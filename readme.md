@@ -16,8 +16,8 @@ Sakib Rahman (Technotreebd)
 
 ## Security Vulnerabilities
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
+If you discover a security vulnerability within Laravel, please refer to http://www.technotree-bd.com/
 
 ## License
 
-General License. All copyrights to Copyright Â© 2014-2017 Grims Technologies. All rights reserved.
+General License. All copyrights to Copyright © 2014-2017 Grims Technologies. All rights reserved.
