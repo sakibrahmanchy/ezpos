@@ -88,7 +88,8 @@ class EmployeeController extends Controller
         // echo $employeeId;
 
         //Access Permissions to user
-        UserPermission::CreateUserPermissions($request->permissions_actions, $userId);
+        if (isset($request->permissions_actions))
+            UserPermission::CreateUserPermissions($request->permissions_actions, $userId);
 
         return redirect()->route('employee_list');
 
