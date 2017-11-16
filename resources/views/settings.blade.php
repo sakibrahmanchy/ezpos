@@ -64,8 +64,29 @@
                                            <input class="form-control" type="text" name="tax_rate" value="{{ $settings['tax_rate'] }}">
 
                                         </div>
-                                    </div>
+                                    </div><br><br><br>
 
+                                    <label for="printer_ip" class="col-sm-3 col-md-3 col-lg-2 control-label">Printer IP:</label>
+                                    <div class="col-sm-9 col-md-9 col-lg-10">
+                                        <div class="input-group date">
+                                    <span class="input-group-addon bg ">
+                                        <i class="fa fa-print"></i>
+                                    </span>
+                                            <input class="form-control" type="text" name="printer_ip" value="{{ $settings['printer_ip'] }}">
+
+                                        </div>
+                                    </div><br><br><br>
+
+                                    <label for="printer_port" class="col-sm-3 col-md-3 col-lg-2 control-label">Printer Port:</label>
+                                    <div class="col-sm-9 col-md-9 col-lg-10">
+                                        <div class="input-group date">
+                                    <span class="input-group-addon bg">
+                                     <i class="fa fa-plug "></i>
+                                    </span>
+                                            <input class="form-control" type="text" name="printer_port" value="{{ $settings['printer_port'] }}">
+
+                                        </div>
+                                    </div>
 
                                 </div>
 
