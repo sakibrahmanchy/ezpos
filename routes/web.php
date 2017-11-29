@@ -213,6 +213,16 @@ Route::group(['middleware' => ['admin']], function () {
     route::post('gift_card/use','GiftCardController@UseGiftCard')->name('gift_card_use')->middleware('auth');
     route::post('gift_cards/delete','GiftCardController@DeleteGiftCards')->name('gift_cards_delete')->middleware('auth');
 
+
+    route::get('/location/new','LocationController@GetLocationForm' )->name('new_location')->middleware('auth');
+    route::post('/location/new','LocationController@AddLocation')->name('new_location')->middleware('auth');
+    route::get('location/list','LocationController@GetLocationList')->name('location_list')->middleware('auth');
+    route::get('location/edit/{location_id}','LocationController@EditLocationGet')->name('location_edit')->middleware('auth');
+    route::post('location/edit/{location_id}','LocationController@EditLocationPost')->name('location_edit')->middleware('auth');
+    route::get('location/delete/{location_id}','LocationController@DeleteLocationGet')->name('location_delete')->middleware('auth');
+    route::post('location/set/default','LocationController@SetDefaultLocation')->name('location_set_default')->middleware('auth');
+    route::post('locations/delete','LocationController@DeleteLocations')->name('locations_delete')->middleware('auth');
+
     route::post('file/insert','FileController@InsertFile')->name('insert_file')->middleware('auth');
     route::post('file/item/insert','FileController@InsertItemFile')->name('insert_item_file')->middleware('auth');
     route::post('file/item/insertEdit','FileController@InsertItemFileEdit')->name('insert_item_file_edit')->middleware('auth');

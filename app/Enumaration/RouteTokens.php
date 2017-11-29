@@ -157,6 +157,13 @@ class RouteTokens
         "gift_cards_delete"=>"gift_cards_delete",
         "gift_card_use"=>"gift_card_use",
 
+        "new_location"=>"locations_add_update",
+        "location_list"=>"locations_add_update",
+        "location_edit"=>"locations_add_update",
+        "location_delete"=>"locations_delete",
+        "locations_delete"=>"locations_delete",
+        "location_set_default"=>"locations_add_update",
+
     );
 
 

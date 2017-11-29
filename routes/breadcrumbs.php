@@ -480,3 +480,23 @@ Breadcrumbs::register('settings', function($breadcrumbs)
 {
     $breadcrumbs->push('Settings', route('change_settings'),['icon' => 'cog fa-spin']);
 });
+
+Breadcrumbs::register('location_list', function($breadcrumbs)
+{
+    $breadcrumbs->push('Location', route('location_list'),['icon' => 'map-marker']);
+});
+
+
+Breadcrumbs::register('new_location', function($breadcrumbs)
+{
+    $breadcrumbs->parent('location_list');
+    $breadcrumbs->push('New Location', route('new_location'));
+});
+
+Breadcrumbs::register('location_edit', function($breadcrumbs, $location_id)
+{
+    $breadcrumbs->parent('location_list');
+    $breadcrumbs->push('Edit Location ', route('location_edit',['location_edit'=>$location_id]));
+});
+
+

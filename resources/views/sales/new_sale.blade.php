@@ -945,7 +945,7 @@
         }
 
         function addGiftCardPayment(gift_card_number, balance, paidAmount){
-            alert("aa");
+
             var paymentType = $("#payment_types").attr("data-value");
             var tenderedAmount = paidAmount;
             $(".payment-history").append("<div class='card payment-log' data-id='"+paymentAdded+"' id='payment-"+paymentAdded+"'  " +

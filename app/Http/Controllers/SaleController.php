@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enumaration\DateTypes;
 use App\Enumaration\SaleStatus;
 use app\Http\Controllers\Reports\ReportTotal;
+use App\Library\SettingsSingleton;
 use App\Model\Category;
 use App\Model\Customer;
 use App\Model\Employee;
@@ -357,7 +358,9 @@ class SaleController extends Controller
             return redirect()->route('new_sale')->withErrors('Sale id not found');
 
         try{
-            $connector = new NetworkPrintConnector("99.127.82.15", 9100);
+            $settings = SettingsSingleton::get();
+
+            $connector = new NetworkPrintConnector($settings['printer_port'], $settings['printer_ip']);
             $printer = new Printer($connector);
 
             $printer -> setJustification(Printer::JUSTIFY_CENTER);

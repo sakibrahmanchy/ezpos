@@ -69,8 +69,8 @@
 
 
     <div class="content">
-        <div style ="background-color:red;color:white" class="title m-b-md">
-            ERROR: 401
+        <div style ="color:red" class="title m-b-md">
+            <b>ERROR: 401</b>
         </div>
         <div class="title m-b-md">
             Unauthorized

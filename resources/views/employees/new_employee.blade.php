@@ -200,8 +200,8 @@
                                             <ul class="list-unstyled list-permission-actions">
                                                 @foreach($module['permissions'] as $permission)
                                                     <li>
-                                                            <input type="checkbox" name="permissions_actions[]" value="{{$permission['permission_token']}}"  class="permissions_{{$permission["permission_category_id"]}}" id="permissions_actions  {{$permission['permission_token']}}">
-                                                            <label for="permissions_actions{{$permission['permission_name']}}"><span></span></label>								<span class="text-info">{{$permission['permission_name']}}</span>
+                                                        <input type="checkbox" name="permissions_actions[]" value="{{$permission['permission_token']}}"  class="permissions_{{$permission["permission_category_id"]}}" id="permissions_actions  {{$permission['permission_token']}}">
+                                                        <label for="permissions_actions{{$permission['permission_name']}}"><span></span></label>								<span class="text-info">{{$permission['permission_name']}}</span>
                                                     </li>
                                                 @endforeach
                                             </ul>

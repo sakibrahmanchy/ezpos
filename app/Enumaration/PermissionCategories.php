@@ -20,5 +20,6 @@ class PermissionCategories
     public static $SALE = 7;
     public static $EMPLOYEE = 8;
     public static $GIFT_CARDS = 9;
+    public static $LOCATIONS = 10;
 
 }

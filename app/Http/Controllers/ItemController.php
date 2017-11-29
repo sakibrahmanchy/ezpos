@@ -330,7 +330,10 @@ class ItemController extends Controller
                 $data = Excel::load($path, function($reader) {
                 })->get();
                 if(!empty($data) && $data->count()){
+                   /* dd($data);*/
+                    $insert = array();
                     foreach ($data as $key => $value) {
+
                         $supplier_id = 0; $category_id=0;$manufacturer_id=0;
                         if(isset($value->supplier)){
 
@@ -370,16 +373,24 @@ class ItemController extends Controller
 
                         }
 
-                        $insert[] = [
-                            'isbn' => $value->isbn, 'product_id' => $value->product_id,
-                            'item_name'=> $value->name, 'category_id' => $category_id,
-                            'supplier_id' => $supplier_id,'manufacturer_id' => $manufacturer_id,
-                            'item_size'=>$value->size, "item_quantity"=>$value->quantity,
-                            "cost_price"=>$value->cost, "selling_price"=>$value->sale,
 
-                        ];
+                        if($value->isbn!=null&&$value->name!=null
+                            &&$value->cost!=null&&$value->sale!=null){
+
+                           $data = [
+                                'isbn' => $value->isbn, 'product_id' => $value->product_id,
+                                'item_name'=> $value->name, 'category_id' => $category_id,
+                                'supplier_id' => $supplier_id,'manufacturer_id' => $manufacturer_id,
+                                'item_size'=>$value->size, "item_quantity"=>$value->quantity,
+                                "cost_price"=>$value->cost, "selling_price"=>$value->sale,
+
+                            ];
+                           array_push($insert, $data);
+                        }
 
 
+
+                       // echo $value->cost;
                     }
 
                     if(!empty($insert)){

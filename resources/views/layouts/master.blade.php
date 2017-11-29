@@ -44,6 +44,7 @@ else
     <link href={{ asset('css/pe-icon-7-stroke.css')}} rel="stylesheet" />
     <link href={{ asset('css/tagit.ui-zendesk.css')}} rel="stylesheet" />
     <link href={{ asset('css/jquery.tagit.css')}} rel="stylesheet" />
+    <link href="{{ asset('css/bootstrap-switch.css') }}" rel="stylesheet">
 
     <link rel="stylesheet" href="{{ asset('css/ezpos.css') }}">
     <!-- Select2 -->
@@ -56,6 +57,8 @@ else
 
     <!-- Google Font -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+
+
 
 
 
@@ -228,6 +231,13 @@ else
                     <li class = {{ Request::is('gift_card/*') ? 'active' : '' }}>
                         <a href="{{route('gift_card_list')}}">
                             <i class="glyphicon glyphicon-gift"></i><span> Gift Card&nbsp;</span>
+                        </a>
+                    </li>
+                @endif
+                @if(UserHasAccessToModule(\App\Enumaration\PermissionCategories::$LOCATIONS))
+                    <li class = {{ Request::is('location/*') ? 'active' : '' }}>
+                        <a href="{{route('location_list')}}">
+                            <i class="fa fa-map-marker"></i><span> Locations&nbsp;</span>
                         </a>
                     </li>
                 @endif
