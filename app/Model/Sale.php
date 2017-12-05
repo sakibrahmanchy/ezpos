@@ -11,6 +11,7 @@ use Doctrine\DBAL\Exception\InvalidFieldNameException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 
 class Sale extends Model
 {
@@ -38,6 +39,10 @@ class Sale extends Model
         return $this->belongsTo('App\Model\User');
     }
 
+    public function counter(){
+        return $this->belongsTo('App\Model\Counter');
+    }
+
     public function InsertSale($saleInfo, $productInfos,$paymentInfos , $saleStatus){
 
         $sale = new Sale();
@@ -52,7 +57,7 @@ class Sale extends Model
         $sale->profit = $saleInfo['profit'];
         $sale->items_sold = $saleInfo['items_sold'];
         $sale->sale_type = $saleInfo['sale_type'];
-
+        $sale->counter_id = Cookie::get("counter_id");
         $sale->save();
 
         $sale_id = $sale->id;
@@ -194,6 +199,7 @@ class Sale extends Model
         $sale->profit = $saleInfo['profit'];
         $sale->items_sold = $saleInfo['items_sold'];
         $sale->sale_type = $saleInfo['sale_type'];
+        $sale->counter_id = Cookie::get("counter_id");
 
         $sale->save();
 

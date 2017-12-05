@@ -26,12 +26,12 @@
                         <!-- from address-->
                         <div class="col-md-4 col-sm-4 col-xs-12">
                             <ul class="list-unstyled invoice-address" style="margin-bottom:2px;">
-                                <li class="company-title">EZ POS, Inc</li>
+                                <li class="company-title">{{$settings['company_name']}}, Inc</li>
 
-                                <li>EZ POS LOCATION</li>
+                                <li>{{$settings['company_name']}}</li>
 
-                                <li>123 Nowhere street</li>
-                                <li>555-555-5555</li>
+                                <li>{{$settings['address']}}</li>
+                                <li>{{$settings['phone']}}</li>
 
                             </ul>
                         </div>
@@ -43,7 +43,7 @@
                                     <strong>{{date('m/d/Y h:i:s a', time()) }}</strong>
                                 </li>
                                 <li><span>Sale ID:</span>EZPOS {{$sale->id}}</li>
-                                <li><span>Register Name:</span>Default</li>
+                                <li><span>Counter Name:</span><b>{{ $sale->counter->name }}</b></li>
                                 <li><span>Employee:</span>{{\Illuminate\Support\Facades\Auth::user()->name }}</li>
                                 @if(isset($sale->customer->id))
                                     @if($sale->customer->first_name!=null)

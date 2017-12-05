@@ -1,9 +1,9 @@
 @extends('layouts.master')
 
-@section('pageTitle','Location List')
+@section('pageTitle','Counter List')
 
 @section('breadcrumbs')
-    {!! Breadcrumbs::render('location_list') !!}
+    {!! Breadcrumbs::render('counter_list') !!}
 @stop
 <style>
     .switch {
@@ -61,6 +61,7 @@
     .slider.round:before {
         border-radius: 50%;
     }
+
 </style>
 @section('content')
     <div class="filter-box">
@@ -75,8 +76,8 @@
             </div>
             <div class="col-md-6">
                 <div class="pull-right">
-                    @if(UserHasPermission("locations_add_update"))
-                        <a href="{{route('new_location')}}" class="btn btn-primary hidden-sm hidden-xs" title="New Location"><i class="fa fa-plus-circle"></i> <span class="">New Location</span></a>
+                    @if(UserHasPermission("counters_add_update"))
+                        <a href="{{route('new_counter')}}" class="btn btn-primary hidden-sm hidden-xs" title="New Counter"><i class="fa fa-plus-circle"></i> <span class="">New Counter</span></a>
                     @endif
                 </div>
             </div>
@@ -102,40 +103,35 @@
                     <tr>
                         <th></th>
                         <th>Actions</th>
-                        <th>Location Name</th>
-                        <th>Address</th>
-                        <th>Phone</th>
+                        <th>Counter Name</th>
+                        <th>Description</th>
                         <th>Printer IP</th>
                         <th>Printer Port</th>
                         <th>Default</th>
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach($locations as $location)
-                        <tr data-id="{{ $location->id }}">
+                    @foreach($counters as $counter)
+                        <tr data-id="{{ $counter->id }}">
                             <td></td>
                             <td><div class="dropdown">
                                     <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><i class="pe-7s-pen"></i>
                                         <span class="caret"></span></button>
                                     <ul class="dropdown-menu">
-                                        @if(UserHasPermission("locations_add_update"))
-                                            <li><a href="{{route('location_edit',['location_id'=>$location->id])}}">Edit Location</a></li>
+                                        @if(UserHasPermission("counters_add_update"))
+                                            <li><a href="{{route('counter_edit',['counter_id'=>$counter->id])}}">Edit Counter</a></li>
                                         @endif
-                                        @if(UserHasPermission("locations_add_update"))
-                                            <li><a href="{{ route('location_set_default',['location_id'=>$location->id]) }}">Set as default</a></li>
-                                        @endif
-                                        @if(UserHasPermission("locations_delete"))
-                                            <li><a href="{{route('location_delete',['location_id'=>$location->id])}}">Delete</a></li>
+                                        @if(UserHasPermission("counters_delete") && !$counter->isDefault)
+                                            <li><a href="{{route('counter_delete',['counter_id'=>$counter->id])}}">Delete</a></li>
                                         @endif
                                     </ul>
                                 </div></td>
-                            <td>{{$location->name}}</td>
-                            <td>{{$location->address}}</td>
-                            <td>{{$location->phone}}</td>
-                            <td>{{$location->printer_ip}}</td>
-                            <td>{{$location->printer_port}}</td>
+                            <td>{{$counter->name}}</td>
+                            <td>{{$counter->description}}</td>
+                            <td>{{$counter->printer_ip}}</td>
+                            <td>{{$counter->printer_port}}</td>
                             <td><label class="switch">
-                                    <input type="checkbox" onchange="changeDefault({{ $location->id }})" id="default-{{ $location->id }}" {{ $location->isDefault?'checked':'' }}>
+                                    <input type="checkbox" onchange="changeDefault({{ $counter->id }})" id="default-{{ $counter->id }}" {{ $counter->isDefault?'checked':'' }}>
                                     <span class="slider round"></span>
                                 </label></td>
                         </tr>
@@ -182,7 +178,7 @@
 
             var status = $("#default-"+id).is(':checked');
             $.ajax({
-                url: "{{route('location_set_default')}}",
+                url: "{{route('counter_set_default')}}",
                 type: "post",
                 data: {
                     id: id,
@@ -258,14 +254,21 @@
 
                 console.log(id_list);
                 $.ajax({
-                    url: "{{route('locations_delete')}}",
+                    url: "{{route('counters_delete')}}",
                     type: "post",
                     data: {
                         id_list:id_list
                     },
                     success: function(response){
-                        if(response.success)
-                            table.rows('.selected').remove().draw( false );
+                        if(response.success){
+                            if(response.success){
+                                var deletedRows = response.deletedRows;
+                                deletedRows.forEach(function(aRow){
+                                    table.rows('.selected').remove().draw( false );
+                                });
+                            }
+
+                        }
                         $("#deleteModal").modal('toggle');
                         $('#selectButtonHolder').addClass('hidden');
                     }

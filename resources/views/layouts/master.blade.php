@@ -234,10 +234,10 @@ else
                         </a>
                     </li>
                 @endif
-                @if(UserHasAccessToModule(\App\Enumaration\PermissionCategories::$LOCATIONS))
-                    <li class = {{ Request::is('location/*') ? 'active' : '' }}>
-                        <a href="{{route('location_list')}}">
-                            <i class="fa fa-map-marker"></i><span> Locations&nbsp;</span>
+                @if(UserHasAccessToModule(\App\Enumaration\PermissionCategories::$COUNTERS))
+                    <li class = {{ Request::is('counter/*') ? 'active' : '' }}>
+                        <a href="{{route('counter_list')}}">
+                            <i class="fa fa-map-marker"></i><span> Counters&nbsp;</span>
                         </a>
                     </li>
                 @endif

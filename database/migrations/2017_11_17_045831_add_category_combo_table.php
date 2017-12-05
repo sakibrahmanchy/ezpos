@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddIsDefaultColumnToLocationTable extends Migration
+class AddCategoryComboTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,11 @@ class AddIsDefaultColumnToLocationTable extends Migration
      */
     public function up()
     {
-        Schema::table('locations', function (Blueprint $table) {
-            $table->boolean('isDefault');
-        });
+        Schema::create('category_combo', function (Blueprint $table) {
+            $table->integer('category_id');
+            $table->integer('combo_id');
+            $table->integer('quantity');
+        });     
     }
 
     /**
@@ -25,8 +27,6 @@ class AddIsDefaultColumnToLocationTable extends Migration
      */
     public function down()
     {
-        Schema::table('locations', function (Blueprint $table) {
-            $table->dropColumn('isDefault');
-        });
+        Schema::dropIfExists('category_combo');
     }
 }

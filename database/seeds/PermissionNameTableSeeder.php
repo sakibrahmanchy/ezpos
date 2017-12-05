@@ -258,18 +258,18 @@ class PermissionNameTableSeeder extends Seeder
                 ),
                 "description"=>"Add, Update, Delete, Search and Use Gift Cards"
             ),
-            "Locations" => array(
+            "Counters" => array(
                 "permissions"=>array(
                     array(
                         "permission_name"=>"Add, Update",
-                        "permission_token"=>"locations_add_update"
+                        "permission_token"=>"counters_add_update"
                     ),
                     array(
                         "permission_name"=>"Delete",
-                        "permission_token"=>"locations_delete"
+                        "permission_token"=>"counters_delete"
                     ),
                 ),
-                "description"=>"Add, Update, Delete Locations"
+                "description"=>"Add, Update, Delete Counters"
             ),
         );
 

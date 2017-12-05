@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateLocationsTable extends Migration
+class CreateCountersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,13 @@ class CreateLocationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('locations', function (Blueprint $table) {
+        Schema::create('counters', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->string('address')->nullable();
-            $table->string('phone')->nullable();
+            $table->text('description')->nullable();
             $table->string('printer_ip');
             $table->string('printer_port');
+            $table->boolean('isDefault');
             $table->timestamps();
         });
     }
@@ -31,6 +31,6 @@ class CreateLocationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('locations');
+        Schema::dropIfExists('counters');
     }
 }

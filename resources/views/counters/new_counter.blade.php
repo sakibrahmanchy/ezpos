@@ -1,9 +1,9 @@
 @extends('layouts.master')
 
-@section('pageTitle','New Location')
+@section('pageTitle','New Counter')
 
 @section('breadcrumbs')
-    {!! Breadcrumbs::render('new_location') !!}
+    {!! Breadcrumbs::render('new_counter') !!}
 @stop
 
 @section('content')
@@ -12,11 +12,11 @@
         @include('includes.message-block')
         <div class="row" id="form">
             <div class="col-md-12">
-                <form action="{{route('new_location')}}" id="location_form" class="form-horizontal" method="post" accept-charset="utf-8" enctype="multipart/form-data">
+                <form action="{{route('new_counter')}}" id="counter_form" class="form-horizontal" method="post" accept-charset="utf-8" enctype="multipart/form-data">
                     <div class="panel-heading">
                         <h3 class="panel-title">
                             <i class="pe-7s-edit"></i>
-                            Location Information   <small>(Fields in red are required)</small>
+                            Counter Information   <small>(Fields in red are required)</small>
                         </h3>
                     </div>
 
@@ -24,7 +24,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="name" class="required col-sm-3 col-md-3 col-lg-2 control-label ">Location Name:</label>
+                                    <label for="name" class="required col-sm-3 col-md-3 col-lg-2 control-label ">Counter Name:</label>
                                     <div class="col-sm-9 col-md-9 col-lg-10">
                                         <input type="text" name="name" value="{{ old('name') }}" class="form-control" id="name" >
                                         <span class="text-danger">{{ $errors->first('name') }}</span>
@@ -32,14 +32,8 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="address" class="col-sm-3 col-md-3 col-lg-2 control-label ">Address:</label>	<div class="col-sm-9 col-md-9 col-lg-10">
-                                        <textarea name="address" cols="17" rows="5" id="address" class="form-control text-area">{{ old('address') }}</textarea>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="phone" class="col-sm-3 col-md-3 col-lg-2 control-label ">Phone:</label>	<div class="col-sm-9 col-md-9 col-lg-10">
-                                        <input type="text" name="phone" value="{{ old('phone') }}" class="form-control" id="phone" >
+                                    <label for="description" class="col-sm-3 col-md-3 col-lg-2 control-label ">Description:</label>	<div class="col-sm-9 col-md-9 col-lg-10">
+                                        <textarea name="description" cols="17" rows="5" id="description" class="form-control text-area">{{ old('description ') }}</textarea>
                                     </div>
                                 </div>
 

@@ -37,7 +37,7 @@
 
                                     <div class="form-group">
                                         <label for="first_name" class="required col-sm-3 col-md-3 col-lg-2 control-label ">Company Name:</label>			<div class="col-sm-9 col-md-9 col-lg-10">
-                                            <input type="text" name="company_name" value="{{$settings['company_name']}}" class="form-control" id="first_name" >
+                                            <input type="text" name="company_name" value="{{$settings['company_name']}}" class="form-control" id="company_name" >
                                             <span class="text-danger">{{ $errors->first('company_name') }}</span>
                                         </div>
                                     </div>
@@ -66,24 +66,24 @@
                                         </div>
                                     </div><br><br><br>
 
-                                    <label for="printer_ip" class="col-sm-3 col-md-3 col-lg-2 control-label">Printer IP:</label>
+                                    <label for="address" class="col-sm-3 col-md-3 col-lg-2 control-label">Address:</label>
                                     <div class="col-sm-9 col-md-9 col-lg-10">
                                         <div class="input-group date">
                                     <span class="input-group-addon bg ">
-                                        <i class="fa fa-print"></i>
+                                        <i class="fa fa-map"></i>
                                     </span>
-                                            <input class="form-control" type="text" name="printer_ip" value="{{ $settings['printer_ip'] }}">
+                                            <input class="form-control" type="text" name="address" value="{{ $settings['address'] }}">
 
                                         </div>
                                     </div><br><br><br>
 
-                                    <label for="printer_port" class="col-sm-3 col-md-3 col-lg-2 control-label">Printer Port:</label>
+                                    <label for="phone" class="col-sm-3 col-md-3 col-lg-2 control-label">Phone:</label>
                                     <div class="col-sm-9 col-md-9 col-lg-10">
                                         <div class="input-group date">
                                     <span class="input-group-addon bg">
-                                     <i class="fa fa-plug "></i>
+                                     <i class="fa fa-phone"></i>
                                     </span>
-                                            <input class="form-control" type="text" name="printer_port" value="{{ $settings['printer_port'] }}">
+                                            <input class="form-control" type="text" name="phone" value="{{ $settings['phone'] }}">
 
                                         </div>
                                     </div>

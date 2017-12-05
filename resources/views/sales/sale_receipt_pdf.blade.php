@@ -24,10 +24,9 @@
 <div>
     <ul style="margin-bottom:2px;float:left;">
 
-        <li >EZ POS, Inc</li>
-        <li>EZ POS LOCATION</li>
-        <li>123 Nowhere street</li>
-        <li>555-555-5555</li>
+        <li >{{ $settings['company_name'] }}</li>
+        <li><?php echo substr($settings['address'],20) ?></li>
+        <li>{{ $settings['phone']}}</li>
 
     </ul>
     <ul  style="margin-bottom:2px;float:right;">
@@ -35,8 +34,8 @@
             Sales Receipt						 <br>
             <strong>{{date('m/d/Y h:i:s a', time()) }}</strong>
         </li>
-        <li><span>Sale ID:</span>EZPOS {{$sale->id}}</li>
-        <li><span>Register Name:</span>Default</li>
+        <li><span>Sale ID:</span>{{ $settings['company_name'] }} {{$sale->id}}</li>
+        <li><span>Counter Name:</span><b>{{ $sale->counter->name }}</b></li>
         <li><span>Employee:</span>{{\Illuminate\Support\Facades\Auth::user()->name }}</li>
         @if(isset($sale->customer->id))
             @if($sale->customer->first_name!=null)
@@ -243,7 +242,7 @@
                         Change return policy			            </div>
                     <div >
                         <?php echo DNS1D::getBarcodeHTML($sale->id , "C39");	?>					</div>
-                    <p style="padding-left: 28px">EZPOS {{ $sale->id }}</p>
+                    <p style="padding-left: 28px">{{ $settings['company_name'] }} {{ $sale->id }}</p>
                     <div >
                     </div>
                 </div>

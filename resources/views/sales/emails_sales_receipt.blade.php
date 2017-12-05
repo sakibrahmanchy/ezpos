@@ -220,7 +220,7 @@
                             </tr>
                             <tr>
                                 <td class="hh-force-col-center"  style="text-align: left;">
-                                    <strong><h1>EZPOS</h1></strong>
+                                    <strong><h1>{{ $settings['company_name'] }}</h1></strong>
                                 </td>
 
                             </tr>
@@ -272,7 +272,7 @@
                         <table border="0" width="100%" cellpadding="0" cellspacing="0" align="center">
                             <tr>
                                 <td style="padding: 30px; font-family: sans-serif; font-size: 16px; line-height: 22px; color: #444444;">
-                                    <h1> EZPOS Invoice Receipt</h1>
+                                    <h1>{{ $settings['company_name'] }} Invoice Receipt</h1>
                                     <br><br>
                                     Hello <strong>Sakib Rahman</strong>,<br>
                                     <br>
@@ -281,7 +281,7 @@
                                     <br><br>
 
                                     Your Trusted
-                                    <br>EZPOS<br>
+                                    <br>{{$settings['company_name']}}<br>
 
                                 </td>
                             </tr>
@@ -300,8 +300,7 @@
             <table border="0" width="100%" cellpadding="0" cellspacing="0" align="center" class="email-container">
                 <tr>
                     <td style="text-align: center;padding: 20px;font-family: sans-serif; font-size: 12px; line-height: 18px;color: #888888;">
-
-                       EZPOS &bull; © 2017 BVI GRIMS LLC &bull; <span class="mobile_link">(123) 456-7890</span><br><br>
+                        {{$settings['company_name']}} &bull;  2017 BVI GRIMS LLC &bull; <span class="mobile_link">{{ $settings['address'] }}</span><br><br>
                     </td>
                 </tr>
             </table>

@@ -99,6 +99,7 @@
                     <tr>
                         <th align="left" class="header">Sale Id</th>
                         <th align="left" class="header">Date</th>
+                        <th align="left" class="header">Counter</th>
                         <th align="left" class="header">Sold By</th>
                         <th align="left" class="header">Sold To</th>
                         <th align="right" class="header">Subtotal_amount</th>
@@ -111,16 +112,19 @@
                     </thead>
                     <tbody id="data-table">
                         @foreach($sales as $aSale)
-
-
                             <tr>
                                 <td><a href="{{route('sale_receipt',['sale_id'=>$aSale->id])}}">
                                         <span class="glyphicon glyphicon-print"></span></a>
                                     <a href="{{route('sale_edit',['id'=>$aSale->id])}}"><span class="glyphicon glyphicon-edit"></span></a>
                                         EZPOS {{$aSale->id}}</td>
                                 <td>{{ $aSale->created_at }}</td>
+                                <td>{{ $aSale->counter->name}}</td>
                                 <td>{{ $aSale->employee->name }}</td>
-                                <td>{{ $aSale->customer->first_name }} {{ $aSale->customer->last_name }}</td>
+                                <td>
+                                    @if(!is_null($aSale->customer))
+                                        {{ $aSale->customer->first_name }} {{ $aSale->customer->last_name }}
+                                    @endif
+                                </td>
                                 <td>
                                     @if($aSale->sub_total_amount>=0)
                                         ${{$aSale->sub_total_amount}}
@@ -156,7 +160,6 @@
                                     @endforeach
 
                                 </td>
-
                                 <td>
                                         {{ (int) $aSale->items_sold}}
                                 </td>
@@ -232,7 +235,7 @@
                     tableData += "<tr>";
                     tableData += "<td><a  href='"+ receipt_url +"'><span class='glyphicon glyphicon-print'></span></a>  <a   href='"+ edit_url +"'><span class='glyphicon glyphicon-edit'></span></a> EZPOS "+ item.id +"</td>";
                     tableData += "<td>"+ item.created_at +"</td>";
-
+                    tableData += "<td>"+ item.counter.name +"</td>";
                     if(item.employee.name!=null)
                         tableData+="<td>"+item.employee.name;
                     else
