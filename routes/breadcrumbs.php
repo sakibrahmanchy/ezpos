@@ -480,3 +480,23 @@ Breadcrumbs::register('settings', function($breadcrumbs)
 {
     $breadcrumbs->push('Settings', route('change_settings'),['icon' => 'cog fa-spin']);
 });
+
+Breadcrumbs::register('counter_list', function($breadcrumbs)
+{
+    $breadcrumbs->push('Counter', route('counter_list'),['icon' => 'map-marker']);
+});
+
+
+Breadcrumbs::register('new_counter', function($breadcrumbs)
+{
+    $breadcrumbs->parent('counter_list');
+    $breadcrumbs->push('New Counter', route('new_counter'));
+});
+
+Breadcrumbs::register('counter_edit', function($breadcrumbs, $counter_id)
+{
+    $breadcrumbs->parent('counter_list');
+    $breadcrumbs->push('Edit Counter ', route('counter_edit',['counter_edit'=>$counter_id]));
+});
+
+

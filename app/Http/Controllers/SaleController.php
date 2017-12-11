@@ -66,7 +66,7 @@ class SaleController extends Controller
 
     public function GetSaleReceipt($sale_id){
 
-        $sale = Sale::where("id",$sale_id)->with('items', 'paymentlogs','customer')->first();
+        $sale = Sale::where("id",$sale_id)->with('items', 'paymentlogs','customer','counter')->first();
 
 
         /*return response()->json(['sale'=>$sale], 200);*/
@@ -109,6 +109,7 @@ class SaleController extends Controller
 
 
     public function DownloadSaleReceipt($sale_id){
+
 
         $sale = Sale::where("id",$sale_id)->with(['items' => function($query){
             $query->where('items.product_type','<>', 2);
@@ -360,21 +361,29 @@ class SaleController extends Controller
         try{
             $settings = SettingsSingleton::get();
 
+<<<<<<< HEAD
             $connector = new NetworkPrintConnector($settings['printer_port'], $settings['printer_ip']);
+=======
+            $counter = $sale->counter;
+            $ip_address = $counter->printer_ip;
+            $port = $counter->printer_port;
+
+            $connector = new NetworkPrintConnector($port, $ip_address);
+>>>>>>> 57dab73638fc904ed755ba74b3986ac9910379e7
             $printer = new Printer($connector);
 
             $printer -> setJustification(Printer::JUSTIFY_CENTER);
             $printer -> text("Order\n");
 
             $printer -> selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);
-            $printer -> text("EZPOS ".$sale->id."\n");
+            $printer -> text($settings['company_name']." ".$sale->id."\n");
             $printer -> text("------------------------------------------\n");
             $printer -> selectPrintMode();
             $printer -> text($sale->created_at . "\n");
             $printer -> selectPrintMode(Printer::MODE_DOUBLE_WIDTH);
-            $printer -> text("EZPOS" . "\n");
+            $printer -> text($settings['company_name'] . "\n");
             $printer -> selectPrintMode();
-            $printer -> text("111, EZPOS ville, EZPOS STORE" . "\n\n");
+            $printer -> text($settings['address'] . "\n\n");
             $printer -> selectPrintMode();
             $printer -> text("Employee: ".Auth::user()->name."\n");
             $printer -> selectPrintMode();

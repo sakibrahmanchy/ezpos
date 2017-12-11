@@ -1,11 +1,68 @@
 @extends('layouts.master')
 
-@section('pageTitle','Gift Card List')
+@section('pageTitle','Counter List')
 
 @section('breadcrumbs')
-    {!! Breadcrumbs::render('gift_card_list') !!}
+    {!! Breadcrumbs::render('counter_list') !!}
 @stop
+<style>
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+    }
 
+    .switch input {display:none;}
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+    input:checked + .slider {
+        background-color: #2196F3;
+    }
+
+    input:focus + .slider {
+        box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked + .slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+    }
+
+    /* Rounded sliders */
+    .slider.round {
+        border-radius: 34px;
+    }
+
+    .slider.round:before {
+        border-radius: 50%;
+    }
+
+</style>
 @section('content')
     <div class="filter-box">
         <div class="row">
@@ -19,8 +76,8 @@
             </div>
             <div class="col-md-6">
                 <div class="pull-right">
-                    @if(UserHasPermission("gift_cards_add_update"))
-                        <a href="{{route('new_gift_card')}}" class="btn btn-primary hidden-sm hidden-xs" title="New Customer"><i class="fa fa-plus-circle"></i> <span class="">New Gift Card</span></a>
+                    @if(UserHasPermission("counters_add_update"))
+                        <a href="{{route('new_counter')}}" class="btn btn-primary hidden-sm hidden-xs" title="New Counter"><i class="fa fa-plus-circle"></i> <span class="">New Counter</span></a>
                     @endif
                 </div>
             </div>
@@ -46,48 +103,41 @@
                     <tr>
                         <th></th>
                         <th>Actions</th>
-                        <th>Gift Card Number</th>
-                        <th>Value</th>
+                        <th>Counter Name</th>
                         <th>Description</th>
-                        <th>Customer Name</th>
-                        <th>Active/Inactive</th>
+                        <th>Printer IP</th>
+                        <th>Printer Port</th>
+                        <th>Default</th>
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach($gift_cards as $gift_card)
-                        <tr data-id="{{ $gift_card->id }}">
+                    @foreach($counters as $counter)
+                        <tr data-id="{{ $counter->id }}">
                             <td></td>
                             <td><div class="dropdown">
                                     <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><i class="pe-7s-pen"></i>
                                         <span class="caret"></span></button>
                                     <ul class="dropdown-menu">
-                                        @if(UserHasPermission("gift_card_add_update"))
-                                            <li><a href="{{route('gift_card_edit',['gift_card_id'=>$gift_card->id])}}">Edit Gift Card</a></li>
+                                        @if(UserHasPermission("counters_add_update"))
+                                            <li><a href="{{route('counter_edit',['counter_id'=>$counter->id])}}">Edit Counter</a></li>
                                         @endif
-                                        @if(UserHasPermission("gift_card_delete"))
-                                            <li><a href="{{route('gift_card_delete',['gift_card_id'=>$gift_card->id])}}">Delete</a></li>
+                                        @if(UserHasPermission("counters_delete") && !$counter->isDefault)
+                                            <li><a href="{{route('counter_delete',['counter_id'=>$counter->id])}}">Delete</a></li>
                                         @endif
                                     </ul>
                                 </div></td>
-                            <td>{{$gift_card->gift_card_number}}</td>
-                            <td>${{$gift_card->value}}</td>
-                            <td>{{$gift_card->description}}</td>
-                            @if($gift_card->customer!=null)
-                                <td>{{$gift_card->customer->first_name}} {{$gift_card->customer->last_name}}</td>
-                            @else
-                                <td></td>
-                            @endif
-                            <td> @if($gift_card->status==\App\Enumaration\GiftCardStatus::$ACTIVE)
-                                    <span class="label label-success">Active</span>
-                                @else
-                                    <span class="label label-danger">Inactive</span>
-
-                                @endif</td>
+                            <td>{{$counter->name}}</td>
+                            <td>{{$counter->description}}</td>
+                            <td>{{$counter->printer_ip}}</td>
+                            <td>{{$counter->printer_port}}</td>
+                            <td><label class="switch">
+                                    <input type="checkbox" onchange="changeDefault({{ $counter->id }})" id="default-{{ $counter->id }}" {{ $counter->isDefault?'checked':'' }}>
+                                    <span class="slider round"></span>
+                                </label></td>
                         </tr>
                     @endforeach
                     </tbody>
                 </table>
-
             </div>
         </div>
     </div>
@@ -124,9 +174,29 @@
             ).draw();
         }
 
+        function changeDefault(id){
+
+            var status = $("#default-"+id).is(':checked');
+            $.ajax({
+                url: "{{route('counter_set_default')}}",
+                type: "post",
+                data: {
+                    id: id,
+                    status: status
+                },
+                success: function(response){
+                   if(response.success){
+                        location.reload();
+                   }
+                }
+
+            });
+
+        }
+
         $(document).ready(function(){
 
-
+            $("[name='my-checkbox']").bootstrapSwitch();
             table = $('.table').DataTable({
 
                 pageLength:10,
@@ -184,14 +254,21 @@
 
                 console.log(id_list);
                 $.ajax({
-                    url: "{{route('gift_cards_delete')}}",
+                    url: "{{route('counters_delete')}}",
                     type: "post",
                     data: {
                         id_list:id_list
                     },
                     success: function(response){
-                        if(response.success)
-                            table.rows('.selected').remove().draw( false );
+                        if(response.success){
+                            if(response.success){
+                                var deletedRows = response.deletedRows;
+                                deletedRows.forEach(function(aRow){
+                                    table.rows('.selected').remove().draw( false );
+                                });
+                            }
+
+                        }
                         $("#deleteModal").modal('toggle');
                         $('#selectButtonHolder').addClass('hidden');
                     }

@@ -102,11 +102,11 @@
                         <th align="right" class="header">Total</th>
                         <th align="left" class="header">Tax</th>
                         <th align="left" class="header">Profit</th>
+                        <th align="left" class="header">Counter</th>
                     </tr>
                     </thead>
                     <tbody id="data-table">
                     @foreach($sales as $aSale)
-                        <tr>
                         <tr>
                             <td>{{ $aSale->starttime }} - {{ $aSale->endtime }} </td>
                             <td>
@@ -137,6 +137,7 @@
                                     -${{ (-1) * $aSale->profit }}
                                 @endif
                             </td>
+                            <td>{{ $aSale->counter_name }}</td>
                         </tr>
                     @endforeach
                     </tbody>
@@ -229,7 +230,7 @@
                         else
                             tableData+="-$"+ (-1) * item.profit;
                         tableData+="</td>";
-
+                        tableData+="<td>"+item.counter_name+"</td>";
                         tableData+="</tr>";
                     });
 

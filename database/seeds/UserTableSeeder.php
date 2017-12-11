@@ -14,12 +14,16 @@ class UserTableSeeder extends Seeder
      */
     public function run()
     {
-        $employee = new User();
-        $employee->name = "Algrims";
-        $employee->email = "algrims@gmail.com";
-        $employee->password = bcrypt("123456");
-        $employee->user_type = \App\Enumaration\UserTypes::$SUPER_ADMIN;
-        $employee->save();
+
+        if(!(User::where("email","algrims@gmail.com")->exists()))
+        {
+            $employee = new User();
+            $employee->name = "Algrims";
+            $employee->email = "algrims@gmail.com";
+            $employee->password = bcrypt("123456");
+            $employee->user_type = \App\Enumaration\UserTypes::$SUPER_ADMIN;
+            $employee->save();
+        }
 
         $permissions =  \Illuminate\Support\Facades\DB::table('permission_names')->select('permission_token')->get()->toArray();
         $permissionList= array();

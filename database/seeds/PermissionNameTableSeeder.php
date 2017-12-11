@@ -258,10 +258,24 @@ class PermissionNameTableSeeder extends Seeder
                 ),
                 "description"=>"Add, Update, Delete, Search and Use Gift Cards"
             ),
+            "Counters" => array(
+                "permissions"=>array(
+                    array(
+                        "permission_name"=>"Add, Update",
+                        "permission_token"=>"counters_add_update"
+                    ),
+                    array(
+                        "permission_name"=>"Delete",
+                        "permission_token"=>"counters_delete"
+                    ),
+                ),
+                "description"=>"Add, Update, Delete Counters"
+            ),
         );
 
 
         foreach($moduleWithPermissionList as $module=>$definitions){
+
             $permissionCategory = PermissionCategory::where('permission_category_name', '=' , $module )->first();
             if (!$permissionCategory) {
 

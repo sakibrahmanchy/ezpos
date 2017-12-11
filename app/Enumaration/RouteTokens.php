@@ -50,6 +50,8 @@ class RouteTokens
         "supplier_to_excel"=>"suppliers_add_update",
 
         "new_sale"=>"sale_add_update",
+        "counter_list_ajax"=>"sale_add_update",
+        "counter_set"=>"sale_add_update",
         "suspended_sale_list"=>"sale_add_update",
         "sale_add_update" => "sale_edit",
         "sale_last_receipt"=>"sale_receipt",
@@ -156,6 +158,13 @@ class RouteTokens
         "gift_card_delete"=>"gift_cards_delete",
         "gift_cards_delete"=>"gift_cards_delete",
         "gift_card_use"=>"gift_card_use",
+        
+        "new_counter"=>"counters_add_update",
+        "counter_list"=>"counters_add_update",
+        "counter_edit"=>"counters_add_update",
+        "counter_delete"=>"counters_delete",
+        "counters_delete"=>"counters_delete",
+        "counter_set_default"=>"counters_add_update",
 
     );
 

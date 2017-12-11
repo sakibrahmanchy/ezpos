@@ -6,6 +6,7 @@ use App\Enumaration\SaleStatus;
 use App\Enumaration\SaleTypes;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\SaleController;
+use App\Model\Counter;
 use App\Model\Sale;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -66,7 +67,8 @@ class SaleReportController extends Controller
                 sum(sub_total_amount) as subtotal,
                 sum(total_amount) as total,
                 sum(tax_amount) as tax,
-                sum(profit) as profit
+                sum(profit) as profit,
+                counter_id
                 from sales
                 where id in (
                     select DISTINCT id from sales where
@@ -85,6 +87,10 @@ class SaleReportController extends Controller
 
             array_push($labels,$aSale->item_name." ($".$aSale->total.")");
             array_push($values,$aSale->total);
+
+            $counter_id = $aSale->counter_id;
+            $counter_name = Counter::where("id",$counter_id)->first()->name;
+            $aSale->counter_name = $counter_name;
         }
 
 
@@ -109,7 +115,8 @@ class SaleReportController extends Controller
                 sum(sub_total_amount) as subtotal,
                 sum(total_amount) as total,
                 sum(tax_amount) as tax,
-                sum(profit) as profit
+                sum(profit) as profit,
+                counter_id
                 from sales
                 where id in (
                     select DISTINCT id from sales where
@@ -129,6 +136,10 @@ class SaleReportController extends Controller
         foreach($items as $aSale){
             array_push($labels,$aSale->item_name." ($".$aSale->total.")");
             array_push($values,$aSale->total);
+
+            $counter_id = $aSale->counter_id;
+            $counter_name = Counter::where("id",$counter_id)->first()->name;
+            $aSale->counter_name = $counter_name;
         }
 
         $reportTotal = new ReportTotal();
@@ -151,7 +162,7 @@ class SaleReportController extends Controller
         $orderBy = "payment_type";
 
         $sales = Sale::where('created_at','>=',$startDate)->where('sale_type',SaleTypes::$SALE)
-        ->where('created_at','<=',$endDate)->with('customer','paymentLogs','employee')->get();
+        ->where('created_at','<=',$endDate)->with('customer','paymentLogs','employee','counter')->get();
 
         $labels = array();
         $values = array();
@@ -180,7 +191,7 @@ class SaleReportController extends Controller
         $sale_type = $request->sale_type;
 
         $sales = Sale::where('created_at','>=',$startDate)->where('sale_type',$sale_type)
-            ->where('created_at','<=',$endDate)->with('customer','paymentLogs','employee')->get();
+            ->where('created_at','<=',$endDate)->with('customer','paymentLogs','employee','counter')->get();
 
         $labels = array();
         $values = array();
@@ -210,7 +221,7 @@ class SaleReportController extends Controller
         $sql = "Select  sum(total_amount) as total,floor(hour(created_at) / $elapse) AS item_name,
                 DATE_FORMAT(date(created_at) + interval $elapse * (hour(created_at) div $elapse) hour, '%H:%i')  as starttime,
                 DATE_FORMAT(date(created_at) + interval $elapse * ((hour(created_at) div $elapse) + 1) hour, '%H:%i') as endtime,
-                sum(sub_total_amount) as subtotal, sum(tax_amount) as tax, sum(profit) as profit
+                sum(sub_total_amount) as subtotal, sum(tax_amount) as tax, sum(profit) as profit, counter_id
                 from sales
                 where id in (
                     select DISTINCT id from sales where
@@ -231,6 +242,10 @@ class SaleReportController extends Controller
             //array_push($labels,$aSale->starttime." - ".$aSale->endtime." ($".$aSale->total.")");
             array_push($labels,$aSale->starttime." - ".$aSale->endtime." ");
             array_push($values,$aSale->total);
+
+            $counter_id = $aSale->counter_id;
+            $counter_name = Counter::where("id",$counter_id)->first()->name;
+            $aSale->counter_name = $counter_name;
         }
 
 
@@ -300,7 +315,7 @@ class SaleReportController extends Controller
         $sql = "Select  sum(total_amount) as total,floor(hour(created_at) / $elapse) AS item_name,
                 DATE_FORMAT(date(created_at) + interval $elapse * (hour(created_at) div $elapse) hour, '%H:%i')  as starttime,
                 DATE_FORMAT(date(created_at) + interval $elapse * ((hour(created_at) div $elapse) + 1) hour, '%H:%i') as endtime,
-                sum(sub_total_amount) as subtotal, sum(tax_amount) as tax, sum(profit) as profit
+                sum(sub_total_amount) as subtotal, sum(tax_amount) as tax, sum(profit) as profit,counter_id
                 from sales
                 where id in (
                     select DISTINCT id from sales where
@@ -320,6 +335,10 @@ class SaleReportController extends Controller
         foreach($items as $aSale){
             array_push($labels,$aSale->starttime." - ".$aSale->endtime." ");
             array_push($values,$aSale->total);
+
+            $counter_id = $aSale->counter_id;
+            $counter_name = Counter::where("id",$counter_id)->first()->name;
+            $aSale->counter_name = $counter_name;
         }
 
         $reportTotal = new ReportTotal();

@@ -213,6 +213,18 @@ Route::group(['middleware' => ['admin']], function () {
     route::post('gift_card/use','GiftCardController@UseGiftCard')->name('gift_card_use')->middleware('auth');
     route::post('gift_cards/delete','GiftCardController@DeleteGiftCards')->name('gift_cards_delete')->middleware('auth');
 
+    
+    route::get('/counter/new','CounterController@GetCounterForm' )->name('new_counter')->middleware('auth');
+    route::post('/counter/new','CounterController@AddCounter')->name('new_counter')->middleware('auth');
+    route::get('counter/list','CounterController@GetCounterList')->name('counter_list')->middleware('auth');
+    route::get('counter/list/ajax','CounterController@GetCounterListAjax')->name('counter_list_ajax')->middleware('auth');
+    route::get('counter/edit/{counter_id}','CounterController@EditCounterGet')->name('counter_edit')->middleware('auth');
+    route::post('counter/edit/{counter_id}','CounterController@EditCounterPost')->name('counter_edit')->middleware('auth');
+    route::get('counter/delete/{counter_id}','CounterController@DeleteCounterGet')->name('counter_delete')->middleware('auth');
+    route::post('counter/set/default','CounterController@SetDefaultCounter')->name('counter_set_default')->middleware('auth');
+    route::post('counters/delete','CounterController@DeleteCounters')->name('counters_delete')->middleware('auth');
+    route::get('counter/set/{counter_id}','CounterController@SetCounter')->name('counter_set')->middleware('auth');
+
     route::post('file/insert','FileController@InsertFile')->name('insert_file')->middleware('auth');
     route::post('file/item/insert','FileController@InsertItemFile')->name('insert_item_file')->middleware('auth');
     route::post('file/item/insertEdit','FileController@InsertItemFileEdit')->name('insert_item_file_edit')->middleware('auth');

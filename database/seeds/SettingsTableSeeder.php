@@ -28,6 +28,7 @@ class SettingsTableSeeder extends Seeder
         $setting->save();
 
         $setting = new \App\Model\Setting();
+<<<<<<< HEAD
         $setting->key = "printer_port";
         $setting->value = "9100";
         $setting->save();
@@ -35,6 +36,15 @@ class SettingsTableSeeder extends Seeder
         $setting = new \App\Model\Setting();
         $setting->key = "printer_ip";
         $setting->value = "99.127.82.15";
+=======
+        $setting->key = "address";
+        $setting->value = "";
+        $setting->save();
+
+        $setting = new \App\Model\Setting();
+        $setting->key = "phone";
+        $setting->value = "";
+>>>>>>> 57dab73638fc904ed755ba74b3986ac9910379e7
         $setting->save();
 
 
