@@ -361,22 +361,12 @@ class SaleController extends Controller
         try{
             $settings = SettingsSingleton::get();
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-            $connector = new NetworkPrintConnector($settings['printer_port'], $settings['printer_ip']);
-=======
->>>>>>> c54366439cf40779a56f9932608b11b105a8421e
             $counter = $sale->counter;
             $ip_address = $counter->printer_ip;
             $port = $counter->printer_port;
 
             $connector = new NetworkPrintConnector($port, $ip_address);
-<<<<<<< HEAD
 
-=======
->>>>>>> 57dab73638fc904ed755ba74b3986ac9910379e7
->>>>>>> c54366439cf40779a56f9932608b11b105a8421e
             $printer = new Printer($connector);
 
             $printer -> setJustification(Printer::JUSTIFY_CENTER);
