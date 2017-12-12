@@ -1,0 +1,17 @@
+FTP:
+107.180.103.7
+sourov
+sourov06
+
+
+DB_HOST=107.180.103.7
+DB_PORT=3306
+DB_DATABASE=test_golf
+DB_USERNAME=root
+DB_PASSWORD=bvigrims
+
+
+/var/www/html
+
+MAILGUN_DOMAIN=sandbox2e35fbe6183d43a6859521f6767bd5a8.mailgun.org
+MAILGUN_SECRET=key-cc2c0f48e43ee03bb7eeaa712460cb17
