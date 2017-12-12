@@ -72,6 +72,7 @@ class CounterController extends Controller
     public function DeleteCounterGet($counter_id){
 
         $counter = Counter::where("id",$counter_id)->first();
+
         if(!$counter->isDefault)
             $counter->delete();
 
@@ -83,10 +84,12 @@ class CounterController extends Controller
 
         $counter_list = $request->id_list;
         $deletedRows = array();
+
         $counters = Counter::whereIn("id",$counter_list)->get();
 
         foreach($counters as $aCounter){
             if(!$aCounter->isDefault){
+
                 array_push($deletedRows, $aCounter->id);
                 $aCounter->delete();
             }
