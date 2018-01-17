@@ -56,8 +56,7 @@ else
     <link rel="stylesheet" href="{{ asset('css/skins/skin-blue.min.css') }}">
 
     <!-- Google Font -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-
+    <link rel="stylesheet" href="{{ asset('css/fonts/google-fonts-2.css') }}">
 
 
 

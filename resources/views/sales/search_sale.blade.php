@@ -62,18 +62,18 @@
                 </div>
 
 
-                <script type="text/javascript">
-                    $('.reports_selected_location_ids_checkboxes').change(function()
-                    {
-                        var selected_location_ids = [];
-                        $("input[name='reports_selected_location_ids[]']:checked").each(function()
-                        {
-                            selected_location_ids.push($(this).val());
-                        });
+                {{--<script type="text/javascript">--}}
+                    {{--$('.reports_selected_location_ids_checkboxes').change(function()--}}
+                    {{--{--}}
+                        {{--var selected_location_ids = [];--}}
+                        {{--$("input[name='reports_selected_location_ids[]']:checked").each(function()--}}
+                        {{--{--}}
+                            {{--selected_location_ids.push($(this).val());--}}
+                        {{--});--}}
 
-                        $.post('https://demo.phppointofsale.com/index.php/reports/set_selected_location_ids', {reports_selected_location_ids: selected_location_ids});
-                    });
-                </script>
+                        {{--$.post('https://demo.phppointofsale.com/index.php/reports/set_selected_location_ids', {reports_selected_location_ids: selected_location_ids});--}}
+                    {{--});--}}
+                {{--</script>--}}
 
                 <div class="form-group">
                     <label for="matchType" class="required text-danger col-sm-3 col-md-3 col-lg-2 control-label">Match Type:</label>						<div class="controls col-sm-9 col-md-7 col-lg-7">

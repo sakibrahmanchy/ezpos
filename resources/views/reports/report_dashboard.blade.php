@@ -34,8 +34,8 @@
 
                             <a href="#" class="list-group-item" id="employees"><i class="icon ti-id-badge"></i>	Employees</a>
 
-                           {{-- <a href="#" class="list-group-item" id="expenses"><i class="icon ti-money"></i>	Expenses</a>
-    --}}
+                            {{-- <a href="#" class="list-group-item" id="expenses"><i class="icon ti-money"></i>	Expenses</a>
+     --}}
                             {{--<a href="#" class="list-group-item" id="giftcards"><i class="icon ti-credit-card"></i>	Giftcards</a>--}}
 
 
@@ -97,13 +97,6 @@
                             <a class="list-group-item" href="{{ route('report_customer_detail') }}"><i class="icon ti-calendar"></i> Detailed Reports</a>
                         </div>
 
-                        <div class="list-group commissions hidden">
-                            <a class="list-group-item" href="https://demo.phppointofsale.com/index.php/reports/graphical_summary_commissions"><i class="icon ti-bar-chart-alt"></i> Graphical Reports</a>
-
-                            <a class="list-group-item" href="https://demo.phppointofsale.com/index.php/reports/summary_commissions"><i class="icon ti-receipt"></i> Summary Reports</a>
-                            <a class="list-group-item" href="https://demo.phppointofsale.com/index.php/reports/detailed_commissions"><i class="icon ti-calendar"></i> Detailed Reports</a>
-                        </div>
-
                         <div class="list-group employees hidden">
                             <a class="list-group-item" href="{{ route('report_employee_graphical') }}"><i class="icon ti-bar-chart-alt"></i> Graphical Reports</a>
                             <a class="list-group-item" href="{{ route('report_employee_summary') }}"><i class="icon ti-receipt"></i> Summary Reports</a>
@@ -117,12 +110,7 @@
                             <a class="list-group-item" href="{{ route('report_sale_summary_hourly') }}"><i class="icon ti-receipt"></i> Summary Sales by Time Reports</a>
                             <a class="list-group-item" href="{{ route('report_sale_graphical_hourly') }}"><i class="icon ti-bar-chart-alt"></i> Graphical Summary Sales by Time Reports</a>
                         </div>
-                        <div class="list-group deleted-sales hidden">
-                            <a href="https://demo.phppointofsale.com/index.php/reports/deleted_sales" class="list-group-item"><i class="icon ti-calendar"></i> Detailed Reports</a>
-                        </div>
-                        <div class="list-group register-log hidden">
-                            <a href="https://demo.phppointofsale.com/index.php/reports/detailed_register_log" class="list-group-item"><i class="icon ti-calendar"></i> Detailed Reports</a>
-                        </div>
+
                         <div class="list-group categories hidden">
                             <a href="{{ route('report_category_graphical') }}" class="list-group-item"><i class="icon ti-bar-chart-alt"></i> Graphical Reports</a>
                             <a href="{{ route('report_category_summary') }}" class="list-group-item"><i class="icon ti-receipt"></i> Summary Reports</a>
@@ -134,7 +122,7 @@
                         <div class="list-group items hidden">
                             <a href="{{ route('report_item_graphical') }}" class="list-group-item"><i class="icon ti-bar-chart-alt"></i> Graphical Reports</a>
                             <a href="{{ route('report_item_summary') }}" class="list-group-item"><i class="icon ti-receipt"></i> Summary Reports</a>
-                            {{--<a class="list-group-item" href="https://demo.phppointofsale.com/index.php/reports/summary_items_variance"><i class="icon ti-receipt"></i> Price Variance Report</a>--}}
+
                         </div>
 
                         <div class="list-group manufacturers hidden">
@@ -146,7 +134,7 @@
                         <div class="list-group item-kits hidden">
                             <a href="{{ route('report_itemkit_graphical') }}" class="list-group-item"><i class="icon ti-bar-chart-alt"></i> Graphical Reports</a>
                             <a href="{{  route('report_itemkit_summary') }}" class="list-group-item"><i class="icon ti-receipt"></i> Summary Reports</a>
-                            {{--<a class="list-group-item" href="https://demo.phppointofsale.com/index.php/reports/summary_item_kits_variance"><i class="icon ti-receipt"></i> Price Variance Report</a>--}}
+
 
                         </div>
                         <div class="list-group payments hidden">
@@ -158,9 +146,6 @@
                             <a href="{{ route('report_supplier_graphical') }}" class="list-group-item"><i class="icon ti-bar-chart-alt"></i> Graphical Reports</a>
                             <a href="{{ route('report_supplier_summary') }}" class="list-group-item"><i class="icon ti-receipt"></i> Summary Reports</a>
                             <a href="{{ route('report_supplier_detail') }}" class="list-group-item"><i class="icon ti-calendar"></i> Detailed Reports</a>
-                            {{--<a href="https://demo.phppointofsale.com/index.php/reports/graphical_summary_suppliers_receivings" class="list-group-item"><i class="icon ti-bar-chart-alt"></i> Graphical Receivings Reports</a>
-                            <a href="https://demo.phppointofsale.com/index.php/reports/summary_suppliers_receivings" class="list-group-item"><i class="icon ti-receipt"></i> Summary Receivings Reports</a>
-                            <a href="https://demo.phppointofsale.com/index.php/reports/specific_supplier_receivings" class="list-group-item"><i class="icon ti-calendar"></i> Detailed Receivings Reports</a>--}}
 
                         </div>
 
@@ -168,81 +153,27 @@
                             <a href="{{ route('report_suspended_detail') }}" class="list-group-item"><i class="icon ti-calendar"></i> Detailed Reports</a>
                         </div>
 
-                        <div class="list-group taxes hidden">
-                            <a href="https://demo.phppointofsale.com/index.php/reports/graphical_summary_taxes" class="list-group-item"><i class="icon ti-bar-chart-alt"></i> Graphical Reports</a>
-                            <a href="https://demo.phppointofsale.com/index.php/reports/summary_taxes" class="list-group-item"><i class="icon ti-receipt"></i> Summary Reports</a>
-                        </div>
-
-                        <div class="list-group timeclock hidden">
-                            <a href="https://demo.phppointofsale.com/index.php/reports/summary_timeclock" class="list-group-item"><i class="icon ti-receipt"></i> Summary Reports</a>
-                            <a href="https://demo.phppointofsale.com/index.php/reports/detailed_timeclock" class="list-group-item"><i class="icon ti-calendar"></i> Detailed Reports</a>
-                        </div>
-
                         <div class="list-group tiers hidden">
                             <a href="https://demo.phppointofsale.com/index.php/reports/summary_tiers" class="list-group-item"><i class="icon ti-receipt"></i> Summary Reports</a>
                         </div>
 
-                        <div class="list-group receivings hidden">
-                            <a href="https://demo.phppointofsale.com/index.php/reports/detailed_receivings" class="list-group-item"><i class="icon ti-calendar"></i> Detailed Reports</a>
-                            <a href="https://demo.phppointofsale.com/index.php/reports/detailed_suspended_receivings" class="list-group-item"><i class="icon ti-calendar"></i> Suspended Receivings</a>
-                            <a href="https://demo.phppointofsale.com/index.php/reports/deleted_recevings" class="list-group-item"><i class="icon ti-receipt"></i> Deleted Receivings Report</a>
-                            <a href="https://demo.phppointofsale.com/index.php/reports/summary_taxes_receivings" class="list-group-item"><i class="icon ti-receipt"></i> Summary taxes report</a>
-                            <a href="https://demo.phppointofsale.com/index.php/reports/graphical_summary_taxes_receivings" class="list-group-item"><i class="icon ti-bar-chart-alt"></i> Graphical summary taxes report</a>
-                            <br>
-                            <h4 class="text-info">Payments</h4>
 
-                            <a href="https://demo.phppointofsale.com/index.php/reports/receivings_graphical_summary_payments" class="list-group-item"><i class="icon ti-bar-chart-alt"></i> Graphical Reports</a>
-                            <a href="https://demo.phppointofsale.com/index.php/reports/receivings_summary_payments" class="list-group-item"><i class="icon ti-receipt"></i> Summary Reports</a>
-                            <a href="https://demo.phppointofsale.com/index.php/reports/receivings_detailed_payments" class="list-group-item"><i class="icon ti-calendar"></i> Detailed Reports</a>
-
-                        </div>
                         <div class="list-group inventory hidden">
                             <a href="{{ route('report_inventory_low') }}" class="list-group-item"><i class="icon ti-stats-down"></i> Low Inventory</a>
                             <a href="{{ route('report_inventory_summary') }}" class="list-group-item"><i class="icon ti-receipt"></i> Inventory Summary</a>
                             <a href="{{ route('report_inventory_detail') }}" class="list-group-item"><i class="icon ti-calendar"></i> Detailed Reports</a>
                         </div>
-                        <div class="list-group giftcards hidden">
-                            <a href="https://demo.phppointofsale.com/index.php/reports/summary_giftcards" class="list-group-item"><i class="icon ti-receipt"></i> Summary Reports</a>
-                            <a href="https://demo.phppointofsale.com/index.php/reports/detailed_giftcards" class="list-group-item"><i class="icon ti-calendar"></i> Detailed Reports</a>
-                            <a href="https://demo.phppointofsale.com/index.php/reports/giftcard_audit" class="list-group-item"><i class="icon ti-calendar"></i> Audit Report</a>
-                            <a href="https://demo.phppointofsale.com/index.php/reports/summary_giftcard_sales" class="list-group-item"><i class="icon ti-receipt"></i> Gift Card Sales Reports</a>
-
-                        </div>
-                        <div class="list-group store-accounts hidden">
 
 
-                            <h4 class="text-info">Customers</h4>
-                            <a href="https://demo.phppointofsale.com/index.php/reports/store_account_statements" class="list-group-item"><i class="icon ti-calendar"></i> Store Account Statements</a>
-                            <a href="https://demo.phppointofsale.com/index.php/reports/summary_store_accounts" class="list-group-item"><i class="icon ti-receipt"></i> Summary Reports</a>
-                            <a href="https://demo.phppointofsale.com/index.php/reports/specific_customer_store_account" class="list-group-item"><i class="icon ti-calendar"></i> Detailed Reports</a>
-                            <a href="https://demo.phppointofsale.com/index.php/reports/store_account_activity" class="list-group-item"><i class="icon ti-receipt"></i> Activity reports</a>
-                            <a href="https://demo.phppointofsale.com/index.php/reports/store_account_outstanding" class="list-group-item"><i class="icon ti-stats-down"></i> Outstanding Sales</a>
-                            <br>
-                            <h4 class="text-info">Suppliers</h4>
-                            <a href="https://demo.phppointofsale.com/index.php/reports/supplier_store_account_statements" class="list-group-item"><i class="icon ti-calendar"></i> Store Account Statements</a>
-                            <a href="https://demo.phppointofsale.com/index.php/reports/supplier_summary_store_accounts" class="list-group-item"><i class="icon ti-receipt"></i> Summary Reports</a>
-                            <a href="https://demo.phppointofsale.com/index.php/reports/supplier_specific_store_account" class="list-group-item"><i class="icon ti-calendar"></i> Detailed Reports</a>
-                            <a href="https://demo.phppointofsale.com/index.php/reports/supplier_store_account_activity" class="list-group-item"><i class="icon ti-receipt"></i> Activity reports</a>
-                            <a href="https://demo.phppointofsale.com/index.php/reports/supplier_store_account_outstanding" class="list-group-item"><i class="icon ti-stats-down"></i> Outstanding Receivings</a>
-                        </div>
                         <div class="list-group profit-and-loss hidden">
                             <a class="list-group-item" href="{{ route('report_profit_loss_summary') }}"><i class="icon ti-receipt"></i> Summary Reports</a>
                             <a class="list-group-item" href="{{ route('report_profit_loss_detail') }}"><i class="icon ti-calendar"></i> Detailed Reports</a>
                         </div>
-                        <div class="list-group expenses hidden">
-                            <a class="list-group-item" href="https://demo.phppointofsale.com/index.php/reports/summary_expenses"><i class="icon ti-receipt"></i> Summary Reports</a>
-                            <a class="list-group-item" href="https://demo.phppointofsale.com/index.php/reports/detailed_expenses"><i class="icon ti-calendar"></i> Detailed Reports</a>
-                        </div>
+
 
                         <div class="list-group closeout hidden">
                             <a href="{{ route('report_close_out_summary') }}" class="list-group-item"><i class="icon ti-receipt"></i> Summary Reports</a>
                         </div>
-
-                        <div class="list-group tags hidden">
-                            <a href="https://demo.phppointofsale.com/index.php/reports/graphical_summary_tags" class="list-group-item"><i class="icon ti-bar-chart-alt"></i> Graphical Reports</a>
-                            <a href="https://demo.phppointofsale.com/index.php/reports/summary_tags" class="list-group-item"><i class="icon ti-receipt"></i> Summary Reports</a>
-                        </div>
-
 
                     </div>
                 </div> <!-- /panel -->

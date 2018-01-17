@@ -83,10 +83,10 @@ class CounterController extends Controller
 
         $counter_list = $request->id_list;
         $deletedRows = array();
-        $counters = Counter::whereIn("counter_id",$counter_list)->get();
+        $counters = Counter::whereIn("id",$counter_list)->get();
 
         foreach($counters as $aCounter){
-            if($aCounter->isDefault){
+            if(!$aCounter->isDefault){
                 array_push($deletedRows, $aCounter->id);
                 $aCounter->delete();
             }

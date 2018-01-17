@@ -222,7 +222,7 @@ class SaleController extends Controller
                     "5" => "items.supplier_id",
                     "6" => "saleType",
                     "7" => "sales.total_amount",
-                    "8" => "item_kits.id",
+                    "8" => "items.id",
                     "9" => "items.id",
                     "10" => "sales.id",
                     "11" => "paymentType",
