@@ -73,7 +73,8 @@ class CounterController extends Controller
 
         $counter = Counter::where("id",$counter_id)->first();
 
-        $counter->delete();
+        if(!$counter->isDefault)
+            $counter->delete();
 
         return redirect()->route('counter_list');
     }
@@ -83,10 +84,12 @@ class CounterController extends Controller
 
         $counter_list = $request->id_list;
         $deletedRows = array();
+
         $counters = Counter::whereIn("id",$counter_list)->get();
 
         foreach($counters as $aCounter){
             if(!$aCounter->isDefault){
+
                 array_push($deletedRows, $aCounter->id);
                 $aCounter->delete();
             }

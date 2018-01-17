@@ -16,7 +16,7 @@ Sakib Rahman (Technotreebd)
 
 ## Security Vulnerabilities
 
-If you discover a security vulnerability within Laravel, please refer to http://www.technotree-bd.com/
+If you discover a security vulnerability within EZPOS, please refer to http://www.technotree-bd.com/
 
 ## License
 

@@ -366,6 +366,7 @@ class SaleController extends Controller
             $port = $counter->printer_port;
 
             $connector = new NetworkPrintConnector($port, $ip_address);
+
             $printer = new Printer($connector);
 
             $printer -> setJustification(Printer::JUSTIFY_CENTER);
