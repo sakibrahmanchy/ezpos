@@ -11,118 +11,196 @@
 
 @section('pageTitle','Suspended Sale List')
 
+@section('breadcrumbs')
+    {!! Breadcrumbs::render('supplier_list') !!}
+@stop
+
 @section('content')
-    <div class="row">
-        {{--<div class="col-md-9 col-sm-10 col-xs-10">
-            <form action="https://demo.phppointofsale.com/index.php/suspended_sale/search" id="search_form" autocomplete="off" method="post" accept-charset="utf-8">
-                <div class="search no-left-border">
-                    <ul class="list-inline">
-                        <li>
-                            <span role="status" aria-live="polite" class="hidden">No search results.</span><input type="text" class="form-control ui-autocomplete-input" name="search" id="search" value="" placeholder="Search Suspended Sales" autocomplete="off">
-                        </li>
-                        <li>
-                            <button type="submit" class="btn btn-primary"><span class="ion-ios-search-strong"></span><span class="hidden-xs hidden-sm"> Search</span></button>
-                        </li>
-                        <li>
-                            <div class="clear-block hidden">
-                                <a class="clear" href="https://demo.phppointofsale.com/index.php/suspended_sale/clear_state">
-                                    <i class="ion ion-close-circled"></i>
-                                </a>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </form>
 
-        </div>--}}
-        <div style="float:right;margin-right:20px">
-            <div class="buttons-list">
-                <div class="pull-right-btn">
-                   {{-- <a href="{{route('new_suspended_sale')}}" class="btn btn-primary hidden-sm hidden-xs" title="New Suspended Sale"><span class="">New Suspended Sale</span></a>					<div class="piluku-dropdown btn-group">
-
-                        <button type="button" class="btn btn-more dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                            <span class="hidden-xs ion-android-more-horizontal"> </span>
-                            <span class="pe-7s-more" aria-hidden="true"></span>
-                        </button>
-                        <ul class="dropdown-menu  dropdown-menu-right" role="menu">
-
-                            <li class="visible-sm visible-xs">
-                                <a href="{{route("new_suspended_sale")}}" class="" title="New Suspended Sale"><span class="ion-plus-round"> Add New Suspended Sale</span></a>							</li>
-
-
-                            <li>
-                            </li>
-                            <li>
-                                <a href="https://demo.phppointofsale.com/index.php/suspended_sales/excel_export" class="hidden-xs import" title="Excel Export"><span class="ion-ios-upload-outline"> Excel Export</span></a>							</li>
-
-                        </ul>--}}
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
-    </div>
     <style>
         td{
             white-space: nowrap;
         }
     </style>
-    <div class="table-responsive">
 
-        <table  class="table table-hover " >
-            <thead>
-            <tr>
+    <div class="filter-box">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="input-group pull-left" style="width: 30%;">
+                    <input type="text" id="global_filter" class="form-control pull-right global_filter" placeholder="Search">
+                    <div class="input-group-btn">
+                        <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="pull-right">
+                    <div class="buttons-list">
+                        <div class="pull-right-btn">
+                            <a href="{{route('new_supplier')}}" class="btn btn-primary hidden-sm hidden-xs" title="New Supplier"><i class="fa fa-plus-circle"></i> <span class="">New Supplier</span></a>
+                            <div class="piluku-dropdown btn-group">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row hidden" id="selectButtonHolder" style="margin-top:10px">
+            <div class="col-md-12">
+                <div class="input-group">
+                    <button style="margin-right:5px" class="btn btn-danger" id="deleteButton">Delete Row(s)</button>
+                    <button style="margin-right:5px" class="btn btn-default" id="selectAllButton">Select All</button>
+                    <button class="btn btn-default" id="clearAllButton">Clear All</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                <th>Suspended Sale Id</th>
-                <th>Date</th>
-                <th>Type</th>
-                <th>Customer</th>
-                <th>Items</th>
-                <th>Total</th>
-                <th>Amount Paid</th>
-                <th>Amount Due</th>
-                <th>Unsuspend</th>
-                <th>Sales Receipt</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach($suspended_sales as $suspended_sale)
+    <div class="box box-primary" style="padding:20px">
+        <div class="card table-responsive">
+
+            <table  class="table table-hover " >
+                <thead>
                 <tr>
 
-                    <td>EZPOS {{$suspended_sale->id}} </td>
-                    <td>{{$suspended_sale->created_at}}</td>
-                    <td>
-                        @if($suspended_sale->sale_status==\App\Enumaration\SaleStatus::$LAYAWAY)
-                            Lay Away
-                        @else
-                            Estimate
-                        @endif
-                    </td>
-                    <td></td>
-                    <td>
-                        @foreach($suspended_sale->item_names as $anItemName)
-                            {{$anItemName}},
-                         @endforeach
-                    </td>
-
-                    <td>{{$suspended_sale->total_amount}}</td>
-                    <td>{{  $suspended_sale->total_amount-$suspended_sale->due }}</td>
-                    <td>{{$suspended_sale->due}}</td>
-                    <td><a class="btn btn-default" href="{{ route("sale_edit",["sale_id"=>$suspended_sale->id]) }}">Unsuspend</a></td>
-                    <td><a href="{{route('sale_receipt',["sale_id"=>$suspended_sale->id])}}" class="btn btn-default">Receipt</a></td>
-
+                    <th>Suspended Sale Id</th>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Customer</th>
+                    <th>Items</th>
+                    <th>Total</th>
+                    <th>Amount Paid</th>
+                    <th>Amount Due</th>
+                    <th>Unsuspend</th>
+                    <th>Sales Receipt</th>
                 </tr>
-            @endforeach
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                @foreach($suspended_sales as $suspended_sale)
+                    <tr>
 
+                        <td>EZPOS {{$suspended_sale->id}} </td>
+                        <td>{{$suspended_sale->created_at}}</td>
+                        <td>
+                            @if($suspended_sale->sale_status==\App\Enumaration\SaleStatus::$LAYAWAY)
+                                Lay Away
+                            @else
+                                Estimate
+                            @endif
+                        </td>
+                        <td></td>
+                        <td>
+                            @foreach($suspended_sale->item_names as $anItemName)
+                                {{$anItemName}},
+                            @endforeach
+                        </td>
+
+                        <td>{{$suspended_sale->total_amount}}</td>
+                        <td>{{  $suspended_sale->total_amount-$suspended_sale->due }}</td>
+                        <td>{{$suspended_sale->due}}</td>
+                        <td><a class="btn btn-default" href="{{ route("sale_edit",["sale_id"=>$suspended_sale->id]) }}">Unsuspend</a></td>
+                        <td><a href="{{route('sale_receipt',["sale_id"=>$suspended_sale->id])}}" class="btn btn-default">Receipt</a></td>
+
+                    </tr>
+                @endforeach
+                </tbody>
+            </table>
+
+        </div>
     </div>
-    </div>
+
 @endsection
 
 
-<script>
+@section('additionalJS')
+    <script>
+        function filterGlobal () {
+            $('.table').DataTable().search(
+                $('#global_filter').val(),
+                $('#global_regex').prop('checked'),
+                $('#global_smart').prop('checked')
+            ).draw();
+        }
 
+        $(document).ready(function(){
 
-</script>
+            table = $('.table').DataTable({
+
+                pageLength:10,
+                columnDefs: [{
+                    orderable: false,
+                    className: 'select-checkbox',
+                    targets:   0
+                }],
+                select: {
+                    style:    'multi',
+                    selector: 'td:first-child'
+                },
+                dom:"Bt<'row'<'col-sm-12'tr>>" +
+                "<'row'<'col-sm-4'l><'col-sm-8'p>>",
+                buttons: [
+                    'copy', 'csv', 'excel', 'print','colvis'
+                ],
+            });
+
+            table.on( 'select', function ( e, dt, type, indexes ) {
+                if ( type === 'row' ) {
+                    $('#selectButtonHolder').removeClass('hidden');
+                }
+
+            });
+
+            table.on( 'deselect', function ( e, dt, type, indexes ) {
+                var count_rows =  table.rows('.selected').data().length;
+                if(count_rows==0){
+                    $('#selectButtonHolder').addClass('hidden');
+                }
+            } );
+
+            $('#selectAllButton').click( function () {
+
+                table.rows({ page: 'current' }).select();
+
+            });
+
+            $('#clearAllButton').click( function () {
+
+                table.rows({ page: 'current' }).deselect();
+
+            } );
+
+            $('#deleteButton').click( function () {
+                $("#deleteModal").modal('toggle');
+            });
+
+            $('#confirmDelete').click(function(){
+
+                var id_list = $.map(table.rows('.selected').nodes(), function (item) {
+                    return $(item).attr("data-id");
+                });
+
+                console.log(id_list);
+                $.ajax({
+                    url: "{{route('suppliers_delete')}}",
+                    type: "post",
+                    data: {
+                        id_list:id_list
+                    },
+                    success: function(response){
+                        if(response.success)
+                            table.rows('.selected').remove().draw( false );
+                        $("#deleteModal").modal('toggle');
+                        $('#selectButtonHolder').addClass('hidden');
+                    }
+
+                });
+            });
+
+            $('input.global_filter').on( 'keyup click', function () {
+                filterGlobal();
+            } )
+
+        });
+
+    </script>
+@stop

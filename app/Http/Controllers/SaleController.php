@@ -453,11 +453,13 @@ class SaleController extends Controller
            /* $printer -> feed();*/
 
         }finally{
-
-            $printer -> cut();
-            $printer -> pulse();
-            $printer -> close();
-
+            if(isset($printer)){
+                $printer -> cut();
+                $printer -> pulse();
+                $printer -> close();
+            }else{
+                return redirect()->route('new_sale')->withErrors('Sorry. Printer Error!');
+            }
         }
         return redirect()->route('sale_receipt',['sale_id'=>$sale_id]);
     }
