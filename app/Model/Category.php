@@ -67,7 +67,7 @@ class Category extends Model
                         $this->generatedMenu .= '<ul class>';
                     }
 
-                    $this->generatedMenu .= '' . $value['category_name'] . ' <a class="child" href="javascript:void(0)" onclick="OpenAddCategoryDialog(this)" id = "' . $value['id'] . '"> [Add child category]</a><a class="child" href="javascript:void(0)" onclick ="OpenEditCategoryDialog(this)" data-value = "' . $value['category_name'] . '"  id = "' . $value['id'] . '"> [Edit]</a><a class="child" href="javascript:void(0)" onclick ="deleteCategory(this)" id = "' . $value['id'] . '"> [Delete]</a><br>';
+                    $this->generatedMenu .= '[Id: '.$value['id'].'] Name: ' . $value['category_name'] . ' <a class="child" href="javascript:void(0)" onclick="OpenAddCategoryDialog(this)" id = "' . $value['id'] . '"> [Add child category]</a><a class="child" href="javascript:void(0)" onclick ="OpenEditCategoryDialog(this)" data-value = "' . $value['category_name'] . '"  id = "' . $value['id'] . '"> [Edit]</a><a class="child" href="javascript:void(0)" onclick ="deleteCategory(this)" id = "' . $value['id'] . '"> [Delete]</a><br>';
 
                     $this->GenerateCategoryMenu($key);
 

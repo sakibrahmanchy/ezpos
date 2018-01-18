@@ -71,7 +71,7 @@ class SaleController extends Controller
 
         /*return response()->json(['sale'=>$sale], 200);*/
         if($sale==null)
-            return redirect()->route('sales.new_sale')->withErrors('Sale id not found');
+            return redirect()->back()->with(["error"=>"Sale id not found!"]);
         else
             return view('sales.sale_receipt',["sale"=>$sale]);
 
@@ -102,7 +102,7 @@ class SaleController extends Controller
         if(!is_null($sale))
             $sale_id = $sale->id;
         else
-            return redirect()->back();
+            return redirect()->back()->with(["error"=>"No sale found!"]);
 
         return redirect()->route('sale_receipt',['sale_id'=>$sale_id]);
     }
@@ -340,8 +340,6 @@ class SaleController extends Controller
 
                 $items = $results->get();
 
-
-
                 return view('sales.search_sale',["dateTypes"=> $dateTypes, "items"=>$items]);
 
 
@@ -356,7 +354,7 @@ class SaleController extends Controller
 
         $sale = Sale::where("id",$sale_id)->with('items','paymentlogs','customer')->first();
         if($sale==null)
-            return redirect()->route('new_sale')->withErrors('Sale id not found');
+            return redirect()->route('new_sale')->with(["error"=>'Sale id not found']);
 
         try{
             $settings = SettingsSingleton::get();
@@ -451,17 +449,18 @@ class SaleController extends Controller
             $printer -> feed();
             /*dd($items);*/
            /* $printer -> feed();*/
+            return redirect()->route('sale_receipt',['sale_id'=>$sale_id]);
 
+        }Catch(\Exception $e){
+            return redirect()->back()->with(["error"=>$e->getMessage()]);
         }finally{
             if(isset($printer)){
                 $printer -> cut();
                 $printer -> pulse();
                 $printer -> close();
-            }else{
-                return redirect()->route('new_sale')->withErrors('Sorry. Printer Error!');
             }
         }
-        return redirect()->route('sale_receipt',['sale_id'=>$sale_id]);
+
     }
 
 

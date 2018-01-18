@@ -1,4 +1,5 @@
 <?php
+
 $employee = \App\Model\Employee::where("user_id",\Illuminate\Support\Facades\Auth::user()->id)->first();
 if($employee!=null)
     $user_image_token = $employee->image_token;
@@ -324,7 +325,7 @@ else
         });
 
         var is_error = '{{ ( session()->has('error')) ? session()->get('error') : 0 }}';
-
+        console.log(is_error);
         if(is_error!="0"){
 
             $.notify({

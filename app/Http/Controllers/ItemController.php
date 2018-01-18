@@ -349,16 +349,7 @@ class ItemController extends Controller
                             }
 
                         }if(isset($value->category)){
-                            $category = Category::where("category_name",$value->category)->first();
-                            if(!is_null($category)){
-                                $category_id = $category->id;
-                            }
-                            else{
-                                $category = new Category();
-                                $category->category_name = $value->category;
-                                $category->save();
-                                $category_id = $category->id;
-                            }
+                            $category_id = $value->category;
 
                         }if(isset($value->manufacturer)){
                             $manufacturer = Manufacturer::where("manufacturer_name",$value->manufacturer)->first();

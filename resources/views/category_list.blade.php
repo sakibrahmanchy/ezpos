@@ -12,15 +12,12 @@
     <div class="box box-primary" style="padding:50px">
         <div class = "row">
             <div class="col-md-12">
-                    <a href = "javscript:void(0)" onclick="OpenAddCategoryDialog(this)" id = "0">[Add root category]</a>
+                    <a href = "javascript:void(0)" onclick="OpenAddCategoryDialog(this)" id = "0">[Add root category]</a>
                     {!! $categoryMenu !!}
             </div>
         </div>
     </div>
 @endsection
-
-
-
 
 <!-- Add Category Modal -->
 <div id="addCategoryModal" class="modal fade" role="dialog">
@@ -33,7 +30,7 @@
                 <h4 class="modal-title">Create Category</h4>
             </div>
             <div class="modal-body">
-                <label for = "category-name">Catgory Name:</label>
+                <label for = "category-name">Category Name:</label>
                 <input type = "text" class="form-control" name = "category-name" id = "category-name">
                 <input type="hidden" name="category-id" id="category-id" >
             </div>

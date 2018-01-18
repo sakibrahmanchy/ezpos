@@ -18,7 +18,6 @@
                         {{$aManufacturer->manufacturer_name}}  <a class="child" href="javascript:void(0)" id = "{{$aManufacturer->id}}" data-value = "{{$aManufacturer->manufacturer_name}}" onclick="OpenEditManufacturerDialog(this)" >[Edit]</a> <a class="child" href="javascript:void(0)" id = "{{$aManufacturer->id}}" onclick = "deleteManufacturer(this)">[Delete]</a><br>
                     @endforeach
                     </ul>
-                    <a href = "javscript:void(0)" onclick="OpenAddManufacturerDialog()" >[Add manufacturer]</a><br>
             </div>
         </div>
     </div>

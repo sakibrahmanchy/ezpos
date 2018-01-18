@@ -78,7 +78,7 @@
                                         <label for="category" class="required col-sm-3 col-md-3 col-lg-2 control-label ">Category:</label>			<div class="col-sm-9 col-md-9 col-lg-10">
 
                                             <select  name = "item_category" class="form-control" value = "{{ $item->category_id }}">
-                                                <option></option><option value="-1">none</option>
+                                                <option></option><option value="-1" @if($item->category_id==-1) selected @endif>none</option>
                                                 @foreach ($categoryList as $aList)
                                                     @if($aList->id==$item->category_id)
                                                     <option value = "{{$aList->id}}" selected>
@@ -117,7 +117,7 @@
                                         <label for="supplier" class="required col-sm-3 col-md-3 col-lg-2 control-label ">Supplier:</label>			<div class="col-sm-9 col-md-9 col-lg-10">
 
                                             <select  name = "item_supplier" value="{{ $item->supplier_id }}" class="form-control">
-                                                <option></option><option value="-1">none</option>
+                                                <option></option><option value="-1" @if($item->supplier_id==-1) selected @endif>none</option>
                                                 @foreach ($supplierList as $aList)
                                                     @if($aList->id==$item->supplier_id)
                                                         <option value = "{{$aList->id}}" selected>

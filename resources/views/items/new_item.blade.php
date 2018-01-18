@@ -76,7 +76,7 @@
                                         <label for="category" class="required col-sm-3 col-md-3 col-lg-2 control-label ">Category:</label>			<div class="col-sm-9 col-md-9 col-lg-10">
 
                                             <select  name = "item_category" class="form-control" value = "{{ old('item_category') }}">
-                                                <option></option><option value="-1">none</option>
+                                                <option></option><option value="-1" selected>none</option>
                                                 @foreach ($categoryList as $aList)
                                                     <option value = "{{$aList->id}}">
                                                         {{$aList->category_name}}
@@ -110,7 +110,7 @@
                                         <label for="supplier" class="required col-sm-3 col-md-3 col-lg-2 control-label ">Supplier:</label>			<div class="col-sm-9 col-md-9 col-lg-10">
 
                                             <select  name = "item_supplier" {{ old('item_supplier') }} class="form-control">
-                                                <option></option><option value ="-1">none</option>
+                                                <option></option><option value ="-1" selected>none</option>
                                                 @foreach ($supplierList as $aList)
                                                     <option value = "{{$aList->id}}">
                                                         {{$aList->company_name}}

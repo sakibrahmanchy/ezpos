@@ -79,7 +79,6 @@
                         <th>Item Status</th>
                         <th>Supplier</th>
                         <th>UPC/EAN/ISBN</th>
-                        <th>Category Full Path</th>
                         <th>Quantity</th>
                         <th>Size</th>
                         <th>Cost Price</th>
@@ -124,7 +123,6 @@
                             </td>
                             <td>{{$item->company_name}}</td>
                             <td>{{$item->isbn}}</td>
-                            <td>{{$item->category_name}} </td>
                             <td>{{$item->item_quantity}}</td>
                             <td>{{$item->item_size}}</td>
                             <td>{{$item->cost_price}}</td>

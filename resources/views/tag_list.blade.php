@@ -10,12 +10,12 @@
     <div class = "row">
         <div class="col-md-12">
             <div class = "jumbotron">
-                <a href = "javscript:void(0)" onclick="OpenAddTagDialog()" >[Add tag]</a><br><ul><br>
+                <a href = "javascript:void(0)" onclick="OpenAddTagDialog()" >[Add tag]</a><br><ul><br>
                 @foreach($tagMenu as $aTag)
                     {{$aTag->tag_name}}  <a class="child" href="javascript:void(0)" id = "{{$aTag->id}}" data-value = "{{$aTag->tag_name}}" onclick="OpenEditTagDialog(this)" >[Edit]</a> <a class="child" href="javascript:void(0)" id = "{{$aTag->id}}" onclick = "deleteTag(this)">[Delete]</a><br>
                 @endforeach
                 </ul>
-                <a href = "javscript:void(0)" onclick="OpenAddTagDialog()" >[Add tag]</a><br>
+                <a href = "javascript:void(0)" onclick="OpenAddTagDialog()" >[Add tag]</a><br>
             </div>
 
         </div>
