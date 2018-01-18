@@ -66,15 +66,7 @@
                                         </div>
                                     </div><br><br><br>
 
-<<<<<<< HEAD
-                                    <label for="printer_ip" class="col-sm-3 col-md-3 col-lg-2 control-label">Printer IP:</label>
-                                    <div class="col-sm-9 col-md-9 col-lg-10">
-                                        <div class="input-group date">
-                                    <span class="input-group-addon bg ">
-                                        <i class="fa fa-print"></i>
-                                    </span>
-                                            <input class="form-control" type="text" name="printer_ip" value="{{ $settings['printer_ip'] }}">
-=======
+
                                     <label for="address" class="col-sm-3 col-md-3 col-lg-2 control-label">Address:</label>
                                     <div class="col-sm-9 col-md-9 col-lg-10">
                                         <div class="input-group date">
@@ -82,20 +74,11 @@
                                         <i class="fa fa-map"></i>
                                     </span>
                                             <input class="form-control" type="text" name="address" value="{{ $settings['address'] }}">
->>>>>>> 57dab73638fc904ed755ba74b3986ac9910379e7
+
 
                                         </div>
                                     </div><br><br><br>
 
-<<<<<<< HEAD
-                                    <label for="printer_port" class="col-sm-3 col-md-3 col-lg-2 control-label">Printer Port:</label>
-                                    <div class="col-sm-9 col-md-9 col-lg-10">
-                                        <div class="input-group date">
-                                    <span class="input-group-addon bg">
-                                     <i class="fa fa-plug "></i>
-                                    </span>
-                                            <input class="form-control" type="text" name="printer_port" value="{{ $settings['printer_port'] }}">
-=======
                                     <label for="phone" class="col-sm-3 col-md-3 col-lg-2 control-label">Phone:</label>
                                     <div class="col-sm-9 col-md-9 col-lg-10">
                                         <div class="input-group date">
@@ -103,7 +86,6 @@
                                      <i class="fa fa-phone"></i>
                                     </span>
                                             <input class="form-control" type="text" name="phone" value="{{ $settings['phone'] }}">
->>>>>>> 57dab73638fc904ed755ba74b3986ac9910379e7
 
                                         </div>
                                     </div>
