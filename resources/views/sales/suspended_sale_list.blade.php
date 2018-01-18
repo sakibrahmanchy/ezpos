@@ -37,7 +37,7 @@
                 <div class="pull-right">
                     <div class="buttons-list">
                         <div class="pull-right-btn">
-                            <a href="{{route('new_supplier')}}" class="btn btn-primary hidden-sm hidden-xs" title="New Supplier"><i class="fa fa-plus-circle"></i> <span class="">New Supplier</span></a>
+                          
                             <div class="piluku-dropdown btn-group">
                             </div>
                         </div>
