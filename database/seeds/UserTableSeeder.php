@@ -23,16 +23,17 @@ class UserTableSeeder extends Seeder
             $employee->password = bcrypt("123456");
             $employee->user_type = \App\Enumaration\UserTypes::$SUPER_ADMIN;
             $employee->save();
+
+            $permissions =  \Illuminate\Support\Facades\DB::table('permission_names')->select('permission_token')->get()->toArray();
+            $permissionList= array();
+
+            foreach($permissions as $aPermission){
+                $permission_token = $aPermission->permission_token;
+                array_push($permissionList, $permission_token);
+            }
+
+            UserPermission::CreateUserPermissions($permissionList, $employee->id);
         }
 
-        $permissions =  \Illuminate\Support\Facades\DB::table('permission_names')->select('permission_token')->get()->toArray();
-        $permissionList= array();
-
-        foreach($permissions as $aPermission){
-            $permission_token = $aPermission->permission_token;
-            array_push($permissionList, $permission_token);
-        }
-
-        UserPermission::CreateUserPermissions($permissionList, $employee->id);
     }
 }

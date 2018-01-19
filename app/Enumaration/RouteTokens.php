@@ -165,6 +165,8 @@ class RouteTokens
         "counter_delete"=>"counters_delete",
         "counters_delete"=>"counters_delete",
         "counter_set_default"=>"counters_add_update",
+        "test_print"=>"counters_add_update",
+
 
     );
 

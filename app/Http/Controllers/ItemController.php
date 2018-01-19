@@ -329,59 +329,36 @@ class ItemController extends Controller
 
                 $data = Excel::load($path, function($reader) {
                 })->get();
+
                 if(!empty($data) && $data->count()){
-                   /* dd($data);*/
+                    /* dd($data);*/
                     $insert = array();
                     foreach ($data as $key => $value) {
 
-                        $supplier_id = 0; $category_id=0;$manufacturer_id=0;
-                        if(isset($value->supplier)){
+                        $supplier_id = -1; $category_id=0;$manufacturer_id=-1;
 
-                            $supplier = Supplier::where("company_name",$value->supplier)->first();
-                            if(!is_null($supplier)){
-                                $supplier_id = $supplier->id;
-                            }
-                            else{
-                                $supplier = new Supplier();
-                                $supplier->company_name = $value->supplier;
-                                $supplier->save();
-                                $supplier_id = $supplier->id;
-                            }
-
-                        }if(isset($value->category)){
+                        if(isset($value->category)){
                             $category_id = $value->category;
-
-                        }if(isset($value->manufacturer)){
-                            $manufacturer = Manufacturer::where("manufacturer_name",$value->manufacturer)->first();
-                            if(!is_null($manufacturer)){
-                                $manufacturer_id = $manufacturer->id;
-                            }else{
-                                $manufacturer = new Manufacturer();
-                                $manufacturer->manufacturer_name = $value->manufacturer;
-                                $manufacturer->save();
-                                $manufacturer_id = $manufacturer->id;
-                            }
 
                         }
 
+                        if($value->name!=null
+                            &&$value->cost!=null){
 
-                        if($value->isbn!=null&&$value->name!=null
-                            &&$value->cost!=null&&$value->sale!=null){
-
-                           $data = [
-                                'isbn' => $value->isbn, 'product_id' => $value->product_id,
+                            $data = [
+                                'product_id' => $value->product_id,
                                 'item_name'=> $value->name, 'category_id' => $category_id,
                                 'supplier_id' => $supplier_id,'manufacturer_id' => $manufacturer_id,
                                 'item_size'=>$value->size, "item_quantity"=>$value->quantity,
-                                "cost_price"=>$value->cost, "selling_price"=>$value->sale,
+                                "cost_price"=>$value->cost, "selling_price"=>$value->cost,
 
                             ];
-                           array_push($insert, $data);
+                            array_push($insert, $data);
                         }
 
 
 
-                       // echo $value->cost;
+                        // echo $value->cost;
                     }
 
                     if(!empty($insert)){
@@ -395,6 +372,7 @@ class ItemController extends Controller
             }
 
         }
+
         return back();
     }
 
