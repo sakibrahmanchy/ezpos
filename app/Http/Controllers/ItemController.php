@@ -329,8 +329,9 @@ class ItemController extends Controller
 
                 $data = Excel::load($path, function($reader) {
                 })->get();
+
                 if(!empty($data) && $data->count()){
-                   /* dd($data);*/
+                    /* dd($data);*/
                     $insert = array();
                     foreach ($data as $key => $value) {
 
@@ -341,24 +342,23 @@ class ItemController extends Controller
 
                         }
 
+                        if($value->name!=null
+                            &&$value->cost!=null){
 
-                        if($value->isbn!=null&&$value->name!=null
-                            &&$value->cost!=null&&$value->sale!=null){
-
-                           $data = [
-                                'isbn' => $value->isbn, 'product_id' => $value->product_id,
+                            $data = [
+                                'product_id' => $value->product_id,
                                 'item_name'=> $value->name, 'category_id' => $category_id,
                                 'supplier_id' => $supplier_id,'manufacturer_id' => $manufacturer_id,
                                 'item_size'=>$value->size, "item_quantity"=>$value->quantity,
-                                "cost_price"=>$value->cost, "selling_price"=>$value->sale,
+                                "cost_price"=>$value->cost, "selling_price"=>$value->cost,
 
                             ];
-                           array_push($insert, $data);
+                            array_push($insert, $data);
                         }
 
 
 
-                       // echo $value->cost;
+                        // echo $value->cost;
                     }
 
                     if(!empty($insert)){
@@ -372,6 +372,7 @@ class ItemController extends Controller
             }
 
         }
+
         return back();
     }
 
