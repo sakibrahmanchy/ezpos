@@ -368,7 +368,7 @@ class SaleController extends Controller
             $ip_address = $counter->printer_ip;
             $port = $counter->printer_port;
 
-            $connector = new NetworkPrintConnector($port, $ip_address);
+            $connector = new NetworkPrintConnector($ip_address, $port);
 
             $printer = new Printer($connector);
 
@@ -480,7 +480,7 @@ class SaleController extends Controller
         $port = $counter->printer_port;
 
         try{
-            $connector = new NetworkPrintConnector($port, $ip_address);
+            $connector = new NetworkPrintConnector($ip_address, $port);
 
             $printer = new Printer($connector);
 
