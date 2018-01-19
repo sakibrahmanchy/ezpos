@@ -28,6 +28,7 @@ class PermissionName extends Model
         $permission->permission_category_id = $data['permission_category_id'];
         $permission->permission_description = "";
         $permission->save();
+
         return $permission->id;
 
     }

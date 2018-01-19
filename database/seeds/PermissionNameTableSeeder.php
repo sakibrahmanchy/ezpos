@@ -15,7 +15,7 @@ class PermissionNameTableSeeder extends Seeder
 
         $moduleWithPermissionList = array(
             "Customer" => array(
-               "permissions" => array(
+                "permissions" => array(
                     array(
                         "permission_name"=>"Add, Update",
                         "permission_token"=>"customer_add_update"
@@ -36,7 +36,7 @@ class PermissionNameTableSeeder extends Seeder
                         "permission_name"=>"Edit customer points/Number of sales until discount",
                         "permission_token"=>"customer_edit_points"
                     )
-               ),
+                ),
                 "description" => "Add, Update, Delete, and Search customers"
             ),
 
@@ -66,7 +66,7 @@ class PermissionNameTableSeeder extends Seeder
                         "permission_token"=>"item_manage_manufacturers"
                     ),
                 ),
-            "description"=>"Add, Update, Delete, and Search Items"
+                "description"=>"Add, Update, Delete, and Search Items"
             ),
 
             "Item kits" => array(
@@ -191,18 +191,18 @@ class PermissionNameTableSeeder extends Seeder
                 ),
                 "description"=>"View and generate reports"
             ),
-             "Sales" => array(
-                 "permissions"=>array(
+            "Sales" => array(
+                "permissions"=>array(
 
-                     array(
-                         "permission_name"=>"Add, Update",
-                         "permission_token"=>"sale_add_update"
-                     ),
+                    array(
+                        "permission_name"=>"Add, Update",
+                        "permission_token"=>"sale_add_update"
+                    ),
                     array(
                         "permission_name"=>"Delete Suspended Sale",
                         "permission_token"=>"delete_suspended_sale",
                     ),
-                     array(
+                    array(
                         "permission_name"=>"Edit Sale",
                         "permission_token"=>"sale_add_update",
                     ),
@@ -214,10 +214,10 @@ class PermissionNameTableSeeder extends Seeder
                         "permission_name"=>"Search Sale",
                         "permission_token"=>"sale_search",
                     ),
-                     array(
-                         "permission_name"=>"Sale Reciept",
-                         "permission_token"=>"sale_receipt",
-                     ),
+                    array(
+                        "permission_name"=>"Sale Reciept",
+                        "permission_token"=>"sale_receipt",
+                    ),
                 ),
                 "description"=>" Process sales and returns"
             ),
@@ -267,7 +267,7 @@ class PermissionNameTableSeeder extends Seeder
                     array(
                         "permission_name"=>"Delete",
                         "permission_token"=>"counters_delete"
-                    ),
+                    )
                 ),
                 "description"=>"Add, Update, Delete Counters"
             ),
@@ -281,54 +281,61 @@ class PermissionNameTableSeeder extends Seeder
 
                 $data['permission_category_name'] = $module;
                 $data['permission_category_description'] = $definitions['description'];
-
                 $permissionCategoryToInsert = new PermissionCategory();
                 $permissionCategoryId = $permissionCategoryToInsert->AddPermissionCategory($data);
+
 
             }else{
                 $permissionCategoryId = $permissionCategory->id;
             }
 
-            $categoryPermissionList = PermissionName::where('permission_category_id','=',$permissionCategoryId)->get();
-
-            $isCategoryPermissionListEmpty = $categoryPermissionList->isEmpty();
-
-            $permissionName = new PermissionName();
-
-            if($isCategoryPermissionListEmpty){
-
-                foreach($definitions as $permissions){
-                    if(is_array($permissions))
+            foreach($definitions as $permissions){
+                if(is_array($permissions))
                     foreach($permissions as $aPermission){
-                        $data['permission_name'] = $aPermission['permission_name'];
-                        $data['permission_token'] = $aPermission['permission_token'];
-                        $data['permission_category_id'] = $permissionCategoryId;
 
-                        $permissionName->AddPermission($data);
-                    }
-                }
-            }else{
-                foreach($definitions as $permissions){
-                    if(is_array($permissions))
-                    foreach($permissions as $aPermission){
-                        foreach($categoryPermissionList as $aCategoryPermission){
-                            if($aCategoryPermission->permission_token==$aPermission['permission_token']){
-                                $data['permission_name'] = $aPermission['permission_name'];
-                                $data['permission_token'] = $aPermission['permission_token'];
-                                $data['permission_category_id'] = $permissionCategoryId;
+                        $permissionName = PermissionName::where("permission_token",$aPermission["permission_token"])->first();
+                        if(!is_null($permissionName)){
+                            $data['permission_name'] = $aPermission['permission_name'];
+                            $data['permission_token'] = $aPermission['permission_token'];
+                            $data['permission_category_id'] = $permissionCategoryId;
 
-                                $permissionName->UpdatePermission($data);
-                            }else{
-                                $data['permission_name'] = $aPermission['permission_name'];
-                                $data['permission_token'] = $aPermission['permission_token'];
-                                $data['permission_category_id'] = $permissionCategoryId;
+                            $permissionName->UpdatePermission($data);
+                        }else{
+                            $permissionName = new PermissionName();
+                            $data['permission_name'] = $aPermission['permission_name'];
+                            $data['permission_token'] = $aPermission['permission_token'];
+                            $data['permission_category_id'] = $permissionCategoryId;
 
-                                $permissionName->AddPermission($data);
-                            }
+                            $permissionName->AddPermission($data);
                         }
+
                     }
-                }
             }
+
+//            $categoryPermissionList = PermissionName::where('permission_category_id','=',$permissionCategoryId)->get();
+//
+//            $isCategoryPermissionListEmpty = $categoryPermissionList->isEmpty();
+//
+//            $permissionName = new PermissionName();
+
+
+
+//            if($isCategoryPermissionListEmpty){
+//
+//                foreach($definitions as $permissions){
+//                    if(is_array($permissions))
+//                    foreach($permissions as $aPermission){
+//                        $data['permission_name'] = $aPermission['permission_name'];
+//                        $data['permission_token'] = $aPermission['permission_token'];
+//                        $data['permission_category_id'] = $permissionCategoryId;
+//
+//                        $permissionName->AddPermission($data);
+//                    }
+//                }
+//            }else{
+//
+//            }
+//        }
         }
 
 

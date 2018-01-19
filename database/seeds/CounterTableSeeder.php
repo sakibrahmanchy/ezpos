@@ -12,12 +12,16 @@ class CounterTableSeeder extends Seeder
      */
     public function run()
     {
-        $counter = new \App\Model\Counter();
-        $counter->name= "Default";
-        $counter->description = "";
-        $counter->printer_ip = "";
-        $counter->printer_port = "";
-        $counter->isDefault = true;
-        $counter->save();
+        if(\App\Model\Counter::first()){
+
+            $counter = new \App\Model\Counter();
+            $counter->name= "Default";
+            $counter->description = "";
+            $counter->printer_ip = "";
+            $counter->printer_port = "";
+            $counter->isDefault = true;
+            $counter->save();
+        }
+
     }
 }
