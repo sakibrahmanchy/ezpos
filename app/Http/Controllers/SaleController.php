@@ -478,7 +478,7 @@ class SaleController extends Controller
         $counter = Counter::where("id",$counter_id)->first();
         $ip_address = $counter->printer_ip;
         $port = $counter->printer_port;
-      
+
         try{
             $connector = new NetworkPrintConnector($port, $ip_address);
 

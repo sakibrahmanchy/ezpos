@@ -175,6 +175,7 @@
             ).draw();
         }
 
+
         function changeDefault(id){
 
             var status = $("#default-"+id).is(':checked');
