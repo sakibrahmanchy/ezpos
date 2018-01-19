@@ -105,6 +105,7 @@ Route::group(['middleware' => ['admin']], function () {
     route::get('sale/search','SaleController@SearchSaleGet')->name('search_sale')->middleware('auth');
     route::post('sale/search','SaleController@SearchSalePost')->name('search_sale')->middleware('auth');
     route::get('sale/print/{sale_id}','SaleController@printSaleReciept')->name('print_sale')->middleware('auth');
+    route::get("sale/test_print/{counter_id}","SaleController@testPrint")->name("test_print")->middleware("auth");
 
     route::get('/report/dashboard',function(){
         return view('reports.report_dashboard');

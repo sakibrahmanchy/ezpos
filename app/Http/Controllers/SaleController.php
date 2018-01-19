@@ -7,6 +7,7 @@ use App\Enumaration\SaleStatus;
 use app\Http\Controllers\Reports\ReportTotal;
 use App\Library\SettingsSingleton;
 use App\Model\Category;
+use App\Model\Counter;
 use App\Model\Customer;
 use App\Model\Employee;
 use App\Model\Item;
@@ -34,7 +35,7 @@ class SaleController extends Controller
     {
         $customerList = Customer::all();
 
-        return view('sales.new_sale',['customerList'=>$customerList]);
+        return view('sales.new_sale', ['customerList' => $customerList]);
     }
 
     public function AddSale(Request $request)
@@ -48,7 +49,8 @@ class SaleController extends Controller
     }
 
 
-    public function SuspendSale(Request $request){
+    public function SuspendSale(Request $request)
+    {
 
         $saleInfo = $request->sale_info;
         $productInfos = $request->product_infos;
@@ -58,100 +60,105 @@ class SaleController extends Controller
 
     }
 
-    public function GetSuspendedSale(){
-
+    public function GetSuspendedSale()
+    {
 
 
     }
 
-    public function GetSaleReceipt($sale_id){
+    public function GetSaleReceipt($sale_id)
+    {
 
-        $sale = Sale::where("id",$sale_id)->with('items', 'paymentlogs','customer','counter')->first();
+        $sale = Sale::where("id", $sale_id)->with('items', 'paymentlogs', 'customer', 'counter')->first();
 
 
         /*return response()->json(['sale'=>$sale], 200);*/
-        if($sale==null)
-            return redirect()->back()->with(["error"=>"Sale id not found!"]);
+        if ($sale == null)
+            return redirect()->back()->with(["error" => "Sale id not found!"]);
         else
-            return view('sales.sale_receipt',["sale"=>$sale]);
+            return view('sales.sale_receipt', ["sale" => $sale]);
 
     }
 
-    public function GetSuspendedSales(){
+    public function GetSuspendedSales()
+    {
 
-        $suspendedSales = Sale::where('sale_status',SaleStatus::$ESTIMATE)->orWhere('sale_status',SaleStatus::$LAYAWAY)->with('items','paymentlogs')->get();
+        $suspendedSales = Sale::where('sale_status', SaleStatus::$ESTIMATE)->orWhere('sale_status', SaleStatus::$LAYAWAY)->with('items', 'paymentlogs')->get();
 
-        foreach($suspendedSales as $aSale){
-            $aSale->item_count =  count($aSale->items);
+        foreach ($suspendedSales as $aSale) {
+            $aSale->item_count = count($aSale->items);
             $item_names = [];
-            foreach($aSale->items as $anItem){
-                array_push($item_names,$anItem->item_name);
+            foreach ($aSale->items as $anItem) {
+                array_push($item_names, $anItem->item_name);
             }
 
             $aSale->item_names = $item_names;
         }
 
 
-        return view('sales.suspended_sale_list',["suspended_sales"=>$suspendedSales]);
+        return view('sales.suspended_sale_list', ["suspended_sales" => $suspendedSales]);
 
     }
 
-    public function showLastSaleReceipt(){
+    public function showLastSaleReceipt()
+    {
 
-        $sale = Sale::orderBy('id','desc')->first();
-        if(!is_null($sale))
+        $sale = Sale::orderBy('id', 'desc')->first();
+        if (!is_null($sale))
             $sale_id = $sale->id;
         else
-            return redirect()->back()->with(["error"=>"No sale found!"]);
+            return redirect()->back()->with(["error" => "No sale found!"]);
 
-        return redirect()->route('sale_receipt',['sale_id'=>$sale_id]);
+        return redirect()->route('sale_receipt', ['sale_id' => $sale_id]);
     }
 
 
-    public function DownloadSaleReceipt($sale_id){
+    public function DownloadSaleReceipt($sale_id)
+    {
 
 
-        $sale = Sale::where("id",$sale_id)->with(['items' => function($query){
-            $query->where('items.product_type','<>', 2);
-        }, 'paymentlogs','customer'])->first();
+        $sale = Sale::where("id", $sale_id)->with(['items' => function ($query) {
+            $query->where('items.product_type', '<>', 2);
+        }, 'paymentlogs', 'customer'])->first();
 
-        $pdf = PDF::loadView('sales.sale_receipt_pdf',["sale"=>$sale]);
+        $pdf = PDF::loadView('sales.sale_receipt_pdf', ["sale" => $sale]);
         return $pdf->download('ezpos-sale-receipt.pdf');
     }
 
-    public function MailSaleReceipt($sale_id){
+    public function MailSaleReceipt($sale_id)
+    {
 
-        $sale = Sale::where("id",$sale_id)->with(['items' => function($query){
-            $query->where('items.product_type','<>', 2);
-        }, 'paymentlogs','customer'])->first();
+        $sale = Sale::where("id", $sale_id)->with(['items' => function ($query) {
+            $query->where('items.product_type', '<>', 2);
+        }, 'paymentlogs', 'customer'])->first();
 
 
         $customer = new \stdClass();
-        if(isset($sale->customer->id)){
+        if (isset($sale->customer->id)) {
             $customer->name = $sale->customer->name;
             $customer->email = $sale->customer->email;
         }
 
-        if(isset($customer->email) && !is_null($customer->email)){
+        if (isset($customer->email) && !is_null($customer->email)) {
 
-            Mail::send('sales.emails_sales_receipt', ["sale"=>$sale], function ($m) use($sale,$customer) {
+            Mail::send('sales.emails_sales_receipt', ["sale" => $sale], function ($m) use ($sale, $customer) {
                 $m->from('sales@ezpos.com', 'EZPOS');
 
-                $pdf = PDF::loadView('sales.sale_receipt_pdf',["sale"=>$sale]);
+                $pdf = PDF::loadView('sales.sale_receipt_pdf', ["sale" => $sale]);
                 $m->to($customer->email, $customer->name)->subject('Sale receipt for purchase!');
                 $m->attachData($pdf->output(), 'invoice.pdf', ['mime' => 'application/pdf']);
             });
 
             // check for failures
             if (Mail::failures()) {
-                return redirect()->route('sale_receipt',$sale_id)->with('error','Error sending email');
+                return redirect()->route('sale_receipt', $sale_id)->with('error', 'Error sending email');
             }
 
             // otherwise everything is okay ...
-            return redirect()->route('sale_receipt',$sale_id)->with('success','Email successfully sent');
+            return redirect()->route('sale_receipt', $sale_id)->with('success', 'Email successfully sent');
         }
 
-        return redirect()->route('sale_receipt',$sale_id)->with('error','Sorry. This customer has no email id.');
+        return redirect()->route('sale_receipt', $sale_id)->with('error', 'Sorry. This customer has no email id.');
 
     }
 
@@ -160,52 +167,51 @@ class SaleController extends Controller
         $dateTypes = new DateTypes();
         $dateTypes = $dateTypes->getDates();
 
-        if (isset($_GET['act'])){
+        if (isset($_GET['act'])) {
             $field_name = $_GET['w'];
             $search_param = $_GET['term'];
 
-            $search_param = (string) '%'.$search_param.'%';
+            $search_param = (string)'%' . $search_param . '%';
 
 
-            if($field_name=="customers"){
-                $customers =  Customer::where("first_name","like",$search_param)->orWhere("last_name","like",$search_param)->get();
+            if ($field_name == "customers") {
+                $customers = Customer::where("first_name", "like", $search_param)->orWhere("last_name", "like", $search_param)->get();
                 echo json_encode($customers);
-            }else if($field_name=="employees"){
-                $employees =  User::where("name","like",$search_param)->get();
+            } else if ($field_name == "employees") {
+                $employees = User::where("name", "like", $search_param)->get();
                 echo json_encode($employees);
-            }else if($field_name=="itemsCategory"){
-                $categories =  Category::where("category_name","like",$search_param)->get();
+            } else if ($field_name == "itemsCategory") {
+                $categories = Category::where("category_name", "like", $search_param)->get();
                 echo json_encode($categories);
-            }else if($field_name=="suppliers"){
-                $suppliers =  Supplier::where("first_name","like",$search_param)->orWhere("last_name","like",$search_param)->orWhere("company_name","like",$search_param)->get();
+            } else if ($field_name == "suppliers") {
+                $suppliers = Supplier::where("first_name", "like", $search_param)->orWhere("last_name", "like", $search_param)->orWhere("company_name", "like", $search_param)->get();
                 echo json_encode($suppliers);
-            }else if($field_name=="itemsKitName"){
-                $itemKits =  ItemKit::where("item_kit_name","like",$search_param)->get();
+            } else if ($field_name == "itemsKitName") {
+                $itemKits = ItemKit::where("item_kit_name", "like", $search_param)->get();
                 echo json_encode($itemKits);
-            }else if($field_name=="itemsName"){
-                $items =  Item::where("item_name","like",$search_param)->get();
+            } else if ($field_name == "itemsName") {
+                $items = Item::where("item_name", "like", $search_param)->get();
                 echo json_encode($items);
-            }else if($field_name=="salesPerson"){
-                $salesPersons =  Employee::where("first_name","like",$search_param)->orWhere("last_name","like",$search_param)->get();
+            } else if ($field_name == "salesPerson") {
+                $salesPersons = Employee::where("first_name", "like", $search_param)->orWhere("last_name", "like", $search_param)->get();
                 echo json_encode($salesPersons);
-            }else if($field_name=="manufacturer"){
-                $manufacturers =  Manufacturer::where("manufacturer_name","like",$search_param)->get();
+            } else if ($field_name == "manufacturer") {
+                $manufacturers = Manufacturer::where("manufacturer_name", "like", $search_param)->get();
                 echo json_encode($manufacturers);
             }
 
-        }else{
-            if (isset($_GET['isPosted']))
-            {
-                if(isset($_GET['report_type'])){
+        } else {
+            if (isset($_GET['isPosted'])) {
+                if (isset($_GET['report_type'])) {
 
                     $reportType = $_GET['report_type'];
 
-                    if($reportType=="simple"){
+                    if ($reportType == "simple") {
 
-                        $dateRange = explode("/",$_GET['report_date_range_simple']);
+                        $dateRange = explode("/", $_GET['report_date_range_simple']);
                         $startDate = $dateRange[0];
-                        $endDate= $dateRange[1];
-                    }else{
+                        $endDate = $dateRange[1];
+                    } else {
 
                         $startDate = $_GET['start_date_formatted'];
                         $endDate = $_GET['end_date_formatted'];
@@ -248,47 +254,47 @@ class SaleController extends Controller
                 $loadData = [];
                 $index = 0;
 
-                if($fields&&!is_null($fields))
-                foreach($fields as $aField){
-                    if($aField){
-                        $magicArray[$index] = array();
-                        array_push($magicArray[$index], $fieldPresets[$aField]);
-                        $index++;
-                    }
+                if ($fields && !is_null($fields))
+                    foreach ($fields as $aField) {
+                        if ($aField) {
+                            $magicArray[$index] = array();
+                            array_push($magicArray[$index], $fieldPresets[$aField]);
+                            $index++;
+                        }
 
-                }
+                    }
                 $index = 0;
-                if($conditions&&!is_null($conditions))
-                    foreach($conditions as $aCondition){
+                if ($conditions && !is_null($conditions))
+                    foreach ($conditions as $aCondition) {
                         array_push($magicArray[$index], $relationalPresets[$aCondition]);
                         $index++;
                     }
                 $index = 0;
 
-                if($values&&!is_null($values))
-                    foreach($values as $aValue) {
+                if ($values && !is_null($values))
+                    foreach ($values as $aValue) {
                         array_push($magicArray[$index], $aValue);
                         $index++;
                     }
 
                 $sales = DB::table("sales")
-                        ->join("item_sale","item_sale.sale_id",'=','sales.id')
-                        ->join('items','items.id','=','item_sale.item_id')
-                        ->leftJoin('customers','sales.customer_id','=','customers.id')
-                        ->leftJoin('users','sales.employee_id','=','users.id');
+                    ->join("item_sale", "item_sale.sale_id", '=', 'sales.id')
+                    ->join('items', 'items.id', '=', 'item_sale.item_id')
+                    ->leftJoin('customers', 'sales.customer_id', '=', 'customers.id')
+                    ->leftJoin('users', 'sales.employee_id', '=', 'users.id');
 
 
                 $in_operation_fields = [];
                 $in_operations_values = [];
                 $notInOperations_fields = [];
-                $notInOperations_values =[];
+                $notInOperations_values = [];
 
-                $inOperationLength =0;
-                foreach($magicArray as $anArray){
-                    if(in_array("in",$anArray)){
-                        $key = array_search($anArray,$magicArray);
-                        array_push($in_operation_fields,$anArray[0]);
-                        array_push($in_operations_values, explode(",",$anArray[2]));
+                $inOperationLength = 0;
+                foreach ($magicArray as $anArray) {
+                    if (in_array("in", $anArray)) {
+                        $key = array_search($anArray, $magicArray);
+                        array_push($in_operation_fields, $anArray[0]);
+                        array_push($in_operations_values, explode(",", $anArray[2]));
                         unset($magicArray[$key]);
                         $inOperationLength++;
                     }
@@ -296,67 +302,66 @@ class SaleController extends Controller
                 }
 
 
-                for($index = 0; $index < $inOperationLength; $index++){
-                    if($matchType=='matchType_All')
-                        $sales = $sales->whereIn($in_operation_fields[$index],$in_operations_values[$index]);
+                for ($index = 0; $index < $inOperationLength; $index++) {
+                    if ($matchType == 'matchType_All')
+                        $sales = $sales->whereIn($in_operation_fields[$index], $in_operations_values[$index]);
                     else
-                        $sales = $sales->orWhereIn($in_operation_fields[$index],$in_operations_values[$index]);
+                        $sales = $sales->orWhereIn($in_operation_fields[$index], $in_operations_values[$index]);
                 }
 
 
-                $notInOperationLength =0;
-                foreach($magicArray as $anArray){
-                    if(in_array("not in",$anArray)){
-                        $key = array_search($anArray,$magicArray);
-                        array_push($notInOperations_fields,$anArray[0]);
-                        array_push($notInOperations_values, explode(",",$anArray[2]));
+                $notInOperationLength = 0;
+                foreach ($magicArray as $anArray) {
+                    if (in_array("not in", $anArray)) {
+                        $key = array_search($anArray, $magicArray);
+                        array_push($notInOperations_fields, $anArray[0]);
+                        array_push($notInOperations_values, explode(",", $anArray[2]));
                         unset($magicArray[$key]);
                         $notInOperationLength++;
                     }
 
                 }
 
-                for($index = 0; $index < $notInOperationLength; $index++){
-                    if($matchType=='matchType_All')
-                        $sales = $sales->whereNotIn($notInOperations_fields[$index],$notInOperations_values[$index]);
+                for ($index = 0; $index < $notInOperationLength; $index++) {
+                    if ($matchType == 'matchType_All')
+                        $sales = $sales->whereNotIn($notInOperations_fields[$index], $notInOperations_values[$index]);
                     else
-                        $sales = $sales->orWhereNotIn($notInOperations_fields[$index],$notInOperations_values[$index]);
+                        $sales = $sales->orWhereNotIn($notInOperations_fields[$index], $notInOperations_values[$index]);
                 }
 
-                if($matchType=='matchType_All'){
-                   $results =  $sales->where($magicArray);
-                 }else if($matchType=='matchType_Or'){
-                   $results =  $sales->orWhere($magicArray);
-                 }
+                if ($matchType == 'matchType_All') {
+                    $results = $sales->where($magicArray);
+                } else if ($matchType == 'matchType_Or') {
+                    $results = $sales->orWhere($magicArray);
+                }
 
-                $results = $results->whereDate("sales.created_at",">=",$startDate)->whereDate("sales.created_at","<=",$endDate);
+                $results = $results->whereDate("sales.created_at", ">=", $startDate)->whereDate("sales.created_at", "<=", $endDate);
 
-                $results = $results->where("sales.deleted_at",null)
-                                    ->where("items.deleted_at",null)
-                                    ->select(DB::raw( ('*, COUNT(*) as item_count')))
-                                    ->groupBy('sales.id');
-
+                $results = $results->where("sales.deleted_at", null)
+                    ->where("items.deleted_at", null)
+                    ->select(DB::raw(('*, COUNT(*) as item_count')))
+                    ->groupBy('sales.id');
 
 
                 $items = $results->get();
 
-                return view('sales.search_sale',["dateTypes"=> $dateTypes, "items"=>$items]);
+                return view('sales.search_sale', ["dateTypes" => $dateTypes, "items" => $items]);
 
 
-            }
-            else
-                return view('sales.search_sale',["dateTypes"=> $dateTypes]);
+            } else
+                return view('sales.search_sale', ["dateTypes" => $dateTypes]);
         }
 
     }
 
-    public function printSaleReciept($sale_id){
+    public function printSaleReciept($sale_id)
+    {
 
-        $sale = Sale::where("id",$sale_id)->with('items','paymentlogs','customer')->first();
-        if($sale==null)
-            return redirect()->route('new_sale')->with(["error"=>'Sale id not found']);
+        $sale = Sale::where("id", $sale_id)->with('items', 'paymentlogs', 'customer')->first();
+        if ($sale == null)
+            return redirect()->route('new_sale')->with(["error" => 'Sale id not found']);
 
-        try{
+        try {
             $settings = SettingsSingleton::get();
 
             $counter = $sale->counter;
@@ -367,42 +372,42 @@ class SaleController extends Controller
 
             $printer = new Printer($connector);
 
-            $printer -> setJustification(Printer::JUSTIFY_CENTER);
-            $printer -> text("Order\n");
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
+            $printer->text("Order\n");
 
-            $printer -> selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);
-            $printer -> text($settings['company_name']." ".$sale->id."\n");
-            $printer -> text("------------------------------------------\n");
-            $printer -> selectPrintMode();
-            $printer -> text($sale->created_at . "\n");
-            $printer -> selectPrintMode(Printer::MODE_DOUBLE_WIDTH);
-            $printer -> text($settings['company_name'] . "\n");
-            $printer -> selectPrintMode();
-            $printer -> text($settings['address'] . "\n\n");
-            $printer -> selectPrintMode();
-            $printer -> text("Employee: ".Auth::user()->name."\n");
-            $printer -> selectPrintMode();
-            $printer -> text("------------------------------------------\n");
+            $printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);
+            $printer->text($settings['company_name'] . " " . $sale->id . "\n");
+            $printer->text("------------------------------------------\n");
+            $printer->selectPrintMode();
+            $printer->text($sale->created_at . "\n");
+            $printer->selectPrintMode(Printer::MODE_DOUBLE_WIDTH);
+            $printer->text($settings['company_name'] . "\n");
+            $printer->selectPrintMode();
+            $printer->text($settings['address'] . "\n\n");
+            $printer->selectPrintMode();
+            $printer->text("Employee: " . Auth::user()->name . "\n");
+            $printer->selectPrintMode();
+            $printer->text("------------------------------------------\n");
 
-            $header =  new \App\Model\Printer\Item("Qty", "Name", "Unit", "Total");
-            $printer -> setJustification(Printer::JUSTIFY_LEFT);
-            $printer -> setEmphasis(true);
+            $header = new \App\Model\Printer\Item("Qty", "Name", "Unit", "Total");
+            $printer->setJustification(Printer::JUSTIFY_LEFT);
+            $printer->setEmphasis(true);
             $printer->text($header);
 
             $items = array();
-            foreach($sale->items as $anItem){
+            foreach ($sale->items as $anItem) {
 
-                $toPrint = new \App\Model\Printer\Item(round($anItem->pivot->quantity),$anItem->item_name , $anItem->selling_price, $anItem->pivot->total_price);
-                array_push($items,$toPrint);
+                $toPrint = new \App\Model\Printer\Item(round($anItem->pivot->quantity), $anItem->item_name, $anItem->selling_price, $anItem->pivot->total_price);
+                array_push($items, $toPrint);
             }
 
-            $printer -> setJustification(Printer::JUSTIFY_LEFT);
-            $printer -> setEmphasis(false);
+            $printer->setJustification(Printer::JUSTIFY_LEFT);
+            $printer->setEmphasis(false);
             foreach ($items as $item) {
-                $printer -> text($item);
+                $printer->text($item);
             }
 
-            $printer -> text("-------------------------------------------\n");
+            $printer->text("-------------------------------------------\n");
 
 
             $subtotal = new FooterItem('Subtotal', $sale->sub_total_amount);
@@ -410,58 +415,157 @@ class SaleController extends Controller
             $total = new FooterItem('Total', $sale->total_amount);
             $due = new FooterItem('Due', $sale->due);
 
-            $printer -> setJustification(Printer::JUSTIFY_LEFT);
-            $printer -> setEmphasis(true);
-            $printer -> text($subtotal);
-            $printer -> setEmphasis(false);
-            $printer -> text($tax);
-            $printer -> setEmphasis(true);
-            $printer -> text($total);
-            $printer -> setEmphasis(false);
-            $printer -> text($due);
-            $printer -> selectPrintMode();
-            $printer -> feed();
-            $printer -> feed();
+            $printer->setJustification(Printer::JUSTIFY_LEFT);
+            $printer->setEmphasis(true);
+            $printer->text($subtotal);
+            $printer->setEmphasis(false);
+            $printer->text($tax);
+            $printer->setEmphasis(true);
+            $printer->text($total);
+            $printer->setEmphasis(false);
+            $printer->text($due);
+            $printer->selectPrintMode();
+            $printer->feed();
+            $printer->feed();
 
 
-            if(!empty($sale->paymentlogs)){
-                $printer -> text("-------------------------------------------\n");
-                $printer -> setEmphasis(true);
-                $printer -> text("Payments");
-                $printer -> feed();
-                $printer -> setEmphasis(false);
-                foreach($sale->paymentlogs as $aPayment){
+            if (!empty($sale->paymentlogs)) {
+                $printer->text("-------------------------------------------\n");
+                $printer->setEmphasis(true);
+                $printer->text("Payments");
+                $printer->feed();
+                $printer->setEmphasis(false);
+                foreach ($sale->paymentlogs as $aPayment) {
                     $payment = new FooterItem($aPayment->payment_type, $aPayment->paid_amount);
-                    $printer -> text($payment);
+                    $printer->text($payment);
                 }
             }
-            $printer -> feed();
-            $printer -> feed();
+            $printer->feed();
+            $printer->feed();
             $printer->setBarcodeHeight(64);
             $printer->setBarcodeWidth(2);
-            $printer -> setEmphasis(true);
-            $printer -> text("Change Return Policy");
-            $printer -> setEmphasis(true);
-            $printer -> feed();
-            $printer -> barcode($sale->id, Printer::BARCODE_CODE39);
-            $printer -> feed();
-            $printer -> text("EZPOS ".$sale->id);
-            $printer -> feed();
+            $printer->setEmphasis(true);
+            $printer->text("Change Return Policy");
+            $printer->setEmphasis(true);
+            $printer->feed();
+            $printer->barcode($sale->id, Printer::BARCODE_CODE39);
+            $printer->feed();
+            $printer->text("EZPOS " . $sale->id);
+            $printer->feed();
             /*dd($items);*/
-           /* $printer -> feed();*/
-            return redirect()->route('sale_receipt',['sale_id'=>$sale_id]);
+            /* $printer -> feed();*/
+            return redirect()->route('sale_receipt', ['sale_id' => $sale_id]);
 
-        }Catch(\Exception $e){
-            return redirect()->back()->with(["error"=>$e->getMessage()]);
-        }finally{
-            if(isset($printer)){
-                $printer -> cut();
-                $printer -> pulse();
-                $printer -> close();
+        } Catch (\Exception $e) {
+            return redirect()->back()->with(["error" => $e->getMessage()]);
+        } finally {
+            if (isset($printer)) {
+                $printer->cut();
+                $printer->pulse();
+                $printer->close();
             }
         }
 
     }
+
+
+    public function testPrint($counter_id)
+    {
+
+
+        $settings = SettingsSingleton::get();
+
+        $counter = Counter::where("id",$counter_id)->first();
+        $ip_address = $counter->printer_ip;
+        $port = $counter->printer_port;
+      
+        try{
+            $connector = new NetworkPrintConnector($port, $ip_address);
+
+            $printer = new Printer($connector);
+
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
+            $printer->text("Order\n");
+
+            $sale = new \StdClass();
+            $sale->id = 12345;
+            $sale->created_at = "1/19/2018";
+
+
+            $printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);
+            $printer->text($settings['company_name'] . " " . $sale->id . "\n");
+            $printer->text("------------------------------------------\n");
+            $printer->selectPrintMode();
+            $printer->text($sale->created_at . "\n");
+            $printer->selectPrintMode(Printer::MODE_DOUBLE_WIDTH);
+            $printer->text($settings['company_name'] . "\n");
+            $printer->selectPrintMode();
+            $printer->text($settings['address'] . "\n\n");
+            $printer->selectPrintMode();
+            $printer->text("Employee: " . Auth::user()->name . "\n");
+            $printer->selectPrintMode();
+            $printer->text("------------------------------------------\n");
+
+            $header = new \App\Model\Printer\Item("Qty", "Name", "Unit", "Total");
+            $printer->setJustification(Printer::JUSTIFY_LEFT);
+            $printer->setEmphasis(true);
+            $printer->text($header);
+
+            $toPrint = new \App\Model\Printer\Item(round(5), "TEST ITEM", 100.0, 500.00);
+
+            $printer->setJustification(Printer::JUSTIFY_LEFT);
+            $printer->setEmphasis(false);
+
+            $printer->text($toPrint);
+            $printer->text("-------------------------------------------\n");
+
+            $subtotal = new FooterItem('Subtotal', 500.00);
+            $tax = new FooterItem('VAT (15%)', 75.00);
+            $total = new FooterItem('Total', 575.00);
+            $due = new FooterItem('Due', 0.00);
+
+            $printer->setJustification(Printer::JUSTIFY_LEFT);
+            $printer->setEmphasis(true);
+            $printer->text($subtotal);
+            $printer->setEmphasis(false);
+            $printer->text($tax);
+            $printer->setEmphasis(true);
+            $printer->text($total);
+            $printer->setEmphasis(false);
+            $printer->text($due);
+            $printer->selectPrintMode();
+            $printer->feed();
+            $printer->feed();
+
+            $printer->feed();
+            $printer->feed();
+            $printer->setBarcodeHeight(64);
+            $printer->setBarcodeWidth(2);
+            $printer->setEmphasis(true);
+            $printer->text("Change Return Policy");
+            $printer->setEmphasis(true);
+            $printer->feed();
+            $printer->barcode($sale->id, Printer::BARCODE_CODE39);
+            $printer->feed();
+            $printer->text("EZPOS " . $sale->id);
+            $printer->feed();
+            /*dd($items);*/
+            /* $printer -> feed();*/
+
+        }Catch (\Exception $e)
+        {
+            return redirect()->back()->with(["error" => $e->getMessage()]);
+        }
+
+        finally{
+            if (isset($printer)) {
+                $printer->cut();
+                $printer->pulse();
+                $printer->close();
+            }
+        }
+    }
+
 
 
     public function EditSaleGet($sale_id){

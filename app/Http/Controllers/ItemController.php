@@ -334,33 +334,10 @@ class ItemController extends Controller
                     $insert = array();
                     foreach ($data as $key => $value) {
 
-                        $supplier_id = 0; $category_id=0;$manufacturer_id=0;
-                        if(isset($value->supplier)){
+                        $supplier_id = -1; $category_id=0;$manufacturer_id=-1;
 
-                            $supplier = Supplier::where("company_name",$value->supplier)->first();
-                            if(!is_null($supplier)){
-                                $supplier_id = $supplier->id;
-                            }
-                            else{
-                                $supplier = new Supplier();
-                                $supplier->company_name = $value->supplier;
-                                $supplier->save();
-                                $supplier_id = $supplier->id;
-                            }
-
-                        }if(isset($value->category)){
+                        if(isset($value->category)){
                             $category_id = $value->category;
-
-                        }if(isset($value->manufacturer)){
-                            $manufacturer = Manufacturer::where("manufacturer_name",$value->manufacturer)->first();
-                            if(!is_null($manufacturer)){
-                                $manufacturer_id = $manufacturer->id;
-                            }else{
-                                $manufacturer = new Manufacturer();
-                                $manufacturer->manufacturer_name = $value->manufacturer;
-                                $manufacturer->save();
-                                $manufacturer_id = $manufacturer->id;
-                            }
 
                         }
 

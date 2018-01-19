@@ -12,7 +12,9 @@ class CounterTableSeeder extends Seeder
      */
     public function run()
     {
-        if(\App\Model\Counter::first()){
+        $counter = \App\Model\Counter::all();
+
+        if(!is_null($counter)){
 
             $counter = new \App\Model\Counter();
             $counter->name= "Default";

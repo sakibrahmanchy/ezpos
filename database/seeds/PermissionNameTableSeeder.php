@@ -267,7 +267,7 @@ class PermissionNameTableSeeder extends Seeder
                     array(
                         "permission_name"=>"Delete",
                         "permission_token"=>"counters_delete"
-                    )
+                    ),
                 ),
                 "description"=>"Add, Update, Delete Counters"
             ),
