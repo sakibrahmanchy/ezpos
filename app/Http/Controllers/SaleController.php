@@ -376,12 +376,12 @@ class SaleController extends Controller
             $printer->text("Order\n");
 
             $printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);
-            $printer->text($settings['company_name'] . " " . $sale->id . "\n");
-            $printer->text("------------------------------------------\n");
-            $printer->selectPrintMode();
+            //$printer->text($settings['company_name'] . " " . $sale->id . "\n");
+            //$printer->text("------------------------------------------\n");
+            //$printer->selectPrintMode();
             $printer->text($sale->created_at . "\n");
             $printer->selectPrintMode(Printer::MODE_DOUBLE_WIDTH);
-            $printer->text($settings['company_name'] . "\n");
+            $printer->text($settings['company_name'] . " " . $sale->id . "\n");
             $printer->selectPrintMode();
             $printer->text($settings['address'] . "\n\n");
             $printer->selectPrintMode();
