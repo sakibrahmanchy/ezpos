@@ -25,8 +25,8 @@ class SettingsTableSeeder extends Seeder
 			if( !$aSettings )
 			{
 				$setting = new \App\Model\Setting();
-				$setting->key = "company_name";
-				$setting->value = "EZ POS";
+				$setting->key = $key;
+				$setting->value = $value;
 				$setting->save();
 			}
 		}
