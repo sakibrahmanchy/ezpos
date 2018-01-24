@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use App\Model\PermissionCategory;
+use \App\Model\Setting;
 
 class SettingsTableSeeder extends Seeder
 {
@@ -12,7 +13,24 @@ class SettingsTableSeeder extends Seeder
      */
     public function run()
     {
-        $setting = new \App\Model\Setting();
+		$settingsArr = [
+					"company_name" => "EZ POS",
+					"company_logo" => "logo.png",
+					"tax_rate" => 15,
+					"address" => ""
+				];
+		foreach( $settingsArr as $key=>$value )
+		{
+			$aSettings = Setting::where("key",$key)->first();
+			if( !$aSettings )
+			{
+				$setting = new \App\Model\Setting();
+				$setting->key = "company_name";
+				$setting->value = "EZ POS";
+				$setting->save();
+			}
+		}
+        /*$setting = new \App\Model\Setting();
         $setting->key = "company_name";
         $setting->value = "EZ POS";
         $setting->save();
@@ -35,8 +53,6 @@ class SettingsTableSeeder extends Seeder
         $setting = new \App\Model\Setting();
         $setting->key = "phone";
         $setting->value = "";
-        $setting->save();
-
-
+        $setting->save();*/
     }
 }

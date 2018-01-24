@@ -24,7 +24,6 @@ class SettingsSingleton
 
     public static function set($key, $value)
     {
-
         $settings = Setting::where("key",$key)->first();
         $settings->key = $key;
         $settings->value = $value;
