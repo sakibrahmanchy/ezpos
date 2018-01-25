@@ -17,7 +17,8 @@ class SettingsTableSeeder extends Seeder
 					"company_name" => "EZ POS",
 					"company_logo" => "logo.png",
 					"tax_rate" => 15,
-					"address" => ""
+					"address" => "",
+					"phone" => ""
 				];
 		foreach( $settingsArr as $key=>$value )
 		{
