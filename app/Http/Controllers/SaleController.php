@@ -411,7 +411,7 @@ class SaleController extends Controller
 
 
             $subtotal = new FooterItem('Subtotal', $sale->sub_total_amount);
-            $tax = new FooterItem('VAT (15%)', $sale->tax_amount);
+            $tax = new FooterItem('VAT (' . $settings['tax_rate'] . '%)', $sale->tax_amount);
             $total = new FooterItem('Total', $sale->total_amount);
             $due = new FooterItem('Due', $sale->due);
 
