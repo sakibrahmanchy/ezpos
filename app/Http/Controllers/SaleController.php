@@ -387,18 +387,11 @@ class SaleController extends Controller
 
             $printer->setJustification(Printer::JUSTIFY_CENTER);
             $printer->text("Order\n");
-            $printer -> setTextSize(2, 3);
-            $printer -> text($sale->id."\n");
-            $printer -> setEmphasis(false);
-            $printer -> setTextSize(1, 1);
-            $printer -> text("------------------------------------------");
-            $printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);
-            $printer->text($settings['company_name']);
-            $printer->text("------------------------------------------\n");
+
             $printer->selectPrintMode();
             $printer->text($sale->created_at . "\n");
-            $printer->selectPrintMode(Printer::MODE_DOUBLE_WIDTH);
-            $printer->text($settings['company_name'] . "\n");
+            $printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);
+            $printer->text($settings['company_name'] . " " . $sale->id . "\n");
             $printer->selectPrintMode();
             $printer->text($settings['address'] . "\n\n");
             $printer->selectPrintMode();
@@ -428,7 +421,7 @@ class SaleController extends Controller
 
 
             $subtotal = new FooterItem('Subtotal', $sale->sub_total_amount);
-            $tax = new FooterItem('VAT (15%)', $sale->tax_amount);
+            $tax = new FooterItem('VAT (' . $settings['tax_rate'] . '%)', $sale->tax_amount);
             $total = new FooterItem('Total', $sale->total_amount);
             $due = new FooterItem('Due', $sale->due);
 
@@ -535,13 +528,13 @@ class SaleController extends Controller
             $sale->created_at = "1/19/2018";
 
 
-            $printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);
-            $printer->text($settings['company_name'] . " " . $sale->id . "\n");
-            $printer->text("------------------------------------------\n");
+            //$printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);
+            //$printer->text($settings['company_name'] . " " . $sale->id . "\n");
+            //$printer->text("------------------------------------------\n");
             $printer->selectPrintMode();
             $printer->text($sale->created_at . "\n");
-            $printer->selectPrintMode(Printer::MODE_DOUBLE_WIDTH);
-            $printer->text($settings['company_name'] . "\n");
+            $printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);
+            $printer->text($settings['company_name'] . " " . $sale->id . "\n");
             $printer->selectPrintMode();
             $printer->text($settings['address'] . "\n\n");
             $printer->selectPrintMode();
