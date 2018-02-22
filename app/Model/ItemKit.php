@@ -82,6 +82,7 @@ class ItemKit extends Model
             $itemToInsert->tax_included = false;
         $itemToInsert->is_service = false ;
         $itemToInsert->cost_price = $request->cost_price ;
+        $itemToInsert->selling_price = $item_kit->selling_price ;
         $itemToInsert->unit_price = $request->unit_price;
         $itemToInsert->item_status = ItemStatus::$ACTIVE;
         $itemToInsert->reorder_level = null;
@@ -91,7 +92,6 @@ class ItemKit extends Model
         $itemToInsert->product_type=1;
         $item = new Item();
         $item->InsertItem($itemToInsert);
-
 
     }
 
@@ -103,7 +103,7 @@ class ItemKit extends Model
         $item_kit->product_id = $request->product_id;
         $item_kit->item_kit_name = $request->item_kit_name;
         $item_kit->category_id = $request->item_kit_category;
-        if(!is_null($request->item_kit_manufacurer))
+        if(!is_null($request->item_kit_manufacturer))
             $item_kit->manufacturer_id = $request->item_kit_manufacturer;
         else
             $item_kit->manufacturer_id = 0;
@@ -117,6 +117,7 @@ class ItemKit extends Model
         $item_kit->save();
 
         $item_kit_id = $item_kit->id;
+
 
         $selectedItems = $request->selected_value;
         $quantities = $request->quantity;
@@ -138,6 +139,43 @@ class ItemKit extends Model
                 else
                     $itemKitProduct->InsertItemKitProduct($item_kit_id,$item,0);
             }
+
+        $item = Item::where("item_name",$item_kit->item_kit_name)
+            ->where("product_type",1)->where("created_at",$item_kit->created_at)->first();
+
+
+        if(!is_null($item)){
+
+
+            $itemToInsert = new \stdClass();
+            $itemToInsert->item_id =0;
+            $itemToInsert->isbn = $item_kit->isbn;
+            $itemToInsert->product_id = $item_kit->product_id;
+            $itemToInsert->item_name = $item_kit->item_kit_name;
+            $itemToInsert->item_status = ItemStatus::$ACTIVE;
+            $itemToInsert->item_category = $item_kit->item_kit_category;
+            $itemToInsert->item_supplier = "";
+            $itemToInsert->size = "";
+            if(!is_null($item_kit->item_kit_manufacurer))
+                $itemToInsert->item_manufacturer = $item_kit->item_kit_manufacturer;
+            else
+                $itemToInsert->item_manufacturer = 0;
+            $itemToInsert->description = $item_kit->description;
+            if(!is_null($item_kit->tax_included))
+                $itemToInsert->tax_included = true;
+            else
+                $itemToInsert->tax_included = false;
+            $itemToInsert->is_service = false ;
+            $itemToInsert->cost_price = $item_kit->cost_price ;
+            $itemToInsert->unit_price = $item_kit->selling_price;
+            $itemToInsert->item_status = ItemStatus::$ACTIVE;
+            $itemToInsert->reorder_level = null;
+            $itemToInsert->replenish_level = null;
+            $itemToInsert->expire_days = null;
+            $itemToInsert->quantity_add_minus = null;
+            $itemToInsert->product_type=1;
+            $item->editItem($itemToInsert, $item->id);
+        }
 
     }
 

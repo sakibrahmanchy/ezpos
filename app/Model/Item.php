@@ -96,6 +96,7 @@ class Item extends Model
 
         $item = Item::where('id','=',$item_id)->first();
 
+
         $item->isbn = $request->isbn;
         $item->product_id = $request->product_id;
         $item->item_name = $request->item_name;
@@ -121,6 +122,8 @@ class Item extends Model
 
         $previous_item_quantity = $item->item_quantity;
         $item->item_quantity += intval( $request->quantity_add_minus);
+
+
 
         $item->save();
 

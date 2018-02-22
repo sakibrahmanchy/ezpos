@@ -160,11 +160,125 @@ class ItemController extends Controller
 
     public function GetItemsAutocomplete(){
 
-        $search_param = (string) '%'.Input::get('q').'%';
 
-        // Get all items with images
+        $autoselect = Input::get('autoselect');
 
-        $items =  DB::table('items')
+        if($autoselect=="true"){
+
+            $search_param = (string)        Input::get('q');
+            $items =  DB::table('items')
+                ->leftJoin('items_images', 'items.id', '=', 'items_images.item_id')
+                ->leftJoin('files', 'files.id', '=', 'items_images.file_id')
+                ->leftJoin('item_price_rule','items.id','=','item_price_rule.item_id')
+                ->leftJoin('price_rules','item_price_rule.price_rule_id','=','price_rules.id')
+                ->leftJoin('suppliers','suppliers.id','=','items.supplier_id')
+                ->where(function($query) use ($search_param) {
+                    $query->where('isbn','=',$search_param);
+                })
+                ->where('items.deleted_at',null)
+                ->where('items.item_status',ItemStatus::$ACTIVE)
+                ->select('items.id as item_id','items.*','files.*','price_rules.*','suppliers.*')
+                ->groupBy('items.item_name')
+                ->where('items.product_type','<>',2)
+                ->first();
+
+            if(!is_null($items)){
+
+                $itemsWithItemKits = array($items);
+                $current_date = new \DateTime('today');
+                // Check price rules on specific items
+
+                foreach($itemsWithItemKits as $anItem) {
+
+                    if(isset($anItem->item_id)){
+
+                        $anItem->type = "auto";
+                        if ($anItem->active){
+
+                            if($anItem->unlimited||$anItem->num_times_to_apply>0)
+                            {
+
+                                if($anItem->type==1){
+
+                                    if($anItem->percent_off>0){
+
+                                        $rule_start_date = new \DateTime($anItem->start_date);
+                                        $rule_expire_date = new \DateTime($anItem->end_date);
+
+                                        if(($current_date>=$rule_start_date) && ($current_date<=$rule_expire_date) ) {
+                                            $discountPercentage = $anItem->percent_off;
+                                            if($discountPercentage>100){
+                                                $anItem->discountPercentage = 100;
+                                                $anItem->itemPrice = $anItem->selling_price;
+                                                $anItem->discountName = $anItem->name;
+                                                $anItem->discountAmount = $anItem->itemPrice*($discountPercentage/100);
+                                                $anItem->itemPriceAfterDiscount = $anItem->itemPrice-$anItem->discountAmount;
+                                                $anItem->discountApplicable = true;
+                                            }else{
+                                                $anItem->discountPercentage = $discountPercentage;
+                                                $anItem->itemPrice = $anItem->selling_price;
+                                                $anItem->discountName = $anItem->name;
+                                                $anItem->discountAmount = $anItem->itemPrice*($discountPercentage/100);
+                                                $anItem->itemPriceAfterDiscount = $anItem->itemPrice-$anItem->discountAmount;
+                                                $anItem->discountApplicable = true;
+                                            }
+
+                                        }else{
+                                            $anItem->discountApplicable = false;
+                                        }
+
+                                        //echo "Item should be discounted by ".$anItem->percent_off." percent";
+
+                                    }else if($anItem->fixed_of>0){
+
+                                        $rule_start_date = new \DateTime($anItem->start_date);
+                                        $rule_expire_date = new \DateTime($anItem->end_date);
+
+                                        if( ($current_date>=$rule_start_date) && ($current_date<=$rule_expire_date) ) {
+                                            $discountPercentage = ($anItem->fixed_of/$anItem->selling_price)*100;
+                                            if($discountPercentage>100){
+                                                $anItem->discountPercentage = 100;
+                                                $anItem->discountAmount = $anItem->selling_price;
+                                                $anItem->discountName = $anItem->name;
+                                                $anItem->itemPrice = $anItem->selling_price;
+                                                $anItem->itemPriceAfterDiscount = $anItem->itemPrice - $anItem->itemPrice;
+                                                $anItem->discountApplicable = true;
+                                            }
+                                            else{
+                                                $anItem->discountPercentage = $discountPercentage;
+                                                $anItem->discountAmount = $anItem->fixed_of;
+                                                $anItem->discountName = $anItem->name;
+                                                $anItem->itemPrice = $anItem->selling_price;
+                                                $anItem->itemPriceAfterDiscount = $anItem->itemPrice - $anItem->discountAmount;
+                                                $anItem->discountApplicable = true;
+                                            }
+
+                                        }else{
+                                            $anItem->discountApplicable = false;
+                                        }
+                                        // echo "Item should be discounted by ".$anItem->fixed_of." dollar";
+                                    }
+
+                                }
+                            }
+
+                        }
+
+
+                    }
+                }
+
+                echo json_encode($itemsWithItemKits);
+            }
+
+
+
+
+        }else{
+
+            // Get all items with images
+            $search_param = (string) '%'.Input::get('q').'%';
+            $items =  DB::table('items')
                 ->leftJoin('items_images', 'items.id', '=', 'items_images.item_id')
                 ->leftJoin('files', 'files.id', '=', 'items_images.file_id')
                 ->leftJoin('item_price_rule','items.id','=','item_price_rule.item_id')
@@ -182,21 +296,22 @@ class ItemController extends Controller
                 ->get()->toArray();
 
 
-        // Get all item kits
+            // Get all item kits
 
 
-        //dd($itemKits);
+            //dd($itemKits);
 
-        //Merge Item Kits with Items
-        $itemsWithItemKits =$items;
+            //Merge Item Kits with Items
+            $itemsWithItemKits =$items;
 
 
-        $current_date = new \DateTime('today');
-        // Check price rules on specific items
-        foreach($itemsWithItemKits as $anItem) {
+            $current_date = new \DateTime('today');
+            // Check price rules on specific items
+            foreach($itemsWithItemKits as $anItem) {
 
-                if(isset($anItem->id)){
 
+                if(isset($anItem->item_id)){
+                    $anItem->type = "list";
                     if ($anItem->active){
 
                         if($anItem->unlimited||$anItem->num_times_to_apply>0)
@@ -260,7 +375,7 @@ class ItemController extends Controller
                                     }else{
                                         $anItem->discountApplicable = false;
                                     }
-                                   // echo "Item should be discounted by ".$anItem->fixed_of." dollar";
+                                    // echo "Item should be discounted by ".$anItem->fixed_of." dollar";
                                 }
 
                             }
@@ -270,39 +385,14 @@ class ItemController extends Controller
 
 
                 }
-        }
-
-
-     /*   if(!is_null($anItem->active)){
-
-            if($anItem->unlimited||$anItem->num_times_to_apply){
-
-                if($anItem->type==1){
-                    echo "Simple Discount";
-
-
-                }else{
-
-                }
-
             }
 
-        }*/
 
+            // return response()->json($itemsWithItemKits);
+            echo json_encode($itemsWithItemKits);
+            // return response()->json(['success' => true,'items'=>$items], 200);
 
-
-        // Check price rules on categories
-
-
-
-        // Check price rules on item kits
-
-
-
-         // return response()->json($itemsWithItemKits);
-           echo json_encode($itemsWithItemKits);
-       // return response()->json(['success' => true,'items'=>$items], 200);
-
+        }
     }
 
 

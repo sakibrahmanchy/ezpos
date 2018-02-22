@@ -63,6 +63,11 @@ class RouteTokens
         "item_list_autocomplete"=>"sale_add_update",
         "sale_edit"=>"sale_add_update",
         'download_sale_receipt'=>'sale_receipt',
+        "pop_open_cash_drawer"=>"sale_add_update",
+        "open_cash_register"=>"sale_add_update",
+        "add_cash_to_register"=>"sale_add_update",
+        "subtract_cash_from_register"=>"sale_add_update",
+        "close_cash_register"=>"sale_add_update",
 
         "report_category_graphical"=>"report_categories",
         "report_category_ajax"=>"report_categories",

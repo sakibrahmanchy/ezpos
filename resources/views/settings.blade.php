@@ -95,6 +95,32 @@
                             </div>
 
                             <br><br>
+                            <div class="form-group" data-keyword="currency">
+                                <label class="col-sm-3 col-md-3 col-lg-2 control-label ">Currency Denominations:</label>						<div class="table-responsive col-sm-9 col-md-4 col-lg-4">
+                                    <table id="currency_denoms" class="table">
+                                        <thead>
+                                        <tr>
+                                            <th>Denomination</th>
+                                            <th>Currency Value</th>
+                                            <th>Delete</th>
+                                        </tr>
+                                        </thead>
+
+                                        <tbody>
+
+                                        @foreach($denominators as $aDenominator)
+                                            <tr>
+                                                <td><input type="text" name="denomination_name[]" class="form-control" value="{{ $aDenominator->denomination_name }}"></td>
+                                                <td><input type="text" name="denomination_value[]" class="form-control" value="{{ $aDenominator->denomination_value }}"></td>
+                                                <td><a class="delete_currency_denom text-primary" href="javascript:void(0);">Delete</a></td>
+                                            </tr>
+                                        @endforeach
+                                        </tbody>
+                                    </table>
+
+                                    <a href="javascript:void(0);" id="add_denom" onclick="addNewDenominator()">Add currency denomination</a>
+                                </div>
+                            </div>
 
 
                             <div class="form-actions pull-right">
@@ -106,9 +132,21 @@
                 </form>	</div>
         </div>
     </div>
+    @endsection
 
+
+@section('additionalJS')
     <script>
 
+        function addNewDenominator(){
+            console.log("Aa");
+            $("#currency_denoms tbody").append('<tr><td><input type="text" class="form-control" name="denomination_name[]" value="" /></td><td><input type="text" class="form-control" name="denomination_value[]" value="" /></td><td>&nbsp;</td></tr>');
+        }
+
+        $(".delete_currency_denom").click(function()
+        {
+            $(this).parent().parent().remove();
+        });
 
         function groupSelect(checkBox){
             selectClass = ".permissions_"+checkBox.id;
@@ -118,6 +156,7 @@
                 $(selectClass).prop('checked', '');
             }
         }
+
         function loadTempImage(input){
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
@@ -132,7 +171,6 @@
         }
 
     </script>
-
-@endsection
+@stop
 
 

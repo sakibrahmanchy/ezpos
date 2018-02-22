@@ -24,6 +24,9 @@ Route::get('/error-401',function(){
 })->name('error-401');
 
 
+Route::get('/login/pin', ['as' => 'pin_log_in', 'uses' => 'UserController@pinLogin']);
+Route::post('/login/pin', ['as' => 'pin_log_in_post', 'uses' => 'UserController@pinLoginPost']);
+
 Route::group(['middleware' => ['admin']], function () {
 
     Route::get('/home','HomeController@getDashBoard')->name('dashboard')->middleware('auth');
@@ -106,6 +109,7 @@ Route::group(['middleware' => ['admin']], function () {
     route::post('sale/search','SaleController@SearchSalePost')->name('search_sale')->middleware('auth');
     route::get('sale/print/{sale_id}','SaleController@printSaleReciept')->name('print_sale')->middleware('auth');
     route::get("sale/test_print/{counter_id}","SaleController@testPrint")->name("test_print")->middleware("auth");
+    route::get("sale/open_cash_drawer","SaleController@popOpenCashDrawer")->name("pop_open_cash_drawer");
 
     route::get('/report/dashboard',function(){
         return view('reports.report_dashboard');
@@ -225,6 +229,16 @@ Route::group(['middleware' => ['admin']], function () {
     route::post('counter/set/default','CounterController@SetDefaultCounter')->name('counter_set_default')->middleware('auth');
     route::post('counters/delete','CounterController@DeleteCounters')->name('counters_delete')->middleware('auth');
     route::get('counter/set/{counter_id}','CounterController@SetCounter')->name('counter_set')->middleware('auth');
+
+
+    route::get("/cash_register/open","CashRegisterController@openNewCashRegisterGet")->name('open_cash_register')->middleware('auth');
+    route::post('/cash_register/open','CashRegisterController@openNewCashRegister')->name('open_cash_register')->middleware('auth');
+    route::get('/cash_register/add','CashRegisterController@addCashToRegister')->name('add_cash_to_register')->middleware('auth');
+    route::post('/cash_register/add','CashRegisterController@addCashToRegisterPost')->name('add_cash_to_register')->middleware('auth');
+    route::get('/cash_register/subtract','CashRegisterController@subtractCashFromRegister')->name('subtract_cash_from_register')->middleware('auth');
+    route::post('/cash_register/subtract','CashRegisterController@subtractCashFromRegisterPost')->name('subtract_cash_from_register')->middleware('auth');
+    route::get('/cash_register/close','CashRegisterController@closeCurrentCashRegister')->name('close_cash_register')->middleware('auth');
+    route::post('/cash_register/close','CashRegisterController@closeCashRegisterPost')->name('close_cash_register')->middleware('auth');
 
     route::post('file/insert','FileController@InsertFile')->name('insert_file')->middleware('auth');
     route::post('file/item/insert','FileController@InsertItemFile')->name('insert_item_file')->middleware('auth');

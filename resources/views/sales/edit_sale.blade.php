@@ -42,6 +42,7 @@
                         </ul>
                     </div>
                 </div>
+                <input type="checkbox" checked  id = "auto_select" style="margin-left:10px"> <b>Add automatically to cart when item found.</b>
             </div>
 
             <br>
@@ -311,9 +312,14 @@
                     // suggestion list.
 
                     itemTotalInfo = [];
+
+                    var autoselect = false;
+                    if($(("#auto_select")).is(':checked'))
+                        autoselect = true;
+
                     $.ajax({
                         url: "{{route('item_list_autocomplete')}}",
-                        data: { q: request.term },
+                        data: { q: request.term, autoselect: autoselect },
                         dataType: "json",
                         success: response,
                         error: function () {
@@ -339,33 +345,40 @@
                 var a = JSON.stringify(item);
                 itemTotalInfo.push(JSON.parse(a));
 
-                var $li = $('<li class="item-suggestion" data-item-total-info = "'+itemTotalInfo+'" data-id = "'+item.item_id+'" data-sale-price = "'+item.selling_price+'" data-img-src ="{{asset('img')}}/'+item.new_name+'" data-title="'+item.item_name+'" data-item-quantity ="'+item.item_quantity+'" data-item-type="item"  onclick = "addItemToCart(this)">'),
+                if(item.type=="auto"){
+                    console.log(item.item_quantity);
+                    autoAddItemTOCart(item);
+                    return null;
+
+                }else{
+                    var $li = $('<li class="item-suggestion" data-item-total-info = "'+itemTotalInfo+'" data-id = "'+item.item_id+'" data-sale-price = "'+item.selling_price+'" data-img-src ="{{asset('img')}}/'+item.new_name+'" data-title="'+item.item_name+'" data-item-quantity ="'+item.item_quantity+'" data-item-type="item"  onclick = "addItemToCart(this)">'),
                         $img = $('<img height="50px" width="50px" style="margin-right:10px">');
 
-                //alert(item.new_name);
-                var  img_src = "default-product.jpg";
-                console.log(item.new_name);
-                if(item.new_name!=null){
-                    img_src = item.new_name;
+                    //alert(item.new_name);
+                    var  img_src = "default-product.jpg";
+
+                    if(item.new_name!=null){
+                        img_src = item.new_name;
+                    }
+                    if(item.product_type==1){
+                        $img.attr({
+                            src: '{{asset('img')}}/' + "item-kit.png",
+                            alt: item.item_kit_name
+                        });
+                    }else{
+                        $img.attr({
+                            src: '{{asset('img')}}/' + img_src,
+                            alt: item.item_name
+                        });
+                    }
+
+
+                    $li.attr('data-value', item.item_name);
+                    $li.append('<a  href="#">');
+                    $li.find('a').append($img).append(item.item_name);
+
+                    return $li.appendTo(ul);
                 }
-                if(item.product_type==1){
-                    $img.attr({
-                        src: '{{asset('img')}}/' + "item-kit.png",
-                        alt: item.item_kit_name
-                    });
-                }else{
-                    $img.attr({
-                        src: '{{asset('img')}}/' + img_src,
-                        alt: item.item_name
-                    });
-                }
-
-
-                $li.attr('data-value', item.item_name);
-                $li.append('<a  href="#">');
-                $li.find('a').append($img).append(item.item_name);
-
-                return $li.appendTo(ul);
 
 
 
@@ -595,6 +608,78 @@
             }
 
         }
+
+        function autoAddItemTOCart(item){
+
+            if(item.item_quantity<=0&&item.product_type!=1){
+                alert("Sorry, product is out of stock.");
+            }
+            else if(document.getElementById("product-div-"+item.item_id) == null) {
+
+                $('.no-items').remove();
+                $('.add-payment').show();
+
+                var itemDescription = '<tr class="product-specific-description" data-index="'+item.item_id+'"  data-item-type="item" id="product-div-' + item.item_id + '" >' +
+                    '<td class="col-sm-8 col-md-6">' +
+                    '<div class="media">' +
+                    '' +
+                    '<div class="media-body">' +
+                    ' <h6 class="media-heading"><a href="#">' + item.item_name + '</a></h6>';
+
+                if(item.name!=null)
+                    itemDescription +=  '<h6 class="media-heading"> by <a href="#">'+ item.name +'</a></h6>';
+
+                if(item.item_quantity != 'undefined'){
+                    if(item.item_quantity>10)
+                        itemDescription += '<span>Status: </span><span class="text-success"><strong>In Stock</strong></span>';
+                    else
+                        itemDescription += '<span>Status: </span><span class="text-danger"><strong>Soon will be out of Stock</strong></span>';
+                }
+
+
+                itemDescription += '</div>' +
+                    '</div></td>' +
+                    ' <td class="col-sm-1 col-md-1" style="text-align: center">' +
+                    ' <input type="number" min = "0" class="form-control quantity" id="product-' + item.item_id + '"  onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" onchange = "addItemPriceToRegister(' + item.item_id + ')"  value="1">' +
+                    '</td>' +
+                    '<td class="col-sm-1 col-md-1 text-center" ><strong data-unit-price = "'+item.selling_price +'" id="unit-price-' + item.item_id + '">$' + item.selling_price + '</strong></td>' +
+                    '<td><input  class="form-control discount-amount" type="number" id="discount-'+ item.item_id+'" onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" onchange = "addItemPriceToRegister(' + item.item_id + ')"  value="0"></td>' +
+                    '<td class="col-sm-1 col-md-1 text-center" ><strong data-total-price = "" id ="total-price-' + item.item_id + '" class="total-price"></strong></td>' +
+                    '<td class="col-sm-1 col-md-1">' +
+                    '<button type="button" class="btn btn-danger" onclick = "removeProduct(' + item.item_id + ')">' +
+                    '<span class="pe-7s-trash"></span> Remove' +
+                    '</button></td></tr><input type="hidden" id="cost-price-'+item.item_id+'" value="'+item.cost_price+'" >' ;
+
+                var itemDiscounts = "";
+                $(".product-descriptions").append(itemDescription);
+
+                if(item.discountApplicable){
+
+                    itemDiscounts+="<tr id='product-discount-"+item.item_id+"'><td colspan='5' style='padding-left:23px;font-size: 80%;background: aliceblue;'> Discount Offer: <strong>"+item.discountName+"</strong><br>";
+                    itemDiscounts+="Item Discount Amount: $<strong>"+item.discountAmount+"</strong></td>";
+                    $("#discount-"+item.item_id).val(Number(item.discountPercentage).toFixed(2));
+                    itemDiscounts+="<input type ='hidden' id='price-rule-"+item.item_id+"' value = '"+item.item_id+"'>";
+                    calculatePrice();
+
+                    //console.log(item.discountAmount);
+                }
+
+                itemDiscounts += '</tr>';
+                $(".product-descriptions").append(itemDiscounts);
+
+                addItemPriceToRegister(item.item_id);
+
+                $("#item-names").val("");
+                $("#item-names").blur();
+                $("#item-names").autocomplete("close");
+            }
+
+
+            if($('#sale-type').attr("data-selected-type")=="return"){
+                convertToReturn();
+            }
+        }
+
 
         function addItemToCart(item){
             //var itemInfo = $(item).data('item-total-info');

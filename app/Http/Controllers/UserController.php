@@ -44,6 +44,8 @@ class UserController extends Controller
             $user->name = $request->username;
             $user->email = $request->email;
             if ($request->password) $user->password = bcrypt($request->password);
+            if ($request->pin)
+            $user->pin = $request->pin;
             $user->user_type = UserTypes::$SUPER_ADMIN;
 
             $user->save();
@@ -78,6 +80,8 @@ class UserController extends Controller
             $user->email = $request->email;
             if ($request->password) $user->password = bcrypt($request->password);
             $user->user_type = UserTypes::$EMPLOYEE;
+            if ($request->pin)
+            $user->pin = $request->pin;
 
             $user->save();
 
@@ -113,6 +117,32 @@ class UserController extends Controller
 
     }
 
+    public function pinLogin() {
+        return view('auth.pin');
+    }
 
+    public function pinLoginPost(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'pin' => 'required'
+        ]);
+
+        $user = User::where('pin', $request->pin)->first();
+
+        $validator->after(function ($validator) use ($user) {
+            if (!$user) {
+                $validator->errors()->add('pin', 'Invalid Pin');
+            }
+        });
+
+        if ($validator->fails()) {
+            return redirect()->route('pin_log_in')
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        Auth::login($user);
+
+        return redirect()->route('dashboard');
+    }
 
 }

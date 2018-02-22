@@ -6,6 +6,7 @@ use App\Enumaration\DateTypes;
 use App\Enumaration\SaleStatus;
 use app\Http\Controllers\Reports\ReportTotal;
 use App\Library\SettingsSingleton;
+use App\Model\CashRegister;
 use App\Model\Category;
 use App\Model\Counter;
 use App\Model\Customer;
@@ -18,6 +19,7 @@ use App\Model\Sale;
 use App\Model\Supplier;
 use App\Model\User;
 use Faker\Provider\tr_TR\DateTime;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Mail;
@@ -33,6 +35,17 @@ class SaleController extends Controller
 
     public function GetSaleForm()
     {
+
+        $cashRegister = new CashRegister();
+        $activeCashRegister = $cashRegister->getCurrentActiveRegister();
+        if(!is_null($activeCashRegister)){
+            // Use active cash register
+
+        }else{
+            // A new cash register should be opened
+            return redirect()->route('open_cash_register');
+        }
+
         $customerList = Customer::all();
 
         return view('sales.new_sale', ['customerList' => $customerList]);
@@ -374,9 +387,13 @@ class SaleController extends Controller
 
             $printer->setJustification(Printer::JUSTIFY_CENTER);
             $printer->text("Order\n");
-
+            $printer -> setTextSize(2, 3);
+            $printer -> text($sale->id."\n");
+            $printer -> setEmphasis(false);
+            $printer -> setTextSize(1, 1);
+            $printer -> text("------------------------------------------");
             $printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);
-            $printer->text($settings['company_name'] . " " . $sale->id . "\n");
+            $printer->text($settings['company_name']);
             $printer->text("------------------------------------------\n");
             $printer->selectPrintMode();
             $printer->text($sale->created_at . "\n");
@@ -468,6 +485,32 @@ class SaleController extends Controller
 
     }
 
+
+    public function popOpenCashDrawer(){
+
+        $counter_id = Cookie::get('counter_id',null);
+        if(is_null($counter_id)){
+            return redirect()->route('new_sale')->with(["error" => "Select a counter first."]);
+        }
+
+        $counter = Counter::where("id",$counter_id)->first();
+        $ip_address = $counter->printer_ip;
+        $port = $counter->printer_port;
+
+        try{
+            $connector = new NetworkPrintConnector($ip_address, $port);
+            $printer = new Printer($connector);
+        } Catch (\Exception $e)
+        {
+            return redirect()->route('new_sale')->with(["error" => $e->getMessage()]);
+        } finally{
+            if (isset($printer)) {
+                $printer->pulse();
+                $printer->close();
+            }
+        }
+
+    }
 
     public function testPrint($counter_id)
     {
