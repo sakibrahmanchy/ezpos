@@ -68,6 +68,7 @@ class RouteTokens
         "add_cash_to_register"=>"sale_add_update",
         "subtract_cash_from_register"=>"sale_add_update",
         "close_cash_register"=>"sale_add_update",
+        "cash_register_log_details"=>"sale_add_update",
 
         "report_category_graphical"=>"report_categories",
         "report_category_ajax"=>"report_categories",
@@ -115,6 +116,8 @@ class RouteTokens
         "report_sale_graphical_hourly"=>"report_sales",
         'report_sale_hourly_ajax'=>'report_sales',
         "report_sale_summary_hourly"=>"report_sales",
+        "cash_register_log_report_details"=>"report_sales",
+        "cash_register_log_report_details_ajax"=>"report_sales",
 
         "report_supplier_graphical"=>"report_suppliers",
         "report_supplier_ajax"=>"report_suppliers",

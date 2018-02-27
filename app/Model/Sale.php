@@ -2,9 +2,14 @@
 
 namespace App\Model;
 
+use App\CashRegisterTransaction;
+use App\Enumaration\CashRegisterTransactionType;
 use App\Enumaration\InventoryReasons;
 use App\Enumaration\InventoryTypes;
+use App\Enumaration\LotyaltyTransactionType;
 use App\Enumaration\SaleStatus;
+use App\Library\SettingsSingleton;
+use App\LoyaltyTransaction;
 use App\Model\Item;
 use App\Model\PaymentLog;
 use Doctrine\DBAL\Exception\InvalidFieldNameException;
@@ -171,6 +176,7 @@ class Sale extends Model
 
             $paymentLog = new PaymentLog();
 
+
             $paymentLog->payment_type = $aPaymentInfo["payment_type"];
             $paymentLog->paid_amount = $aPaymentInfo["paid_amount"];
 
@@ -178,10 +184,69 @@ class Sale extends Model
 
             $sale->paymentLogs()->attach($paymentLog);
 
+
+            if($aPaymentInfo["payment_type"]=="Cash"){
+
+                $cashRegisterTransaction = new CashRegisterTransaction();
+                $cashRegister = new CashRegister();
+
+                $activeCashRegiser = $cashRegister->getCurrentActiveRegister();
+                $cashRegisterToChange = CashRegister::where("id",$activeCashRegiser->id)->first();
+                $cashRegisterToChange->current_balance += $aPaymentInfo["paid_amount"];
+
+                if($cashRegisterToChange->save()){
+                    $cashRegisterTransaction->cash_register_id = $activeCashRegiser->id;
+                    $cashRegisterTransaction->amount = $aPaymentInfo["paid_amount"];
+                    $cashRegisterTransaction->transaction_type = CashRegisterTransactionType::$CASH_SALES;
+                    $cashRegister->comments = "Cash Sales for sale: ".$sale_id;
+                    $cashRegisterTransaction->save();
+                }
+
+            }
+
         }
+
+        if( $saleInfo['customer_id'] != 0){
+            //Check if customer has a loyalty card or not
+            if($this->CustomerHasLoyalty($saleInfo['customer_id'])){
+                $creditAmount = $this->IncreaseCustomerLoyalty($saleInfo["customer_id"],$saleInfo["total"]);
+                $this->NewLoyaltyTransaction($saleInfo["customer_id"],$creditAmount,LotyaltyTransactionType::$CREDIT_BALANCE,$sale_id);
+            }
+        }
+
         return $sale_id;
 
 
+    }
+
+    public function NewLoyaltyTransaction($customer_id,$transaction_amount,$transaction_type,$sale_id){
+        $loyaltyTransaction = new LoyaltyTransaction();
+        $loyaltyTransaction->customer_id = $customer_id;
+        $loyaltyTransaction->transaction_type = $transaction_type;
+        $loyaltyTransaction->transaction_amount = $transaction_amount;
+        $loyaltyTransaction->sale_id = $sale_id;
+        $loyaltyTransaction->save();
+    }
+
+    public function IncreaseCustomerLoyalty($customer_id,$total_amount){
+
+        $settings = SettingsSingleton::get();
+        $loyalty_incentive_percentage = $settings["customer_loyalty_percentage"];
+        $creditLoyalty = ($total_amount * $loyalty_incentive_percentage)/ 100;
+        $customer = Customer::where("id",$customer_id)->first();
+        $customer->balance+=$creditLoyalty;
+        if($customer->save())
+            return $creditLoyalty;
+        return 0;
+    }
+
+
+    public function CustomerHasLoyalty($customer_id){
+        $customer = Customer::where("id",$customer_id)->first();
+        if(!is_null($customer->loyalty_card_number)){
+            return true;
+        }
+        return false;
     }
 
     public function editSale($saleInfo, $productInfos,$paymentInfos , $saleStatus, $sale_id){

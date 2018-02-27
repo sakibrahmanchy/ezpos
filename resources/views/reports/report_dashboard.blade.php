@@ -36,7 +36,7 @@
 
                             {{-- <a href="#" class="list-group-item" id="expenses"><i class="icon ti-money"></i>	Expenses</a>
      --}}
-                            {{--<a href="#" class="list-group-item" id="giftcards"><i class="icon ti-credit-card"></i>	Giftcards</a>--}}
+                            <a href="#" class="list-group-item" id="register_logs"><i class="icon ti-credit-card"></i>	Register Logs</a>
 
 
                             <a href="#" class="list-group-item" id="inventory"><i class="icon ti-bar-chart"></i>	Inventory Reports</a>
@@ -95,6 +95,10 @@
                             <a class="list-group-item" href="{{ route('report_customer_graphical') }}"><i class="icon ti-bar-chart-alt"></i> Graphical Reports</a>
                             <a class="list-group-item" href="{{ route('report_customer_summary') }}"><i class="icon ti-receipt"></i> Summary Reports</a>
                             <a class="list-group-item" href="{{ route('report_customer_detail') }}"><i class="icon ti-calendar"></i> Detailed Reports</a>
+                        </div>
+
+                        <div class="list-group register_logs hidden">
+                            <a class="list-group-item" href="{{ route('cash_register_log_report_details') }}"><i class="icon ti-calendar"></i> Detailed Reports</a>
                         </div>
 
                         <div class="list-group employees hidden">

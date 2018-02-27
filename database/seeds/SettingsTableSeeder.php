@@ -18,7 +18,8 @@ class SettingsTableSeeder extends Seeder
 					"company_logo" => "logo.png",
 					"tax_rate" => 15,
 					"address" => "",
-					"phone" => ""
+					"phone" => "",
+                    "customer_loyalty_percentage"=>"1"
 				];
 		foreach( $settingsArr as $key=>$value )
 		{
@@ -31,29 +32,5 @@ class SettingsTableSeeder extends Seeder
 				$setting->save();
 			}
 		}
-        /*$setting = new \App\Model\Setting();
-        $setting->key = "company_name";
-        $setting->value = "EZ POS";
-        $setting->save();
-
-        $setting = new \App\Model\Setting();
-        $setting->key = "company_logo";
-        $setting->value = "logo.png";
-        $setting->save();
-
-        $setting = new \App\Model\Setting();
-        $setting->key = "tax_rate";
-        $setting->value = "15";
-        $setting->save();
-
-        $setting = new \App\Model\Setting();
-        $setting->key = "address";
-        $setting->value = "";
-        $setting->save();
-
-        $setting = new \App\Model\Setting();
-        $setting->key = "phone";
-        $setting->value = "";
-        $setting->save();*/
     }
 }

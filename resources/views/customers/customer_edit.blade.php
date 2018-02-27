@@ -135,6 +135,35 @@
                                 </div>
                             </div>
 
+                            <div class="panel-heading">
+                                <h3 class="panel-title">
+                                    <i class="pe-7s-edit"></i>
+                                    Customer Incentives    					<small>(Loyalty Program)</small>
+                                </h3>
+                            </div>
+
+                            <div class="panel-body">
+                                @if(is_null($customer->loyalty_card_number))
+                                        <span class="label label-warning">No loyalty card is active for this customer.</span><br><br>
+                                @endif
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="loyalty_card_number" class="col-sm-3 col-md-3 col-lg-2 control-label">Loyalty Number:</label>						<div class="col-sm-9 col-md-9 col-lg-10">
+                                                <input type="text" name="loyalty_card_number" value="{{ $customer->loyalty_card_number }}" id="loyalty_card_number" class="form-control">
+                                            </div>
+                                        </div>
+                                        <br>
+                                        @if(!is_null($customer->loyalty_card_number))
+                                        <div class="form-group">
+                                            <label for="loyalty_card_number" class="col-sm-3 col-md-3 col-lg-2 control-label">Balance:</label>						<div class="col-sm-9 col-md-9 col-lg-10">
+                                                <label  name="loyalty_card_number">${{ round($customer->balance,2) }}</label>
+                                            </div>
+                                        </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
 
                             <input type="hidden" name="redirect_code" value="0">
 

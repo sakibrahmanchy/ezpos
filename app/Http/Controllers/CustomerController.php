@@ -21,6 +21,7 @@ class CustomerController extends Controller
 
         $rules = [
             'first_name' => 'required',
+            'loyalty_card_number'=>'nullable|unique:customers'
         ];
         $allInput = $request->all();
 
@@ -44,6 +45,12 @@ class CustomerController extends Controller
         $customerCredentials['state'] = $request->state;
         $customerCredentials['zip'] = $request->zip;
         $customerCredentials['country'] = $request->country;
+        if($request->loyalty_card_number){
+            $customerCredentials['loyalty_card_number'] = $request->loyalty_card_number;
+            $customerCredentials['balance'] = 0.0;
+        }
+
+
         if(!is_null( $request->comments))
             $customerCredentials['comments'] = $request->comments;
         else
@@ -63,8 +70,8 @@ class CustomerController extends Controller
             Storage::disk('customer_user_pictures')->put($userImageToken . '.jpg', $image);  // Storing image in the disk as the name according to user id
             $customerCredentials['image_token'] = $userImageToken.'.jpg';
         }
-
-        $customerId = \App\Model\Customer::create($customerCredentials)->id;
+        $customer=  \App\Model\Customer::create($customerCredentials);
+        $customerId = $customer->id;
 
 
         return redirect()->route('customer_list');
@@ -96,6 +103,7 @@ class CustomerController extends Controller
         /* var_dump($customer);*/
         $rules = [
             'first_name' => 'required',
+            'loyalty_card_number'=>'nullable|unique:customers'
         ];
         $allInput = $request->all();
 
@@ -121,6 +129,10 @@ class CustomerController extends Controller
         $customer->zip = $request->zip;
         $customer->country = $request->country;
         $customer->comments = $request->comments;
+
+        if($request->loyalty_card_number){
+            $customerCredentials['loyalty_card_number'] = $request->loyalty_card_number;
+        }
 
         if(!is_null( $request->comments))
             $customer->comments = $request->comments;

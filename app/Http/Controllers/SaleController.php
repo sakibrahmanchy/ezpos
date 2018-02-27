@@ -40,15 +40,13 @@ class SaleController extends Controller
         $activeCashRegister = $cashRegister->getCurrentActiveRegister();
         if(!is_null($activeCashRegister)){
             // Use active cash register
+            $customerList = Customer::all();
 
+            return view('sales.new_sale', ['customerList' => $customerList]);
         }else{
             // A new cash register should be opened
             return redirect()->route('open_cash_register');
         }
-
-        $customerList = Customer::all();
-
-        return view('sales.new_sale', ['customerList' => $customerList]);
     }
 
     public function AddSale(Request $request)
@@ -387,7 +385,6 @@ class SaleController extends Controller
 
             $printer->setJustification(Printer::JUSTIFY_CENTER);
             $printer->text("Order\n");
-
             $printer->selectPrintMode();
             $printer->text($sale->created_at . "\n");
             $printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);

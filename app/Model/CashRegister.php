@@ -13,6 +13,44 @@ class CashRegister extends Model
         'opened_by','closed_by','opening_time','closing_time'];
 
 
+    public function OpenedByUser(){
+        return $this->belongsTo('App\Model\User','opened_by','id');
+    }
+
+    public function ClosedByUser(){
+        return $this->belongsTo('App\Model\User','closed_by','id');
+    }
+
+    public function CashRegisterTransactions(){
+        return $this->hasMany('App\CashRegisterTransaction','cash_register_id','id');
+    }
+
+    public function additionSum(){
+            return $this->CashRegisterTransactions()
+            ->selectRaw('cash_register_id, sum(amount) as aggregate')
+            ->where("transaction_type",CashRegisterTransactionType::$ADD_BALANCE)
+            ->groupBy('cash_register_id');
+    }
+
+    public function subtractionSum(){
+        return $this->CashRegisterTransactions()
+            ->selectRaw('cash_register_id, sum(amount) as aggregate')
+            ->where("transaction_type",CashRegisterTransactionType::$SUBTRACT_BALANCE)
+            ->groupBy('cash_register_id');
+    }
+
+    public function saleSum(){
+        return $this->CashRegisterTransactions()
+            ->selectRaw('cash_register_id, sum(amount) as aggregate')
+            ->where("transaction_type",CashRegisterTransactionType::$CASH_SALES)
+            ->groupBy('cash_register_id');
+    }
+
+    public function Counter(){
+        return $this->belongsTo('App\Model\Counter','counter_id','id');
+    }
+
+
     public function getCurrentActiveRegister(){
         return $this->orderBy('created_at', 'desc')->where('closing_balance',null)->first();
     }
@@ -25,6 +63,16 @@ class CashRegister extends Model
             $addedTotal = CashRegisterTransaction::where("cash_register_id",$cashRegisterId)
                 ->where("transaction_type",CashRegisterTransactionType::$ADD_BALANCE)->sum("amount");
             return $addedTotal;
+        }
+        return 0;
+    }
+
+    public function getActiveRegisterOpeningBalance(){
+        $cash_register = $this->getCurrentActiveRegister();
+        if(!is_null($cash_register)){
+            $cashRegisterId = $cash_register->id;
+            $opening_balance = CashRegister::where("id",$cashRegisterId)->first()->opening_balance;
+            return $opening_balance;
         }
         return 0;
     }
@@ -86,6 +134,17 @@ class CashRegister extends Model
             }
         }
         return false;
+    }
+
+    public function getTotalSaleInCurrentRegister(){
+        $cash_register = $this->getCurrentActiveRegister();
+        if(!is_null($cash_register)){
+            $total_sales_in_register = CashRegisterTransaction::where("cash_register_id",$cash_register->id)
+                ->where("transaction_type",CashRegisterTransactionType::$CASH_SALES)->sum('amount');
+            return $total_sales_in_register;
+        }
+        return 0;
+
     }
 
 }

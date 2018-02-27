@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Enumaration\CashRegisterTransactionType;
 use Illuminate\Database\Eloquent\Model;
 
 class CashRegisterTransaction extends Model
@@ -57,4 +58,9 @@ class CashRegisterTransaction extends Model
         $this->transaction_type = $transaction_type;
     }
 
+
+    public function totalAdditions(){
+        return CashRegisterTransaction::where("id",$this->id)->sum('amount');
+        //return $this->sum('amount')->where('cash_register_transactions.transaction_type',CashRegisterTransactionType::$ADD_BALANCE);
+    }
 }

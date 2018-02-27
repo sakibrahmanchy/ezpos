@@ -88,6 +88,16 @@
                                             <input class="form-control" type="text" name="phone" value="{{ $settings['phone'] }}">
 
                                         </div>
+                                    </div><br><br><br>
+
+                                    <label for="phone" class="col-sm-3 col-md-3 col-lg-2 control-label">Customer Loyalty Percentage:</label>
+                                    <div class="col-sm-9 col-md-9 col-lg-10">
+                                        <div class="input-group date">
+                                    <span class="input-group-addon bg">
+                                     <i class="fa fa-percent    "></i>
+                                    </span>
+                                            <input class="form-control" type="text" name="customer_loyalty_percentage" value="{{ $settings['customer_loyalty_percentage'] }}">
+                                        </div>
                                     </div>
 
                                 </div>

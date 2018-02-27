@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\CashRegisterTransaction;
+use App\Enumaration\CashRegisterTransactionType;
 use App\Model\CurrencyDenomination;
 use App\Model\CashRegister;
+use App\Model\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
@@ -91,21 +94,17 @@ class CashRegisterController extends Controller
 
     public function closeCurrentCashRegister()
     {
-
         $cashRegister = new CashRegister();
-        $activeRegister = $cashRegister->getCurrentActiveRegister();
-        if (!is_null($activeRegister))
-        {
-            $cash_info = DB::table('cash_registers')
-                ->join('cash_register_transactions','cash_registers.id','=','cash_register_transactions.cash_register_id')
-                ->where("cash_register_id",$activeRegister->id)->first();
-            $total_additions = $cashRegister->getTotalAddedAmountInActiveRegister();
-            $total_subtractions = $cashRegister->getTotalSubtractedAmountInActiveRegister();
-            $cash_sales = 0;
-        }
+
+        $openingBalance = $cashRegister->getActiveRegisterOpeningBalance();
+        $total_additions = $cashRegister->getTotalAddedAmountInActiveRegister();
+        $total_subtractions = $cashRegister->getTotalSubtractedAmountInActiveRegister();
+        $cash_sales = $cashRegister->getTotalSaleInCurrentRegister();
+
+
         $denominations = CurrencyDenomination::all();
-         return view('cash_registers.close_cash_register',["denominations"=>$denominations,"cash_info"=>$cash_info,
-                                "additions"=>$total_additions,"subtractions"=>$total_subtractions,"sales"=>$cash_sales]);
+        return view('cash_registers.close_cash_register',["denominations"=>$denominations,"openingBalance"=>$openingBalance,
+            "additions"=>$total_additions,"subtractions"=>$total_subtractions,"sales"=>$cash_sales]);
 
     }
 
@@ -118,7 +117,25 @@ class CashRegisterController extends Controller
         $activeRegister->closing_time = $closing_time;
         $activeRegister->closed_by = Auth::user()->id;
         if($activeRegister->save())
-            return redirect()->route('dashboard');
+            return redirect()->route('cash_register_log_details',["register_id"=>$activeRegister->id]);
+    }
+
+    public function cashRegisterLogDetails($cashRegisterId){
+        $cashRegister = CashRegister::where("id",$cashRegisterId)->with('OpenedByUser','ClosedByUser','CashRegisterTransactions')->first();
+
+        $openedBy = $cashRegister->OpenedByUser->name;
+        $closedBy = $cashRegister->closedByUser->name;
+        $total_additions = CashRegisterTransaction::where('cash_register_id',$cashRegisterId)->where('transaction_type',CashRegisterTransactionType::$ADD_BALANCE)->sum('amount');
+        $total_subtractions = CashRegisterTransaction::where('cash_register_id',$cashRegisterId)->where('transaction_type',CashRegisterTransactionType::$SUBTRACT_BALANCE)->sum('amount');
+        $cash_sales = CashRegisterTransaction::where("cash_register_id",$cashRegister->id)->where('transaction_type',CashRegisterTransactionType::$CASH_SALES)->sum('amount');
+        $cashRegisterTransactions = $cashRegister->CashRegisterTransactions;
+
+        return view('cash_registers.cash_register_log_details',["register"=>$cashRegister,
+                "transactions"=>$cashRegisterTransactions,"opened_by"=>$openedBy,"closed_by"=>$closedBy,
+            "additions"=>$total_additions,"subtractions"=>$total_subtractions,"sales"=>$cash_sales]);
+
+
+        //dd($cashRegisterTotal);
     }
 
 }

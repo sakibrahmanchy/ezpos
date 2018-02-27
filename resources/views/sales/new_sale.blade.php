@@ -89,10 +89,9 @@
 
                             <li><a href="{{route('sale_last_receipt')}}"  target="_blank" class="look-up-receipt" title="Lookup Receipt"><i class="ion-document"></i> Show last sale receipt</a></li>
                             <li><a href="{{route('pop_open_cash_drawer')}}"  class="look-up-receipt" title="Lookup Receipt"><i class="ion-document"></i> Pop Open Cash Drawer</a></li>
-
-
-
-
+                            <li><a href="{{ route('add_cash_to_register') }}">Add cash to register</a></li>
+                            <li><a href="{{ route('subtract_cash_from_register') }}">Remove cash from register</a></li>
+                            <li><a href="{{ route('close_cash_register') }}">Close register</a></li>
                         </ul>
                         <form action="" id="cancel_sale_form" autocomplete="off" method="post" accept-charset="utf-8">
 
@@ -179,6 +178,8 @@
                                 Credit Card				</a>
                             <a tabindex="-1" href="#" class="btn btn-pay select-payment" data-payment="Gift Card">
                                 Gift Card				</a>
+                            <a tabindex="-1" href="#" class="btn btn-pay select-payment" data-payment="Loyalty Card">
+                                Loyalty Card				</a>
 
                         </div>
 
@@ -190,9 +191,12 @@
                             <option value="Gift Card">Gift Card</option>
                             <option value="Debit Card">Debit Card</option>
                             <option value="Credit Card">Credit Card</option>
+                            <option value="Loyalty Card">Loyalty Card</option>
                         </select>
                         <input type="number" name="amount_tendered" value="0.00" id="amount_tendered" class="add-input numKeyboard form-control" data-title="Payment Amount" onkeydown="this.onchange()" onkeypress="this.onchange()" onfocus="this.onchange()" onkeyup="this.onchange()" onchange="calculateDue()">
                         <input class="hidden form-control" type="text" name="gift_card_number"  id="gift_card_number" class="add-input numKeyboard form-control" >
+					<span class="input-group-addon" style="background: #5cb85c; border-color: #4cae4c;">
+                        <input class="hidden form-control" type="text" name="loyalty_card_number"  id="loyalty_card_number" class="add-input numKeyboard form-control" >
 					<span class="input-group-addon" style="background: #5cb85c; border-color: #4cae4c;">
 						<a href="javascript:void(0)" class="hidden" id="add_payment_button" onclick = "addPayment()" style=" color:white;text-decoration:none;">Add Payment</a>
 						<a class="javascript:void(0)" id="finish_sale_alternate_button" style=" color:white;text-decoration:none;" onclick = "completeSales()">Complete Sale</a>
@@ -260,7 +264,7 @@
 
         $(document).ready(function(e){
 
-            checkPaymentTypeGiftcard();
+            checkPaymentType();
 
             var $item = $('#item-names');
 
@@ -796,6 +800,7 @@
 
             $("#amount_tendered").removeClass("hidden");
             $("#gift_card_number").addClass("hidden");
+            $("#loyalty_card_number").addClass("hidden");
             $('#payment_types').attr("data-value",($(this).attr('data-payment')));
             // start_cc_processing
             $('.select-payment').removeClass('active');
@@ -803,7 +808,7 @@
             $("#amount_tendered").focus();
             $("#amount_tendered").attr('placeholder','');
 
-            checkPaymentTypeGiftcard();
+            checkPaymentType();
 
 
 
@@ -876,7 +881,57 @@
 
                 }
 
-            }else{
+            }else if ($("#payment_types").attr("data-value") == "Loyalty Card"){
+
+                var loyalty_card_number = $("#loyalty_card_number").val();
+                if(loyalty_card_number==""){
+
+                    $.notify({
+                        icon: '',
+                        message: "Loyalty card number cannot be empty!"
+
+                    },{
+                        type: 'danger',
+                        timer: 4000
+                    });
+
+                }else{
+
+                    var due = $("#due").attr("data-due");
+                    $.ajax({
+                        url: "{{route('gift_card_use')}}",
+                        type: "post",
+                        data: {
+                            due:due,
+                            loyalty_card_number:loyalty_card_number
+                        },
+                        success: function(response){
+
+                            if(response.success){
+
+                                addGiftCardPayment(loyalty_card_number,response.current_value,response.value_deducted);
+                                SubmitSales(1);
+
+                            }else{
+                                $.notify({
+                                    icon: '',
+                                    message: response.message
+
+                                },{
+                                    type: 'danger',
+                                    timer: 4000
+                                });
+                            }
+
+                        }
+                    })
+
+
+                }
+
+            }
+
+                else{
                 addPayment();
                 SubmitSales(1);
             }
@@ -1125,7 +1180,7 @@
         }
 
 
-        function checkPaymentTypeGiftcard()
+        function checkPaymentType()
         {
 
             if ($("#payment_types").attr("data-value") == "Gift Card")
@@ -1136,6 +1191,15 @@
                 $("#gift_card_number").removeClass("hidden");
                 $("#gift_card_number").attr('placeholder',"Swipe\/Type gift card #");
                 $("#gift_card_number").focus();
+
+            }else if ($("#payment_types").attr("data-value") == "Loyalty Card")
+            {
+                /*$("#amount_tendered").val('');
+                $("#amount_tendered").attr('placeholder',"Swipe\/Type gift card #");*/
+                $("#amount_tendered").addClass("hidden");
+                $("#loyalty_card_number").removeClass("hidden");
+                $("#loyalty_card_number").attr('placeholder',"Swipe\/Type loyalty card #");
+                $("#loyalty_card_number").focus();
 
             }
         }

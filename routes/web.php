@@ -185,6 +185,9 @@ Route::group(['middleware' => ['admin']], function () {
     route::get('/report/close_out/summary','Reports\CloseOutReportController@ReportCloseOutSummary')->name('report_close_out_summary')->middleware('auth');
     route::post('/report/close_out/ajax','Reports\CloseOutReportController@ReportCloseOutAjax')->name('report_close_out_ajax')->middleware('auth');
 
+    route::get('/report/cash_register_logs/details','Reports\CashRegisterController@detailedReports')->name('cash_register_log_report_details');
+    route::post('/report/cash_register_logs/details/ajax','Reports\CashRegisterController@detailedReportsAjax')->name('cash_register_log_report_details_ajax');
+
     route::get('/employee/new','EmployeeController@GetEmployeeForm' )->name('new_employee')->middleware('auth');
     route::post('/employee/new','EmployeeController@AddEmployee')->name('new_employee')->middleware('auth');
     route::get('employee/list','EmployeeController@GetEmployeeList')->name('employee_list')->middleware('auth');
@@ -239,6 +242,7 @@ Route::group(['middleware' => ['admin']], function () {
     route::post('/cash_register/subtract','CashRegisterController@subtractCashFromRegisterPost')->name('subtract_cash_from_register')->middleware('auth');
     route::get('/cash_register/close','CashRegisterController@closeCurrentCashRegister')->name('close_cash_register')->middleware('auth');
     route::post('/cash_register/close','CashRegisterController@closeCashRegisterPost')->name('close_cash_register')->middleware('auth');
+    route::get('/cash_register/log_details/{register_id}','CashRegisterController@cashRegisterLogDetails')->name('cash_register_log_details')->middleware('auth');
 
     route::post('file/insert','FileController@InsertFile')->name('insert_file')->middleware('auth');
     route::post('file/item/insert','FileController@InsertItemFile')->name('insert_item_file')->middleware('auth');

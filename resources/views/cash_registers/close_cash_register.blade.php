@@ -51,12 +51,12 @@
 
 
                         <ul class="list-group close-amount">
-                            <li class="list-group-item">Open Amount:  <span class="pull-right">${{ $cash_info->opening_balance }}</span></li>
+                            <li class="list-group-item">Open Amount:  <span class="pull-right">${{ $openingBalance }}</span></li>
                             <li class="list-group-item">Cash Sales:  <span class="pull-right">${{ $sales }}</span></li>
                             <li class="list-group-item">Cash additions [<a href="">Edit</a>]:  <span class="pull-right">${{ $additions }} </span></li>
                             <li class="list-group-item">Cash subtractions [<a href="">Edit</a>]:  <span class="pull-right">${{$subtractions  }} </span></li>
 
-                            <li class="list-group-item active">You should have  in the register. <span class="pull-right text-success total-amount">{{ $cash_info->opening_balance + $sales + $additions+ $subtractions }}</span></li>
+                            <li class="list-group-item active">You should have  in the register. <span class="pull-right total-amount">{{ $openingBalance + $sales + $additions+ $subtractions }}</span></li>
                         </ul>
 
 
@@ -67,7 +67,7 @@
 
 
                                 <div class="form-group controll-croups1">
-                                    <label for="closing_amount" class="control-label">Closing amount:</label>											<input type="text" name="closing_amount" value="{{ $cash_info->opening_balance + $sales + $additions+ $subtractions }}" id="closing_amount" class="form-control valid">
+                                    <label for="closing_amount" class="control-label">Closing amount:</label>											<input type="text" name="closing_amount" value="{{ $openingBalance + $sales + $additions- $subtractions }}" id="closing_amount" class="form-control valid">
                                 </div>
                                 <div class="form-group controll-croups1">
                                     <label for="notes" class="control-label">Notes:</label>											<textarea name="notes" cols="40" rows="10" id="notes" class="form-control text-area"></textarea>
