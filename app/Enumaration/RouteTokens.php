@@ -19,6 +19,7 @@ class RouteTokens
         "customer_delete"=>"customer_delete",
         "customers_delete"=>"customer_delete",
 
+
         "new_item"=>"item_add_update",
         "item_list"=>"item_search",
         "item_edit"=>"item_add_update",
@@ -69,6 +70,7 @@ class RouteTokens
         "subtract_cash_from_register"=>"sale_add_update",
         "close_cash_register"=>"sale_add_update",
         "cash_register_log_details"=>"sale_add_update",
+        "loyalty_card_use"=>"sale_add_update",
 
         "report_category_graphical"=>"report_categories",
         "report_category_ajax"=>"report_categories",

@@ -9,7 +9,6 @@ use App\Enumaration\InventoryTypes;
 use App\Enumaration\LotyaltyTransactionType;
 use App\Enumaration\SaleStatus;
 use App\Library\SettingsSingleton;
-use App\LoyaltyTransaction;
 use App\Model\Item;
 use App\Model\PaymentLog;
 use Doctrine\DBAL\Exception\InvalidFieldNameException;
@@ -17,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
+use App\Model\LoyaltyTransaction;
 
 class Sale extends Model
 {
@@ -50,6 +50,9 @@ class Sale extends Model
 
     public function InsertSale($saleInfo, $productInfos,$paymentInfos , $saleStatus){
 
+        if($saleStatus!=1)
+            session()->put('success','Sale has been successfully suspended');
+
         $sale = new Sale();
         $sale->employee_id = Auth::user()->id;
         $sale->customer_id = $saleInfo['customer_id'];
@@ -63,6 +66,7 @@ class Sale extends Model
         $sale->items_sold = $saleInfo['items_sold'];
         $sale->sale_type = $saleInfo['sale_type'];
         $sale->counter_id = Cookie::get("counter_id");
+        $sale->comment = $saleInfo["comment"];
         $sale->save();
 
         $sale_id = $sale->id;
@@ -204,28 +208,26 @@ class Sale extends Model
 
             }
 
+            if(strpos($aPaymentInfo["payment_type"],"Loyalty Card")!==false){
+                    $loyaltyTransaction = new LoyaltyTransaction();
+                    $loyaltyTransaction->NewLoyaltyTransaction($saleInfo["customer_id"],$aPaymentInfo["paid_amount"],LotyaltyTransactionType::$DEBIT_BALANCE,$sale_id);
+            }
+
         }
 
         if( $saleInfo['customer_id'] != 0){
             //Check if customer has a loyalty card or not
             if($this->CustomerHasLoyalty($saleInfo['customer_id'])){
                 $creditAmount = $this->IncreaseCustomerLoyalty($saleInfo["customer_id"],$saleInfo["total"]);
-                $this->NewLoyaltyTransaction($saleInfo["customer_id"],$creditAmount,LotyaltyTransactionType::$CREDIT_BALANCE,$sale_id);
+                $loyaltyTransaction = new LoyaltyTransaction();
+                $loyaltyTransaction->NewLoyaltyTransaction($saleInfo["customer_id"],$creditAmount,LotyaltyTransactionType::$CREDIT_BALANCE,$sale_id);
             }
         }
+
 
         return $sale_id;
 
 
-    }
-
-    public function NewLoyaltyTransaction($customer_id,$transaction_amount,$transaction_type,$sale_id){
-        $loyaltyTransaction = new LoyaltyTransaction();
-        $loyaltyTransaction->customer_id = $customer_id;
-        $loyaltyTransaction->transaction_type = $transaction_type;
-        $loyaltyTransaction->transaction_amount = $transaction_amount;
-        $loyaltyTransaction->sale_id = $sale_id;
-        $loyaltyTransaction->save();
     }
 
     public function IncreaseCustomerLoyalty($customer_id,$total_amount){
@@ -240,6 +242,14 @@ class Sale extends Model
         return 0;
     }
 
+    public function DeductCustomerLoyalty($customer_id,$amountToDeduct){
+        $customer = Customer::where("id",$customer_id)->first();
+        $customer->balance-=$amountToDeduct;
+        if($customer->save())
+            return 1;
+        return 0;
+    }
+
 
     public function CustomerHasLoyalty($customer_id){
         $customer = Customer::where("id",$customer_id)->first();
@@ -250,6 +260,9 @@ class Sale extends Model
     }
 
     public function editSale($saleInfo, $productInfos,$paymentInfos , $saleStatus, $sale_id){
+
+        if($saleStatus!=1)
+            session()->put('success','Sale has been successfully suspended');
 
         $sale = Sale::where('id',$sale_id)->first();
 
@@ -265,6 +278,7 @@ class Sale extends Model
         $sale->items_sold = $saleInfo['items_sold'];
         $sale->sale_type = $saleInfo['sale_type'];
         $sale->counter_id = Cookie::get("counter_id");
+        $sale->comment = $saleInfo["comment"];
 
         $sale->save();
 

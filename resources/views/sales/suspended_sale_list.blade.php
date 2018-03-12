@@ -62,7 +62,7 @@
             <table  class="table table-hover " >
                 <thead>
                 <tr>
-
+                    <th></th>
                     <th>Suspended Sale Id</th>
                     <th>Date</th>
                     <th>Type</th>
@@ -78,7 +78,7 @@
                 <tbody>
                 @foreach($suspended_sales as $suspended_sale)
                     <tr>
-
+                        <td></td>
                         <td>EZPOS {{$suspended_sale->id}} </td>
                         <td>{{$suspended_sale->created_at}}</td>
                         <td>

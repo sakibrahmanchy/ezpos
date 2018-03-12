@@ -204,6 +204,11 @@
 
                         </div>
 
+                        <div style="padding:20px">
+                            <div class="side-heading">Comments</div>
+                            <input type="text" name="comment" id="comment" class="form-control" />
+                        </div>
+
                     </div>
                 </div>
 
@@ -384,8 +389,7 @@
 
             };
 
-
-          var sales = JSON.parse('<?php echo json_encode($sales) ?>');
+          var sales = <?php echo json_encode($sales) ?>;
 
           index = 0;
             sales.forEach(function(item){
@@ -948,7 +952,12 @@
 
             if($(".no-items").length==0) {
 
-                var confirmText = "Are you sure to complete transaction?";
+                var confirmText = "";
+                if(status==1)
+                    confirmText = "Are you sure to complete transaction?";
+                else
+                    confirmText = "Are you sure to suspend sale?";
+
                 if(confirm(confirmText)){
 
                     var customerId = $("#customer").val();
@@ -957,6 +966,7 @@
                     var totalAmount = $("#total").attr("data-total");
                     var saleDiscountAmount = $("#saleDiscountAmount").val();
                     var due =  $("#due").attr("data-due");
+                    var comment = $("#comment").val();
 
                     var sale_type = "";
 
@@ -1076,7 +1086,8 @@
                         status: status,
                         profit: totalProfit,
                         items_sold: totalItemsSold,
-                        sale_type:sale_type
+                        sale_type:sale_type,
+                        comment: comment
                     };
 
                     var edit_url = '{{ route("sale_edit", ":sale_id") }}';
@@ -1092,11 +1103,19 @@
                         },
                         success: function(response){
 
-                            var sale_id = response;
+                            switch (status){
+                                case 1:
+                                    var url = '{{ route("sale_receipt", ":sale_id") }}';
+                                    url = url.replace(':sale_id', sale_id);
+                                    window.location.href=url;
+                                    break;
+                                case 2:
+                                case 3:
+                                    var url = '{{ route("new_sale") }}';
+                                    window.location.href=url;
+                                    break;
 
-                            var url = '{{ route("sale_receipt", ":sale_id") }}';
-                            url = url.replace(':sale_id', sale_id);
-                            window.location.href=url;
+                            }
 
                         }
                     })
@@ -1133,6 +1152,7 @@
 
         function preLoadPayment(paymentInfo){
 
+                $("#comment").val(paymentInfo.comment);
                 var paymentType = paymentInfo.payment_type;
                 var tenderedAmount = paymentInfo.paid_amount;
                 if(paymentType!=null && tenderedAmount!=null)

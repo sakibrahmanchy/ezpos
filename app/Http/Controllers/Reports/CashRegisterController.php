@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Reports;
 
-use App\CashRegisterTransaction;
+use App\Model\CashRegisterTransaction;
 use App\Enumaration\CashRegisterTransactionType;
 use App\Http\Controllers\Controller;
 use App\Model\CashRegister;

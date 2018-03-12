@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\CashRegisterTransaction;
+use App\Model\CashRegisterTransaction;
 use App\Enumaration\CashRegisterTransactionType;
 use App\Model\CurrencyDenomination;
 use App\Model\CashRegister;

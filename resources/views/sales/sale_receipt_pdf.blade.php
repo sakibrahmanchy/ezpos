@@ -236,6 +236,15 @@
 @endif
 </div>
 
+<div class="row">
+    <div class="col-md-offset-8 col-sm-offset-8 col-xs-offset-2 col-md-2 col-sm-2 col-xs-6"><br>
+        <div class="invoice-footer-heading"><strong>Comments</strong></div>
+    </div>
+    <div class="col-md-offset-8 col-sm-offset-8 col-xs-offset-2 col-md-2 col-sm-2"><br>
+        <div class="invoice-footer-heading">{{ $sale->comment }}</div><br>
+    </div><br><br>
+</div>
+
             <div >
                 <div>
                     <div>

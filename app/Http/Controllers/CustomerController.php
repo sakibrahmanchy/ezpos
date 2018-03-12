@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Model\Customer;
+use App\Model\LoyaltyTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -179,6 +180,56 @@ class CustomerController extends Controller
             return response()->json(["success"=>true],200);
         return response()->json(["success"=>false],200);
 
+    }
+
+    public function UseLoyaltyCard(Request $request){
+
+        $loyalty_card_number = $request->loyalty_card_number;
+        $due = $request->due;
+
+        if(Customer::where("loyalty_card_number",$loyalty_card_number)->exists()){
+
+            $loyalty_card = Customer::where("loyalty_card_number",$loyalty_card_number)->first();
+
+            if($loyalty_card->loyalty_card_number!=null){
+
+                if($loyalty_card->balance>0){
+
+                    $previous_balance = $loyalty_card->balance;
+
+                    if($due<=$loyalty_card->balance){
+
+                        $loyalty_card->balance -= $due;
+                        $loyalty_card->save();
+
+                        $current_balance = $loyalty_card->balance;
+                        $balance_deducted = $previous_balance-$current_balance;
+                        $due = $due-$balance_deducted;
+
+                        return response()->json(["success"=>true,"due"=>$due,
+                            "balance_deducted"=>$balance_deducted,"current_balance"=>$current_balance,"customer_id"=>$loyalty_card->id]);
+
+                    }else{
+
+                        $loyalty_card->balance -= $previous_balance;
+                        $loyalty_card->save();
+
+                        $current_balance = $loyalty_card->balance;
+                        $balance_deducted = $previous_balance-$current_balance;
+                        $due = $due-$balance_deducted;
+
+                        return response()->json(["success"=>true,"due"=>$due,
+                            "balance_deducted"=>$balance_deducted,"current_balance"=>$current_balance,"customer_id"=>$loyalty_card->id]);
+                    }
+
+                }
+                else
+                    return response()->json(["success"=>false,"message"=>"Low balance on loyalty card."],200);
+            }
+            else
+                return response()->json(["success"=>false,"message"=>"Loyalty card is not active."],200);
+        }else
+            return response()->json(["success"=>false,"message"=>"Invalid loyalty card number."],200);
     }
 
 }

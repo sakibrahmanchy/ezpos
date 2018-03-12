@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Model;
 
 use App\Enumaration\CashRegisterTransactionType;
 use Illuminate\Database\Eloquent\Model;

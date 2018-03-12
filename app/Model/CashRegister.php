@@ -2,7 +2,6 @@
 
 namespace App\Model;
 
-use App\CashRegisterTransaction;
 use App\Enumaration\CashRegisterTransactionType;
 use Illuminate\Database\Eloquent\Model;
 
@@ -22,7 +21,7 @@ class CashRegister extends Model
     }
 
     public function CashRegisterTransactions(){
-        return $this->hasMany('App\CashRegisterTransaction','cash_register_id','id');
+        return $this->hasMany('App\Model\CashRegisterTransaction','cash_register_id','id');
     }
 
     public function additionSum(){

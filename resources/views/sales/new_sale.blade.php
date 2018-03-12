@@ -13,20 +13,20 @@
 @section('content')
 
     {{--Sale config--}}
-        <?php $tax_rate = $settings['tax_rate'] ; ?>
+    <?php $tax_rate = $settings['tax_rate'] ; ?>
     {{--Sale config--}}
 
     <div class="row">
         <div class="col-sm-7 panel-margin " >
-        <div class = "search section">
+            <div class = "search section">
 
                 <div class="input-group">
-                   <a href="{{route('new_item')}}" target="_blank" class="input-group-addon" id="sizing-addon2" style="background-color:#337ab7;color:white;border:solid #337ab7 1px; "><strong>+</strong></a>
+                    <a href="{{route('new_item')}}" target="_blank" class="input-group-addon" id="sizing-addon2" style="background-color:#337ab7;color:white;border:solid #337ab7 1px; "><strong>+</strong></a>
                     <input type="text"  class="form-control" id = "item-names">
                     <div class="input-group-btn bs-dropdown-to-select-group">
                         <button type="button" class="btn btn-primary dropdown-toggle as-is bs-dropdown-to-select" data-toggle="dropdown">
                             <span data-bind="bs-drp-sel-label">Sale</span>
-                          {{--  <input type="hidden" name="selected_value" data-bind="bs-drp-sel-value" value="">--}}
+                            {{--  <input type="hidden" name="selected_value" data-bind="bs-drp-sel-value" value="">--}}
 
                             <span class="caret"></span>
                             <span class="sr-only">Toggle Dropdown</span>
@@ -38,35 +38,35 @@
                         </ul>
                     </div>
                 </div>
-            <input type="checkbox" checked  id = "auto_select" style="margin-left:10px"> <b>Add automatically to cart when item found.</b>
+                <input type="checkbox" checked  id = "auto_select" style="margin-left:10px"> <b>Add automatically to cart when item found.</b>
 
             </div>
 
-        <br>
+            <br>
 
-        <div class="card table-responsive" >
-            <table class="table table-hover table-responsive">
-                <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Quantity</th>
-                    <th class="text-center">Price</th>
-                    <th class="text-center">Discount(%)</th>
-                    <th class="text-center">Total</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody class = "product-descriptions">
+            <div class="card table-responsive" >
+                <table class="table table-hover table-responsive">
+                    <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th class="text-center">Price</th>
+                        <th class="text-center">Discount(%)</th>
+                        <th class="text-center">Total</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody class = "product-descriptions">
 
 
-                </tbody>
-                <tfoot>
-                </tfoot>
-            </table>
+                    </tbody>
+                    <tfoot>
+                    </tfoot>
+                </table>
+            </div>
+
         </div>
-
-       </div>
-       <div class ="col-sm-4  " >
+        <div class ="col-sm-4  " >
             <div class = "card"  >
 
                 <div class="sale-buttons input-group" style = "border-bottom:solid #ddd 1px; padding:10px">
@@ -81,7 +81,7 @@
                             <li>
                                 <a href="{{route('suspended_sale_list')}}" class="" title="Suspended Sales"><i class="ion-ios-list-outline"></i> Suspended Sales</a>								</li>
                             <li>
-                                    <a href="{{route('search_sale')}}" class="" title="Search Sales"><i class="ion-search"></i> Search Sales</a>
+                                <a href="{{route('search_sale')}}" class="" title="Search Sales"><i class="ion-search"></i> Search Sales</a>
                             </li>
 
                             <li>
@@ -123,7 +123,7 @@
                     <form action="" id="select_customer_form" autocomplete="off" class="form-inline" method="post" accept-charset="utf-8">
                         <div class="input-group contacts" style="padding-top:10px;padding-left:10px">
 
-						<a href="{{route('new_customer')}}" target="_blank" class="input-group-addon" id="sizing-addon2" style="background-color:#337ab7;color:white;border:solid #337ab7 1px; "><strong>+</strong></a>
+                            <a href="{{route('new_customer')}}" target="_blank" class="input-group-addon" id="sizing-addon2" style="background-color:#337ab7;color:white;border:solid #337ab7 1px; "><strong>+</strong></a>
                             <select id="customer" name="customer" class="add-customer-input keyboardLeft ui-autocomplete-input form-control" data-title="Customer Name" placeholder="Type customer name..." autocomplete="off">
                                 <option value ="0" selected>Select Customer for sale</option>
                                 @foreach($customerList as $aCustomer)
@@ -145,12 +145,12 @@
                     <strong>Discount entire sale</strong><span style="float: right"><strong id=""><input id ="saleDiscountAmount" onkeyup="setSaleToDiscount()" onkeydown="setSaleToDiscount()" type ="number" placeholder="" style="max-width:45px;float: right" value ="0"></strong></span>
                 </div>
 
-                    <div class = "card" style="background-color: #778a9b;color:whitesmoke;font-size:20px;">
-                        Total <span style="float: right"><strong data-total="0" id = "total"> $0.00</strong></span>
-                    </div>
-                    <div class = "card" style="background-color: #778a9b;color:whitesmoke;font-size:20px;">
-                        Due <span style="float: right"><strong data-due="0" id = "due"> $0.00</strong></span>
-                    </div><br>
+                <div class = "card" style="background-color: #778a9b;color:whitesmoke;font-size:20px;">
+                    Total <span style="float: right"><strong data-total="0" id = "total"> $0.00</strong></span>
+                </div>
+                <div class = "card" style="background-color: #778a9b;color:whitesmoke;font-size:20px;">
+                    Due <span style="float: right"><strong data-due="0" id = "due"> $0.00</strong></span>
+                </div><br>
                 <div class="row">
                     {{--<input type="number" id = "paid-amount" name="paid-amount" class="col-md-8 form-control" style="float:left">
                     <button type="button" class="col-md-4 btn btn-success" style="float:right" onclick = "SubmitSales()">
@@ -184,18 +184,18 @@
                         </div>
 
 
-                    <div class="input-group add-payment-form">
-                        <select name="payment_type" id="payment_types" class="hidden" data-value="Cash" >
-                            <option value="Cash" selected="selected">Cash</option>
-                            <option value="Check">Check</option>
-                            <option value="Gift Card">Gift Card</option>
-                            <option value="Debit Card">Debit Card</option>
-                            <option value="Credit Card">Credit Card</option>
-                            <option value="Loyalty Card">Loyalty Card</option>
-                        </select>
-                        <input type="number" name="amount_tendered" value="0.00" id="amount_tendered" class="add-input numKeyboard form-control" data-title="Payment Amount" onkeydown="this.onchange()" onkeypress="this.onchange()" onfocus="this.onchange()" onkeyup="this.onchange()" onchange="calculateDue()">
-                        <input class="hidden form-control" type="text" name="gift_card_number"  id="gift_card_number" class="add-input numKeyboard form-control" >
-					<span class="input-group-addon" style="background: #5cb85c; border-color: #4cae4c;">
+                        <div class="input-group add-payment-form">
+                            <select name="payment_type" id="payment_types" class="hidden" data-value="Cash" >
+                                <option value="Cash" selected="selected">Cash</option>
+                                <option value="Check">Check</option>
+                                <option value="Gift Card">Gift Card</option>
+                                <option value="Debit Card">Debit Card</option>
+                                <option value="Credit Card">Credit Card</option>
+                                <option value="Loyalty Card">Loyalty Card</option>
+                            </select>
+                            <input type="number" name="amount_tendered" value="0.00" id="amount_tendered" class="add-input numKeyboard form-control" data-title="Payment Amount" onkeydown="this.onchange()" onkeypress="this.onchange()" onfocus="this.onchange()" onkeyup="this.onchange()" onchange="calculateDue()">
+                            <input class="hidden form-control" type="text" name="gift_card_number"  id="gift_card_number" class="add-input numKeyboard form-control" >
+                            <span class="input-group-addon" style="background: #5cb85c; border-color: #4cae4c;">
                         <input class="hidden form-control" type="text" name="loyalty_card_number"  id="loyalty_card_number" class="add-input numKeyboard form-control" >
 					<span class="input-group-addon" style="background: #5cb85c; border-color: #4cae4c;">
 						<a href="javascript:void(0)" class="hidden" id="add_payment_button" onclick = "addPayment()" style=" color:white;text-decoration:none;">Add Payment</a>
@@ -203,17 +203,22 @@
 					</span>
 
 
+                        </div>
+
+                        <div style="padding:20px">
+                            <div class="side-heading">Comments</div>
+                            <input type="text" name="comment" id="comment" class="form-control" />
+                        </div>
+
                     </div>
-
                 </div>
+
+                <form id = "saleSubmit" method = "post" action = "{{route('new_sale')}}">
+
+                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                </form>
             </div>
-
-           <form id = "saleSubmit" method = "post" action = "{{route('new_sale')}}">
-
-               <input type="hidden" name="_token" value="{{ csrf_token() }}">
-           </form>
-       </div>
-    </div>
+        </div>
     </div>
 
     <!-- Add Category Modal -->
@@ -294,7 +299,7 @@
                     }
                     else
                     {
-                       addPayment();
+                        addPayment();
                     }
 
                 }
@@ -349,40 +354,41 @@
 
                 itemTotalInfo.push(JSON.parse(a));
 
-                    if(item.type=="auto"){
-                        console.log(item.item_quantity);
-                        autoAddItemTOCart(item);
-                        return null;
+                if(item.type=="auto"){
+                    console.log(item.item_quantity);
+                    autoAddItemTOCart(item);
+                    return null;
 
-                    }else{
-                        var $li = $('<li class="item-suggestion" data-item-total-info = "'+itemTotalInfo+'" data-id = "'+item.item_id+'" data-sale-price = "'+item.selling_price+'" data-img-src ="{{asset('img')}}/'+item.new_name+'" data-title="'+item.item_name+'" data-item-quantity ="'+item.item_quantity+'" data-item-type="item"  onclick = "addItemToCart(this)">'),
-                            $img = $('<img height="50px" width="50px" style="margin-right:10px">');
+                }else{
 
-                        //alert(item.new_name);
-                        var  img_src = "default-product.jpg";
+                    var $li = $('<li class="item-suggestion" data-item-total-info = "'+itemTotalInfo+'" data-id = "'+item.item_id+'" data-sale-price = "'+item.selling_price+'" data-img-src ="{{asset('img')}}/'+item.new_name+'" data-title="'+item.item_name+'" data-item-quantity ="'+item.item_quantity+'" data-item-type="item"  onclick = "addItemToCart(this)">'),
+                        $img = $('<img height="50px" width="50px" style="margin-right:10px">');
 
-                        if(item.new_name!=null){
-                            img_src = item.new_name;
-                        }
-                        if(item.product_type==1){
-                            $img.attr({
-                                src: '{{asset('img')}}/' + "item-kit.png",
-                                alt: item.item_kit_name
-                            });
-                        }else{
-                            $img.attr({
-                                src: '{{asset('img')}}/' + img_src,
-                                alt: item.item_name
-                            });
-                        }
+                    //alert(item.new_name);
+                    var  img_src = "default-product.jpg";
 
-
-                        $li.attr('data-value', item.item_name);
-                        $li.append('<a  href="#">');
-                        $li.find('a').append($img).append(item.item_name);
-
-                        return $li.appendTo(ul);
+                    if(item.new_name!=null){
+                        img_src = item.new_name;
                     }
+                    if(item.product_type==1){
+                        $img.attr({
+                            src: '{{asset('img')}}/' + "item-kit.png",
+                            alt: item.item_kit_name
+                        });
+                    }else{
+                        $img.attr({
+                            src: '{{asset('img')}}/' + img_src,
+                            alt: item.item_name
+                        });
+                    }
+
+
+                    $li.attr('data-value', item.item_name);
+                    $li.append('<a  href="#">');
+                    $li.find('a').append($img).append(item.item_name);
+
+                    return $li.appendTo(ul);
+                }
 
 
 
@@ -392,11 +398,11 @@
             $( document ).on( 'click', '.bs-dropdown-to-select-group .dropdown-menu li', function( event ) {
                 var $target = $( event.currentTarget );
                 $target.closest('.bs-dropdown-to-select-group')
-                        .find('[data-bind="bs-drp-sel-value"]').val($target.attr('data-value'))
-                        .end()
-                        .children('.dropdown-toggle').dropdown('toggle');
+                    .find('[data-bind="bs-drp-sel-value"]').val($target.attr('data-value'))
+                    .end()
+                    .children('.dropdown-toggle').dropdown('toggle');
                 $target.closest('.bs-dropdown-to-select-group')
-                        .find('[data-bind="bs-drp-sel-label"]').text($target.context.textContent);
+                    .find('[data-bind="bs-drp-sel-label"]').text($target.context.textContent);
                 return false;
             });
 
@@ -428,7 +434,7 @@
         function calculatePrice(){
 
             //var subTotal = Number($(".subtotal" ).attr("data-subtotal"));
-           var discountItemOnBoard = false,discountItemPrice;
+            var discountItemOnBoard = false,discountItemPrice;
             var subTotal = 0;
             var subReal = 0;
             var saleType = $('#sale-type').attr("data-selected-type");
@@ -624,7 +630,7 @@
         }
 
         function addItemToCart(item){
-        //var itemInfo = $(item).data('item-total-info');
+            //var itemInfo = $(item).data('item-total-info');
             var index = $('.item-suggestion').index(item);
             if(itemTotalInfo[index].item_quantity<=0&&itemTotalInfo[index].product_type!=1){
                 alert("Sorry, product is out of stock.");
@@ -634,11 +640,11 @@
                 $('.add-payment').show();
 
                 var itemDescription = '<tr class="product-specific-description" data-index="'+item.getAttribute("data-id")+'"  data-item-type="'+item.getAttribute("data-item-type")+'" id="product-div-' + item.getAttribute("data-id") + '" data-rule-id="'+itemTotalInfo[index].id+'">' +
-                        '<td class="col-sm-8 col-md-6">' +
-                        '<div class="media">' +
-                        '' +
-                        '<div class="media-body">' +
-                        ' <h6 class="media-heading"><a href="#">' + item.getAttribute('data-title') + '</a></h6>';
+                    '<td class="col-sm-8 col-md-6">' +
+                    '<div class="media">' +
+                    '' +
+                    '<div class="media-body">' +
+                    ' <h6 class="media-heading"><a href="#">' + item.getAttribute('data-title') + '</a></h6>';
 
                 if(itemTotalInfo[index].company_name!=null)
                     itemDescription +=  '<h6 class="media-heading"> by <a href="#">'+ itemTotalInfo[index].company_name +'</a></h6>';
@@ -652,17 +658,18 @@
 
 
                 itemDescription += '</div>' +
-                '</div></td>' +
-                ' <td class="col-sm-1 col-md-1" style="text-align: center">' +
-                ' <input type="number" min = "0" class="form-control quantity" id="product-' + item.getAttribute('data-id') + '"  onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" onchange = "addItemPriceToRegister(' + item.getAttribute('data-id') + ')"  value="1">' +
-                '</td>' +
-                '<td class="col-sm-1 col-md-1 text-center" ><strong data-unit-price = "'+item.getAttribute('data-sale-price') +'" id="unit-price-' + item.getAttribute('data-id') + '">$' + item.sale_price + '</strong></td>' +
-                '<td><input  class="form-control discount-amount" type="number" id="discount-'+ item.getAttribute("data-id")+'" onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" onchange = "addItemPriceToRegister(' + item.getAttribute('data-id') + ')"  value="0"></td>' +
-                '<td class="col-sm-1 col-md-1 text-center" ><strong data-total-price = "" id ="total-price-' + item.getAttribute('data-id') + '" class="total-price"></strong></td>' +
-                '<td class="col-sm-1 col-md-1">' +
-                '<button type="button" class="btn btn-danger" onclick = "removeProduct(' + item.getAttribute('data-id') + ')">' +
-                '<span class="pe-7s-trash"></span> Remove' +
-                '</button></td></tr><input type="hidden" id="cost-price-'+item.getAttribute('data-id')+'" value="'+itemTotalInfo[index].cost_price+'" >' ;
+                    '</div></td>' +
+                    ' <td class="col-sm-1 col-md-1" style="text-align: center">' +
+                    ' <input type="number" min = "0" class="form-control quantity" id="product-' + item.getAttribute('data-id') + '"  onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" onchange = "addItemPriceToRegister(' + item.getAttribute('data-id') + ')"  value="1">' +
+                    '</td>' +
+                    '<td class="col-sm-1 col-md-1 text-center" ><strong data-unit-price = "'+item.getAttribute('data-sale-price') +'" id="unit-price-' + item.getAttribute('data-id') + '">$' + item.getAttribute('data-sale-price')
+                    + '</strong></td>' +
+                    '<td><input  class="form-control discount-amount" type="number" id="discount-'+ item.getAttribute("data-id")+'" onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" onchange = "addItemPriceToRegister(' + item.getAttribute('data-id') + ')"  value="0"></td>' +
+                    '<td class="col-sm-1 col-md-1 text-center" ><strong data-total-price = "" id ="total-price-' + item.getAttribute('data-id') + '" class="total-price"></strong></td>' +
+                    '<td class="col-sm-1 col-md-1">' +
+                    '<button type="button" class="btn btn-danger" onclick = "removeProduct(' + item.getAttribute('data-id') + ')">' +
+                    '<span class="pe-7s-trash"></span> Remove' +
+                    '</button></td></tr><input type="hidden" id="cost-price-'+item.getAttribute('data-id')+'" value="'+itemTotalInfo[index].cost_price+'" >' ;
 
                 var itemDiscounts = "";
                 $(".product-descriptions").append(itemDescription);
@@ -695,13 +702,13 @@
             var discountAmount = Number($("#allDiscountAmount").val());
 
             $( ".discount-amount" ).each(function( index ) {
-               /* $( this ).val = discountAmount;*/
+                /* $( this ).val = discountAmount;*/
 
-                   var discount_id = "#"+this.id;
-                   $(discount_id).val(discountAmount);
-                   var product_id = discount_id.replace(/[^0-9\.-]+/g, "");
-                   product_id = product_id.substr(1,product_id.length);
-                   addItemPriceToRegister(product_id);
+                var discount_id = "#"+this.id;
+                $(discount_id).val(discountAmount);
+                var product_id = discount_id.replace(/[^0-9\.-]+/g, "");
+                product_id = product_id.substr(1,product_id.length);
+                addItemPriceToRegister(product_id);
 
             });
 
@@ -717,20 +724,20 @@
                 $('.no-items').remove();
                 $('.add-payment').show();
                 var itemDescription = '<tr class="product-specific-description" style="background: aliceblue;" data-index="0" id="product-div-discount" data-item-type="discount" data-rule-id="0">' +
-                        '<td class="col-sm-8 col-md-6">' +
-                        '<div class="media">' +
-                        '' +
-                        '<div class="media-body">' +
-                        ' <h6 class="media-heading"><a href="#">Discount</a></h6>' +
-                        '';
+                    '<td class="col-sm-8 col-md-6">' +
+                    '<div class="media">' +
+                    '' +
+                    '<div class="media-body">' +
+                    ' <h6 class="media-heading"><a href="#">Discount</a></h6>' +
+                    '';
 
 
                 itemDescription += '</div>' +
-                        '</div></td>' +
-                        ' <td class="col-sm-1 col-md-1" style="text-align: center">' +
-                        ' <input type="number"  class="form-control" id="product-discount-quantity"  onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" onchange = "addDiscountPriceToRegister()"  value="-1">' +
-                        '</td>' +
-                        '<td class="col-sm-1 col-md-1 text-center" ><strong data-unit-price = "'+discountAmount+'" id="unit-discount-price">';
+                    '</div></td>' +
+                    ' <td class="col-sm-1 col-md-1" style="text-align: center">' +
+                    ' <input type="number"  class="form-control" id="product-discount-quantity"  onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" onchange = "addDiscountPriceToRegister()"  value="-1">' +
+                    '</td>' +
+                    '<td class="col-sm-1 col-md-1 text-center" ><strong data-unit-price = "'+discountAmount+'" id="unit-discount-price">';
 
                 if(discountAmount >= 0 ){
                     itemDescription += "$"+discountAmount;
@@ -739,12 +746,12 @@
                 }
 
                 itemDescription += '</strong></td>' +
-                        '<td><input disabled  class="form-control discount-amount" type="number"   value="0"></td>' +
-                        '<td class="col-sm-1 col-md-1 text-center" ><strong data-total-price="" id ="total-price-discount" class="total-price"></strong></td>' +
-                        '<td class="col-sm-1 col-md-1">' +
-                        '<button type="button" class="btn btn-danger" onclick = "removeDiscountItem()">' +
-                        '<span class="pe-7s-trash"></span> Remove' +
-                        '</button></td></tr>' ;
+                    '<td><input disabled  class="form-control discount-amount" type="number"   value="0"></td>' +
+                    '<td class="col-sm-1 col-md-1 text-center" ><strong data-total-price="" id ="total-price-discount" class="total-price"></strong></td>' +
+                    '<td class="col-sm-1 col-md-1">' +
+                    '<button type="button" class="btn btn-danger" onclick = "removeDiscountItem()">' +
+                    '<span class="pe-7s-trash"></span> Remove' +
+                    '</button></td></tr>' ;
 
                 var itemDiscounts = "";
                 $(".product-descriptions").prepend(itemDescription);
@@ -899,7 +906,7 @@
 
                     var due = $("#due").attr("data-due");
                     $.ajax({
-                        url: "{{route('gift_card_use')}}",
+                        url: "{{route('loyalty_card_use')}}",
                         type: "post",
                         data: {
                             due:due,
@@ -908,9 +915,10 @@
                         success: function(response){
 
                             if(response.success){
+                                $("#customer").val(response.customer_id);
+                                $("#customer").trigger('change');
 
-                                addGiftCardPayment(loyalty_card_number,response.current_value,response.value_deducted);
-                                SubmitSales(1);
+                                addLoyaltyCardPayment(loyalty_card_number,response.current_balance,response.balance_deducted);
 
                             }else{
                                 $.notify({
@@ -931,7 +939,7 @@
 
             }
 
-                else{
+            else{
                 addPayment();
                 SubmitSales(1);
             }
@@ -941,8 +949,12 @@
         function SubmitSales(status){
 
             if($(".no-items").length==0) {
+                var confirmText = "";
+                if(status==1)
+                    confirmText = "Are you sure to complete transaction?";
+                else
+                    confirmText = "Are you sure to suspend sale?";
 
-                var confirmText = "Are you sure to complete transaction?";
                 if(confirm(confirmText)){
 
                     var customerId = $("#customer").val();
@@ -952,6 +964,7 @@
                     var saleDiscountAmount = $("#saleDiscountAmount").val();
                     var due =  $("#due").attr("data-due");
                     var sale_type = "";
+                    var comment = $("#comment").val();
 
                     if($('#sale-type').attr("data-selected-type")=="return"){
                         sale_type = "{{ \App\Enumaration\SaleTypes::$RETURN  }}";
@@ -1021,9 +1034,9 @@
 
                             if (salesDiscountAmount > 0)
                             {
-                              var preSubtotal = Number(subTotalAmount) + Number(salesDiscountAmount);
-                              var itemPortionOfSaleDiscount = ((currentTotal/preSubtotal) *  salesDiscountAmount);
-                              discountAmount += itemPortionOfSaleDiscount;
+                                var preSubtotal = Number(subTotalAmount) + Number(salesDiscountAmount);
+                                var itemPortionOfSaleDiscount = ((currentTotal/preSubtotal) *  salesDiscountAmount);
+                                discountAmount += itemPortionOfSaleDiscount;
                             }
                             var itemProfit = ((currentUnitPrice * currentQuantity) - discountAmount) - (currentCostPrice*currentQuantity);
 
@@ -1063,7 +1076,8 @@
                         status: status,
                         profit: totalProfit,
                         items_sold: totalItemsSold,
-                        sale_type:sale_type
+                        sale_type:sale_type,
+                        comment: comment
                     };
 
                     $.ajax({
@@ -1076,13 +1090,21 @@
                         },
                         success: function(response){
                             var sale_id = response;
+                            switch (status){
+                                case 1:
+                                    var url = '{{ route("sale_receipt", ":sale_id") }}';
+                                    url = url.replace(':sale_id', sale_id);
+                                    window.location.href=url;
+                                        break;
+                                case 2:
+                                case 3:
+                                    var url = '{{ route("new_sale") }}';
+                                    window.location.href=url;
+                                    break;
 
-                            var url = '{{ route("sale_receipt", ":sale_id") }}';
-                            url = url.replace(':sale_id', sale_id);
-                            window.location.href=url;
-
+                            }
                         }
-                    })
+                    });
                 }
 
             }
@@ -1106,11 +1128,25 @@
             var paymentType = $("#payment_types").attr("data-value");
             var tenderedAmount = paidAmount;
             $(".payment-history").append("<div class='card payment-log' data-id='"+paymentAdded+"' id='payment-"+paymentAdded+"'  " +
-                    "style='margin: 10px'><span class='pe-7s-close-circle' onclick='deletePayment("+paymentAdded+")'" +
-                    " style='float:left'>" +
-                    "</span> <p id='payment-type-"+paymentAdded+"' style='float:left'>"
-                    +paymentType+":"+ gift_card_number +" (Balance: $"+ balance +") </p><p id='tendered-amount-"+paymentAdded+"' style='float:right' data-payment-amount='"
-                    +tenderedAmount+"'>$"+tenderedAmount+"</p><br></div>");
+                "style='margin: 10px'><span class='pe-7s-close-circle' onclick='deletePayment("+paymentAdded+")'" +
+                " style='float:left'>" +
+                "</span> <p id='payment-type-"+paymentAdded+"' style='float:left'>"
+                +paymentType+":"+ gift_card_number +" (Balance: $"+ balance +") </p><p id='tendered-amount-"+paymentAdded+"' style='float:right' data-payment-amount='"
+                +tenderedAmount+"'>$"+tenderedAmount+"</p><br></div>");
+            paymentAdded++;
+            calculateDue();
+        }
+
+        function addLoyaltyCardPayment(loyalty_card_number, balance, paidAmount){
+
+            var paymentType = $("#payment_types").attr("data-value");
+            var tenderedAmount = paidAmount;
+            $(".payment-history").append("<div class='card payment-log' data-id='"+paymentAdded+"' id='payment-"+paymentAdded+"'  " +
+                "style='margin: 10px'><span class='pe-7s-close-circle' onclick='deletePayment("+paymentAdded+")'" +
+                " style='float:left'>" +
+                "</span> <p id='payment-type-"+paymentAdded+"' style='float:left'>"
+                +paymentType+":"+ loyalty_card_number +" (Balance: $"+ balance +") </p><p id='tendered-amount-"+paymentAdded+"' style='float:right' data-payment-amount='"
+                +tenderedAmount+"'>$"+tenderedAmount+"</p><br></div>");
             paymentAdded++;
             calculateDue();
         }
@@ -1157,7 +1193,7 @@
                 $("#due").text("$"+due);
                 $("#due").attr("data-due",due);
             } else{
-               /* $("#amount_tendered").val(due);*/
+                /* $("#amount_tendered").val(due);*/
                 $("#due").text("-$"+ (-1)*due);
                 $("#due").attr("data-due",due);
             }
@@ -1206,26 +1242,26 @@
 
         function selectCounter(){
 
-           @if(\Illuminate\Support\Facades\Cookie::get('counter_id')==null)
-                $("#choose_counter_modal").modal();
-                $.ajax({
-                    url: "{{route('counter_list_ajax')}}",
-                    type:"get",
-                    dataType: "json",
-                    success: function(response){
-                        $(".choose-counter-home").html("");
-                        counters = response.counters;
-                        counters.forEach(function(counter){
-                            var url = '{{ route("counter_set", ":counter_id") }}';
-                            url = url.replace(':counter_id', counter.id);
-                            $(".choose-counter-home").append('<li><a class="set_employee_current_counter_after_login" href="'+url+'">'+counter.name+'</a></li>');
-                        });
-                    },
-                    error: function () {
+            @if(\Illuminate\Support\Facades\Cookie::get('counter_id')==null)
+            $("#choose_counter_modal").modal();
+            $.ajax({
+                url: "{{route('counter_list_ajax')}}",
+                type:"get",
+                dataType: "json",
+                success: function(response){
+                    $(".choose-counter-home").html("");
+                    counters = response.counters;
+                    counters.forEach(function(counter){
+                        var url = '{{ route("counter_set", ":counter_id") }}';
+                        url = url.replace(':counter_id', counter.id);
+                        $(".choose-counter-home").append('<li><a class="set_employee_current_counter_after_login" href="'+url+'">'+counter.name+'</a></li>');
+                    });
+                },
+                error: function () {
 
-                    }
-                })
-           @endif
+                }
+            })
+            @endif
         }
 
 
@@ -1240,7 +1276,7 @@
                     $(".choose-counter-home").html("");
                     counters = response.counters;
                     counters.forEach(function(counter){
-                       var url = '{{ route("counter_set", ":counter_id") }}';
+                        var url = '{{ route("counter_set", ":counter_id") }}';
                         url = url.replace(':counter_id', counter.id);
                         $(".choose-counter-home").append('<li><a class="set_employee_current_counter_after_login" href="'+url+'">'+counter.name+'</a></li>');
                     });

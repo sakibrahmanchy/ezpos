@@ -249,6 +249,8 @@ Route::group(['middleware' => ['admin']], function () {
     route::post('file/item/insertEdit','FileController@InsertItemFileEdit')->name('insert_item_file_edit')->middleware('auth');
     route::get('file/delete/{file_id}','FileController@DeleteFile')->name('delete_file')->middleware('auth');
 
+    route::post('loyalty_card/use','CustomerController@UseLoyaltyCard')->name('loyalty_card_use')->middleware('auth');
+
 
 });
 

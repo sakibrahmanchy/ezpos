@@ -325,7 +325,7 @@ else
         });
 
         var is_error = '{{ ( session()->has('error')) ? session()->get('error') : 0 }}';
-        console.log(is_error);
+
         if(is_error!="0"){
 
             $.notify({
@@ -336,6 +336,8 @@ else
                 type: 'danger',
                 timer: 4000
             });
+
+            {{  session()->forget('error') }}
         }
 
         var is_success = '{{ ( session()->has('success')) ? session()->get('success') : 0 }}';
@@ -350,6 +352,7 @@ else
                 type: 'success',
                 timer: 4000
             });
+            {{  session()->forget('success') }}
         }
 
         $.ajaxSetup({
