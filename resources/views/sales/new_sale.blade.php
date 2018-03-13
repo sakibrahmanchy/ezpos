@@ -351,11 +351,8 @@
 
             $item.data( "ui-autocomplete" )._renderItem = function( ul, item ) {
                 var a = JSON.stringify(item);
-
                 itemTotalInfo.push(JSON.parse(a));
-
                 if(item.type=="auto"){
-                    console.log(item.item_quantity);
                     autoAddItemTOCart(item);
                     return null;
 
@@ -621,6 +618,13 @@
                 $("#item-names").val("");
                 $("#item-names").blur();
                 $("#item-names").autocomplete("close");
+            }else{
+                var itemId = item.item_id;
+                var itemQuantityFieldName = "#product-"+itemId;
+                var itemCurrentQuantity = $(itemQuantityFieldName).val();
+                itemCurrentQuantity++;
+                $(itemQuantityFieldName).val(itemCurrentQuantity);
+                addItemPriceToRegister(itemId);
             }
 
 
@@ -689,6 +693,13 @@
                 $(".product-descriptions").append(itemDiscounts);
 
                 addItemPriceToRegister(item.getAttribute('data-id'));
+            }else{
+                var itemId = item.getAttribute("data-id");
+                var itemQuantityFieldName = "#product-"+itemId;
+                var itemCurrentQuantity = $(itemQuantityFieldName).val();
+                itemCurrentQuantity++;
+                $(itemQuantityFieldName).val(itemCurrentQuantity);
+                addItemPriceToRegister(itemId);
             }
 
             if($('#sale-type').attr("data-selected-type")=="return"){
