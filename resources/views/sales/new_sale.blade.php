@@ -453,8 +453,10 @@
             });
 
             subTotal = Number(subTotal.toFixed(2));
+            subTotal = subTotal.toFixed(2);
 
             subReal = Number(subReal.toFixed(2));
+            subReal = subReal.toFixed(2);
 
             var taxToBeReduced = 0 ;
             if(discountItemOnBoard)

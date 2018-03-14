@@ -446,6 +446,7 @@
 
                 subTotal += (Number($( this ).attr("data-total-price"))) ;
             });
+
             subTotal = Number(subTotal.toFixed(2));
 
             subReal = Number(subReal.toFixed(2));
@@ -455,6 +456,7 @@
             {
                 taxToBeReduced = Number(discountItemPrice * taxRate);
             }
+
             var tax = Number(Number(subTotal * taxRate).toFixed(2)-taxToBeReduced).toFixed(2);
             var realTax = Number(Number(subReal * taxRate).toFixed(2)-taxToBeReduced).toFixed(2);
 
@@ -471,6 +473,7 @@
 
             if(subTotal>=0) $(".subtotal").text("$"+subTotal);
             else $(".subtotal").text("-$"+(-1)* subTotal);
+
             $(".subtotal").attr("data-subtotal",subReal);
 
             if(tax>=0)
