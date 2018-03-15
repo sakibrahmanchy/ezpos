@@ -273,6 +273,8 @@
 
             var $item = $('#item-names');
 
+            $item.focus();
+
             $("#customer").select2();
 
             $('.select-payment').on('click mousedown',selectPayment);
@@ -618,7 +620,6 @@
                 addItemPriceToRegister(item.item_id);
 
                 $("#item-names").val("");
-                $("#item-names").blur();
                 $("#item-names").autocomplete("close");
             }else{
                 var itemId = item.item_id;

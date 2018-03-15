@@ -2,7 +2,6 @@
 
 namespace App\Model;
 
-use App\CashRegisterTransaction;
 use App\Enumaration\CashRegisterTransactionType;
 use App\Enumaration\InventoryReasons;
 use App\Enumaration\InventoryTypes;
