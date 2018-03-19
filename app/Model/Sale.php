@@ -52,6 +52,25 @@ class Sale extends Model
         if($saleStatus!=1)
             session()->put('success','Sale has been successfully suspended');
 
+
+        $sale = $this->insertSaleInfo($saleInfo,$saleStatus);
+        $sale_id = $sale->id;
+
+        $this->insertItemsInSale($productInfos,$sale,$saleStatus);
+
+        if(!is_null($paymentInfos))
+            $this->insertSalePaymentInfos($paymentInfos,$sale);
+
+        if( $saleInfo['customer_id'] != 0){
+            //Check if customer has a loyalty card or not
+            $this->addCustomerLoyaltyBalance($sale->customer_id, $sale_id, $sale->total_amount);
+        }
+
+        return $sale_id;
+    }
+
+    public function insertSaleInfo($saleInfo,$saleStatus){
+
         $sale = new Sale();
         $sale->employee_id = Auth::user()->id;
         $sale->customer_id = $saleInfo['customer_id'];
@@ -68,61 +87,44 @@ class Sale extends Model
         $sale->comment = $saleInfo["comment"];
         $sale->save();
 
-        $sale_id = $sale->id;
+        return $sale;
+
+    }
+
+    public function insertItemsInSale($productInfos,$sale,$saleStatus) {
 
         foreach($productInfos as $aProductInfo){
 
             $item_id = $aProductInfo['item_id'];
             $item_quantity = $aProductInfo['quantity'];
             $item_type = $aProductInfo["item_type"];
+
             if($item_id==0){
                 $keyId = "discount-01!XcQZc003ab";
                 $item = Item::where("product_id",$keyId)->first();
 
                 if(is_null($item)){
 
-                        $item = new Item();
-                        $item->product_id=$keyId;
-                        $item->item_name = "discount";
-                        $item->category_id = 0;
-                        $item->supplier_id = 0;
-                        $item->product_type = 2;
-                        $item->cost_price = $aProductInfo["unit_price"];
-                        $item->selling_price = $aProductInfo["unit_price"];
-                        $item->save();
-                        $itemId = $item->id;
+                    $itemId = $this->InsertDiscountAsAnItemInItemsTable($keyId,$aProductInfo["unit_price"]);
 
                 }else
                     $itemId = $item->id;
 
-                    $aProductInfo['item_id'] = $itemId;
-                    $sale->Items()->attach([$itemId=>$aProductInfo]);
+                $aProductInfo['item_id'] = $itemId;
 
-
+                $sale->Items()->attach([$itemId=>$aProductInfo]);
 
             }else{
-                if($saleStatus!=SaleStatus::$ESTIMATE){
-                    if($item_type=="item"){
-                        $item = Item::where("id",$item_id)->first();
-                        $previous_item_quantity = $item->item_quantity;
-                        $item->item_quantity -= $item_quantity;
-                        $item->save();
 
-                        $current_item_quantity = $item->item_quantity;
-                        $quantity_change = $current_item_quantity - $previous_item_quantity;
+                if($saleStatus!=SaleStatus::$ESTIMATE){
+
+                    if($item_type=="item"){
+
+                        $item = Item::where("id",$item_id)->first();
+                        $quantity_change = $this->decreaseItemQuantity($item,$item_quantity);
 
                         if($quantity_change!=0){
-                            $inventoryLog = new InventoryLog();
-                            $inventoryLog->item_id = $item->id;
-                            $inventoryLog->in_out_quantity = $quantity_change;
-                            if($quantity_change>0)
-                                $inventoryLog->type = InventoryTypes::$ADD_INVENTORY;
-                            else
-                                $inventoryLog->type = InventoryTypes::$SUBTRACT_INVENTORY;
-
-                            $inventoryLog->reason = InventoryReasons::$SALEORRETURN." (<a href=". route('sale_receipt',["sale_id"=>$sale_id]) .">EZPOS ".$sale_id."</a>)";
-                            $inventoryLog->user_id = Auth::user()->id;
-                            $inventoryLog->save();
+                            $this->itemChangeInventoryLog($item_id,$sale->id,$quantity_change);
                         }
 
                     }else if($item_type=="item-kit"){
@@ -140,29 +142,12 @@ class Sale extends Model
                                 $quantity_change = $current_item_quantity - $previous_item_quantity;
 
                                 if($quantity_change!=0){
-                                    $inventoryLog = new InventoryLog();
-                                    $inventoryLog->item_id = $item->id;
-                                    $inventoryLog->in_out_quantity = $quantity_change;
-                                    if($quantity_change>0)
-                                        $inventoryLog->type = InventoryTypes::$ADD_INVENTORY;
-                                    else
-                                        $inventoryLog->type = InventoryTypes::$SUBTRACT_INVENTORY;
-
-                                    $inventoryLog->reason = InventoryReasons::$SALEORRETURN." (<a href=". route('sale_receipt',["sale_id"=>$sale_id]) .">EZPOS ".$sale_id."</a>)";
-                                    $inventoryLog->user_id = Auth::user()->id;
-                                    $inventoryLog->save();
+                                    $this->itemChangeInventoryLog($item_id,$sale->id,$quantity_change);
                                 }
-
                             }
-
-
                         }
-
                     }
-
-
                 }
-
                 if($item_type=='item')
                     $sale->Items()->attach([$item_id=>$aProductInfo]);
                 else if($item_type=='item-kit'){
@@ -173,12 +158,15 @@ class Sale extends Model
             }
 
         }
+    }
 
-        if(!is_null($paymentInfos))
+    public function insertSalePaymentInfos($paymentInfos,$sale) {
+
+        $sale_id = $sale->id;
+
         foreach($paymentInfos as $aPaymentInfo){
 
             $paymentLog = new PaymentLog();
-
 
             $paymentLog->payment_type = $aPaymentInfo["payment_type"];
             $paymentLog->paid_amount = $aPaymentInfo["paid_amount"];
@@ -208,25 +196,20 @@ class Sale extends Model
             }
 
             if(strpos($aPaymentInfo["payment_type"],"Loyalty Card")!==false){
-                    $loyaltyTransaction = new LoyaltyTransaction();
-                    $loyaltyTransaction->NewLoyaltyTransaction($saleInfo["customer_id"],$aPaymentInfo["paid_amount"],LotyaltyTransactionType::$DEBIT_BALANCE,$sale_id);
-            }
-
-        }
-
-        if( $saleInfo['customer_id'] != 0){
-            //Check if customer has a loyalty card or not
-            if($this->CustomerHasLoyalty($saleInfo['customer_id'])){
-                $creditAmount = $this->IncreaseCustomerLoyalty($saleInfo["customer_id"],$saleInfo["total"]);
                 $loyaltyTransaction = new LoyaltyTransaction();
-                $loyaltyTransaction->NewLoyaltyTransaction($saleInfo["customer_id"],$creditAmount,LotyaltyTransactionType::$CREDIT_BALANCE,$sale_id);
+                $loyaltyTransaction->NewLoyaltyTransaction($sale->customer_id,$aPaymentInfo["paid_amount"],LotyaltyTransactionType::$DEBIT_BALANCE,$sale_id);
             }
+
         }
+    }
 
+    public function addCustomerLoyaltyBalance($customer_id, $sale_id, $sale_total){
 
-        return $sale_id;
-
-
+        if($this->CustomerHasLoyalty($customer_id)) {
+            $creditAmount = $this->IncreaseCustomerLoyalty($customer_id,$sale_total);
+            $loyaltyTransaction = new LoyaltyTransaction();
+            $loyaltyTransaction->NewLoyaltyTransaction($customer_id,$creditAmount,LotyaltyTransactionType::$CREDIT_BALANCE,$sale_id);
+        }
     }
 
     public function IncreaseCustomerLoyalty($customer_id,$total_amount){
@@ -248,7 +231,6 @@ class Sale extends Model
             return 1;
         return 0;
     }
-
 
     public function CustomerHasLoyalty($customer_id){
         $customer = Customer::where("id",$customer_id)->first();
@@ -417,5 +399,43 @@ class Sale extends Model
     public function DeleteSale($saleId){
         $sale = $this::where("id",$saleId)->first();
         $sale->delete();
+    }
+
+    public function InsertDiscountAsAnItemInItemsTable($keyId, $unitPrice){
+
+        $item = new Item();
+        $item->product_id=$keyId;
+        $item->item_name = "discount";
+        $item->category_id = 0;
+        $item->supplier_id = 0;
+        $item->product_type = 2;
+        $item->cost_price = $unitPrice;
+        $item->selling_price = $unitPrice;
+        $item->save();
+
+        return $item->id;
+    }
+
+    public function decreaseItemQuantity($item,$quantityToLess){
+        $item->item_quantity -= $quantityToLess;
+        $previous_item_quantity = $item->item_quantity;
+        $item->save();
+        $current_item_quantity = $item->item_quantity;
+        $quantity_change = $current_item_quantity - $previous_item_quantity;
+        return $quantity_change;
+    }
+
+    public function itemChangeInventoryLog($item_id,$sale_id, $quantity_change) {
+        $inventoryLog = new InventoryLog();
+        $inventoryLog->item_id = $item_id;
+        $inventoryLog->in_out_quantity = $quantity_change;
+        if($quantity_change>0)
+            $inventoryLog->type = InventoryTypes::$ADD_INVENTORY;
+        else
+            $inventoryLog->type = InventoryTypes::$SUBTRACT_INVENTORY;
+
+        $inventoryLog->reason = InventoryReasons::$SALEORRETURN." (<a href=". route('sale_receipt',["sale_id"=>$sale_id]) .">EZPOS ".$sale_id."</a>)";
+        $inventoryLog->user_id = Auth::user()->id;
+        $inventoryLog->save();
     }
 }

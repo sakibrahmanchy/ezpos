@@ -424,7 +424,6 @@
 
         function calculatePrice(){
 
-
             var sales_type = $("#sale-type").attr("data-selected-type");
             //var subTotal = Number($(".subtotal" ).attr("data-subtotal"));
             var discountItemOnBoard = false,discountItemPrice;
@@ -921,7 +920,6 @@
                     $.notify({
                         icon: '',
                         message: "Gift card number cannot be empty!"
-
                     },{
                         type: 'danger',
                         timer: 4000
