@@ -16,6 +16,8 @@ class RouteTokens
         "new_customer"=>"customer_add_update",
         "customer_list"=>"customer_add_update",
         "customer_edit"=>"customer_add_update",
+        "customer_balance"=>"customer_add_update",
+        "customer_transactions"=>"customer_add_update",
         "customer_delete"=>"customer_delete",
         "customers_delete"=>"customer_delete",
 

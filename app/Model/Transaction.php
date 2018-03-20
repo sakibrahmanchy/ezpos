@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 
 class Transaction extends Model
 {
+    protected $fillable = ['customer_id','amount_paid','sale_amount','payment_transaction_type','payment_log_id'];
+
     public function addNewTransaction($transactionData){
         return Transaction::create($transactionData);
     }

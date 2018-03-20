@@ -63,6 +63,9 @@
                                         @if(UserHasPermission("customer_add_update"))
                                             <li><a href="{{route('customer_edit',['customer_id'=>$customer->id])}}">Edit Customer</a></li>
                                         @endif
+                                        @if(UserHasPermission("customer_add_update"))
+                                            <li><a href="{{route('customer_balance',['customer_id'=>$customer->id])}}">Customer Balance</a></li>
+                                        @endif
                                         @if(UserHasPermission("customer_delete"))
                                             <li><a href="{{route('customer_delete',['customer_id'=>$customer->id])}}">Delete</a></li>
                                         @endif

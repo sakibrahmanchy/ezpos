@@ -50,6 +50,7 @@ Route::group(['middleware' => ['admin']], function () {
     route::get('/customer/new','CustomerController@GetCustomerForm' )->name('new_customer')->middleware('auth');
     route::post('/customer/new','CustomerController@AddCustomer')->name('new_customer')->middleware('auth');
     route::get('customer/list','CustomerController@GetCustomerList')->name('customer_list')->middleware('auth');
+    Route::get('customer/balance/{customer_id}','CustomerController@getCustomerBalance')->name('customer_balance')->middleware('auth');
     route::get('customer/edit/{customer_id}','CustomerController@EditCustomerGet')->name('customer_edit')->middleware('auth');
     route::post('customer/edit/{customer_id}','CustomerController@EditCustomerPost')->name('customer_edit')->middleware('auth');
     route::get('customer/delete/{customer_id}','CustomerController@DeleteCustomerGet')->name('customer_delete')->middleware('auth');
@@ -245,7 +246,7 @@ Route::group(['middleware' => ['admin']], function () {
     route::get('/cash_register/log_details/{register_id}','CashRegisterController@cashRegisterLogDetails')->name('cash_register_log_details')->middleware('auth');
 
     route::post('file/insert','FileController@InsertFile')->name('insert_file')->middleware('auth');
-    route::post('file/item/insert','FileController@InsertItemFile')->name('insert_item_file')->middleware('auth');
+    route::post('file/item/insert','FileController@I    nsertItemFile')->name('insert_item_file')->middleware('auth');
     route::post('file/item/insertEdit','FileController@InsertItemFileEdit')->name('insert_item_file_edit')->middleware('auth');
     route::get('file/delete/{file_id}','FileController@DeleteFile')->name('delete_file')->middleware('auth');
 

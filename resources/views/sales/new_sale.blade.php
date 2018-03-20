@@ -276,6 +276,10 @@
             $item.focus();
 
             $("#customer").select2();
+            $("#customer").on('change',function () {
+                calculatePrice();
+                calculateDue();
+            });
 
             $('.select-payment').on('click mousedown',selectPayment);
 
@@ -929,10 +933,13 @@
                         success: function(response){
 
                             if(response.success){
+
                                 $("#customer").val(response.customer_id);
                                 $("#customer").trigger('change');
 
                                 addLoyaltyCardPayment(loyalty_card_number,response.current_balance,response.balance_deducted);
+                                calculatePrice();
+                                calculateDue();
 
                             }else{
                                 $.notify({
@@ -962,6 +969,15 @@
 
         function SubmitSales(status){
 
+            var customerId = $("#customer").val();
+            var subTotalAmount = $(".subtotal").attr("data-subtotal");
+            var taxAmount = $("#tax").attr("data-tax");
+            var totalAmount = $("#total").attr("data-total");
+            var saleDiscountAmount = $("#saleDiscountAmount").val();
+            var due =  $("#due").attr("data-due");
+            var sale_type = "";
+            var comment = $("#comment").val();
+
             if($(".no-items").length==0) {
                 var confirmText = "";
                 if(status==1)
@@ -969,16 +985,10 @@
                 else
                     confirmText = "Are you sure to suspend sale?";
 
-                if(confirm(confirmText)){
+                if(due>0&&customerId!=0)
+                    confirmText = "Are you sure to leave due for this customer?";
 
-                    var customerId = $("#customer").val();
-                    var subTotalAmount = $(".subtotal").attr("data-subtotal");
-                    var taxAmount = $("#tax").attr("data-tax");
-                    var totalAmount = $("#total").attr("data-total");
-                    var saleDiscountAmount = $("#saleDiscountAmount").val();
-                    var due =  $("#due").attr("data-due");
-                    var sale_type = "";
-                    var comment = $("#comment").val();
+                if(confirm(confirmText)){
 
                     if($('#sale-type').attr("data-selected-type")=="return"){
                         sale_type = "{{ \App\Enumaration\SaleTypes::$RETURN  }}";
@@ -1182,7 +1192,7 @@
 
             var total = Number($("#total").attr("data-total")).toFixed(2);
             var due = Number($("#due").attr("data-due")).toFixed(2);
-
+            var customer_id = $("#customer").val();
 
             var addPaymentBtn = $("#add_payment_button");
             var completeSaleBtn = $("#finish_sale_alternate_button");
@@ -1220,9 +1230,15 @@
                 completeSaleBtn.removeClass('hidden');
 
             }else{
-
-                completeSaleBtn.addClass('hidden');
-                addPaymentBtn.removeClass('hidden');
+                console.log(customer_id);
+                if(customer_id==0)
+                {
+                    completeSaleBtn.addClass('hidden');
+                    addPaymentBtn.removeClass('hidden');
+                }else{
+                    addPaymentBtn.addClass('hidden');
+                    completeSaleBtn.removeClass('hidden');
+                }
 
             }
 

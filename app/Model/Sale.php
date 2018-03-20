@@ -6,6 +6,7 @@ use App\Enumaration\CashRegisterTransactionType;
 use App\Enumaration\InventoryReasons;
 use App\Enumaration\InventoryTypes;
 use App\Enumaration\LotyaltyTransactionType;
+use App\Enumaration\PaymentTransactionTypes;
 use App\Enumaration\SaleStatus;
 use App\Library\SettingsSingleton;
 use App\Model\Item;
@@ -100,7 +101,9 @@ class Sale extends Model
             $item_type = $aProductInfo["item_type"];
 
             if($item_id==0){
+
                 $keyId = "discount-01!XcQZc003ab";
+
                 $item = Item::where("product_id",$keyId)->first();
 
                 if(is_null($item)){
@@ -148,6 +151,7 @@ class Sale extends Model
                         }
                     }
                 }
+
                 if($item_type=='item')
                     $sale->Items()->attach([$item_id=>$aProductInfo]);
                 else if($item_type=='item-kit'){
@@ -172,6 +176,8 @@ class Sale extends Model
             $paymentLog->paid_amount = $aPaymentInfo["paid_amount"];
 
             $paymentLog->save();
+            if($sale->customer_id!=0)
+            $this->AddSaleTransaction($sale->customer_id,$paymentLog->paid_amount,$sale->total_amount, $paymentLog->id);
 
             $sale->paymentLogs()->attach($paymentLog);
 
@@ -201,6 +207,19 @@ class Sale extends Model
             }
 
         }
+    }
+
+    public function AddSaleTransaction( $customer_id,$amount_paid,$sale_amount,$payment_log_id ){
+
+        $transaction = new Transaction();
+        $transactionData = array(
+            "customer_id" => $customer_id,
+            "amount_paid" => $amount_paid,
+            "sale_amount" => $sale_amount,
+            "payment_transaction_type" => PaymentTransactionTypes::$SALE,
+            "payment_log_id" => $payment_log_id
+        );
+        $transaction->addNewTransaction($transactionData);
     }
 
     public function addCustomerLoyaltyBalance($customer_id, $sale_id, $sale_total){

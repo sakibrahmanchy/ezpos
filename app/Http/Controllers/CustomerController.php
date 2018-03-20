@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Model\Customer;
 use App\Model\LoyaltyTransaction;
+use App\Model\Sale;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -230,6 +231,13 @@ class CustomerController extends Controller
                 return response()->json(["success"=>false,"message"=>"Loyalty card is not active."],200);
         }else
             return response()->json(["success"=>false,"message"=>"Invalid loyalty card number."],200);
+    }
+
+    public function getCustomerBalance($customer_id){
+        $customerInfo = Customer::with('transactions','transactionSum')->where("id",$customer_id)->first();
+        $saleInfo = Sale::with('items')->where('customer_id',$customer_id)->take(7)->get();
+        $saleTotalInfo = Sale::where('customer_id',$customer_id)->get();
+        return view('customers.customer_balance',["customer"=>$customerInfo,'sales'=>$saleInfo,"saleTotal"=>$saleTotalInfo]);
     }
 
 }
