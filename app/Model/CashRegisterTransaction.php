@@ -10,57 +10,25 @@ class CashRegisterTransaction extends Model
     protected $fillable = ['cash_register_id','amount','transaction_type','comments'];
 
 
-    /**
-     * @return mixed
-     */
-    public function getCashRegisterId()
-    {
-        return $this->cash_register_id;
-    }
-
-    /**
-     * @param mixed $cash_register_id
-     */
-    public function setCashRegisterId($cash_register_id)
-    {
-        $this->cash_register_id = $cash_register_id;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAmount()
-    {
-        return $this->amount;
-    }
-
-    /**
-     * @param mixed $amount
-     */
-    public function setAmount($amount)
-    {
-        $this->amount = $amount;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getTransactionType()
-    {
-        return $this->transaction_type;
-    }
-
-    /**
-     * @param mixed $transaction_type
-     */
-    public function setTransactionType($transaction_type)
-    {
-        $this->transaction_type = $transaction_type;
-    }
-
-
     public function totalAdditions(){
         return CashRegisterTransaction::where("id",$this->id)->sum('amount');
         //return $this->sum('amount')->where('cash_register_transactions.transaction_type',CashRegisterTransactionType::$ADD_BALANCE);
+    }
+
+    public function newCashRegisterTransaction($saleId, $paidAmount) {
+        $cashRegisterTransaction = new CashRegisterTransaction();
+
+        $cashRegister = new CashRegister();
+        $activeCashRegiser = $cashRegister->getCurrentActiveRegister();
+        $cashRegisterToChange = CashRegister::where("id",$activeCashRegiser->id)->first();
+        $cashRegisterToChange->current_balance += $paidAmount;
+
+        if($cashRegisterToChange->save()){
+            $cashRegisterTransaction->cash_register_id = $activeCashRegiser->id;
+            $cashRegisterTransaction->amount = $paidAmount;
+            $cashRegisterTransaction->transaction_type = CashRegisterTransactionType::$CASH_SALES;
+            $cashRegister->comments = "Cash Sales for sale: ".$saleId;
+            $cashRegisterTransaction->save();
+        }
     }
 }

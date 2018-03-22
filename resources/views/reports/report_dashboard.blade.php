@@ -68,9 +68,9 @@
 
                             <a href="#" class="list-group-item" id="suspended_sales"><i class="icon ti-download"></i>	Suspended Sales</a>
 
-                            {{--<a href="#" class="list-group-item" id="tags"><i class="icon ti-layout-grid3"></i>	Tags</a>
+                            <a href="#" class="list-group-item" id="transactions"><i class="icon ti-layout-grid3"></i>	Transactions</a>
 
-                            <a href="#" class="list-group-item" id="taxes"><i class="icon ti-agenda"></i>	Taxes</a>--}}
+                            {{-- <a href="#" class="list-group-item" id="taxes"><i class="icon ti-agenda"></i>	Taxes</a>--}}
 
 
                             {{--<a href="#" class="list-group-item" id="tiers"><i class="icon ti-stats-up"></i>	Tiers</a>
@@ -177,6 +177,10 @@
 
                         <div class="list-group closeout hidden">
                             <a href="{{ route('report_close_out_summary') }}" class="list-group-item"><i class="icon ti-receipt"></i> Summary Reports</a>
+                        </div>
+
+                        <div class="list-group transactions hidden">
+                            <a href="{{ route('report_transaction_details') }}" class="list-group-item"><i class="icon ti-receipt"></i> Detailed Reports</a>
                         </div>
 
                     </div>

@@ -63,23 +63,19 @@
                                         @if(UserHasPermission("customer_add_update"))
                                             <li><a href="{{route('customer_edit',['customer_id'=>$customer->id])}}">Edit Customer</a></li>
                                         @endif
-                                        @if(UserHasPermission("customer_add_update"))
-                                            <li><a href="{{route('customer_balance',['customer_id'=>$customer->id])}}">Customer Balance</a></li>
-                                        @endif
                                         @if(UserHasPermission("customer_delete"))
                                             <li><a href="{{route('customer_delete',['customer_id'=>$customer->id])}}">Delete</a></li>
                                         @endif
                                     </ul>
                                 </div></td>
                             <td>{{$customer->id}}</td>
-                            <td>{{$customer->first_name}} {{$customer->last_name}}</td>
+                            <td><a href="{{ route('customer_profile',["customer_id"=>$customer->id]) }}">{{$customer->first_name}} {{$customer->last_name}}</a></td>
                             <td>{{$customer->email}}</td>
                             <td>{{$customer->phone}}</td>
                             <td> @if($customer->image_token!=null)
                                     <img src="{{asset('img/customers/userpictures/'.$customer->image_token)}}" height="40" width="40" class="img-polaroid" id="image_empty" alt="" />
                                 @else
-                                  <img src="{{asset('img/faces/face-0.jpg')}}" class="img-polaroid"  height="40" width="40" id="image_empty" alt="" />
-
+                                    <img src="{{asset('img/faces/face-0.jpg')}}" class="img-polaroid"  height="40" width="40" id="image_empty" alt="" />
                                 @endif</td>
                         </tr>
                     @endforeach

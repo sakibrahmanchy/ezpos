@@ -170,35 +170,13 @@ class Sale extends Model
 
         foreach($paymentInfos as $aPaymentInfo){
 
-            $paymentLog = new PaymentLog();
-
-            $paymentLog->payment_type = $aPaymentInfo["payment_type"];
-            $paymentLog->paid_amount = $aPaymentInfo["paid_amount"];
-
-            $paymentLog->save();
-            if($sale->customer_id!=0)
-            $this->AddSaleTransaction($sale->customer_id,$paymentLog->paid_amount,$sale->total_amount, $paymentLog->id);
-
-            $sale->paymentLogs()->attach($paymentLog);
-
+            $paymentLogObject = new \App\Model\PaymentLog();
+            $paymentLogObject->addNewPaymentLog( $aPaymentInfo["payment_type"], $aPaymentInfo["paid_amount"],$sale,$sale->customer_id);
 
             if($aPaymentInfo["payment_type"]=="Cash"){
 
                 $cashRegisterTransaction = new CashRegisterTransaction();
-                $cashRegister = new CashRegister();
-
-                $activeCashRegiser = $cashRegister->getCurrentActiveRegister();
-                $cashRegisterToChange = CashRegister::where("id",$activeCashRegiser->id)->first();
-                $cashRegisterToChange->current_balance += $aPaymentInfo["paid_amount"];
-
-                if($cashRegisterToChange->save()){
-                    $cashRegisterTransaction->cash_register_id = $activeCashRegiser->id;
-                    $cashRegisterTransaction->amount = $aPaymentInfo["paid_amount"];
-                    $cashRegisterTransaction->transaction_type = CashRegisterTransactionType::$CASH_SALES;
-                    $cashRegister->comments = "Cash Sales for sale: ".$sale_id;
-                    $cashRegisterTransaction->save();
-                }
-
+                $cashRegisterTransaction->newCashRegisterTransaction($sale_id,$aPaymentInfo["paid_amount"]);
             }
 
             if(strpos($aPaymentInfo["payment_type"],"Loyalty Card")!==false){
@@ -209,55 +187,17 @@ class Sale extends Model
         }
     }
 
-    public function AddSaleTransaction( $customer_id,$amount_paid,$sale_amount,$payment_log_id ){
-
-        $transaction = new Transaction();
-        $transactionData = array(
-            "customer_id" => $customer_id,
-            "amount_paid" => $amount_paid,
-            "sale_amount" => $sale_amount,
-            "payment_transaction_type" => PaymentTransactionTypes::$SALE,
-            "payment_log_id" => $payment_log_id
-        );
-        $transaction->addNewTransaction($transactionData);
-    }
 
     public function addCustomerLoyaltyBalance($customer_id, $sale_id, $sale_total){
-
-        if($this->CustomerHasLoyalty($customer_id)) {
-            $creditAmount = $this->IncreaseCustomerLoyalty($customer_id,$sale_total);
+        $customerLoyalty = new LoyaltyTransaction();
+        if($customerLoyalty->CustomerHasLoyalty($customer_id)) {
+            $creditAmount = $customerLoyalty->IncreaseCustomerLoyalty($customer_id,$sale_total);
             $loyaltyTransaction = new LoyaltyTransaction();
             $loyaltyTransaction->NewLoyaltyTransaction($customer_id,$creditAmount,LotyaltyTransactionType::$CREDIT_BALANCE,$sale_id);
         }
     }
 
-    public function IncreaseCustomerLoyalty($customer_id,$total_amount){
 
-        $settings = SettingsSingleton::get();
-        $loyalty_incentive_percentage = $settings["customer_loyalty_percentage"];
-        $creditLoyalty = ($total_amount * $loyalty_incentive_percentage)/ 100;
-        $customer = Customer::where("id",$customer_id)->first();
-        $customer->balance+=$creditLoyalty;
-        if($customer->save())
-            return $creditLoyalty;
-        return 0;
-    }
-
-    public function DeductCustomerLoyalty($customer_id,$amountToDeduct){
-        $customer = Customer::where("id",$customer_id)->first();
-        $customer->balance-=$amountToDeduct;
-        if($customer->save())
-            return 1;
-        return 0;
-    }
-
-    public function CustomerHasLoyalty($customer_id){
-        $customer = Customer::where("id",$customer_id)->first();
-        if(!is_null($customer->loyalty_card_number)){
-            return true;
-        }
-        return false;
-    }
 
     public function editSale($saleInfo, $productInfos,$paymentInfos , $saleStatus, $sale_id){
 

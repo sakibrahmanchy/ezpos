@@ -50,7 +50,9 @@ Route::group(['middleware' => ['admin']], function () {
     route::get('/customer/new','CustomerController@GetCustomerForm' )->name('new_customer')->middleware('auth');
     route::post('/customer/new','CustomerController@AddCustomer')->name('new_customer')->middleware('auth');
     route::get('customer/list','CustomerController@GetCustomerList')->name('customer_list')->middleware('auth');
-    Route::get('customer/balance/{customer_id}','CustomerController@getCustomerBalance')->name('customer_balance')->middleware('auth');
+    Route::get('customer/profile/{customer_id}','CustomerController@getCustomerProfile')->name('customer_profile')->middleware('auth');
+    Route::get('customer/balance/add','CustomerController@customerAddBalanceGet')->name('customer_balance_add')->middleware('auth');
+    Route::post('customer/balance/add','CustomerController@customerAddBalancePost')->name('customer_balance_add')->middleware('auth');
     route::get('customer/edit/{customer_id}','CustomerController@EditCustomerGet')->name('customer_edit')->middleware('auth');
     route::post('customer/edit/{customer_id}','CustomerController@EditCustomerPost')->name('customer_edit')->middleware('auth');
     route::get('customer/delete/{customer_id}','CustomerController@DeleteCustomerGet')->name('customer_delete')->middleware('auth');
@@ -188,6 +190,9 @@ Route::group(['middleware' => ['admin']], function () {
 
     route::get('/report/cash_register_logs/details','Reports\CashRegisterController@detailedReports')->name('cash_register_log_report_details');
     route::post('/report/cash_register_logs/details/ajax','Reports\CashRegisterController@detailedReportsAjax')->name('cash_register_log_report_details_ajax');
+
+    route::get('/report/transaction/details','Reports\TransactionReportController@detailedReports')->name('report_transaction_details');
+    route::post('/report/transaction/details/ajax','Reports\TransactionReportController@detailedReportsAjax')->name('report_transaction_details_ajax');
 
     route::get('/employee/new','EmployeeController@GetEmployeeForm' )->name('new_employee')->middleware('auth');
     route::post('/employee/new','EmployeeController@AddEmployee')->name('new_employee')->middleware('auth');

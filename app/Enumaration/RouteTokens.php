@@ -16,11 +16,11 @@ class RouteTokens
         "new_customer"=>"customer_add_update",
         "customer_list"=>"customer_add_update",
         "customer_edit"=>"customer_add_update",
-        "customer_balance"=>"customer_add_update",
+        "customer_profile"=>"customer_add_update",
+        "customer_balance_add"=>"customer_add_update",
         "customer_transactions"=>"customer_add_update",
         "customer_delete"=>"customer_delete",
         "customers_delete"=>"customer_delete",
-
 
         "new_item"=>"item_add_update",
         "item_list"=>"item_search",
@@ -141,6 +141,9 @@ class RouteTokens
 
         "report_suspended_detail"=>"report_suspended_sales",
         "report_suspended_detail_ajax"=>"report_suspended_sales",
+
+        "report_transaction_details" => "report_suspended_sales",
+        "report_transaction_details_ajax" => "report_suspended_sales",
 
         "new_employee"=>"employees_add_update",
         "employee_list" => "employees_add_update",

@@ -64,7 +64,7 @@
                                                 </li>
                                                 <li>
                                                     @if($customer->image_token!=null)
-                                                        <div id="avatar"><img src="{{asset('img/customers/userpictures/'.$customer->image_token)}}" class="img-polaroid" id="image_empty" alt=""></div>
+                                                        <div id="avatar"><img width="300px" height="300px" src="{{asset('img/customers/userpictures/'.$customer->image_token)}}" class="img-polaroid" id="image_empty" alt=""></div>
                                                     @else
                                                         <div id="avatar"><img src="{{asset('img/avatar.png')}}" class="img-polaroid" id="image_empty" alt=""></div>
 
@@ -150,7 +150,7 @@
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label for="loyalty_card_number" class="col-sm-3 col-md-3 col-lg-2 control-label">Loyalty Number:</label>						<div class="col-sm-9 col-md-9 col-lg-10">
-                                                <input type="text" name="loyalty_card_number" value="{{ $customer->loyalty_card_number }}" id="loyalty_card_number" class="form-control">
+                                                <input disabled type="text" name="loyalty_card_number" value="{{ $customer->loyalty_card_number }}" id="loyalty_card_number" class="form-control">
                                             </div>
                                         </div>
                                         <br>

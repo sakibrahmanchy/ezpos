@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Model\Customer;
 use App\Model\LoyaltyTransaction;
+use App\Model\PaymentLog;
 use App\Model\Sale;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -105,7 +106,6 @@ class CustomerController extends Controller
         /* var_dump($customer);*/
         $rules = [
             'first_name' => 'required',
-            'loyalty_card_number'=>'nullable|unique:customers'
         ];
         $allInput = $request->all();
 
@@ -233,11 +233,45 @@ class CustomerController extends Controller
             return response()->json(["success"=>false,"message"=>"Invalid loyalty card number."],200);
     }
 
-    public function getCustomerBalance($customer_id){
+    public function getCustomerProfile($customer_id){
         $customerInfo = Customer::with('transactions','transactionSum')->where("id",$customer_id)->first();
+        $transactionHistory = Customer::with('transactions','transactionSum')
+            ->where('id',$customer_id)->take(2)->get();
         $saleInfo = Sale::with('items')->where('customer_id',$customer_id)->take(7)->get();
         $saleTotalInfo = Sale::where('customer_id',$customer_id)->get();
-        return view('customers.customer_balance',["customer"=>$customerInfo,'sales'=>$saleInfo,"saleTotal"=>$saleTotalInfo]);
+        return view('customers.customer_profile',["customer"=>$customerInfo,
+                                                  'sales'=>$saleInfo,
+                                                  "saleTotal"=>$saleTotalInfo,
+                                                  "transactionHistory"=>$transactionHistory]);
     }
 
+
+    public function customerAddBalanceGet(Request $request) {
+
+        if(!isset($request->customer_id))
+            $customer_id = 0;
+        else
+            $customer_id = $request->customer_id;
+
+        $customers = Customer::all();
+        if($customer_id!=0){
+            $customerInfo = Customer::with('transactions','transactionSum')->where("id",$customer_id)->first();
+            $saleTotalInfo = Sale::where('customer_id',$customer_id)->get();
+            return view('customers.customer_add_balance',
+                ["customer_id"=>$customer_id,"customers"=>$customers,"customer"=>$customerInfo,"saleTotal"=>$saleTotalInfo]);
+        }
+        return view('customers.customer_add_balance',["customer_id"=>$customer_id,"customers"=>$customers]);
+
+    }
+
+    public function customerAddBalancePost(Request $request) {
+        $this->validate($request,[
+            "customer_id" => "required",
+            "payment_method" => "required",
+            "amount_to_add" => "required"
+        ]);
+        $paymentLog = new PaymentLog();
+        $paymentLog->addNewPaymentLog( $request->payment_method, $request->amount_to_add,null,$request->customer_id);
+        return redirect()->route('customer_balance_add',["customer_id"=>$request->customer_id]);
+    }
 }

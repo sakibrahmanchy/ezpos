@@ -371,6 +371,6 @@ else
     });
 
 </script>
-@yield('additionalJS');
+@yield('additionalJS')
 </body>
 </html>
