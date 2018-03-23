@@ -13,8 +13,16 @@ class CreateTransactionsTable extends Migration
      */
     public function up()
     {
-        Schema::table('transactions', function (Blueprint $table) {
-            $table->float('sale_amount')->nullable()->change();
+        Schema::create('transactions', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('customer_id');
+            $table->integer('sale_id')->nullable();
+            $table->double('amount_paid');
+            $table->double('sale_amount');
+            $table->tinyInteger('payment_transaction_type');
+            $table->integer('payment_log_id');
+            $table->timestamps();
+
         });
     }
 
@@ -25,8 +33,6 @@ class CreateTransactionsTable extends Migration
      */
     public function down()
     {
-        Schema::table('transactions',function (Blueprint $table){
-
-        });
+        Schema::dropIfExists('transactions');
     }
 }
