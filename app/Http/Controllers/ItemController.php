@@ -182,7 +182,7 @@ class ItemController extends Controller
                 ->where('items.product_type','<>',2)
                 ->first();
 
-            if(!is_null($items)){
+            if(!is_null($items)) {
 
                 $itemsWithItemKits = array($items);
                 $current_date = new \DateTime('today');
@@ -267,12 +267,8 @@ class ItemController extends Controller
 
                     }
                 }
-
                 echo json_encode($itemsWithItemKits);
             }
-
-
-
 
         }else{
 
@@ -308,8 +304,6 @@ class ItemController extends Controller
             $current_date = new \DateTime('today');
             // Check price rules on specific items
             foreach($itemsWithItemKits as $anItem) {
-
-
                 if(isset($anItem->item_id)){
                     $anItem->type = "list";
                     if ($anItem->active){
@@ -382,8 +376,6 @@ class ItemController extends Controller
                         }
 
                     }
-
-
                 }
             }
 

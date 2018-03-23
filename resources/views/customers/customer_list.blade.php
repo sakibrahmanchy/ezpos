@@ -45,6 +45,7 @@
                     <tr >
                         <th></th>
                         <th>Actions</th>
+                        <th>Account No.</th>
                         <th>Person Id</th>
                         <th>Name</th>
                         <th>Email</th>
@@ -68,6 +69,7 @@
                                         @endif
                                     </ul>
                                 </div></td>
+                            <td>{{ $customer->account_number }}</td>
                             <td>{{$customer->id}}</td>
                             <td><a href="{{ route('customer_profile',["customer_id"=>$customer->id]) }}">{{$customer->first_name}} {{$customer->last_name}}</a></td>
                             <td>{{$customer->email}}</td>

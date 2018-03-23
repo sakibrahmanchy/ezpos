@@ -26,7 +26,7 @@ class CreateTransactionsTable extends Migration
     public function down()
     {
         Schema::table('transactions',function (Blueprint $table){
-            $table->double('sale_amount')->change();
+
         });
     }
 }
