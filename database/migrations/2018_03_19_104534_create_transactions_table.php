@@ -14,7 +14,7 @@ class CreateTransactionsTable extends Migration
     public function up()
     {
         Schema::table('transactions', function (Blueprint $table) {
-            $table->double('sale_amount')->nullable()->change();
+            $table->float('sale_amount')->nullable()->change();
         });
     }
 
