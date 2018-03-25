@@ -38,7 +38,9 @@ class EmployeeController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required',
             'repeat_password' => 'required|same:password',
-            'username' => 'required'
+            'username' => 'required',
+			'pin' => 'required|numeric'
+
         ];
         $allInput = $request->all();
 
@@ -56,6 +58,9 @@ class EmployeeController extends Controller
         $userCredentials['email'] = $request->email;
         $userCredentials['password'] = bcrypt($request->password);
         $userCredentials['user_type'] = UserTypes::$EMPLOYEE;
+		$userCredentials['pin'] = $request->pin;
+        $userCredentials['api_token'] = "";
+        $userCredentials['ip'] = "";
 
         $userId = User::create($userCredentials)->id;
 
@@ -152,6 +157,7 @@ class EmployeeController extends Controller
         $user->email = $request->email;
         if ($request->password) $user->password = bcrypt($request->password);
         $user->user_type = UserTypes::$EMPLOYEE;
+		if ($request->pin) $user->pin = $request->pin;
 
         $user->save();
 

@@ -169,6 +169,15 @@
                             </div>
 
                             <div class="form-group">
+                                <label for="password" class="col-sm-3 col-md-3 col-lg-2 control-label">User pin(4 digit max.):</label>
+                                <div class="col-sm-9 col-md-9 col-lg-10">
+                                    <input type="password" name="pin" pattern="[0-9]{4}" maxlength="4" class="form-control">
+                                    <span class="text-danger">{{ $errors->first('pin') }}</span>
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
                                 <label for="password" class="col-sm-3 col-md-3 col-lg-2 control-label">Password:</label>
                                 <div class="col-sm-9 col-md-9 col-lg-10">
                                     <input type="password" name="password" value="" id="password" class="form-control" autocomplete="off" >
