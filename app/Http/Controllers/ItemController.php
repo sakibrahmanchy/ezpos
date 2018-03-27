@@ -412,35 +412,38 @@ class ItemController extends Controller
                 $data = Excel::load($path, function($reader) {
                 })->get();
 
+
                 if(!empty($data) && $data->count()){
-                    /* dd($data);*/
+
                     $insert = array();
                     foreach ($data as $key => $value) {
-
-                        $supplier_id = -1; $category_id=0;$manufacturer_id=-1;
+                        
+                        $supplier_id = -1; $category_id=0;$manufacturer_id=-1;$upc = "";
 
                         if(isset($value->category)){
                             $category_id = $value->category;
-
                         }
+
+                        if(isset($value->upc))
+                            $upc = $value->upc;
 
                         if($value->name!=null
                             &&$value->cost!=null){
+                            if($value->sale)
+                                $sell = $value->sell;
+                            else $sell = $value->cost;
 
                             $data = [
-                                'product_id' => $value->product_id,
+                                'product_id' => $value->product_id, 'isbn' => $upc,
                                 'item_name'=> $value->name, 'category_id' => $category_id,
                                 'supplier_id' => $supplier_id,'manufacturer_id' => $manufacturer_id,
                                 'item_size'=>$value->size, "item_quantity"=>$value->quantity,
-                                "cost_price"=>$value->cost, "selling_price"=>$value->cost,
+                                "cost_price"=>$value->cost, "selling_price"=>$sell,
 
                             ];
+
                             array_push($insert, $data);
                         }
-
-
-
-                        // echo $value->cost;
                     }
 
                     if(!empty($insert)){
