@@ -193,7 +193,6 @@ class PermissionNameTableSeeder extends Seeder
             ),
             "Sales" => array(
                 "permissions"=>array(
-
                     array(
                         "permission_name"=>"Add, Update",
                         "permission_token"=>"sale_add_update"
@@ -213,6 +212,10 @@ class PermissionNameTableSeeder extends Seeder
                     array(
                         "permission_name"=>"Search Sale",
                         "permission_token"=>"sale_search",
+                    ),
+                    array(
+                        "permission_name"=>"Edit sale cost price",
+                        "permission_token"=>"edit_sale_cost_price",
                     ),
                     array(
                         "permission_name"=>"Sale Reciept",
@@ -311,31 +314,6 @@ class PermissionNameTableSeeder extends Seeder
 
                     }
             }
-
-//            $categoryPermissionList = PermissionName::where('permission_category_id','=',$permissionCategoryId)->get();
-//
-//            $isCategoryPermissionListEmpty = $categoryPermissionList->isEmpty();
-//
-//            $permissionName = new PermissionName();
-
-
-
-//            if($isCategoryPermissionListEmpty){
-//
-//                foreach($definitions as $permissions){
-//                    if(is_array($permissions))
-//                    foreach($permissions as $aPermission){
-//                        $data['permission_name'] = $aPermission['permission_name'];
-//                        $data['permission_token'] = $aPermission['permission_token'];
-//                        $data['permission_category_id'] = $permissionCategoryId;
-//
-//                        $permissionName->AddPermission($data);
-//                    }
-//                }
-//            }else{
-//
-//            }
-//        }
         }
 
 

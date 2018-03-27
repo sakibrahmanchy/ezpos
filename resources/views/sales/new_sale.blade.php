@@ -612,7 +612,11 @@
                     ' <td class="col-sm-1 col-md-1" style="text-align: center">' +
                     ' <input type="number" min = "0" class="form-control quantity" id="product-' + item.item_id + '"  onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" onchange = "addItemPriceToRegister(' + item.item_id + ')"  value="1">' +
                     '</td>' +
-                    '<td class="col-sm-1 col-md-1 text-center" ><strong data-unit-price = "'+item.selling_price +'" id="unit-price-' + item.item_id + '">$' + item.selling_price + '</strong></td>' +
+                     @if(UserHasPermission("edit_sale_cost_price"))
+                         '<td class="col-sm-1 col-md-1 text-center"><a href="javascript:void(0)"><strong data-unit-price = "'+item.selling_price +'" id="unit-price-' + item.item_id + '">$' + item.selling_price + '</strong></a></td>' +
+                     @else
+                         '<td class="col-sm-1 col-md-1 text-center" ><strong data-unit-price = "'+item.selling_price +'" id="unit-price-' + item.item_id + '">$' + item.selling_price + '</strong></td>' +
+                     @endif
                     '<td><input  class="form-control discount-amount" type="number" id="discount-'+ item.item_id+'" onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" onchange = "addItemPriceToRegister(' + item.item_id + ')"  value="0"></td>' +
                     '<td class="col-sm-1 col-md-1 text-center" ><strong data-total-price = "" id ="total-price-' + item.item_id + '" class="total-price"></strong></td>' +
                     '<td class="col-sm-1 col-md-1">' +
