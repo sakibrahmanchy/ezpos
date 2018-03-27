@@ -229,7 +229,28 @@
         </div>
     </div>
 
-    <!-- Add Category Modal -->
+    <div id="edit_item_price_modal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Edit Price</h4>
+                </div>
+                <div class="modal-body">
+                    <input type = "text" class="form-control" name = "edit_item_price" id = "edit_item_price" placeholder="New Price"><br>
+                    <input type ="hidden" name="edit_item_id" id="edit_item_id" />
+                    <button onclick ="setNewItemPrice()" type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- Look up receipt Modal -->
     <div id="look-up-receipt" class="modal fade" role="dialog">
         <div class="modal-dialog">
 
@@ -613,7 +634,7 @@
                     ' <input type="number" min = "0" class="form-control quantity" id="product-' + item.item_id + '"  onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" onchange = "addItemPriceToRegister(' + item.item_id + ')"  value="1">' +
                     '</td>' +
                      @if(UserHasPermission("edit_sale_cost_price"))
-                         '<td class="col-sm-1 col-md-1 text-center"><a href="javascript:void(0)"><strong data-unit-price = "'+item.selling_price +'" id="unit-price-' + item.item_id + '">$' + item.selling_price + '</strong></a></td>' +
+                         '<td class="col-sm-1 col-md-1 text-center"><a  href="javascript:void(0)" onclick="editItemSalePrice('+item.item_id+')" data-unit-price = "'+item.selling_price +'" id="unit-price-' + item.item_id + '">$'+item.selling_price+'</a></td>' +
                      @else
                          '<td class="col-sm-1 col-md-1 text-center" ><strong data-unit-price = "'+item.selling_price +'" id="unit-price-' + item.item_id + '">$' + item.selling_price + '</strong></td>' +
                      @endif
@@ -666,11 +687,26 @@
             $("#item-names").val("");
             $("#item-names").autocomplete("close");
         }
+
+        function editItemSalePrice(id) {
+           //alert($("#unit-price-"+id).attr("data-unit-price"));
+            $("#edit_item_price").val($("#unit-price-"+id).attr("data-unit-price"));
+            $("#edit_item_id").val(id);
+            $("#edit_item_price_modal").modal();
+        }
+
+        function setNewItemPrice(){
+            var id =   $("#edit_item_id").val();
+            $("#unit-price-"+id).attr("data-unit-price",$("#edit_item_price").val());
+            $("#unit-price-"+id).html("$"+$("#edit_item_price").val());
+            addItemPriceToRegister(id);
+        }
+
         function addItemToCart(item){
             //var itemInfo = $(item).data('item-total-info');
             console.log(item);
             var index = $('.item-suggestion').index(item);
-            if(item.item_quantity<=0&&item.product_type!=1){
+            if(itemTotalInfo[index].item_quantity<=0&&itemTotalInfo[index].product_type!=1){
                 alert("Sorry, product is out of stock.");
             }
             else if(document.getElementById("product-div-"+item.getAttribute("data-id")) == null) {
@@ -699,9 +735,12 @@
                     '</div></td>' +
                     ' <td class="col-sm-1 col-md-1" style="text-align: center">' +
                     ' <input type="number" min = "0" class="form-control quantity" id="product-' + item.getAttribute('data-id') + '"  onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" onchange = "addItemPriceToRegister(' + item.getAttribute('data-id') + ')"  value="1">' +
-                    '</td>' +
-                    '<td class="col-sm-1 col-md-1 text-center" ><strong data-unit-price = "'+item.getAttribute('data-sale-price') +'" id="unit-price-' + item.getAttribute('data-id') + '">$' + item.getAttribute('data-sale-price')
-                    + '</strong></td>' +
+                    '</td>'+
+                    @if(UserHasPermission("edit_sale_cost_price"))
+                        '<td class="col-sm-1 col-md-1 text-center"><a  href="javascript:void(0)" onclick="editItemSalePrice('+item.getAttribute("data-id")+')" data-unit-price = "'+item.getAttribute('data-sale-price') +'" id="unit-price-' + item.getAttribute('data-id') + '">$'+item.getAttribute('data-sale-price')+'</a></td>' +
+                    @else
+                        '<td class="col-sm-1 col-md-1 text-center" ><strong data-unit-price = "'+item.getAttribute('data-sale-price') +'" id="unit-price-' +  item.getAttribute('data-id') + '">$' + item.getAttribute('data-sale-price') + '</strong></td>' +
+                    @endif
                     '<td><input  class="form-control discount-amount" type="number" id="discount-'+ item.getAttribute("data-id")+'" onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" onchange = "addItemPriceToRegister(' + item.getAttribute('data-id') + ')"  value="0"></td>' +
                     '<td class="col-sm-1 col-md-1 text-center" ><strong data-total-price = "" id ="total-price-' + item.getAttribute('data-id') + '" class="total-price"></strong></td>' +
                     '<td class="col-sm-1 col-md-1">' +

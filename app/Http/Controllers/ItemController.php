@@ -37,6 +37,7 @@ class ItemController extends Controller
     {
 
         $this->validate($request, [
+            'isbn' => 'unique:items',
             'item_name' => 'required',
             'item_category' => 'required',
             'item_supplier' => 'required',
@@ -57,8 +58,6 @@ class ItemController extends Controller
 
     public function GetItemList()
     {
-
-
         $allItems = DB::table('items')
             ->leftJoin('categories', 'items.category_id', '=', 'categories.id')->leftJoin('suppliers', 'items.supplier_id', '=', 'suppliers.id')
             ->leftJoin('manufacturers', 'items.manufacturer_id', '=', 'manufacturers.id')
@@ -141,6 +140,7 @@ class ItemController extends Controller
 
         /* var_dump($item);*/
         $this->validate($request, [
+            'isbn' => 'unique:items',
             'item_name' => 'required',
             'item_category' => 'required',
             'item_supplier' => 'required',
@@ -413,11 +413,11 @@ class ItemController extends Controller
                 })->get();
 
 
-                if(!empty($data) && $data->count()){
+                if(!empty($data) && $data->count()) {
 
                     $insert = array();
                     foreach ($data as $key => $value) {
-                        
+
                         $supplier_id = -1; $category_id=0;$manufacturer_id=-1;$upc = "";
 
                         if(isset($value->category)){

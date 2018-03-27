@@ -23,6 +23,7 @@ Route::get('/error-401',function(){
     return view('errors.401');
 })->name('error-401');
 
+Route::get('/pp','EmployeeController@AddNewUserPermissions')->name('error-401');
 
 Route::get('/login/pin', ['as' => 'pin_log_in', 'uses' => 'UserController@pinLogin']);
 Route::post('/login/pin', ['as' => 'pin_log_in_post', 'uses' => 'UserController@pinLoginPost']);

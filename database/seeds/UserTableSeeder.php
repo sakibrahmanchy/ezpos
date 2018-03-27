@@ -33,6 +33,18 @@ class UserTableSeeder extends Seeder
             }
 
             UserPermission::CreateUserPermissions($permissionList, $employee->id);
+        }else{
+            $employee = User::where("email","algrims@gmail.com")->first();
+            $employeePermissions = UserPermission::where("user_id",$employee->id)
+                ->pluck('permission_id')->toArray();
+
+            $permissions =  \Illuminate\Support\Facades\DB::table('permission_names')->pluck('id')->toArray();
+            //$permissionList= array();
+            $newPermissionsToAdd = array_diff($permissions,$employeePermissions);
+
+            if(!is_null($newPermissionsToAdd))
+                UserPermission::AddNewPermissions($newPermissionsToAdd,$employee->id);
+
         }
 
     }

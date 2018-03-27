@@ -286,8 +286,6 @@ class PermissionNameTableSeeder extends Seeder
                 $data['permission_category_description'] = $definitions['description'];
                 $permissionCategoryToInsert = new PermissionCategory();
                 $permissionCategoryId = $permissionCategoryToInsert->AddPermissionCategory($data);
-
-
             }else{
                 $permissionCategoryId = $permissionCategory->id;
             }
@@ -297,7 +295,7 @@ class PermissionNameTableSeeder extends Seeder
                     foreach($permissions as $aPermission){
 
                         $permissionName = PermissionName::where("permission_token",$aPermission["permission_token"])->first();
-                        if(!is_null($permissionName)){
+                            if(!is_null($permissionName)){
                             $data['permission_name'] = $aPermission['permission_name'];
                             $data['permission_token'] = $aPermission['permission_token'];
                             $data['permission_category_id'] = $permissionCategoryId;
