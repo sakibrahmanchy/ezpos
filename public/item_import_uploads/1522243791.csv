@@ -1,0 +1,154 @@
+UPC,Name,Cost,Sell,category,quantity
+20003100000,Provolone Cheese,1.56,4.68,5,100
+20003100000,Feta Cheese,0,11.37,5,100
+20000100000,Beaufort,11.4,19.45,5,100
+20000400000,Brie De Meaux Tradition,14.99,19.49,5,100
+20000500000,Brie De Nangis 45%,12.91,17.2,5,100
+20000600000,Blue du Vercors AOP,10.3,17.58,5,100
+20000700000,Chevre Buche Blanche,10.27,18.1,5,100
+20000800000,Gouda Mild Amsterdamer,6.24,11.01,5,100
+20000900000,Cambonzola,11.06,16.03,5,100
+20001000000,Camembert,10.38,12.9,5,100
+20001300000,Comte Vieux,9.19,14.05,5,100
+20001400000,Camember,1.95,5,5,100
+20001500000,Cantal  Jeune,7.05,13.95,5,100
+20001600000,Cheddar Smocked Charwood,7.95,19.72,5,100
+20001700000,Crottin Chavignol Fermier,1.01,3.85,5,100
+20001800000,Bergamino Di bufala,9.15,16.5,5,100
+20001900000,Emmental Francais Grand C,8.84,12.92,5,100
+20002000000,Gruyere 45%,10.03,15.36,5,100
+20002100000,Saint Paulin,5.64,6.5,5,100
+20002200000,Parmesan Grana Padano,11.5,21.5,5,100
+20002300000,Petit Vacherin Pasterise,6.86,13.95,5,100
+20002400000,Edel de Cleron 500 grs,11.72,19.99,5,100
+20002500000,Morbier Au Lait Cru,9.27,9.24,5,100
+20002600000,Munster Au Lait Cru,0,6.06,5,100
+20002700000,Parmiggiano Reggiano,14.03,22.87,5,100
+20002800000,Cheddar Shropshire / Bleu,8.33,20.01,5,100
+20002900000,Pont L'eveque Fermier,0,8.67,5,100
+20003000000,Mimolette Campina,0,6.98,5,100
+20003200000,Gouda Edam 40% Holland,2.06,7.95,5,100
+20003300000,Reblochon Fermier 45%,8.29,15.72,5,100
+20003400000,DORBLU German Blue,6.55,16.5,5,100
+20003490000,Wht Stilton Mango,8.11,19.47,5,100
+20003500000,Roquefort Papillon Noir,12.78,15.95,5,100
+20003600000,Tomme a L'Ail,8.36,18.5,5,100
+20003700000,Farmers Five Cheddar,9.56,13.95,5,100
+20003800000,Stilton,14.77,21.05,5,100
+20003900000,Saint Nectaire Fermier,0,9.82,5,100
+20004000000,Saint Marcellin Fermier,3.29,5.55,5,100
+20004100000,Edel de Cleron 350 grs,10.09,17.21,5,100
+20004200000,Tomme  Noir Pyrenees,7.04,15.89,5,100
+20004400000,Chevre Buche  Frais,0,18.98,5,100
+20004700000,Chevre Tomme Capitoul,11.55,18.64,5,100
+20029600000,Chevre Crottins Frais,2.05,3.85,5,100
+20029800000,Chevre Fromage Cendree,10.6,15.98,5,100
+20029900000,Chevre Frais Truffee,20,30.03,5,100
+20030000000,Chevre Buchette Thym,5.88,11.75,5,100
+20030200000,Fromages Des Clarines250g,6.54,11.16,5,100
+20030300000,Cheddar English Farmhouse,0,17.98,5,100
+20030400000,Cheddar Leicestershire,14.32,21.4,5,100
+20030600000,Gouda Aged / Old,8.91,15.75,5,100
+20030800000,Epoisses Gaugry  AOP,9.68,16.52,5,100
+20031000000,Saint -Felicien,5.99,10.54,5,100
+20031100000,Gorgonzola,9.66,15.98,5,100
+20031200000,Grana Padano,12.5,19.5,5,100
+20031400000,Gouda  Matured,7.21,13.5,5,100
+20031600000,Old Amsterdam Holl Cheese,12.05,19.75,5,100
+20031700000,Gouda Pepper Trio,9.78,17.05,5,100
+20031800000,Gouda Asparagus,6.5,13.5,5,100
+20031900000,Gouda Poivre Aromatique,8.2,16.65,5,100
+20032100000,Cheddar White Vintage,6.26,18.54,5,100
+20032300000,Cheddar White Mild,10.73,16.25,5,100
+20032400000,Manchego Viejo 12 M,22.57,30.47,5,100
+20032600000,Brebis Corsica,24.8,25,5,100
+20032700000,Brie Campagne Pasteurized,5.81,15.05,5,100
+20032800000,Raclette,8.13,14.5,5,100
+20032900000,Taleggio,10.91,16.72,5,100
+20033200000,Creme Fraiche Epaisse50cl,4.14,6.25,5,100
+20033300000,Gorgonzola Piquante IT,9.66,16.5,5,100
+20033400000,Edel de Cleron  100 grs,4.68,6.5,5,100
+20033500000,Mozzarella Buffala  250g,6.25,10.5,5,100
+20033600000,Corsica Goat,0,24.94,5,100
+20033700000,Tomette Huile Banon 100 g,4,5.5,5,100
+20033800000,Chevre Frais Rochamb 200g,4.07,8.5,5,100
+20033900000,Fontina,11.05,13.79,5,100
+20034000000,Asiago,0,12.75,5,100
+20034100000,Tete De Moine,9.81,20.99,5,100
+20034200000,Pecorino W/ Pepper,12.53,19.74,5,100
+20034400000,Scamorza Affumicata,8.25,16.5,5,100
+20034500000,Mozzarella  Italian Light,1.7,6.25,5,100
+20034700000,Pate De Coing,4.05,6.91,5,100
+20034800000,Mozzarella Cerise Balls,2.95,6.25,5,100
+20035000000,Mozzarella Italian 125grs,3.94,6.75,5,100
+20035100000,Mozzarella Buffala  150g,6.25,9.92,5,100
+20035300000,Crottin Chevre 1/2 Sec Ye,4.47,6.5,5,100
+20035400000,Grana Padano,10.25,16.75,5,100
+20035600000,Saint Agur Blue,8.55,16.95,5,100
+20035700000,Tomme de Yenne Cremeuse,9.65,16.46,5,100
+20035800000,Tomme de Montagne,8.98,15.32,5,100
+20035900000,Petit Montagnard Frais,6.12,12.05,5,100
+20036000000,Cremeux Bourguignon,15.66,28.41,5,100
+20036100000,Valbrie aux Poivre,8.81,17.2,5,100
+20036200000,Brie aux herbes & Ail,8.81,17.2,5,100
+20036300000,Brie De Chevre,9.89,17.46,5,100
+20036400000,Gouda Curry,0,12.5,5,100
+20037000000,Karalis Greek Cheese 400,0,16.3,5,100
+20037100000,Kaskaval  Greek Cheese,0,15.75,5,100
+20038000000,Landana  Truffle,14.21,25.07,5,100
+20038100000,Landana Truffle  Walnuts,11.49,17.03,5,100
+20038200000,Landana  Chili Sambal,8.17,14.8,5,100
+20038600000,Landana  Cumin,8.18,14.4,5,100
+20038700000,Gouda Walnuts,11.42,13.59,5,100
+3.07E+12,Gouda Edam Babybel,2.06,4,5,100
+3.15E+12,Mozzarella Monte Oro,4.47,7.25,5,100
+3.18E+12,Munster Petit,0,6.06,5,100
+3.22E+12,Selles Sur Cher Valadiou,8.36,12.42,5,100
+3.26E+12,Chevre Buchette,6.28,11.73,5,100
+3.27E+12,Creme Fraiche Epaisse50cl,4.14,7.95,5,100
+3.28E+12,Chevre Camembert,9.15,14.05,5,100
+3.34E+12,Reblochon Baby 240g,4.5,8.5,5,100
+3.37E+12,Selles Sur Cher Valadiou,8.36,12.46,5,100
+3.39E+12,Chevre Buchette Nature,6.28,11.73,5,100
+3.39E+12,Chevre Pyramide Cendre,5,8.5,5,100
+3.42E+12,Neufchatel  Coeur Fermier,0,8.32,5,100
+3.44E+12,Chevre Frais Rochamb 200g,4.07,8.5,5,100
+3.44E+12,Mozzarella Bufala,4.68,6.95,5,100
+3.44E+12,Mozzarella Italian 125grs,3.94,7.25,5,100
+3.44E+12,Buchette St  Maure,3.1,6.95,5,100
+3.70E+12,Tete De Moine Rosette,4.95,7.85,5,100
+3.73E+12,Petit Montagnard,0,6.06,5,100
+7.61E+12,Fondue Suisse PK,6.97,10.9,5,100
+7.61E+12,Fondue Suisse PK,8.97,13.9,5,100
+8.00E+12,Mozzarella Italian,4,7.25,5,100
+8.00E+12,Mozzarella  Italian Light,1.7,6.25,5,100
+8.00E+12,Mozzarella 8x25grs,5.29,9.5,5,100
+8.00E+12,Mascarpone Galba 250 grs,4.47,7.25,5,100
+8.00E+12,Mozzarelline Galbani,5.78,10.75,5,100
+8.00E+12,Mozzarella Castelli,4.47,7.25,5,100
+8.00E+12,Mozzarella Bufala Cerise,3.75,6.67,5,100
+8.00E+12,Mozzarella burrata 120grs,5.29,6.5,5,100
+8.00E+12,Mozzarella Italian 125grs,3.94,6.75,5,100
+8.00E+12,Mozzarella Italian 125grs,3.94,7.25,5,100
+8.01E+12,Mozzarella Bufalla,5.28,9.92,5,100
+8.01E+12,Mozzarella Bufala,5.29,9.92,5,100
+8.01E+12,Mozzarella Bufa Ball 200g,6.25,9.92,5,100
+8.01E+12,Mozzarella Fior 200grs,5.83,10.75,5,100
+8.01E+12,Mozzarella Italian 125grs,3.94,6.75,5,100
+8.02E+12,Mascarpone Igor 250 grs,4.47,7.25,5,100
+8.03E+12,Mozzarella  Bufala,6.25,9.92,5,100
+8.03E+12,Mozzarella Bufala Cerise,5.29,6.25,5,100
+8.03E+12,Mozzarella Bufala  125 gr,2.21,5.25,5,100
+8.06E+12,Burrata  Italian 250 gr,6.25,13.5,5,100
+8.71E+12,Chesse Curler tetedemoine,34.99,45,5,100
+20037200000,Epsilon Greek Cheese,10.18,17.36,5,100
+5.20E+12,Feta Cheese 200 grs,0,5,5,100
+5.20E+12,Feta Cheese 200 grs,0,5,5,100
+5.29E+12,Halloumi Cyprus Cheese,4.85,9.95,5,100
+5.40E+12,Feta Cheese 200 grs,0,5,5,100
+20001100000,Cheddar (Regular),0,4.65,5,100
+20004600000,Swiss Danish Cheese,3.48,4.98,5,100
+20001200000,Cheddar & Porto,7.46,19.72,5,100
+20032200000,Cheddar Extra Mature,6.26,19.04,5,100
+20033100000,Afterburn Spicy Cheddar,7.46,19.7,5,100
+20038500000,Petit Basque Brebis,8,14.95,5,100

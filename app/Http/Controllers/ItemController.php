@@ -7,16 +7,20 @@ use App\Enumaration\PriceRuleTypes;
 use App\Model\Category;
 use App\Model\File;
 use App\Model\Item;
+use App\Model\ItemImportLog;
 use App\Model\ItemKit;
 use App\Model\ItemsImage;
 use App\Model\Manufacturer;
 use App\Model\Supplier;
 use Faker\Provider\zh_CN\DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Excel;
+use App\Model\ImporterWizard\Importer;
 
 class ItemController extends Controller
 {
@@ -405,66 +409,84 @@ class ItemController extends Controller
     {
 
         if(Input::hasFile('import_file')){
+            $importedFileName = time().".csv";
             $path = Input::file('import_file')->getRealPath();
             $extension = $request->import_file->getClientOriginalExtension();
             if ($extension == "xlsx" || $extension == "xls" || $extension == "csv") {
 
+                Storage::disk('uploaded_import_files')->put($importedFileName, file_get_contents(Input::file('import_file')));
+
                 $data = Excel::load($path, function($reader) {
                 })->get();
 
-                $duplicateUpcs = array();
-                if(!empty($data) && $data->count()) {
+                $defaultValues = array(
+                    "category" => -1,
+                    "supplier" => -1,
+                    "manufacturer"=>-1,
+                    "quantity" => 100
+                );
 
-                    $insert = array();
-                    foreach ($data as $key => $value) {
+                $rules = array(
+                    "upc" => "required|unique:items,isbn",
+                    "name" => "required",
+                    "cost" => "required",
+                    "sell" => "required"
+                );
 
-                        $supplier_id = -1; $category_id=0;$manufacturer_id=-1;
+                $columnMaps = array(
+                    "upc" => "isbn",
+                    "name" => "item_name",
+                    "category" => "category_id",
+                    "supplier" => "supplier_id",
+                    "manufacturer" => "manufacturer_id",
+                    "cost" => "cost_price",
+                    "sell" => "selling_price",
+                    "quantity" => "item_quantity",
+                    "size" => "item_size"
+                );
 
-                        if(isset($value->category)){
-                            $category_id = $value->category;
-                        }
+                $importer = new Importer("items",$columnMaps,$data,$rules,$defaultValues);
 
-                        if(isset($value->upc)){
-                            $upc = (string) $value->upc;
-                            if(Item::where("isbn",$value->upc)->exists() || in_array($upc, $duplicateUpcs)){
-                                array_push($duplicateUpcs,$upc);
-                            }
-                            else{
-                                if($value->name!=null
-                                    &&$value->cost!=null){
+                $importer->insertIntoDB();
 
-                                    if($value->sell)
-                                        $sell = $value->sell;
-                                    else $sell = $value->cost;
+                $itemImportLog = new ItemImportLog();
+                $itemImportLog->user_id = Auth::user()->id;
+                $itemImportLog->uploaded_file_path = asset('public/item_import_uploads/'.$importedFileName);
+                $itemImportLog->downloaded_file_path = "";
+                $itemImportLog->percentage = $importer->getStatusPercentage();
+                $itemImportLog->save();
 
-                                    $data = [
-                                        'product_id' => $value->product_id, 'isbn' => $upc,
-                                        'item_name'=> $value->name, 'category_id' => $category_id,
-                                        'supplier_id' => $supplier_id,'manufacturer_id' => $manufacturer_id,
-                                        'item_size'=>$value->size, "item_quantity"=>$value->quantity,
-                                        "cost_price"=>$value->cost, "selling_price"=>$sell,
-
-                                    ];
-
-                                    array_push($insert, $data);
-                                }
-                            }
-                        }else{
-                            return redirect()->route('item_import_excel')->withErrors("I.");
-                        }
-
-
-
-                    }
+                //$importer->downloadLogFile($importer->getErrorLogs());
+                $failedItems = $importer->getFailureItems();
+                if($failedItems>0) {
+                    return redirect()->route('item_list')->with(["error"=>$failedItems. " items failed to import"]);
+                }else{
+                    return redirect()->route('item_list')->with(["success"=>"All items imported successfully"]);
                 }
 
             }else {
-                return redirect()->route('item_import_excel')->withErrors("Only xls or csv files are allowed.");
+                return redirect()->route('item_import_excel')->with(["error"=>"Only xls or csv files are allowed."]);
             }
 
         }
+        return redirect()->back()->with(["error" => "No files selected"]);
+    }
 
-        return back();
+    public function downloadLogFile($errors){
+        $excelFile = Excel::create('item_import_log'.time(), function($excel) use ($errors) {
+
+            // Set the spreadsheet title, creator, and description
+            $excel->setTitle('item_import_status_file');
+            $excel->setCreator('EZPOS')->setCompany('EZ POS, LLC');
+            $excel->setDescription('item_import_status_file');
+
+            // Build the spreadsheet, passing in the payments array
+            $excel->sheet('sheet1', function($sheet) use ($errors) {
+                $sheet->fromArray($errors, null, 'A4', false, false);
+            });
+
+        })->download();
+        $this->logfile = $excelFile;
     }
 
     public function DeleteItems(Request $request){

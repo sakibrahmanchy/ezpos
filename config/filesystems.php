@@ -78,7 +78,10 @@ return [
             'driver' => 'local',
             'root'   => public_path() . '/img',
         ],
-
+        "uploaded_import_files" => [
+            "driver" => "local",
+            "root" => public_path() .'/item_import_uploads'
+        ]
     ],
 
 ];
