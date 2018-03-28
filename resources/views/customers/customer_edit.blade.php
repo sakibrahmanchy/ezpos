@@ -150,7 +150,7 @@
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label for="loyalty_card_number" class="col-sm-3 col-md-3 col-lg-2 control-label">Loyalty Number:</label>						<div class="col-sm-9 col-md-9 col-lg-10">
-                                                <input disabled type="text" name="loyalty_card_number" value="{{ $customer->loyalty_card_number }}" id="loyalty_card_number" class="form-control">
+                                                <input type="text" name="loyalty_card_number" value="{{ $customer->loyalty_card_number }}" id="loyalty_card_number" class="form-control">
                                             </div>
                                         </div>
                                         <br>

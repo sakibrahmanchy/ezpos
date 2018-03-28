@@ -98,7 +98,7 @@ class ItemController extends Controller
             ->get();
 
         return view('items.item_list', ["allItems" => $allItems, "activeItems"=>$activeItems,
-                                  "inactiveItems"=>$inactiveItems, "draftItems"=>$draftItems]);
+                                        "inactiveItems"=>$inactiveItems, "draftItems"=>$draftItems]);
     }
 
     public function EditItemGet($itemId)
@@ -121,7 +121,7 @@ class ItemController extends Controller
         $item = new Item();
         $images = $item->getItemImages($itemId);
 
-       return view('items.item_edit', ['item' => $itemInfo, 'categoryList' => $categoryList,'supplierList'=>$supplierList,'manufacturerList'=>$manufacturerList,'images'=>$images]);
+        return view('items.item_edit', ['item' => $itemInfo, 'categoryList' => $categoryList,'supplierList'=>$supplierList,'manufacturerList'=>$manufacturerList,'images'=>$images]);
     }
 
     public function DeleteItemImage($item_id,$image_id){
@@ -140,7 +140,7 @@ class ItemController extends Controller
 
         /* var_dump($item);*/
         $this->validate($request, [
-            'isbn' => 'unique:items',
+            'isbn' => 'unique:items,isbn,'.$itemId,
             'item_name' => 'required',
             'item_category' => 'required',
             'item_supplier' => 'required',
@@ -412,43 +412,49 @@ class ItemController extends Controller
                 $data = Excel::load($path, function($reader) {
                 })->get();
 
-
+                $duplicateUpcs = array();
                 if(!empty($data) && $data->count()) {
 
                     $insert = array();
                     foreach ($data as $key => $value) {
 
-                        $supplier_id = -1; $category_id=0;$manufacturer_id=-1;$upc = "";
+                        $supplier_id = -1; $category_id=0;$manufacturer_id=-1;
 
                         if(isset($value->category)){
                             $category_id = $value->category;
                         }
 
-                        if(isset($value->upc))
-                            $upc = $value->upc;
+                        if(isset($value->upc)){
+                            $upc = (string) $value->upc;
+                            if(Item::where("isbn",$value->upc)->exists() || in_array($upc, $duplicateUpcs)){
+                                array_push($duplicateUpcs,$upc);
+                            }
+                            else{
+                                if($value->name!=null
+                                    &&$value->cost!=null){
 
-                        if($value->name!=null
-                            &&$value->cost!=null){
-                            if($value->sale)
-                                $sell = $value->sell;
-                            else $sell = $value->cost;
+                                    if($value->sell)
+                                        $sell = $value->sell;
+                                    else $sell = $value->cost;
 
-                            $data = [
-                                'product_id' => $value->product_id, 'isbn' => $upc,
-                                'item_name'=> $value->name, 'category_id' => $category_id,
-                                'supplier_id' => $supplier_id,'manufacturer_id' => $manufacturer_id,
-                                'item_size'=>$value->size, "item_quantity"=>$value->quantity,
-                                "cost_price"=>$value->cost, "selling_price"=>$sell,
+                                    $data = [
+                                        'product_id' => $value->product_id, 'isbn' => $upc,
+                                        'item_name'=> $value->name, 'category_id' => $category_id,
+                                        'supplier_id' => $supplier_id,'manufacturer_id' => $manufacturer_id,
+                                        'item_size'=>$value->size, "item_quantity"=>$value->quantity,
+                                        "cost_price"=>$value->cost, "selling_price"=>$sell,
 
-                            ];
+                                    ];
 
-                            array_push($insert, $data);
+                                    array_push($insert, $data);
+                                }
+                            }
+                        }else{
+                            return redirect()->route('item_import_excel')->withErrors("I.");
                         }
-                    }
 
-                    if(!empty($insert)){
-                        DB::table('items')->insert($insert);
-                        return redirect()->route('item_list');
+
+
                     }
                 }
 
@@ -469,5 +475,5 @@ class ItemController extends Controller
         return response()->json(["success"=>false],200);
 
     }
-    
+
 }

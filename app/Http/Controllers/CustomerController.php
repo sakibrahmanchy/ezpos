@@ -106,6 +106,7 @@ class CustomerController extends Controller
         /* var_dump($customer);*/
         $rules = [
             'first_name' => 'required',
+            'loyalty_card_number'=>'nullable|unique:customers,loyalty_card_number,'.$customerId,
         ];
         $allInput = $request->all();
 
@@ -133,7 +134,7 @@ class CustomerController extends Controller
         $customer->comments = $request->comments;
 
         if($request->loyalty_card_number){
-            $customerCredentials['loyalty_card_number'] = $request->loyalty_card_number;
+            $customer->loyalty_card_number = $request->loyalty_card_number;
         }
 
         if(!is_null( $request->comments))
