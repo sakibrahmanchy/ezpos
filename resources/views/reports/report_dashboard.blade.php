@@ -70,6 +70,7 @@
 
                             <a href="#" class="list-group-item" id="transactions"><i class="icon ti-layout-grid3"></i>	Transactions</a>
 
+                            <a href="#" class="list-group-item" id="import_logs"><i class="icon ti-layout-grid3"></i>	Item Import Logs</a>
                             {{-- <a href="#" class="list-group-item" id="taxes"><i class="icon ti-agenda"></i>	Taxes</a>--}}
 
 
@@ -182,6 +183,10 @@
                         <div class="list-group transactions hidden">
                             <a href="{{ route('report_transaction_details') }}" class="list-group-item"><i class="icon ti-receipt"></i> Detailed Reports</a>
                         </div>
+                        <div class="list-group import_logs hidden">
+                            <a href="{{ route('report_item_import_log') }}" class="list-group-item"><i class="icon ti-receipt"></i> Detailed Reports</a>
+                        </div>
+
 
                     </div>
                 </div> <!-- /panel -->

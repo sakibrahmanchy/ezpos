@@ -47,6 +47,8 @@ Breadcrumbs::register('item_import', function($breadcrumbs)
     $breadcrumbs->push('Import Items', route('item_import_excel'));
 });
 
+
+
 Breadcrumbs::register('item_categories', function($breadcrumbs)
 {
     $breadcrumbs->parent('item_list');
@@ -308,6 +310,12 @@ Breadcrumbs::register('report_item_summary', function($breadcrumbs)
 {
     $breadcrumbs->parent('report_item');
     $breadcrumbs->push('Summary', route('report_item_summary'));
+});
+
+Breadcrumbs::register('report_item_import_log', function($breadcrumbs)
+{
+    $breadcrumbs->parent('report_item');
+    $breadcrumbs->push('Item Import Log', route('report_item_import_log'));
 });
 
 Breadcrumbs::register('report_manufacturer', function($breadcrumbs)

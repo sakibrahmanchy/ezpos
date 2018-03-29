@@ -87,12 +87,13 @@ class UserPermission extends Model
     {
         // Add new Permissions if required
         UserPermission::CheckIfNewPermissionsToBeAdded($userId);
+        
         // Get all permissions by user id
         $userPermissions = DB::table('user_permissions')
             ->leftJoin('permission_names', 'user_permissions.permission_id', '=', 'permission_names.id')
             ->where('user_id', '=', $userId)
             ->get();
-        
+
         // Update all user permissions to 0
         foreach ($userPermissions as $aUserPermission) {
             $userPermission = UserPermission::where("user_id", '=', $aUserPermission->user_id)->where('permission_id', '=', $aUserPermission->permission_id)->first();

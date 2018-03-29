@@ -1,9 +1,9 @@
 @extends('layouts.master')
 
-@section('pageTitle','Item Summary Report')
+@section('pageTitle','Item Import Details Report')
 
 @section('breadcrumbs')
-    {!! Breadcrumbs::render('report_item_summary') !!}
+    {!! Breadcrumbs::render('report_item_import_log') !!}
 @stop
 
 @section('content')
