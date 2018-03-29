@@ -23,7 +23,7 @@ Route::get('/error-401',function(){
     return view('errors.401');
 })->name('error-401');
 
-Route::get('/login/pin', ['as' => 'pin_log_inpin_log_in', 'uses' => 'UserController@pinLogin']);
+Route::get('/login/pin', ['as' => 'pin_log_in', 'uses' => 'UserController@pinLogin']);
 Route::post('/login/pin', ['as' => 'pin_log_in_post', 'uses' => 'UserController@pinLoginPost']);
 
 Route::group(['middleware' => ['admin']], function () {

@@ -178,7 +178,7 @@
                             <div class="form-group">
                                 <label for="password" class="col-sm-3 col-md-3 col-lg-2 control-label">User pin(4 digit max.):</label>
                                 <div class="col-sm-9 col-md-9 col-lg-10">
-                                    <input type="password" name="pin" class="form-control" maxlength="4" required >
+                                    <input type="password" name="pin" class="form-control" maxlength="4"  >
                                     <span class="text-danger">{{ $errors->first('password') }}</span>
                                 </div>
                             </div>

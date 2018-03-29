@@ -85,12 +85,14 @@ class UserPermission extends Model
 
     public static function UpdateUserPermissions($permissionList, $userId)
     {
+        // Add new Permissions if required
+        UserPermission::CheckIfNewPermissionsToBeAdded($userId);
         // Get all permissions by user id
         $userPermissions = DB::table('user_permissions')
             ->leftJoin('permission_names', 'user_permissions.permission_id', '=', 'permission_names.id')
             ->where('user_id', '=', $userId)
             ->get();
-
+        
         // Update all user permissions to 0
         foreach ($userPermissions as $aUserPermission) {
             $userPermission = UserPermission::where("user_id", '=', $aUserPermission->user_id)->where('permission_id', '=', $aUserPermission->permission_id)->first();
@@ -112,6 +114,17 @@ class UserPermission extends Model
         }
     }
 
+    public static function CheckIfNewPermissionsToBeAdded($userId){
+
+        $employeePermissions = UserPermission::where("user_id",$userId)
+            ->pluck('permission_id')->toArray();
+
+        $permissions =  \Illuminate\Support\Facades\DB::table('permission_names')->pluck('id')->toArray();
+        $newPermissionsToAdd = array_diff($permissions,$employeePermissions);
+
+        if(!is_null($newPermissionsToAdd))
+            UserPermission::AddNewPermissions($newPermissionsToAdd,$userId);
+    }
 
     public static function AddNewPermissions($permissionList, $userId){
         //Iterate over the permissionList

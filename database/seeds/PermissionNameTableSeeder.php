@@ -43,7 +43,7 @@ class PermissionNameTableSeeder extends Seeder
             "Items" => array(
                 "permissions"=>array(
                     array("permission_name"=>"Add, Update",
-                        "permission_token"=>"item_add_update"
+                          "permission_token"=>"item_add_update"
                     ),
                     array(
                         "permission_name"=>"Delete",
@@ -72,7 +72,7 @@ class PermissionNameTableSeeder extends Seeder
             "Item kits" => array(
                 "permissions"=>array(
                     array("permission_name"=>"Add, Update",
-                        "permission_token"=>"itemkit_add_update"
+                          "permission_token"=>"itemkit_add_update"
                     ),
                     array(
                         "permission_name"=>"Delete",
@@ -93,7 +93,7 @@ class PermissionNameTableSeeder extends Seeder
             "Price rules" => array(
                 "permissions"=>array(
                     array("permission_name"=>"Add, Update",
-                        "permission_token"=>"price_rules_add_update"
+                          "permission_token"=>"price_rules_add_update"
                     ),
                     array(
                         "permission_name"=>"Delete",
@@ -110,7 +110,7 @@ class PermissionNameTableSeeder extends Seeder
             "Suppliers" => array(
                 "permissions"=>array(
                     array("permission_name"=>"Add, Update",
-                        "permission_token"=>"suppliers_add_update"
+                          "permission_token"=>"suppliers_add_update"
                     ),
                     array(
                         "permission_name"=>"Delete",
@@ -130,7 +130,7 @@ class PermissionNameTableSeeder extends Seeder
             "Reports" => array(
                 "permissions"=>array(
                     array("permission_name"=>"Categories",
-                        "permission_token"=>"report_categories"
+                          "permission_token"=>"report_categories"
                     ),
                     array(
                         "permission_name"=>"Closeout",
@@ -227,7 +227,7 @@ class PermissionNameTableSeeder extends Seeder
             "Employees" => array(
                 "permissions"=>array(
                     array("permission_name"=>"Add, Update",
-                        "permission_token"=>"employees_add_update"
+                          "permission_token"=>"employees_add_update"
                     ),
                     array(
                         "permission_name"=>"Delete",
@@ -247,7 +247,7 @@ class PermissionNameTableSeeder extends Seeder
             "Gift Cards" => array(
                 "permissions"=>array(
                     array("permission_name"=>"Add, Update",
-                        "permission_token"=>"gift_cards_add_update"
+                          "permission_token"=>"gift_cards_add_update"
                     ),
                     array(
                         "permission_name"=>"Delete",
@@ -295,7 +295,7 @@ class PermissionNameTableSeeder extends Seeder
                     foreach($permissions as $aPermission){
 
                         $permissionName = PermissionName::where("permission_token",$aPermission["permission_token"])->first();
-                            if(!is_null($permissionName)){
+                        if(!is_null($permissionName)){
                             $data['permission_name'] = $aPermission['permission_name'];
                             $data['permission_token'] = $aPermission['permission_token'];
                             $data['permission_category_id'] = $permissionCategoryId;
