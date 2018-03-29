@@ -59,8 +59,6 @@
         </div>
     </div>
 
-
-
     <div class="box box-primary nav-tabs-custom" style="padding:20px">
 
         <div class="se-pre-con text-center hide">
@@ -126,16 +124,21 @@
 
                     </tr>
                     </thead>
+
                     <tbody id="data-table">
                     @foreach($items as $aSale)
                         <tr>
                             <td>{{ $aSale->id }}</td>
                             <td>{{ $aSale->item_name }}</td>
                             <td>
-                                {{$aSale->category->category_name}}
+                                @if(isset($aSale->category))
+                                    {{$aSale->category->category_name}}
+                                 @endif
                             </td>
                             <td>
-                                {{$aSale->supplier->company_name}}
+                                @if(isset($aSale->supplier))
+                                    {{$aSale->supplier->company_name}}
+                                @endif
                             </td>
                             <td>{{$aSale->product_id}}</td>
                             <td>{{$aSale->description}}</td>

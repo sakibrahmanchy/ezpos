@@ -103,24 +103,4 @@ class Importer {
         return $this->validationErrors;
     }
 
-    public function downloadLogFile($errors){
-        $excelFile = Excel::create('item_import_log'.time(), function($excel) use ($errors) {
-
-            // Set the spreadsheet title, creator, and description
-            $excel->setTitle('item_import_status_file');
-            $excel->setCreator('EZPOS')->setCompany('EZ POS, LLC');
-            $excel->setDescription('item_import_status_file');
-
-            // Build the spreadsheet, passing in the payments array
-            $excel->sheet('sheet1', function($sheet) use ($errors) {
-                $sheet->fromArray($errors, null, 'A4', false, false);
-            });
-
-        })->download();
-       $this->logfile = $excelFile;
-    }
-
-    public function getLogFile(){
-
-    }
 }

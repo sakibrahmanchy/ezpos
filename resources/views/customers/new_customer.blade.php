@@ -116,7 +116,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="company_name" class="col-sm-3 col-md-3 col-lg-2 control-label">Comapany name:</label>						<div class="col-sm-9 col-md-9 col-lg-10">
+                            <label for="company_name" class="col-sm-3 col-md-3 col-lg-2 control-label">Company name:</label>						<div class="col-sm-9 col-md-9 col-lg-10">
                                 <input type="text" name="company_name" value="{{ old('company_name') }}" id="company_name" class="form-control">
                             </div>
                         </div>

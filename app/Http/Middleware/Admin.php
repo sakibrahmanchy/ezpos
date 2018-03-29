@@ -59,6 +59,7 @@ class Admin
 
         $route_token = RouteTokens::$ROUTE_TOKENS[$request->route()->getName()];
 
+
         if($user->user_type==UserTypes::$EMPLOYEE||$user->user_type==UserTypes::$SUPER_ADMIN)
             if(in_array($route_token,$permissionList))
                 return $next($request);

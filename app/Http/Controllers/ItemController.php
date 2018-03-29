@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Excel;
 use App\Model\ImporterWizard\Importer;
-
+use PHPExcel_IOFactory;
 class ItemController extends Controller
 {
     public function GetItemForm()
@@ -449,17 +449,21 @@ class ItemController extends Controller
 
                 $importer->insertIntoDB();
 
+                $excelFile = $this->downloadLogFile($importer->getErrorLogs());
+                $objWriter = PHPExcel_IOFactory::createWriter($excelFile->excel, 'Excel2007');
+                $objWriter->save(str_replace(__FILE__,'item_import_logs/'.$excelFile->filename  .'.xlsx',__FILE__));
+
                 $itemImportLog = new ItemImportLog();
                 $itemImportLog->user_id = Auth::user()->id;
-                $itemImportLog->uploaded_file_path = asset('public/item_import_uploads/'.$importedFileName);
-                $itemImportLog->downloaded_file_path = "";
+                $itemImportLog->uploaded_file_path = asset('/item_import_uploads/'.$importedFileName);
+                $itemImportLog->downloaded_file_path = asset("item_import_logs/".$excelFile->filename.'.xlsx');
                 $itemImportLog->percentage = $importer->getStatusPercentage();
                 $itemImportLog->save();
 
-                //$importer->downloadLogFile($importer->getErrorLogs());
+//                Storage::disk('uploaded_import_files')->put($excelFile->filename, file_get_contents($excelFile));
                 $failedItems = $importer->getFailureItems();
                 if($failedItems>0) {
-                    return redirect()->route('item_list')->with(["error"=>$failedItems. " items failed to import"]);
+                    return redirect()->route('item_list')->with(["error"=>$failedItems. " items failed to import","html"=>"<a href=\'".asset("item_import_logs/".$excelFile->filename.'.xlsx')."\' target=\'_blank\'>(Click here to view the log file)</a>"]);
                 }else{
                     return redirect()->route('item_list')->with(["success"=>"All items imported successfully"]);
                 }
@@ -485,8 +489,8 @@ class ItemController extends Controller
                 $sheet->fromArray($errors, null, 'A4', false, false);
             });
 
-        })->download();
-        $this->logfile = $excelFile;
+        });
+        return $excelFile;
     }
 
     public function DeleteItems(Request $request){

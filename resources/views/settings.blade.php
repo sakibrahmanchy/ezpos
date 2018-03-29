@@ -9,6 +9,65 @@
 @include('includes.message-block')
 
 @section('content')
+    <style>
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {display:none;}
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked + .slider:before {
+            -webkit-transform: translateX(26px);
+            -ms-transform: translateX(26px);
+            transform: translateX(26px);
+        }
+
+        /* Rounded sliders */
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+    </style>
+
 
     <div class="box box-primary" style="padding:20px">
         <div class="row" id="form">
@@ -26,7 +85,7 @@
                         <div class="panel-heading">
                             <h3 class="panel-title">
                                 <i class="pe-7s-edit"></i>
-                               Settings<small>(Fields in red are required)</small>
+                                Settings<small>(Fields in red are required)</small>
                             </h3>
                         </div>
 
@@ -49,7 +108,7 @@
                                                     <input type="file" name="image" onchange = "loadTempImage(this)" id="image" class="filestyle" tabindex="-1" style="position: absolute; clip: rect(0px 0px 0px 0px);"><div class="bootstrap-filestyle input-group"><input type="text" class="form-control " disabled=""> <span class="group-span-filestyle input-group-btn" tabindex="0"><label for="image" class="btn btn-file-upload "><span class="pe-7s-folder"></span> <span class="buttonText">Choose file</span></label></span></div>&nbsp;
                                                 </li>
                                                 <li>
-                                                         <div id="avatar"><img src="{{asset('img/logo.png?'.rand())}}" class="img-responsive logo-preview" id="image_empty" alt=""></div>
+                                                    <div id="avatar"><img src="{{asset('img/logo.png?'.rand())}}" class="img-responsive logo-preview" id="image_empty" alt=""></div>
                                                 </li>
                                             </ul>
                                         </div>
@@ -61,7 +120,7 @@
                                     <span class="input-group-addon bg">
                                      %
                                     </span>
-                                           <input class="form-control" type="text" name="tax_rate" value="{{ $settings['tax_rate'] }}">
+                                            <input class="form-control" type="text" name="tax_rate" value="{{ $settings['tax_rate'] }}">
 
                                         </div>
                                     </div><br><br><br>
@@ -77,18 +136,19 @@
 
 
                                         </div>
-                                    </div><br><br><br>
+                                    </div>
+                                    <br><br><br>
 
                                     <label for="phone" class="col-sm-3 col-md-3 col-lg-2 control-label">Phone:</label>
                                     <div class="col-sm-9 col-md-9 col-lg-10">
                                         <div class="input-group date">
-                                    <span class="input-group-addon bg">
-                                     <i class="fa fa-phone"></i>
-                                    </span>
+                                            <span class="input-group-addon bg">
+                                                <i class="fa fa-phone"></i>
+                                            </span>
                                             <input class="form-control" type="text" name="phone" value="{{ $settings['phone'] }}">
-
                                         </div>
-                                    </div><br><br><br>
+                                    </div>
+                                    <br><br><br>
 
                                     <label for="phone" class="col-sm-3 col-md-3 col-lg-2 control-label">Customer Loyalty Percentage:</label>
                                     <div class="col-sm-9 col-md-9 col-lg-10">
@@ -99,50 +159,61 @@
                                             <input class="form-control" type="text" name="customer_loyalty_percentage" value="{{ $settings['customer_loyalty_percentage'] }}">
                                         </div>
                                     </div>
+                                    <br><br><br>
 
+                                    <label for="phone" class="col-sm-3 col-md-3 col-lg-2 control-label">Negative Inventory:</label>
+                                    <div class="col-sm-9 col-md-9 col-lg-10">
+                                        <label class="switch">
+                                            <input type="checkbox" onchange="negativeInventory()" id="negative_inventory" @if($settings['negative_inventory']=="true") checked @else  @endif}}>
+                                            <span class="slider round"></span>
+                                        </label>
+                                        <input type="hidden" name="negative_inventory" id="negative_inventory_value" value="{{ $settings['negative_inventory'] }}"/>
+                                    </div>
                                 </div>
 
                             </div>
 
-                            <br><br>
-                            <div class="form-group" data-keyword="currency">
-                                <label class="col-sm-3 col-md-3 col-lg-2 control-label ">Currency Denominations:</label>						<div class="table-responsive col-sm-9 col-md-4 col-lg-4">
-                                    <table id="currency_denoms" class="table">
-                                        <thead>
-                                        <tr>
-                                            <th>Denomination</th>
-                                            <th>Currency Value</th>
-                                            <th>Delete</th>
-                                        </tr>
-                                        </thead>
-
-                                        <tbody>
-
-                                        @foreach($denominators as $aDenominator)
-                                            <tr>
-                                                <td><input type="text" name="denomination_name[]" class="form-control" value="{{ $aDenominator->denomination_name }}"></td>
-                                                <td><input type="text" name="denomination_value[]" class="form-control" value="{{ $aDenominator->denomination_value }}"></td>
-                                                <td><a class="delete_currency_denom text-primary" href="javascript:void(0);">Delete</a></td>
-                                            </tr>
-                                        @endforeach
-                                        </tbody>
-                                    </table>
-
-                                    <a href="javascript:void(0);" id="add_denom" onclick="addNewDenominator()">Add currency denomination</a>
-                                </div>
-                            </div>
-
-
-                            <div class="form-actions pull-right">
-                                <input type="submit" value="Submit" id="submitf" class="btn floating-button btn-primary float_right">
-                            </div>
-                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
                         </div>
+
+                        <br><br>
+                        <div class="form-group" data-keyword="currency">
+                            <label class="col-sm-3 col-md-3 col-lg-2 control-label ">Currency Denominations:</label>						<div class="table-responsive col-sm-9 col-md-4 col-lg-4">
+                                <table id="currency_denoms" class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Denomination</th>
+                                        <th>Currency Value</th>
+                                        <th>Delete</th>
+                                    </tr>
+                                    </thead>
+
+                                    <tbody>
+
+                                    @foreach($denominators as $aDenominator)
+                                        <tr>
+                                            <td><input type="text" name="denomination_name[]" class="form-control" value="{{ $aDenominator->denomination_name }}"></td>
+                                            <td><input type="text" name="denomination_value[]" class="form-control" value="{{ $aDenominator->denomination_value }}"></td>
+                                            <td><a class="delete_currency_denom text-primary" href="javascript:void(0);">Delete</a></td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+
+                                <a href="javascript:void(0);" id="add_denom" onclick="addNewDenominator()">Add currency denomination</a>
+                            </div>
+                        </div>
+
+
+                        <div class="form-actions pull-right">
+                            <input type="submit" value="Submit" id="submitf" class="btn floating-button btn-primary float_right">
+                        </div>
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     </div>
-                </form>	</div>
-        </div>
+            </div>
+            </form>	</div>
     </div>
-    @endsection
+    </div>
+@endsection
 
 
 @section('additionalJS')
@@ -173,11 +244,16 @@
 
                 reader.onload = function (e) {
                     $('#image_empty').attr('src', e.target.result) .width(150)
-                            .height(200);;
+                        .height(200);;
                 }
 
                 reader.readAsDataURL(input.files[0]);
             }
+        }
+
+        function negativeInventory(){
+            var status = $("#negative_inventory").is(':checked');
+            $("#negative_inventory_value").val(status);
         }
 
     </script>

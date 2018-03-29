@@ -503,7 +503,6 @@
 
         }
 
-
         function removeProduct(productId){
             Id = "#product-div-"+productId;
             $(Id).remove();

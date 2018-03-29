@@ -147,7 +147,7 @@
                  tableData="";
 
                  data.sale.forEach(function(item){
-                    console.log(item);
+
                     var receipt_url = '{{ route("sale_receipt", ":id") }}';
                      receipt_url = receipt_url.replace(':sale_id', item.id);
 
@@ -160,7 +160,10 @@
                     tableData+="<td>"+item.item.item_name;
                     tableData+="</td>";
                     tableData+="<td>";
-                    tableData+=""+item.item.category.category_name+" ";
+                    if(item.item.category)
+                        tableData+=""+item.item.category.category_name+" ";
+                    else tableData+="";
+
                     tableData+="</td>";
                     tableData+="<td>";
                     tableData+=""+item.in_out_quantity;

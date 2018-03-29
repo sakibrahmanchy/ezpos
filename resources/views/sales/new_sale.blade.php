@@ -299,6 +299,8 @@
 
         $(document).ready(function(e){
 
+            $.fn.editable.defaults.mode = 'inline';
+
             checkPaymentType();
 
             $item = $('#item-names');
@@ -548,7 +550,6 @@
 
         }
 
-
         function removeProduct(productId){
             console.log(productId);
             Id = "#product-div-"+productId;
@@ -600,71 +601,143 @@
 
         }
 
+        function appendItemToCartAuto(item){
+            $('.no-items').remove();
+            $('.add-payment').show();
+
+            var itemDescription = '<tr class="product-specific-description" data-index="'+item.item_id+'"  data-item-type="item" id="product-div-' + item.item_id + '" >' +
+                '<td class="col-sm-8 col-md-6">' +
+                '<div class="media">' +
+                '' +
+                '<div class="media-body">' +
+                ' <h6 class="media-heading"><a href="#">' + item.item_name + '</a></h6>';
+
+            if(item.name!=null)
+                itemDescription +=  '<h6 class="media-heading"> by <a href="#">'+ item.name +'</a></h6>';
+
+            if(item.item_quantity != 'undefined'){
+                if(item.item_quantity>10)
+                    itemDescription += '<span>Status: </span><span class="text-success"><strong>In Stock</strong></span>';
+                else if(item.item_quantity>0&&item.item_quantity<10)
+                    itemDescription += '<span>Status: </span><span class="text-warning"><strong>Soon will be out of Stock</strong></span>';
+                else
+                    itemDescription += '<span>Status: </span><span class="text-danger"><strong>Out of Stock</strong></span>';
+            }
+
+
+            itemDescription += '</div>' +
+                '</div></td>' +
+                ' <td class="col-sm-1 col-md-1" style="text-align: center">' +
+                ' <input type="number" min = "0" class="form-control quantity" id="product-' + item.item_id + '"  onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" onchange = "addItemPriceToRegister(' + item.item_id + ')"  value="1">' +
+                '</td>' +
+                    @if(UserHasPermission("edit_sale_cost_price"))
+                        '<td class="col-sm-1 col-md-1 text-center"><a  href="javascript:void(0)" onclick="editItemSalePrice('+item.item_id+')" data-unit-price = "'+item.selling_price +'" id="unit-price-' + item.item_id + '">$'+item.selling_price+'</a></td>' +
+                    @else
+                        '<td class="col-sm-1 col-md-1 text-center" ><strong data-unit-price = "'+item.selling_price +'" id="unit-price-' + item.item_id + '">$' + item.selling_price + '</strong></td>' +
+                    @endif
+                        '<td><input  class="form-control discount-amount" type="number" id="discount-'+ item.item_id+'" onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" onchange = "addItemPriceToRegister(' + item.item_id + ')"  value="0"></td>' +
+                '<td class="col-sm-1 col-md-1 text-center" ><strong data-total-price = "" id ="total-price-' + item.item_id + '" class="total-price"></strong></td>' +
+                '<td class="col-sm-1 col-md-1">' +
+                '<button type="button" class="btn btn-danger" onclick = "removeProduct(' + item.item_id + ')">' +
+                '<span class="pe-7s-trash"></span> Remove' +
+                '</button></td></tr><input type="hidden" id="cost-price-'+item.item_id+'" value="'+item.cost_price+'" >' ;
+
+            var itemDiscounts = "";
+            $(".product-descriptions").append(itemDescription);
+
+            if(item.discountApplicable){
+
+                itemDiscounts+="<tr id='product-discount-"+item.item_id+"'><td colspan='5' style='padding-left:23px;font-size: 80%;background: aliceblue;'> Discount Offer: <strong>"+item.discountName+"</strong><br>";
+                itemDiscounts+="Item Discount Amount: $<strong>"+item.discountAmount+"</strong></td>";
+                $("#discount-"+item.item_id).val(Number(item.discountPercentage).toFixed(2));
+                itemDiscounts+="<input type ='hidden' id='price-rule-"+item.item_id+"' value = '"+item.item_id+"'>";
+                calculatePrice();
+
+                //console.log(item.discountAmount);
+            }
+
+            itemDiscounts += '</tr>';
+            $(".product-descriptions").append(itemDiscounts);
+            editItemSalePrice(item.item_id);
+            clearAutoComplete();
+            addItemPriceToRegister(item.item_id);
+        }
+
+        function appendItemToCart(item, index) {
+
+            $('.no-items').remove();
+            $('.add-payment').show();
+
+            var itemDescription = '<tr class="product-specific-description" data-index="'+item.getAttribute("data-id")+'"  data-item-type="'+item.getAttribute("data-item-type")+'" id="product-div-' + item.getAttribute("data-id") + '" data-rule-id="'+itemTotalInfo[index].id+'">' +
+                '<td class="col-sm-8 col-md-6">' +
+                '<div class="media">' +
+                '' +
+                '<div class="media-body">' +
+                ' <h6 class="media-heading"><a href="#">' + item.getAttribute('data-title') + '</a></h6>';
+
+            if(itemTotalInfo[index].company_name!=null)
+                itemDescription +=  '<h6 class="media-heading"> by <a href="#">'+ itemTotalInfo[index].company_name +'</a></h6>';
+
+            if(item.getAttribute('data-item-quantity') != 'undefined'){
+                if(item.getAttribute('data-item-quantity')>10)
+                    itemDescription += '<span>Status: </span><span class="text-success"><strong>In Stock</strong></span>';
+                else if(item.getAttribute('data-item-quantity')>0&&item.getAttribute('data-item-quantity')<10)
+                    itemDescription += '<span>Status: </span><span class="text-warning"><strong>Soon will be out of Stock</strong></span>';
+                else
+                    itemDescription += '<span>Status: </span><span class="text-danger"><strong>Out of Stock</strong></span>';
+            }
+
+
+            itemDescription += '</div>' +
+                '</div></td>' +
+                ' <td class="col-sm-1 col-md-1" style="text-align: center">' +
+                ' <input type="number" min = "0" class="form-control quantity" id="product-' + item.getAttribute('data-id') + '"  onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" onchange = "addItemPriceToRegister(' + item.getAttribute('data-id') + ')"  value="1">' +
+                '</td>'+
+                    @if(UserHasPermission("edit_sale_cost_price"))
+                        '<td class="col-sm-1 col-md-1 text-center"><a  href="javascript:void(0)" onclick="editItemSalePrice('+item.getAttribute("data-id")+')" data-unit-price = "'+item.getAttribute('data-sale-price') +'" id="unit-price-' + item.getAttribute('data-id') + '">$'+item.getAttribute('data-sale-price')+'</a></td>' +
+                    @else
+                        '<td class="col-sm-1 col-md-1 text-center" ><strong data-unit-price = "'+item.getAttribute('data-sale-price') +'" id="unit-price-' +  item.getAttribute('data-id') + '">$' + item.getAttribute('data-sale-price') + '</strong></td>' +
+                    @endif
+                        '<td><input  class="form-control discount-amount" type="number" id="discount-'+ item.getAttribute("data-id")+'" onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" onchange = "addItemPriceToRegister(' + item.getAttribute('data-id') + ')"  value="0"></td>' +
+                '<td class="col-sm-1 col-md-1 text-center" ><strong data-total-price = "" id ="total-price-' + item.getAttribute('data-id') + '" class="total-price"></strong></td>' +
+                '<td class="col-sm-1 col-md-1">' +
+                '<button type="button" class="btn btn-danger" onclick = "removeProduct(' + item.getAttribute('data-id') + ')">' +
+                '<span class="pe-7s-trash"></span> Remove' +
+                '</button></td></tr><input type="hidden" id="cost-price-'+item.getAttribute('data-id')+'" value="'+itemTotalInfo[index].cost_price+'" >' ;
+
+            var itemDiscounts = "";
+            $(".product-descriptions").append(itemDescription);
+
+            if(itemTotalInfo[index].discountApplicable){
+
+                itemDiscounts+="<tr id='product-discount-"+item.getAttribute("data-id")+"'><td colspan='5' style='padding-left:23px;font-size: 80%;background: aliceblue;'> Discount Offer: <strong>"+itemTotalInfo[index].discountName+"</strong><br>";
+                itemDiscounts+="Item Discount Amount: $<strong>"+itemTotalInfo[index].discountAmount+"</strong></td>";
+                $("#discount-"+item.getAttribute('data-id')).val(Number(itemTotalInfo[index].discountPercentage).toFixed(2));
+                itemDiscounts+="<input type ='hidden' id='price-rule-"+item.getAttribute("data-id")+"' value = '"+itemTotalInfo[index].id+"'>";
+                calculatePrice();
+
+                //console.log(itemTotalInfo[index].discountAmount);
+            }
+
+            itemDiscounts += '</tr>';
+            $(".product-descriptions").append(itemDiscounts);
+            editItemSalePrice(item.getAttribute("data-id"));
+            addItemPriceToRegister(item.getAttribute('data-id'));
+        }
+
         function autoAddItemTOCart(item){
 
             if(item.item_quantity<=0&&item.product_type!=1){
+
+                @if($settings['negative_inventory']=="true")
+                //Continue Selling Products
+                appendItemToCartAuto(item);
+                @else
                 alert("Sorry, product is out of stock.");
+                @endif
             }
             else if(document.getElementById("product-div-"+item.item_id) == null) {
-
-                $('.no-items').remove();
-                $('.add-payment').show();
-
-                var itemDescription = '<tr class="product-specific-description" data-index="'+item.item_id+'"  data-item-type="item" id="product-div-' + item.item_id + '" >' +
-                    '<td class="col-sm-8 col-md-6">' +
-                    '<div class="media">' +
-                    '' +
-                    '<div class="media-body">' +
-                    ' <h6 class="media-heading"><a href="#">' + item.item_name + '</a></h6>';
-
-                if(item.name!=null)
-                    itemDescription +=  '<h6 class="media-heading"> by <a href="#">'+ item.name +'</a></h6>';
-
-                if(item.item_quantity != 'undefined'){
-                    if(item.item_quantity>10)
-                        itemDescription += '<span>Status: </span><span class="text-success"><strong>In Stock</strong></span>';
-                    else
-                        itemDescription += '<span>Status: </span><span class="text-danger"><strong>Soon will be out of Stock</strong></span>';
-                }
-
-
-                itemDescription += '</div>' +
-                    '</div></td>' +
-                    ' <td class="col-sm-1 col-md-1" style="text-align: center">' +
-                    ' <input type="number" min = "0" class="form-control quantity" id="product-' + item.item_id + '"  onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" onchange = "addItemPriceToRegister(' + item.item_id + ')"  value="1">' +
-                    '</td>' +
-                     @if(UserHasPermission("edit_sale_cost_price"))
-                         '<td class="col-sm-1 col-md-1 text-center"><a  href="javascript:void(0)" onclick="editItemSalePrice('+item.item_id+')" data-unit-price = "'+item.selling_price +'" id="unit-price-' + item.item_id + '">$'+item.selling_price+'</a></td>' +
-                     @else
-                         '<td class="col-sm-1 col-md-1 text-center" ><strong data-unit-price = "'+item.selling_price +'" id="unit-price-' + item.item_id + '">$' + item.selling_price + '</strong></td>' +
-                     @endif
-                    '<td><input  class="form-control discount-amount" type="number" id="discount-'+ item.item_id+'" onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" onchange = "addItemPriceToRegister(' + item.item_id + ')"  value="0"></td>' +
-                    '<td class="col-sm-1 col-md-1 text-center" ><strong data-total-price = "" id ="total-price-' + item.item_id + '" class="total-price"></strong></td>' +
-                    '<td class="col-sm-1 col-md-1">' +
-                    '<button type="button" class="btn btn-danger" onclick = "removeProduct(' + item.item_id + ')">' +
-                    '<span class="pe-7s-trash"></span> Remove' +
-                    '</button></td></tr><input type="hidden" id="cost-price-'+item.item_id+'" value="'+item.cost_price+'" >' ;
-
-                var itemDiscounts = "";
-                $(".product-descriptions").append(itemDescription);
-
-                if(item.discountApplicable){
-
-                    itemDiscounts+="<tr id='product-discount-"+item.item_id+"'><td colspan='5' style='padding-left:23px;font-size: 80%;background: aliceblue;'> Discount Offer: <strong>"+item.discountName+"</strong><br>";
-                    itemDiscounts+="Item Discount Amount: $<strong>"+item.discountAmount+"</strong></td>";
-                    $("#discount-"+item.item_id).val(Number(item.discountPercentage).toFixed(2));
-                    itemDiscounts+="<input type ='hidden' id='price-rule-"+item.item_id+"' value = '"+item.item_id+"'>";
-                    calculatePrice();
-
-                    //console.log(item.discountAmount);
-                }
-
-                itemDiscounts += '</tr>';
-                $(".product-descriptions").append(itemDiscounts);
-                clearAutoComplete();
-                addItemPriceToRegister(item.item_id);
-
-
+                appendItemToCartAuto(item);
             }else{
                 var itemId = item.item_id;
                 var itemQuantityFieldName = "#product-"+itemId;
@@ -681,91 +754,20 @@
             }
         }
 
-        function clearAutoComplete(){
-            var e = jQuery.Event("keydown", { keyCode: 20 });
-            $("#item-names").trigger(e);
-            $("#item-names").val("");
-            $("#item-names").autocomplete("close");
-        }
-
-        function editItemSalePrice(id) {
-           //alert($("#unit-price-"+id).attr("data-unit-price"));
-            $("#edit_item_price").val($("#unit-price-"+id).attr("data-unit-price"));
-            $("#edit_item_id").val(id);
-            $("#edit_item_price_modal").modal();
-        }
-
-        function setNewItemPrice(){
-            var id =   $("#edit_item_id").val();
-            $("#unit-price-"+id).attr("data-unit-price",$("#edit_item_price").val());
-            $("#unit-price-"+id).html("$"+$("#edit_item_price").val());
-            addItemPriceToRegister(id);
-        }
-
         function addItemToCart(item){
             //var itemInfo = $(item).data('item-total-info');
-            console.log(item);
             var index = $('.item-suggestion').index(item);
+
             if(itemTotalInfo[index].item_quantity<=0&&itemTotalInfo[index].product_type!=1){
-                alert("Sorry, product is out of stock.");
+                @if($settings['negative_inventory']=="true")
+                //Continue Selling Products
+                    appendItemToCart(item,index);
+                @else
+                    alert("Sorry, product is out of stock.");
+                @endif
             }
             else if(document.getElementById("product-div-"+item.getAttribute("data-id")) == null) {
-                $('.no-items').remove();
-                $('.add-payment').show();
-
-                var itemDescription = '<tr class="product-specific-description" data-index="'+item.getAttribute("data-id")+'"  data-item-type="'+item.getAttribute("data-item-type")+'" id="product-div-' + item.getAttribute("data-id") + '" data-rule-id="'+itemTotalInfo[index].id+'">' +
-                    '<td class="col-sm-8 col-md-6">' +
-                    '<div class="media">' +
-                    '' +
-                    '<div class="media-body">' +
-                    ' <h6 class="media-heading"><a href="#">' + item.getAttribute('data-title') + '</a></h6>';
-
-                if(itemTotalInfo[index].company_name!=null)
-                    itemDescription +=  '<h6 class="media-heading"> by <a href="#">'+ itemTotalInfo[index].company_name +'</a></h6>';
-
-                if(item.getAttribute('data-item-quantity') != 'undefined'){
-                    if(item.getAttribute('data-item-quantity')>10)
-                        itemDescription += '<span>Status: </span><span class="text-success"><strong>In Stock</strong></span>';
-                    else
-                        itemDescription += '<span>Status: </span><span class="text-danger"><strong>Soon will be out of Stock</strong></span>';
-                }
-
-
-                itemDescription += '</div>' +
-                    '</div></td>' +
-                    ' <td class="col-sm-1 col-md-1" style="text-align: center">' +
-                    ' <input type="number" min = "0" class="form-control quantity" id="product-' + item.getAttribute('data-id') + '"  onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" onchange = "addItemPriceToRegister(' + item.getAttribute('data-id') + ')"  value="1">' +
-                    '</td>'+
-                    @if(UserHasPermission("edit_sale_cost_price"))
-                        '<td class="col-sm-1 col-md-1 text-center"><a  href="javascript:void(0)" onclick="editItemSalePrice('+item.getAttribute("data-id")+')" data-unit-price = "'+item.getAttribute('data-sale-price') +'" id="unit-price-' + item.getAttribute('data-id') + '">$'+item.getAttribute('data-sale-price')+'</a></td>' +
-                    @else
-                        '<td class="col-sm-1 col-md-1 text-center" ><strong data-unit-price = "'+item.getAttribute('data-sale-price') +'" id="unit-price-' +  item.getAttribute('data-id') + '">$' + item.getAttribute('data-sale-price') + '</strong></td>' +
-                    @endif
-                    '<td><input  class="form-control discount-amount" type="number" id="discount-'+ item.getAttribute("data-id")+'" onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" onchange = "addItemPriceToRegister(' + item.getAttribute('data-id') + ')"  value="0"></td>' +
-                    '<td class="col-sm-1 col-md-1 text-center" ><strong data-total-price = "" id ="total-price-' + item.getAttribute('data-id') + '" class="total-price"></strong></td>' +
-                    '<td class="col-sm-1 col-md-1">' +
-                    '<button type="button" class="btn btn-danger" onclick = "removeProduct(' + item.getAttribute('data-id') + ')">' +
-                    '<span class="pe-7s-trash"></span> Remove' +
-                    '</button></td></tr><input type="hidden" id="cost-price-'+item.getAttribute('data-id')+'" value="'+itemTotalInfo[index].cost_price+'" >' ;
-
-                var itemDiscounts = "";
-                $(".product-descriptions").append(itemDescription);
-
-                if(itemTotalInfo[index].discountApplicable){
-
-                    itemDiscounts+="<tr id='product-discount-"+item.getAttribute("data-id")+"'><td colspan='5' style='padding-left:23px;font-size: 80%;background: aliceblue;'> Discount Offer: <strong>"+itemTotalInfo[index].discountName+"</strong><br>";
-                    itemDiscounts+="Item Discount Amount: $<strong>"+itemTotalInfo[index].discountAmount+"</strong></td>";
-                    $("#discount-"+item.getAttribute('data-id')).val(Number(itemTotalInfo[index].discountPercentage).toFixed(2));
-                    itemDiscounts+="<input type ='hidden' id='price-rule-"+item.getAttribute("data-id")+"' value = '"+itemTotalInfo[index].id+"'>";
-                    calculatePrice();
-
-                    //console.log(itemTotalInfo[index].discountAmount);
-                }
-
-                itemDiscounts += '</tr>';
-                $(".product-descriptions").append(itemDiscounts);
-
-                addItemPriceToRegister(item.getAttribute('data-id'));
+                appendItemToCart(item, index);
             }else{
                 var itemId = item.getAttribute("data-id");
                 var itemQuantityFieldName = "#product-"+itemId;
@@ -779,6 +781,43 @@
                 convertToReturn();
             }
 
+        }
+
+        function clearAutoComplete(){
+            var e = jQuery.Event("keydown", { keyCode: 20 });
+            $("#item-names").trigger(e);
+            $("#item-names").val("");
+            $("#item-names").autocomplete("close");
+        }
+
+        function editItemSalePrice(id) {
+            @if(UserHasPermission("edit_sale_cost_price"))
+            $("#unit-price-"+id).editable({
+                type:"number",
+                step: 'any',
+                validate: function(value) {
+                    if($.trim(value) == '') {
+                        return 'This field is required';
+                    }
+                },
+                success: function(response, newValue) {
+                    console.log(response);
+                    $("#unit-price-"+id).editable("destroy");
+                    var newItemPrice = newValue;
+                    $("#unit-price-"+id).attr("data-unit-price",newItemPrice);
+                    $("#unit-price-"+id).html("$"+newItemPrice);
+                    addItemPriceToRegister(id);
+                    editItemSalePrice(id);
+                }
+            });
+            @endif
+        }
+
+        function setNewItemPrice(){
+            var id =   $("#edit_item_id").val();
+            $("#unit-price-"+id).attr("data-unit-price",$("#edit_item_price").val());
+            $("#unit-price-"+id).html("$"+$("#edit_item_price").val());
+            addItemPriceToRegister(id);
         }
 
         function setAllItemToDiscount(){
@@ -798,7 +837,6 @@
 
             calculatePrice();
         }
-
 
         function setSaleToDiscount(){
 

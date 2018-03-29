@@ -23,9 +23,7 @@ Route::get('/error-401',function(){
     return view('errors.401');
 })->name('error-401');
 
-Route::get('/pp','EmployeeController@AddNewUserPermissions')->name('error-401');
-
-Route::get('/login/pin', ['as' => 'pin_log_in', 'uses' => 'UserController@pinLogin']);
+Route::get('/login/pin', ['as' => 'pin_log_inpin_log_in', 'uses' => 'UserController@pinLogin']);
 Route::post('/login/pin', ['as' => 'pin_log_in_post', 'uses' => 'UserController@pinLoginPost']);
 
 Route::group(['middleware' => ['admin']], function () {
@@ -147,6 +145,8 @@ Route::group(['middleware' => ['admin']], function () {
     route::get('/report/item/graphical','Reports\ItemReportController@ReportItemGraphical')->name('report_item_graphical')->middleware('auth');
     route::post('/report/item/ajax','Reports\ItemReportController@ReportItemAjax')->name('report_item_ajax')->middleware('auth');
     route::get('/report/item/summary','Reports\ItemReportController@ReportItemSummary')->name('report_item_summary')->middleware('auth');
+    route::get('/report/item/import_log','Reports\ItemReportController@ReportItemImportLog')->name('report_item_import_log')->middleware('auth');
+
 
     route::get('/report/manufacturer/graphical','Reports\ManufacturerReportController@ReportManufacturerGraphical')->name('report_manufacturer_graphical')->middleware('auth');
     route::post('/report/manufacturer/ajax','Reports\ManufacturerReportController@ReportManufacturerAjax')->name('report_manufacturer_ajax')->middleware('auth');

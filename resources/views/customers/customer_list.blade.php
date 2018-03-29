@@ -46,6 +46,7 @@
                         <th></th>
                         <th>Actions</th>
                         <th>Account No.</th>
+                        <th>Loyalty No.</th>
                         <th>Person Id</th>
                         <th>Name</th>
                         <th>Email</th>
@@ -70,6 +71,7 @@
                                     </ul>
                                 </div></td>
                             <td>{{ $customer->account_number }}</td>
+                            <td>@if($customer->loyalty_card_number) {{ $customer->loyalty_card_number }} @else None @endif</td>
                             <td>{{$customer->id}}</td>
                             <td><a href="{{ route('customer_profile',["customer_id"=>$customer->id]) }}">{{$customer->first_name}} {{$customer->last_name}}</a></td>
                             <td>{{$customer->email}}</td>

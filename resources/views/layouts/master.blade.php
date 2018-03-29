@@ -46,6 +46,7 @@ else
     <link href={{ asset('css/tagit.ui-zendesk.css')}} rel="stylesheet" />
     <link href={{ asset('css/jquery.tagit.css')}} rel="stylesheet" />
     <link href="{{ asset('css/bootstrap-switch.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/bootstrap-editable.css') }}" rel="stylesheet">
 
     <link rel="stylesheet" href="{{ asset('css/ezpos.css') }}">
     <!-- Select2 -->
@@ -286,7 +287,6 @@ else
 <!-- Chart JS -->
 <script src = "{{asset('js/Chart.min.js')}}" type="text/javascript" charset="UTF-8"></script>
 
-
 <!-- Data table -->
 <script type="text/javascript" src="{{ asset('DataTables/datatables.min.js') }}"></script>
 <script type="text/javascript" src="{{ asset("DataTables/mark.min.js") }}"></script>
@@ -313,8 +313,8 @@ else
 
 <!-- Random Color -->
 <script src={{ asset('js/randomColor.js')}}></script>
-
-
+<!-- Bootstrap Editables -->
+<script src="{{ asset('js/bootstrap-editable.js') }}"></script>
 
 <script type="text/javascript">
 
@@ -328,14 +328,16 @@ else
 
         if(is_error!="0"){
 
+            var html = ' {!!  ( session()->has('html')) ? session()->get('html') : '' !!}';
+
             $.notify({
                 icon: 'pe-7s-gift',
-                message: is_error
-
+                message: is_error+html,
             },{
                 type: 'danger',
-                timer: 4000
+                timer: 4000,
             });
+
 
             {{  session()->forget('error') }}
         }
@@ -367,6 +369,14 @@ else
             format: 'yyyy/mm/dd'
         });
 
+        (function() {
+            var original = $.fn.editableutils.setCursorPosition;
+            $.fn.editableutils.setCursorPosition = function() {
+                try {
+                    original.apply(this, Array.prototype.slice.call(arguments));
+                } catch (e) { /* noop */ }
+            };
+        })();
 
     });
 

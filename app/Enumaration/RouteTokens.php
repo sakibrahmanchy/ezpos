@@ -102,6 +102,7 @@ class RouteTokens
         "report_item_graphical"=>"report_items",
         "report_item_ajax"=>"report_items",
         "report_item_summary"=>"report_items",
+        "report_item_import_log"=>"report_items",
 
         "report_manufacturer_graphical"=>"report_manufacturers",
         "report_manufacturer_ajax"=>"report_manufacturers",

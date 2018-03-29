@@ -19,7 +19,8 @@ class SettingsTableSeeder extends Seeder
 					"tax_rate" => 15,
 					"address" => "",
 					"phone" => "",
-                    "customer_loyalty_percentage"=>"1"
+                    "customer_loyalty_percentage"=>"1",
+                    "negative_inventory" => false
 				];
 		foreach( $settingsArr as $key=>$value )
 		{
