@@ -35,7 +35,7 @@
                                 <div class="col-md-12">
 
                                     <div class="form-group">
-                                        <label for="isbn" class=" col-sm-3 col-md-3 col-lg-2 control-label ">UPC/EAN/ISBN:</label>			<div class="col-sm-9 col-md-9 col-lg-10">
+                                        <label for="isbn" class=" col-sm-3 col-md-3 col-lg-2 control-label required">UPC/EAN/ISBN:</label>			<div class="col-sm-9 col-md-9 col-lg-10">
                                             <input type="text" name="isbn" value="{{ old('isbn') }}" class="form-control" id="isbn" >
                                             <span class="text-danger">{{ $errors->first('isbn') }}</span>
                                         </div>

@@ -41,7 +41,7 @@ class ItemController extends Controller
     {
 
         $this->validate($request, [
-            'isbn' => 'unique:items',
+            'isbn' => 'unique:items|required',
             'item_name' => 'required',
             'item_category' => 'required',
             'item_supplier' => 'required',
@@ -140,11 +140,9 @@ class ItemController extends Controller
 
     public function  EditItemPost(Request $request, $itemId)
     {
-
-
         /* var_dump($item);*/
         $this->validate($request, [
-            'isbn' => 'unique:items,isbn,'.$itemId,
+            'isbn' => 'required|unique:items,isbn,'.$itemId,
             'item_name' => 'required',
             'item_category' => 'required',
             'item_supplier' => 'required',
