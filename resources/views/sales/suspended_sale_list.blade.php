@@ -90,9 +90,7 @@
                         </td>
                         <td></td>
                         <td>
-                            @foreach($suspended_sale->item_names as $anItemName)
-                                {{$anItemName}},
-                            @endforeach
+							{{ implode(',', $suspended_sale->item_names ) }}
                         </td>
 
                         <td>{{$suspended_sale->total_amount}}</td>
