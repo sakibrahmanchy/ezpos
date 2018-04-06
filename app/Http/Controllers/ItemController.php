@@ -26,7 +26,6 @@ class ItemController extends Controller
 {
     public function GetItemForm()
     {
-
         //Load all permissions from database
         $categoryList = Category::orderBy('category_name')->get();
 
@@ -41,7 +40,7 @@ class ItemController extends Controller
     {
 
         $this->validate($request, [
-            'isbn' => 'unique:items|required',
+            'isbn' => 'unique:items',
             'item_name' => 'required',
             'item_category' => 'required',
             'item_supplier' => 'required',
@@ -107,8 +106,6 @@ class ItemController extends Controller
 
     public function EditItemGet($itemId)
     {
-
-
         $categoryList = Category::orderBy('category_name')->get();
 
         $supplierList = Supplier::all();
@@ -130,7 +127,6 @@ class ItemController extends Controller
 
     public function DeleteItemImage($item_id,$image_id){
 
-
         $item_image = ItemsImage::where('item_id','=',$item_id)->where('file_id','=',$image_id)->first();
         $item_image->delete();
 
@@ -142,7 +138,7 @@ class ItemController extends Controller
     {
         /* var_dump($item);*/
         $this->validate($request, [
-            'isbn' => 'required|unique:items,isbn,'.$itemId,
+            'isbn' => 'unique:items,isbn,'.$itemId,
             'item_name' => 'required',
             'item_category' => 'required',
             'item_supplier' => 'required',
@@ -161,7 +157,6 @@ class ItemController extends Controller
 
 
     public function GetItemsAutocomplete(){
-
 
         $autoselect = Input::get('autoselect');
 
@@ -381,7 +376,6 @@ class ItemController extends Controller
                 }
             }
 
-
             // return response()->json($itemsWithItemKits);
             echo json_encode($itemsWithItemKits);
             // return response()->json(['success' => true,'items'=>$items], 200);
@@ -425,7 +419,7 @@ class ItemController extends Controller
                 );
 
                 $rules = array(
-                    "upc" => "required|unique:items,isbn",
+                    "upc" => "unique:items,isbn",
                     "name" => "required",
                     "cost" => "required",
                     "sell" => "required"
@@ -475,6 +469,7 @@ class ItemController extends Controller
     }
 
     public function downloadLogFile($errors){
+
         $excelFile = Excel::create('item_import_log'.time(), function($excel) use ($errors) {
 
             // Set the spreadsheet title, creator, and description

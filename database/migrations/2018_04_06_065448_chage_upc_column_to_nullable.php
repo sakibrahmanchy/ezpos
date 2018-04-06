@@ -1,10 +1,10 @@
-    <?php
+<?php
 
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class ChangeUpcColumnToNotNullable extends Migration
+class ChageUpcColumnToNullable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class ChangeUpcColumnToNotNullable extends Migration
     public function up()
     {
         Schema::table('items', function($table) {
-            $table->string('isbn')->nullable(false)->change();
+            $table->string('isbn')->nullable(true)->change();
         });
     }
 
@@ -26,7 +26,7 @@ class ChangeUpcColumnToNotNullable extends Migration
     public function down()
     {
         Schema::table('items', function($table) {
-            $table->string('isbn')->nullable(true)->change();
+            $table->string('isbn')->nullable(false)->change();
         });
     }
 }
