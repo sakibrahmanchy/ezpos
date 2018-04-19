@@ -30,6 +30,7 @@
                         <th align="left" class="header">User</th>
                         <th align="right" class="header">Imported File</th>
                         <th align="right" class="header">Log File</th>
+                        <th align="right" class="header">Import Type</th>
                         <th align="right" class="header">Status</th>
                     </tr>
                     </thead>
@@ -41,8 +42,15 @@
                             <td><a href="{{ $aLog->uploaded_file_path }}">Download Imported File</a></td>
                             <td><a href="{{ $aLog->downloaded_file_path }}">Download Log File</a></td>
                             <td>
+                                @if($aLog->type==\App\Enumaration\ImportType::$NOT_INSERTED||$aLog->type==\App\Enumaration\ImportType::$ITEM)
+                                    Item
+                                @elseif($aLog->type==\App\Enumaration\ImportType::$SUPPLIER)
+                                    Supplier
+                                @endif
+                            </td>
+                            <td>
                                 @if($aLog->percentage==100)
-                                    <label class="label label-success large_label"><h3>100% imported</h3></label>
+                                    <label class="label label-success large_label">100% imported</label>
                                 @elseif(@$aLog->percentage>0&&$aLog->percentage<100)
                                     <label class="label label-warning large_label">Partial({{ round($aLog->percentage,2) }}%) Imported</label>
                                 @else

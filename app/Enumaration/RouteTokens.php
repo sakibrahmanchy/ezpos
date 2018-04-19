@@ -51,6 +51,7 @@ class RouteTokens
         "supplier_delete"=>"suppliers_delete",
         "suppliers_delete"=>"suppliers_delete",
         "supplier_to_excel"=>"suppliers_add_update",
+        "supplier_import_excel"=>"suppliers_add_update",
 
         "new_sale"=>"sale_add_update",
         "counter_list_ajax"=>"sale_add_update",

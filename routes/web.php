@@ -95,6 +95,8 @@ Route::group(['middleware' => ['admin']], function () {
     route::get('/supplier/export','SupplierController@SuppliersDataToExcel' )->name('supplier_to_excel')->middleware('auth');
     route::get('supplier/delete/{supplier_id}','SupplierController@DeleteSupplierPost')->name('supplier_delete')->middleware('auth');
     route::post('suppliers/delete','SupplierController@DeleteSuppliers')->name('suppliers_delete')->middleware('auth');
+    Route::get('supplier/excel/import','SupplierController@importExcelGet')->name('supplier_import_excel')->middleware('auth');
+    Route::post('supplier/excel/import', 'SupplierController@importExcel')->name('supplier_import_excel')->middleware('auth');
 
     route::get('/sale/new','SaleController@GetSaleForm' )->name('new_sale')->middleware('auth');
     route::post('/sale/new','SaleController@AddSale')->name('new_sale')->middleware('auth');

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddCommentToSalesTable extends Migration
+class AddTypeColumnToImportLogs extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AddCommentToSalesTable extends Migration
      */
     public function up()
     {
-        Schema::table('sales', function($table) {
-            $table->text('comment')->nullable();
+        Schema::table('import_logs', function($table) {
+            $table->integer('type');
         });
     }
 
@@ -25,8 +25,8 @@ class AddCommentToSalesTable extends Migration
      */
     public function down()
     {
-        Schema::table('sales', function($table) {
-            $table->dropColumn('comment');
+        Schema::table('import_logs', function($table) {
+            $table->dropColumn('type');
         });
     }
 }

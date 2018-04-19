@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddCommentToSalesTable extends Migration
+class ChangeItemImportLogsToImportLogs extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,7 @@ class AddCommentToSalesTable extends Migration
      */
     public function up()
     {
-        Schema::table('sales', function($table) {
-            $table->text('comment')->nullable();
-        });
+        Schema::rename("item_import_logs", "import_logs");
     }
 
     /**
@@ -25,8 +23,6 @@ class AddCommentToSalesTable extends Migration
      */
     public function down()
     {
-        Schema::table('sales', function($table) {
-            $table->dropColumn('comment');
-        });
+        Schema::rename("import_logs", "item_import_logs");
     }
 }

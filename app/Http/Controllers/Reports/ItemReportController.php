@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Reports;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\SaleController;
-use App\Model\ItemImportLog;
+use App\Model\ImportLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -191,7 +191,7 @@ class ItemReportController extends Controller
 
     public function ReportItemImportLog(){
 
-        $importLogs = ItemImportLog::orderBy('created_at','desc')->with('User')->get();
+        $importLogs = ImportLog::orderBy('created_at','desc')->with('User')->get();
 
         return view('reports.item.item_import_log',["logs"=>$importLogs]);
 

@@ -115,6 +115,13 @@ Breadcrumbs::register('supplier_edit', function($breadcrumbs, $supplier_id)
     $breadcrumbs->push('Edit Supplier', route('supplier_edit',['supplier_edit'=>$supplier_id]));
 });
 
+Breadcrumbs::register('supplier_import', function($breadcrumbs)
+{
+    $breadcrumbs->parent('supplier_list');
+    $breadcrumbs->push('Import Suppliers', route('supplier_import_excel'));
+});
+
+
 
 Breadcrumbs::register('employee_list', function($breadcrumbs)
 {

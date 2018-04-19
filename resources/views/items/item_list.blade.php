@@ -22,7 +22,7 @@
             <div class="col-md-6">
                 <div class="pull-right">
                     @if(UserHasPermission("item_add_update"))
-                        <a href="{{route('new_item')}}" class="btn btn-primary hidden-sm hidden-xs" title="New Item"><span class=""><i class="fa fa-plus-circle" aria-hidden="true"></i> New Item</span></a>
+                        <a href="{{route('new_item')}}" class="btn btn-primary" title="New Item"><span class=""><i class="fa fa-plus-circle" aria-hidden="true"></i> New Item</span></a>
                        &nbsp; <div class="dropdown pull-right ">
                             <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                 <span class="fa fa-cogs" aria-hidden="true">

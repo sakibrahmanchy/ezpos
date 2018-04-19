@@ -36,7 +36,7 @@ class Importer {
         }
     }
 
-    public function validateErrors($aRow){
+    public function validateErrors($aRow,$uniqueField){
         $rowData = $aRow->toArray();
         $validator = Validator::make($rowData,$this->rules);
 
@@ -44,7 +44,7 @@ class Importer {
             $errorMessages = (string) $validator->errors();
             $errorData = array(
                 "field" => $aRow->name,
-                "upc" => $aRow->upc,
+                $uniqueField => $aRow->{$uniqueField},
                 "status" => "Failure",
                 "errors" => $errorMessages
             );
@@ -72,10 +72,10 @@ class Importer {
         return $insertObject;
     }
 
-    public function insertIntoDB(){
+    public function insertIntoDB($uniqueFieldName){
         foreach ($this->values as $aRow) {
             $this->replaceWithDefaultValues($aRow);
-            if($this->validateErrors($aRow)) {
+            if($this->validateErrors($aRow,$uniqueFieldName)) {
                 $aRow = $this->mapColumns($aRow);
                 DB::table($this->table_name)->insert($aRow);
                 $this->uploadSuccess++;

@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Enumaration\ImportType;
 use App\Enumaration\ItemStatus;
 use App\Enumaration\PriceRuleTypes;
 use App\Model\Category;
 use App\Model\File;
+use App\Model\ImportLog;
 use App\Model\Item;
-use App\Model\ItemImportLog;
 use App\Model\ItemKit;
 use App\Model\ItemsImage;
 use App\Model\Manufacturer;
@@ -22,6 +23,8 @@ use Illuminate\Support\Facades\Validator;
 use Excel;
 use App\Model\ImporterWizard\Importer;
 use PHPExcel_IOFactory;
+
+
 class ItemController extends Controller
 {
     public function GetItemForm()
@@ -439,17 +442,18 @@ class ItemController extends Controller
 
                 $importer = new Importer("items",$columnMaps,$data,$rules,$defaultValues);
 
-                $importer->insertIntoDB();
+                $importer->insertIntoDB("upc");
 
                 $excelFile = $this->downloadLogFile($importer->getErrorLogs());
                 $objWriter = PHPExcel_IOFactory::createWriter($excelFile->excel, 'Excel2007');
                 $objWriter->save(str_replace(__FILE__,'item_import_logs/'.$excelFile->filename  .'.xlsx',__FILE__));
 
-                $itemImportLog = new ItemImportLog();
+                $itemImportLog = new ImportLog();
                 $itemImportLog->user_id = Auth::user()->id;
                 $itemImportLog->uploaded_file_path = asset('/item_import_uploads/'.$importedFileName);
                 $itemImportLog->downloaded_file_path = asset("item_import_logs/".$excelFile->filename.'.xlsx');
                 $itemImportLog->percentage = $importer->getStatusPercentage();
+                $itemImportLog->type = ImportType::$ITEM;
                 $itemImportLog->save();
 
 //                Storage::disk('uploaded_import_files')->put($excelFile->filename, file_get_contents($excelFile));

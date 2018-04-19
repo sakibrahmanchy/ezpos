@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Model\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 
 class CategoryController extends Controller
@@ -11,12 +12,30 @@ class CategoryController extends Controller
     //
 
     public function GetCategoryList(){
-        $categoryList = new Category();
-        $categoryList->fetchCategories();
-        $categoryList->GenerateCategoryMenu(0);
-        $generatedCategoryMenu = $categoryList->GetGeneratedMenu();
 
-        return view('category_list',['categoryMenu'=>$generatedCategoryMenu]);
+            $result = DB::table('items')->join(DB::raw("(SELECT 
+    
+              id,category_name
+    
+              FROM categories
+    
+              WHERE id = 1   
+    
+              GROUP BY categories.id
+    
+              ) as b"),function($join){
+
+                $join->on("b.id","=","items.category_id");
+
+            })->get();
+            dd($result);
+
+//        $categoryList = new Category();
+//        $categoryList->fetchCategories();
+//        $categoryList->GenerateCategoryMenu(0);
+//        $generatedCategoryMenu = $categoryList->GetGeneratedMenu();
+//
+//        return view('category_list',['categoryMenu'=>$generatedCategoryMenu]);
     }
 
     public function AddCategory(Request $request){

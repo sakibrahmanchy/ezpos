@@ -21,8 +21,19 @@
                 <div class="pull-right">
                     <div class="buttons-list">
                         <div class="pull-right-btn">
-                            <a href="{{route('new_supplier')}}" class="btn btn-primary hidden-sm hidden-xs" title="New Supplier"><i class="fa fa-plus-circle"></i> <span class="">New Supplier</span></a>
-                            <div class="piluku-dropdown btn-group">
+                            <a style="margin-right: 10px" href="{{route('new_supplier')}}" class="btn btn-primary" title="New Supplier"><i class="fa fa-plus-circle"></i> <span class="">New Supplier</span></a>
+                            <div class="dropdown pull-right ">
+                                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                <span class="fa fa-cogs" aria-hidden="true">
+                                </span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                                    <li>
+                                        <a href="{{ route('supplier_import_excel') }}">
+                                            Import Suppliers
+                                        </a>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </div>
