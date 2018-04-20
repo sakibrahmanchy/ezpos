@@ -24,7 +24,7 @@ class Sale extends Model
 
     public function Items(){
         return $this->belongsToMany('App\Model\Item')->withPivot('quantity','unit_price',
-            'total_price','discount_amount','item_discount_percentage')->with('pricerule', 'Category','Supplier');
+            'total_price','discount_amount','item_discount_percentage','is_price_taken_from_barcode')->with('pricerule', 'Category','Supplier');
     }
 
     public function ItemKits(){

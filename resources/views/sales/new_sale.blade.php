@@ -373,7 +373,8 @@
 
                 var a = JSON.stringify(item);
                 itemTotalInfo.push(JSON.parse(a));
-                if(item.type=="auto"){
+                console.log(item);
+                if(item.type === "auto"){
                     autoAddItemTOCart(item);
                     return null;
                 }else{
@@ -384,7 +385,7 @@
 
                     $img = $('<img height="50px" width="50px" style="margin-right:10px">');
 
-                    var  img_src = "default-product.jpg";
+                    var img_src = "default-product.jpg";
 
                     if(item.new_name!=null){
                         img_src = item.new_name;
@@ -394,7 +395,7 @@
                             src: '{{asset('img')}}/' + "item-kit.png",
                             alt: item.item_kit_name
                         });
-                    }else{
+                    } else{
                         $img.attr({
                             src: '{{asset('img')}}/' + img_src,
                             alt: item.item_name
@@ -414,17 +415,17 @@
             $item.autocomplete({
 
                 minLength: 0,
+                delay: 500,
                 source: function (request, response) {
                     // request.term is the term searched for.
                     // response is the callback function you must call to update the autocomplete's
                     // suggestion list.
 
                     itemTotalInfo = [];
-
                     var autoselect = false;
                     if($(("#auto_select")).is(':checked'))
                         autoselect = true;
-
+                    console.log(request.term);
                     $.ajax({
                         url: "{{route('item_list_autocomplete')}}",
                         data: { q: request.term, autoselect: autoselect },
@@ -612,8 +613,17 @@
                 '<div class="media-body">' +
                 ' <h6 class="media-heading"><a href="#">' + item.item_name + '</a></h6>';
 
-            if(item.name!=null)
-                itemDescription +=  '<h6 class="media-heading"> by <a href="#">'+ item.name +'</a></h6>';
+            if(item.name!==null) {
+                if(item.useScanPrice){
+                    itemDescription +=  '<h6 class="media-heading"> by <a href="#">'+ item.name +'@'+item.new_price+'/'+item.item_size+'</a></h6>';
+                }
+                else
+                    itemDescription +=  '<h6 class="media-heading"> by <a href="#">'+ item.name +'</a></h6>';
+            }else {
+                if(item.useScanPrice){
+                    itemDescription +=  '<h6 class="media-heading"><a href="#">@'+item.new_price+'/'+item.item_size+'</a></h6>';
+                }
+            }
 
             if(item.item_quantity != 'undefined'){
                 if(item.item_quantity>10)
@@ -631,9 +641,9 @@
                 ' <input type="number" min = "0" class="form-control quantity" id="product-' + item.item_id + '"  onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" onchange = "addItemPriceToRegister(' + item.item_id + ')"  value="1">' +
                 '</td>' +
                     @if(UserHasPermission("edit_sale_cost_price"))
-                        '<td class="col-sm-1 col-md-1 text-center"><a  href="javascript:void(0)" onclick="editItemSalePrice('+item.item_id+')" data-unit-price = "'+item.selling_price +'" id="unit-price-' + item.item_id + '">$'+item.selling_price+'</a></td>' +
+                        '<td class="col-sm-1 col-md-1 text-center"><a href="javascript:void(0)" data-price-scanned-from-barcode='+item.useScanPrice+' onclick="editItemSalePrice('+item.item_id+')" data-unit-price = "'+(item.useScanPrice? item.new_price : item.selling_price) +'" id="unit-price-' + item.item_id + '">$'+(item.useScanPrice? item.new_price : item.selling_price)+'</a></td>' +
                     @else
-                        '<td class="col-sm-1 col-md-1 text-center" ><strong data-unit-price = "'+item.selling_price +'" id="unit-price-' + item.item_id + '">$' + item.selling_price + '</strong></td>' +
+                        '<td class="col-sm-1 col-md-1 text-center" ><strong data-price-scanned-from-barcode='+item.useScanPrice+' data-unit-price = "'+(item.useScanPrice? item.new_price : item.selling_price) +'" id="unit-price-' + item.item_id + '">$' + (item.useScanPrice? item.new_price : item.selling_price) + '</strong></td>' +
                     @endif
                         '<td><input  class="form-control discount-amount" type="number" id="discount-'+ item.item_id+'" onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" onchange = "addItemPriceToRegister(' + item.item_id + ')"  value="0"></td>' +
                 '<td class="col-sm-1 col-md-1 text-center" ><strong data-total-price = "" id ="total-price-' + item.item_id + '" class="total-price"></strong></td>' +
@@ -731,7 +741,7 @@
 
                 @if($settings['negative_inventory']=="true")
                 //Continue Selling Products
-                appendItemToCartAuto(item);
+                    appendItemToCartAuto(item);
                 @else
                 alert("Sorry, product is out of stock.");
                 @endif
@@ -1013,7 +1023,7 @@
             }else if ($("#payment_types").attr("data-value") == "Loyalty Card"){
 
                 var loyalty_card_number = $("#loyalty_card_number").val();
-                if(loyalty_card_number==""){
+                if(loyalty_card_number=="") {
 
                     $.notify({
                         icon: '',
@@ -1024,7 +1034,7 @@
                         timer: 4000
                     });
 
-                }else{
+                } else {
 
                     var due = $("#due").attr("data-due");
                     $.ajax({
@@ -1125,8 +1135,8 @@
                         var itemId = $(this).attr("data-index");
                         var itemType = $(this).attr("data-item-type");
                         var itemRuleId = $(this).attr("data-rule-id");
-
-                        if(itemId==0){
+                        console.log($(this));
+                        if( itemId == 0 ) {
 
                             var currentQuantity = $("#product-discount-quantity").val();
                             var currentCostPrice =  $("#unit-discount-price").attr("data-unit-price");
@@ -1144,18 +1154,20 @@
                                 item_discount_percentage: currentDiscountPercentage,
                                 total_price: currentTotal,
                                 price_rule_id: itemRuleId
-
                             };
                             productInfos.push(productInfo);
 
 
-                        }else {
+                        } else {
 
                             var currentQuantity = $("#product-" + itemId).val();
                             var currentCostPrice = $("#cost-price-" + itemId).val();
                             var currentUnitPrice = $("#unit-price-" + itemId).attr("data-unit-price");
                             var currentDiscountPercentage = $("#discount-" + itemId).val();
                             var currentTotal = $("#total-price-" + itemId).attr("data-total-price");
+                            var isPriceScannedFromBarcode = $("#unit-price-"+itemId).attr("data-price-scanned-from-barcode");
+                            var scanStatus = (isPriceScannedFromBarcode == 'true' ? 1 : 0);
+
                             percentage = (currentDiscountPercentage / 100);
                             var discountAmount = (currentUnitPrice * currentQuantity) - currentTotal;
                             var salesDiscountAmount = $("#saleDiscountAmount").val();
@@ -1184,7 +1196,8 @@
                                 sale_discount_amount: salesDiscountAmount,
                                 item_profit: itemProfit,
                                 tax_rate: "{{ $tax_rate }}",
-                                tax_amount: currentTotal*taxRate
+                                tax_amount: currentTotal*taxRate,
+                                is_price_taken_from_barcode: scanStatus
                             };
                             productInfos.push(productInfo);
 

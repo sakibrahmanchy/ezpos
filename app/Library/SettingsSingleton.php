@@ -22,6 +22,11 @@ class SettingsSingleton
         return self::$settingsData;
     }
 
+    public static function getByKey($key){
+        self::get();
+        return (self::$settingsData)[$key];
+    }
+
     public static function set($key, $value)
     {
         $settings = Setting::where("key",$key)->first();

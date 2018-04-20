@@ -82,8 +82,14 @@
                         <tbody>
                         @foreach($sale->items as $anItem)
                             <tr>
-                                <td> {{ $anItem->item_name }} </td>
-                                <td> ${{ $anItem->selling_price }} </td>
+                                <td>
+                                 @if($anItem->pivot->is_price_taken_from_barcode)
+                                    <span>{{ $anItem->item_name }}</span><br>@<span>{{ $anItem->pivot->unit_price }}</span>/{{ $anItem->item_size }}
+                                 @else
+                                    {{ $anItem->item_name }}
+                                 @endif
+                                </td>
+                                <td> ${{ $anItem->pivot->unit_price }} </td>
                                 <td> {{ $anItem->pivot->quantity }} </td>
                                 <td> ${{ $anItem->pivot->total_price }} </td>
                                 <td> {{ $anItem->pivot->item_discount_percentage }}% </td>

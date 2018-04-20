@@ -403,8 +403,12 @@ class SaleController extends Controller
 
             $items = array();
             foreach ($sale->items as $anItem) {
-
-                $toPrint = new \App\Model\Printer\Item(round($anItem->pivot->quantity), $anItem->item_name, $anItem->selling_price, $anItem->pivot->total_price);
+                $item_name = "";
+                if($anItem->pivot->is_price_taken_from_barcode)
+                    $item_name = $anItem->item_name.'@'.$anItem->pivot->unit_price.'/'.$anItem->item_size;
+                else
+                  $item_name = $anItem->item_name;
+                $toPrint = new \App\Model\Printer\Item(round($anItem->pivot->quantity), $item_name, $anItem->pivot->unit_price , $anItem->pivot->total_price);
                 array_push($items, $toPrint);
             }
 

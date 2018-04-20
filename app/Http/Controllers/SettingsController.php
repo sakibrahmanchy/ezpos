@@ -20,7 +20,10 @@ class SettingsController extends Controller
 
     public function SaveSettings(Request $request){
         $this->validate($request,[
-            "company_name"=>"required"
+            "company_name"=>"required",
+            'upc_code_prefix' => 'required_with:scan_price_from_barcode,on',
+            "tax_rate" => "required",
+            "customer_loyalty_percentage" => "required"
         ]);
 
         $settingsChange =$request->except(['_token','image','denomination_name','denomination_value']);

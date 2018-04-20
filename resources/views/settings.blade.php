@@ -6,8 +6,6 @@
     {!! Breadcrumbs::render('settings') !!}
 @stop
 
-@include('includes.message-block')
-
 @section('content')
     <style>
         .switch {
@@ -70,6 +68,7 @@
 
 
     <div class="box box-primary" style="padding:20px">
+        @include('includes.message-block')
         <div class="row" id="form">
             <div class="spinner" id="grid-loader" style="display:none">
                 <div class="rect1"></div>
@@ -94,13 +93,12 @@
                             <div class="row">
                                 <div class="col-md-12">
 
-                                    <div class="form-group">
-                                        <label for="first_name" class="required col-sm-3 col-md-3 col-lg-2 control-label ">Company Name:</label>			<div class="col-sm-9 col-md-9 col-lg-10">
-                                            <input type="text" name="company_name" value="{{$settings['company_name']}}" class="form-control" id="company_name" >
-                                            <span class="text-danger">{{ $errors->first('company_name') }}</span>
-                                        </div>
-                                    </div>
 
+                                    <label for="first_name" class="required col-sm-3 col-md-3 col-lg-2 control-label ">Company Name:</label>			<div class="col-sm-9 col-md-9 col-lg-10">
+                                        <input type="text" name="company_name" value="{{$settings['company_name']}}" class="form-control" id="company_name" >
+                                        <span class="text-danger">{{ $errors->first('company_name') }}</span>
+                                    </div>
+                                    <br><br><br>
                                     <div class="form-group">
                                         <label for="image_id" class="col-sm-3 col-md-3 col-lg-2 control-label ">Select Company Logo:</label>			<div class="col-sm-9 col-md-9 col-lg-10">
                                             <ul class="list-unstyled avatar-list">
@@ -108,20 +106,19 @@
                                                     <input type="file" name="image" onchange = "loadTempImage(this)" id="image" class="filestyle" tabindex="-1" style="position: absolute; clip: rect(0px 0px 0px 0px);"><div class="bootstrap-filestyle input-group"><input type="text" class="form-control " disabled=""> <span class="group-span-filestyle input-group-btn" tabindex="0"><label for="image" class="btn btn-file-upload "><span class="pe-7s-folder"></span> <span class="buttonText">Choose file</span></label></span></div>&nbsp;
                                                 </li>
                                                 <li>
-                                                    <div id="avatar"><img src="{{asset('img/logo.png?'.rand())}}" class="img-responsive logo-preview" id="image_empty" alt=""></div>
+                                                    <div class="col-lg-2" id="avatar"><img src="{{asset('img/logo.png?'.rand())}}" class="img-responsive logo-preview" id="image_empty" alt=""></div>
                                                 </li>
                                             </ul>
                                         </div>
                                     </div>
 
-                                    <label for="hire_date" class="col-sm-3 col-md-3 col-lg-2 control-label">Tax Rate:</label>
+                                    <label for="hire_date" class="col-sm-3 col-md-3 col-lg-2 control-label required">Tax Rate:</label>
                                     <div class="col-sm-9 col-md-9 col-lg-10">
                                         <div class="input-group date">
-                                    <span class="input-group-addon bg">
-                                     %
-                                    </span>
+                                            <span class="input-group-addon bg">
+                                             %
+                                            </span>
                                             <input class="form-control" type="text" name="tax_rate" value="{{ $settings['tax_rate'] }}">
-
                                         </div>
                                     </div><br><br><br>
 
@@ -150,7 +147,7 @@
                                     </div>
                                     <br><br><br>
 
-                                    <label for="phone" class="col-sm-3 col-md-3 col-lg-2 control-label">Customer Loyalty Percentage:</label>
+                                    <label for="phone" class="col-sm-3 col-md-3 col-lg-2 control-label required">Customer Loyalty Percentage:</label>
                                     <div class="col-sm-9 col-md-9 col-lg-10">
                                         <div class="input-group date">
                                     <span class="input-group-addon bg">
@@ -169,10 +166,33 @@
                                         </label>
                                         <input type="hidden" name="negative_inventory" id="negative_inventory_value" value="{{ $settings['negative_inventory'] }}"/>
                                     </div>
+
+                                    <label for="phone" class="col-sm-3 col-md-3 col-lg-2 control-label">Scan Price from barcode:</label>
+                                    <div class="col-sm-9 col-md-9 col-lg-10">
+                                        <label class="switch">
+                                            <input type="checkbox" onchange="scanPriceFromBarcode()" id="scan_price_from_barcode" @if($settings['scan_price_from_barcode']=="true") checked @else  @endif}}>
+                                            <span class="slider round"></span>
+                                        </label>
+                                        <input type="hidden" name="scan_price_from_barcode" id="scan_price_from_barcode_value" value="{{ $settings['scan_price_from_barcode'] }}"/>
+                                    </div>
+
+
                                 </div>
 
                             </div>
 
+                        </div>
+
+                        <div class="upc_code_prefix_holder hidden">
+                            <label for="upc_code_prefix" class="col-sm-3 col-md-3 col-lg-2 control-label required">Upc Code Prefix:</label>
+                            <div class="col-sm-9 col-md-9 col-lg-10">
+                                <div class="input-group date">
+                                                <span class="input-group-addon bg">
+                                                 <i class="fa fa-plus-circle"></i>
+                                                </span>
+                                    <input class="form-control"  name="upc_code_prefix" value="{{ $settings['upc_code_prefix'] }}">
+                                </div>
+                            </div>
                         </div>
 
                         <br><br>
@@ -219,6 +239,25 @@
 @section('additionalJS')
     <script>
 
+        $(document).ready(function(){
+
+            togglePriceOnBarCode();
+
+            $("#scan_price_from_barcode").on("change",function(){
+                togglePriceOnBarCode();
+            });
+
+        });
+
+        function togglePriceOnBarCode() {
+            var status = $("#scan_price_from_barcode").is(':checked');
+            if(status) {
+                $(".upc_code_prefix_holder").removeClass("hidden");
+            }else{
+                $(".upc_code_prefix_holder").addClass("hidden");
+            }
+        }
+
         function addNewDenominator(){
             console.log("Aa");
             $("#currency_denoms tbody").append('<tr><td><input type="text" class="form-control" name="denomination_name[]" value="" /></td><td><input type="text" class="form-control" name="denomination_value[]" value="" /></td><td>&nbsp;</td></tr>');
@@ -254,6 +293,11 @@
         function negativeInventory(){
             var status = $("#negative_inventory").is(':checked');
             $("#negative_inventory_value").val(status);
+        }
+
+        function scanPriceFromBarcode(){
+            var status = $("#scan_price_from_barcode").is(':checked');
+            $("#scan_price_from_barcode_value").val(status);
         }
 
     </script>

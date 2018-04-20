@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enumaration\ImportType;
 use App\Enumaration\ItemStatus;
 use App\Enumaration\PriceRuleTypes;
+use App\Library\SettingsSingleton;
 use App\Model\Category;
 use App\Model\File;
 use App\Model\ImportLog;
@@ -12,6 +13,7 @@ use App\Model\Item;
 use App\Model\ItemKit;
 use App\Model\ItemsImage;
 use App\Model\Manufacturer;
+use App\Model\Setting;
 use App\Model\Supplier;
 use Faker\Provider\zh_CN\DateTime;
 use Illuminate\Http\Request;
@@ -165,7 +167,22 @@ class ItemController extends Controller
 
         if($autoselect=="true"){
 
-            $search_param = (string)        Input::get('q');
+            $search_param = (string) Input::get('q');
+            $scan_price_from_barcode = SettingsSingleton::getByKey('scan_price_from_barcode');
+            $item_new_price_from_barcode = -1;
+            $priceNeededToBeScanned = false;
+            if(strlen($search_param)==12) {
+                if($scan_price_from_barcode=="true"){
+                    $priceNeededToBeScanned = true;
+                    $upc_code_prefix = $scan_price_from_barcode = SettingsSingleton::getByKey('upc_code_prefix');
+                    if(substr($search_param,0,strlen($upc_code_prefix)) ===  $upc_code_prefix){
+                        $item_new_price_from_barcode = (int) substr($search_param,6,12);
+                        $item_new_price_from_barcode = $item_new_price_from_barcode / 1000;
+                        $search_param = substr($search_param,0,6);
+                    }
+                }
+            }
+
             $items =  DB::table('items')
                 ->leftJoin('items_images', 'items.id', '=', 'items_images.item_id')
                 ->leftJoin('files', 'files.id', '=', 'items_images.file_id')
@@ -193,6 +210,10 @@ class ItemController extends Controller
                     if(isset($anItem->item_id)){
 
                         $anItem->type = "auto";
+                        if($priceNeededToBeScanned) {
+                            $anItem->new_price = $item_new_price_from_barcode;
+                            $anItem->useScanPrice = true;
+                        }
                         if ($anItem->active){
 
                             if($anItem->unlimited||$anItem->num_times_to_apply>0)
