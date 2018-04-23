@@ -190,7 +190,7 @@ class ItemController extends Controller
                 ->leftJoin('price_rules','item_price_rule.price_rule_id','=','price_rules.id')
                 ->leftJoin('suppliers','suppliers.id','=','items.supplier_id')
                 ->where(function($query) use ($search_param) {
-                    $query->where('isbn','=',$search_param);
+                    $query->where('isbn','like',"%".$search_param."%");
                 })
                 ->where('items.deleted_at',null)
                 ->where('items.item_status',ItemStatus::$ACTIVE)
