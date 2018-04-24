@@ -84,7 +84,7 @@
                             <tr>
                                 <td>
                                  @if($anItem->pivot->is_price_taken_from_barcode)
-                                    <span>{{ $anItem->item_name }}</span><br>@<span>{{ $anItem->pivot->unit_price }}</span>/{{ $anItem->item_size }}
+                                    <span>{{ $anItem->item_name }}</span><br>@<span>{{ $anItem->pivot->unit_price }}</span>{{ $anItem->item_size==null ? "" : "/".$anItem->item_size }}
                                  @else
                                     {{ $anItem->item_name }}
                                  @endif

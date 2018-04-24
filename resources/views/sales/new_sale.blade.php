@@ -613,15 +613,18 @@
                 '<div class="media-body">' +
                 ' <h6 class="media-heading"><a href="#">' + item.item_name + '</a></h6>';
 
+
             if(item.name!==null) {
                 if(item.useScanPrice){
-                    itemDescription +=  '<h6 class="media-heading"> by <a href="#">'+ item.name +'@'+item.new_price+'/'+item.item_size+'</a></h6>';
+                    var additionalPrice = item.name +(item.item_size===null) ? (item.new_price.toFixed(2)) : ('@'+item.new_price+'/'+item.item_size);
+                    itemDescription +=  '<h6 class="media-heading"> by <a href="#">'+'@'+additionalPrice+'</a></h6>';
                 }
                 else
                     itemDescription +=  '<h6 class="media-heading"> by <a href="#">'+ item.name +'</a></h6>';
             }else {
                 if(item.useScanPrice){
-                    itemDescription +=  '<h6 class="media-heading"><a href="#">@'+item.new_price+'/'+item.item_size+'</a></h6>';
+                    var additionalPrice = item.name +(item.item_size===null) ? (item.new_price.toFixed(2)) : ('@'+item.new_price+'/'+item.item_size);
+                    itemDescription +=  '<h6 class="media-heading"><a href="#">'+'@'+additionalPrice+'</a></h6>';
                 }
             }
 
@@ -641,9 +644,9 @@
                 ' <input type="number" min = "0" class="form-control quantity" id="product-' + item.item_id + '"  onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" onchange = "addItemPriceToRegister(' + item.item_id + ')"  value="1">' +
                 '</td>' +
                     @if(UserHasPermission("edit_sale_cost_price"))
-                        '<td class="col-sm-1 col-md-1 text-center"><a href="javascript:void(0)" data-price-scanned-from-barcode='+item.useScanPrice+' onclick="editItemSalePrice('+item.item_id+')" data-unit-price = "'+(item.useScanPrice? item.new_price : item.selling_price) +'" id="unit-price-' + item.item_id + '">$'+(item.useScanPrice? item.new_price : item.selling_price)+'</a></td>' +
+                        '<td class="col-sm-1 col-md-1 text-center"><a href="javascript:void(0)" data-price-scanned-from-barcode='+item.useScanPrice+' onclick="editItemSalePrice('+item.item_id+')" data-unit-price = "'+(item.useScanPrice? item.new_price.toFixed(2) : item.selling_price) +'" id="unit-price-' + item.item_id + '">$'+(item.useScanPrice? item.new_price.toFixed(2) : item.selling_price)+'</a></td>' +
                     @else
-                        '<td class="col-sm-1 col-md-1 text-center" ><strong data-price-scanned-from-barcode='+item.useScanPrice+' data-unit-price = "'+(item.useScanPrice? item.new_price : item.selling_price) +'" id="unit-price-' + item.item_id + '">$' + (item.useScanPrice? item.new_price : item.selling_price) + '</strong></td>' +
+                        '<td class="col-sm-1 col-md-1 text-center" ><strong data-price-scanned-from-barcode='+item.useScanPrice+' data-unit-price = "'+(item.useScanPrice? item.new_price.toFixed(2) : item.selling_price) +'" id="unit-price-' + item.item_id + '">$' + (item.useScanPrice? item.new_price.toFixed(2) : item.selling_price) + '</strong></td>' +
                     @endif
                         '<td><input  class="form-control discount-amount" type="number" id="discount-'+ item.item_id+'" onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" onchange = "addItemPriceToRegister(' + item.item_id + ')"  value="0"></td>' +
                 '<td class="col-sm-1 col-md-1 text-center" ><strong data-total-price = "" id ="total-price-' + item.item_id + '" class="total-price"></strong></td>' +

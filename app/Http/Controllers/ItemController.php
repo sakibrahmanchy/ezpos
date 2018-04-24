@@ -291,7 +291,6 @@ class ItemController extends Controller
                     }
                     echo json_encode($itemsWithItemKits);
                 }
-
             }
 
         }else{
