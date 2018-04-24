@@ -147,6 +147,17 @@
                                     </div>
                                     <br><br><br>
 
+                                    <label for="item_size" class="col-sm-3 col-md-3 col-lg-2 control-label required">Default Item Size:</label>
+                                    <div class="col-sm-9 col-md-9 col-lg-10">
+                                        <div class="input-group date">
+                                    <span class="input-group-addon bg">
+                                     <i class="fa fa-balance-scale"></i>
+                                    </span>
+                                            <input class="form-control" type="text" name="item_size" value="{{ $settings['item_size'] }}">
+                                        </div>
+                                    </div>
+                                    <br><br><br>
+
                                     <label for="phone" class="col-sm-3 col-md-3 col-lg-2 control-label required">Customer Loyalty Percentage:</label>
                                     <div class="col-sm-9 col-md-9 col-lg-10">
                                         <div class="input-group date">

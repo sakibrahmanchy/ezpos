@@ -22,7 +22,8 @@ class SettingsTableSeeder extends Seeder
                     "customer_loyalty_percentage"=>"1",
                     "negative_inventory" => false,
                     "scan_price_from_barcode" => false,
-                    "upc_code_prefix"=>"200"
+                    "upc_code_prefix"=>"200",
+                    "item_size" => "lbs"
 				];
 		foreach( $settingsArr as $key=>$value )
 		{
