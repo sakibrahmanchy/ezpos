@@ -210,7 +210,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-offset-4 col-sm-offset-4 col-md-6 col-sm-6 col-xs-8">
-                                <div class="invoice-footer-heading">Tax(15%)</div>
+                                <div class="invoice-footer-heading">Tax({{ $settings['tax_rate'] }}%)</div>
                             </div>
                             <div class="col-md-2 col-sm-2 col-xs-4">
                                 <div class="invoice-footer-value">
@@ -258,9 +258,9 @@
                                 <div class="invoice-footer-value invoice-total">
 
                                     @if($sale->due>=0)
-                                         ${{$sale->due}}
+                                         ${{  number_format($sale->due, 2) }}
                                     @else
-                                        -${{ (-1) * $sale->due }}
+                                        -${{ (-1) * number_format($sale->due, 2) }}
                                     @endif
                                 </div>
                             </div>
