@@ -1,6 +1,7 @@
 <?php
 
 namespace  App\Model\ImporterWizard;
+use App\Library\SettingsSingleton;
 use Illuminate\Support\Facades\DB;
 use Validator;
 use Excel;
@@ -63,17 +64,15 @@ class Importer {
     }
 
     public function mapColumns($aRow){
+        $prefixCode = SettingsSingleton::getByKey("upc_code_prefix");
         $insertObject = array();
         foreach ($this->columnMaps as $aKey => $aValue) {
             $aRow->{$aValue} = $aRow->{$aKey};
-            if($aKey=="upc"){
-                dd($aRow->{$aKey});
-                if(substr($aValue,2)=="200"){
-                    dd($aKey);
-                }
-            }
             $insertObject[$aValue] = $aRow->{$aKey};
             unset($aRow->{$aKey});
+        }
+        if(substr($insertObject["isbn"],0,strlen($prefixCode))==$prefixCode) {
+           $insertObject["item_quantity"] = 0;
         }
         return $insertObject;
     }

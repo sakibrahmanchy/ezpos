@@ -462,7 +462,8 @@ class ItemController extends Controller
                     "sell" => "selling_price",
                     "quantity" => "item_quantity",
                     "size" => "item_size",
-                    "status" => "item_status"
+                    "status" => "item_status",
+                    "product_id" => "product_id"
                 );
 
                 $importer = new Importer("items",$columnMaps,$data,$rules,$defaultValues);
