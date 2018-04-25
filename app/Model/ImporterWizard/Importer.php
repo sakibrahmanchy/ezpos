@@ -67,6 +67,7 @@ class Importer {
         foreach ($this->columnMaps as $aKey => $aValue) {
             $aRow->{$aValue} = $aRow->{$aKey};
             if($aKey=="upc"){
+                dd($aRow->{$aKey});
                 if(substr($aValue,2)=="200"){
                     dd($aKey);
                 }

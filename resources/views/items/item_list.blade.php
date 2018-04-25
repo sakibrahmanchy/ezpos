@@ -108,7 +108,7 @@
                                 </ul>
 
                             </div></td>
-                            <td> {{$item->item_id}} </td>
+                            <td> {{$item->product_id}} </td>
                             <td>{{$item->item_name}}</td>
                             <td>
                                 @if($item->item_status == \App\Enumaration\ItemStatus::$DRAFTED)
