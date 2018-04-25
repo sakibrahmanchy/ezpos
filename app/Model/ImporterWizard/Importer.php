@@ -66,6 +66,11 @@ class Importer {
         $insertObject = array();
         foreach ($this->columnMaps as $aKey => $aValue) {
             $aRow->{$aValue} = $aRow->{$aKey};
+            if($aKey=="upc"){
+                if(substr($aValue,2)=="200"){
+                    dd($aKey);
+                }
+            }
             $insertObject[$aValue] = $aRow->{$aKey};
             unset($aRow->{$aKey});
         }

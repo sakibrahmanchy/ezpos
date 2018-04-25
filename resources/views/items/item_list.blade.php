@@ -83,7 +83,6 @@
                         <th>Size</th>
                         <th>Cost Price</th>
                         <th>Selling Price</th>
-                        <th>Product ID</th>
                         <th>Category</th>
                         <th>Reorder Level</th>
                         <th>Replenish Level</th>
@@ -127,7 +126,6 @@
                             <td>{{$item->item_size}}</td>
                             <td>{{$item->cost_price}}</td>
                             <td>{{$item->selling_price}}</td>
-                            <td>{{$item->product_id}}</td>
                             <td>{{$item->category_name}}</td>
                             <td>{{$item->item_reorder_level}}</td>
                             <td>{{$item->item_replenish_level}}</td>

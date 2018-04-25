@@ -441,7 +441,8 @@ class ItemController extends Controller
                     "category" => -1,
                     "supplier" => -1,
                     "manufacturer"=>-1,
-                    "quantity" => 100
+                    "quantity" => 100,
+                    "status" => ItemStatus::$ACTIVE
                 );
 
                 $rules = array(
@@ -460,7 +461,8 @@ class ItemController extends Controller
                     "cost" => "cost_price",
                     "sell" => "selling_price",
                     "quantity" => "item_quantity",
-                    "size" => "item_size"
+                    "size" => "item_size",
+                    "status" => "item_status"
                 );
 
                 $importer = new Importer("items",$columnMaps,$data,$rules,$defaultValues);
