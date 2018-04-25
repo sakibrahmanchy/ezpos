@@ -74,7 +74,7 @@
                     <tr>
                         <th></th>
                         <th>Actions</th>
-                        <th>Item Id</th>
+                        <th>Product Id</th>
                         <th>Item Name</th>
                         <th>Item Status</th>
                         <th>Supplier</th>
@@ -94,7 +94,7 @@
                     </thead>
                     <tbody>
                     @foreach($allItems as $item)
-                            <tr data-id="{{ $item->item_id }}">
+                            <tr data-id="{{ $item->product_id }}">
                             <td></td>
                             <td><div class="dropdown">
                                 <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><i class="pe-7s-pen"></i>
