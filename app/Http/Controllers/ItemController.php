@@ -45,7 +45,7 @@ class ItemController extends Controller
     {
 
         $this->validate($request, [
-            'isbn' => 'unique:items',
+            'isbn' => 'unique:items|nullable',
             'item_name' => 'required',
             'item_category' => 'required',
             'item_supplier' => 'required',
@@ -143,7 +143,7 @@ class ItemController extends Controller
     {
         /* var_dump($item);*/
         $this->validate($request, [
-            'isbn' => 'unique:items,isbn,'.$itemId,
+            'isbn' => 'unique:items,isbn,'.$itemId.'|nullable',
             'item_name' => 'required',
             'item_category' => 'required',
             'item_supplier' => 'required',
@@ -446,7 +446,7 @@ class ItemController extends Controller
                 );
 
                 $rules = array(
-                    "upc" => "unique:items,isbn",
+                    "upc" => "unique:items,isbn|nullable",
                     "name" => "required",
                     "cost" => "required",
                     "sell" => "required"
@@ -456,7 +456,7 @@ class ItemController extends Controller
                     "upc" => "isbn",
                     "name" => "item_name",
                     "category" => "category_id",
-                    "supplier" => "supplier_id",
+                    "supplier_id" => "supplier_id",
                     "manufacturer" => "manufacturer_id",
                     "cost" => "cost_price",
                     "sell" => "selling_price",
