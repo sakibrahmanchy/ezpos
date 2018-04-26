@@ -455,7 +455,7 @@ class ItemController extends Controller
                 $columnMaps = array(
                     "upc" => "isbn",
                     "name" => "item_name",
-                    "category" => "category_id",
+                    "category_id" => "category_id",
                     "supplier_id" => "supplier_id",
                     "manufacturer" => "manufacturer_id",
                     "cost" => "cost_price",
