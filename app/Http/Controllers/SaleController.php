@@ -372,6 +372,7 @@ class SaleController extends Controller
         if ($sale == null)
             return redirect()->route('new_sale')->with(["error" => 'Sale id not found']);
 
+            $created_at = date("d/m/Y H:i:s a",strtotime($sale->created_at));
         try {
             $settings = SettingsSingleton::get();
 
@@ -382,17 +383,16 @@ class SaleController extends Controller
             $connector = new NetworkPrintConnector($ip_address, $port);
 
             $printer = new Printer($connector);
-
             $printer->setJustification(Printer::JUSTIFY_CENTER);
-            $printer->text("Order\n");
+            $printer->text("Receipt\n");
             $printer->selectPrintMode();
-            $printer->text($sale->created_at . "\n");
+            $printer->text( $created_at. "\n");
             $printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);
-            $printer->text($settings['company_name'] . " " . $sale->id . "\n");
+            $printer->text($settings['company_name'] . " No." . $sale->id . "\n");
             $printer->selectPrintMode();
             $printer->text($settings['address'] . "\n\n");
             $printer->selectPrintMode();
-            $printer->text("Employee: " . Auth::user()->name . "\n");
+            $printer->text("Cashier: " . Auth::user()->name . "\n");
             $printer->selectPrintMode();
             $printer->text("------------------------------------------\n");
 
@@ -422,7 +422,8 @@ class SaleController extends Controller
 
 
             $subtotal = new FooterItem('Subtotal', $sale->sub_total_amount);
-            $tax = new FooterItem('VAT (' . $settings['tax_rate'] . '%)', $sale->tax_amount);
+            if($settings["tax_rate"]>0)
+                $tax = new FooterItem('VAT (' . $settings['tax_rate'] . '%)', $sale->tax_amount);
             $total = new FooterItem('Total', $sale->total_amount);
             $due = new FooterItem('Due', $sale->due);
 
@@ -430,7 +431,8 @@ class SaleController extends Controller
             $printer->setEmphasis(true);
             $printer->text($subtotal);
             $printer->setEmphasis(false);
-            $printer->text($tax);
+            if($settings["tax_rate"]>0)
+                $printer->text($tax);
             $printer->setEmphasis(true);
             $printer->text($total);
             $printer->setEmphasis(false);
@@ -461,7 +463,7 @@ class SaleController extends Controller
             $printer->feed();
             $printer->barcode($sale->id, Printer::BARCODE_CODE39);
             $printer->feed();
-            $printer->text("EZPOS " . $sale->id);
+            $printer->text($settings['company_name']." " . $sale->id);
             $printer->feed();
             /*dd($items);*/
             /* $printer -> feed();*/

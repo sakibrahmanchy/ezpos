@@ -12,6 +12,7 @@ class CategoryController extends Controller
     //
 
     public function GetCategoryList(){
+
         $categoryList = new Category();
         $categoryList->fetchCategories();
         $categoryList->GenerateCategoryMenu(0);
