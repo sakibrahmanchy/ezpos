@@ -81,18 +81,20 @@
                     {{-- {{ csrf_field() }}--}}
 
                     <div class="panel panel-piluku">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">
-                                <i class="pe-7s-edit"></i>
-                                Settings<small>(Fields in red are required)</small>
-                            </h3>
-                        </div>
+
 
                         <div class="panel-body">
 
                             <div class="row">
                                 <div class="col-md-12">
 
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">
+                                            <i class="pe-7s-edit"></i>
+                                            Company Informations<small>(Fields in red are required)</small>
+                                        </h3>
+                                    </div>
+                                    <br>
 
                                     <label for="first_name" class="required col-sm-3 col-md-3 col-lg-2 control-label ">Company Name:</label>			<div class="col-sm-9 col-md-9 col-lg-10">
                                         <input type="text" name="company_name" value="{{$settings['company_name']}}" class="form-control" id="company_name" >
@@ -112,26 +114,13 @@
                                         </div>
                                     </div>
 
-                                    <label for="hire_date" class="col-sm-3 col-md-3 col-lg-2 control-label required">Tax Rate:</label>
-                                    <div class="col-sm-9 col-md-9 col-lg-10">
-                                        <div class="input-group date">
-                                            <span class="input-group-addon bg">
-                                             %
-                                            </span>
-                                            <input class="form-control" type="text" name="tax_rate" value="{{ $settings['tax_rate'] }}">
-                                        </div>
-                                    </div><br><br><br>
-
-
                                     <label for="address" class="col-sm-3 col-md-3 col-lg-2 control-label">Address:</label>
                                     <div class="col-sm-9 col-md-9 col-lg-10">
                                         <div class="input-group date">
-                                    <span class="input-group-addon bg ">
-                                        <i class="fa fa-map"></i>
-                                    </span>
+                                            <span class="input-group-addon bg ">
+                                                <i class="fa fa-map"></i>
+                                            </span>
                                             <input class="form-control" type="text" name="address" value="{{ $settings['address'] }}">
-
-
                                         </div>
                                     </div>
                                     <br><br><br>
@@ -146,6 +135,34 @@
                                         </div>
                                     </div>
                                     <br><br><br>
+
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">
+                                            <i class="pe-7s-edit"></i>
+                                            Sales & Items Informations<small>(Fields in red are required)</small>
+                                        </h3>
+                                    </div>
+                                    <br>
+
+                                    <label for="hire_date" class="col-sm-3 col-md-3 col-lg-2 control-label required">Default Opening Amount:</label>
+                                    <div class="col-sm-9 col-md-9 col-lg-10">
+                                        <div class="input-group date">
+                                            <span class="input-group-addon bg">
+                                               <i class="fa fa-envelope-open"></i>
+                                            </span>
+                                            <input class="form-control" type="text" name="default_opening_amount" value="{{ $settings['default_opening_amount'] }}">
+                                        </div>
+                                    </div><br><br><br>
+
+                                    <label for="hire_date" class="col-sm-3 col-md-3 col-lg-2 control-label required">Tax Rate:</label>
+                                    <div class="col-sm-9 col-md-9 col-lg-10">
+                                        <div class="input-group date">
+                                            <span class="input-group-addon bg">
+                                             %
+                                            </span>
+                                            <input class="form-control" type="text" name="tax_rate" value="{{ $settings['tax_rate'] }}">
+                                        </div>
+                                    </div><br><br><br>
 
                                     <label for="item_size" class="col-sm-3 col-md-3 col-lg-2 control-label required">Default Item Size:</label>
                                     <div class="col-sm-9 col-md-9 col-lg-10">

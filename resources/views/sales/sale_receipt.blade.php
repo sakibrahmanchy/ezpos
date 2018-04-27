@@ -42,9 +42,9 @@
                                     Sales Receipt						 <br>
                                     <strong>{{date('m/d/Y h:i:s a', time()) }}</strong>
                                 </li>
-                                <li><span>Sale ID:</span>EZPOS {{$sale->id}}</li>
-                                <li><span>Counter Name:</span><b>{{ $sale->counter->name }}</b></li>
-                                <li><span>Employee:</span>{{\Illuminate\Support\Facades\Auth::user()->name }}</li>
+                                <li><span>Sale ID: </span>EZPOS No. {{$sale->id}}</li>
+                                <li><span>Counter Name: </span><b>{{ $sale->counter->name }}</b></li>
+                                <li><span>Cashier: </span>{{\Illuminate\Support\Facades\Auth::user()->name }}</li>
                                 @if(isset($sale->customer->id))
                                     @if($sale->customer->first_name!=null)
                                         <li><span>Customer:</span>{{$sale->customer->first_name}}</li>
@@ -208,27 +208,25 @@
                                 </div>
                             </div>
                         </div>
+                        @if( $settings['tax_rate'] >0 )
                         <div class="row">
                             <div class="col-md-offset-4 col-sm-offset-4 col-md-6 col-sm-6 col-xs-8">
-                                <div class="invoice-footer-heading">Tax({{ $settings['tax_rate'] }}%)</div>
+                                    <div class="invoice-footer-heading">Tax({{ $settings['tax_rate']  }}%)</div>
                             </div>
                             <div class="col-md-2 col-sm-2 col-xs-4">
                                 <div class="invoice-footer-value">
-
                                     <strong>
-                                    <span style="white-space:nowrap;"></span>
-                                       @if($sale->tax_amount>=0)
+                                        <span style="white-space:nowrap;"></span>
+                                        @if($sale->tax_amount>=0)
                                             ${{ number_format($sale->tax_amount, 2)}}
-                                       @else
+                                        @else
                                             ${{ number_format((-1) * $sale->tax_amount, 2) }}
-                                       @endif
-
+                                        @endif
                                     </strong>
-
-
                                 </div>
                             </div>
                         </div>
+                        @endif
                         <div class="row">
                             <div class="col-md-offset-4 col-sm-offset-4 col-md-6 col-sm-6 col-xs-8">
                                 <div class="invoice-footer-heading">Total</div>

@@ -57,7 +57,7 @@
                                 <label for="opening_balance" class="control-label col-sm-2">Opening amount:</label>
                                 <div class="col-sm-10">
                                     <div class="input-group">
-                                        <input type="text" name="opening_balance" value="" id="opening_balance" class="form-control">
+                                        <input type="text" name="opening_balance" value="{{ $settings['default_opening_amount'] }}" id="opening_balance" class="form-control">
                                         <span class="input-group-btn bg">
                                        <input type="submit" name="submit" value="Save" id="submit" class="btn btn-primary">
                                        </span>

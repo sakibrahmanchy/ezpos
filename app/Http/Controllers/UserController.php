@@ -35,7 +35,7 @@ class UserController extends Controller
             $this->validate($request,[
                 'email' => 'required|email',
                 'repeat_password' => 'same:password',
-                'username' => 'required'
+                'username' => 'required|alpha_dash|unique:users,id,'.$request->username,
             ]);
 
             $user = User::where('email', '=', $request->email)->first();

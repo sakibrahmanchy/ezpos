@@ -38,17 +38,19 @@
     <!-- /.login-logo -->
     <div class="login-box-body">
         <p class="login-box-msg">Sign in to start your session</p>
-
+        @if ( session()->has('error'))
+            <center><label class="text text-danger">{{  session()->get('error') }}</label></center>
+        @endif
         <form action="{{ url('/login') }}" method="post">
             {{ csrf_field() }}
 
-            <div class="form-group has-feedback{{ $errors->has('email') ? ' has-error' : '' }}">
-                <input type="text" class="form-control" placeholder="Email" value="{{ old('email') }}" name="email">
+            <div class="form-group has-feedback{{ $errors->has('identity') ? ' has-error' : '' }}">
+                <input type="text" class="form-control" placeholder="Email or Username" value="{{ old('identity') }}" name="identity">
                 <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
 
-                @if ($errors->has('email'))
+                @if ($errors->has('identity'))
                     <span class="help-block">
-                            {{ $errors->first('email') }}
+                            {{ $errors->first('identity') }}
                         </span>
                 @endif
             </div>

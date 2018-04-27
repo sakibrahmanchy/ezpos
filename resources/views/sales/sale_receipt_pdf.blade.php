@@ -191,6 +191,7 @@
 
             </td>
         </tr>
+        @if( $settings['tax_rate'] >0 )
         <tr>
             <th>Tax</th>
             <td>
@@ -201,6 +202,7 @@
                 @endif
             </td>
         </tr>
+        @endif
         <tr>
             <th>Total</th>
             <td>

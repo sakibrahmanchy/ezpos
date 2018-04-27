@@ -3,7 +3,7 @@
 @section('pageTitle','Edit Employee')
 
 @section('breadcrumbs')
-    {!! Breadcrumbs::render('employee_edit',$employee->employee_id) !!}
+    {!! Breadcrumbs::render('employee_edit',$employee->id) !!}
 @stop
 
 @section('content')
@@ -16,7 +16,7 @@
                 <div class="rect3"></div>
             </div>
             <div class="col-md-12">
-                <form action="{{route('employee_edit',['employee_id'=>$employee->employee_id])}}" id="employee_form" class="form-horizontal" method="post" accept-charset="utf-8" enctype="multipart/form-data">
+                <form action="{{route('employee_edit',['employee_id'=>$employee->id])}}" id="employee_form" class="form-horizontal" method="post" accept-charset="utf-8" enctype="multipart/form-data">
                     <div class="panel panel-piluku">
                         <div class="panel-heading">
                             <h3 class="panel-title">
@@ -46,7 +46,7 @@
                                     <div class="form-group">
                                         <label for="email" class="col-sm-3 col-md-3 col-lg-2 control-label required">E-Mail:</label>
                                         <div class="col-sm-9 col-md-9 col-lg-10">
-                                            <input type="text" name="email" value="{{$employee->email}}" class="form-control" id="email" >
+                                            <input type="text" name="email" value="{{$employee->user->email}}" class="form-control" id="email" >
                                             <span class="text-danger">{{ $errors->first('email') }}</span>
                                         </div>
                                     </div>
@@ -170,7 +170,7 @@
                             <div class="form-group"><br>
                                 <label for="username" class="col-sm-3 col-md-3 col-lg-2 control-label required">Username:</label>
                                 <div class="col-sm-9 col-md-9 col-lg-10">
-                                    <input type="text" name="username" value="{{$employee->name}}" id="username" class="form-control" >
+                                    <input type="text" name="username" value="{{$employee->user->name}}" id="username" class="form-control" >
                                     <span class="text-danger">{{ $errors->first('username') }}</span>
                                 </div>
                             </div>
@@ -203,6 +203,22 @@
                                 <h3 class="panel-title"><i class = "pe-7s-info"></i>  Employee Permissions and Access<br></h3>
 
                             </div>
+
+                            <br><br>
+                            <div class="form-group">
+                                <label for="counter_permissions" class="col-sm-3 col-md-3 col-lg-2 control-label">List of accessible counters:</label>
+                                <div class="col-sm-9 col-md-9 col-lg-10">
+                                    <select class="form-control" id="counter_permissions" name="counter_permissions[]" multiple="multiple">
+                                        @foreach($counters as $aCounter)
+                                            <option {{ in_array($aCounter->id,$counter_list) ? "selected " : "" }} value="{{ $aCounter->id }}">{{ $aCounter->name }}</option>
+                                        @endforeach
+                                    </select>
+
+                                </div>
+                            </div>
+
+
+
                             <p class="text-center">Check the boxes below to grant access to modules</p>
                             <div class="panel-body form-group">
 
@@ -235,7 +251,7 @@
                             <input type="hidden" name="redirect_code" value="0">
 
                             <div class="form-actions pull-right">
-                                <input type="submit" name="submitf" value="Submit" id="submitf" class="btn floating-button btn-primary float_right">
+                                <input type="submit" name="submit" id="submit" class="btn floating-button btn-primary float_right">
                             </div>
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
                         </div>
@@ -248,28 +264,42 @@
 @endsection
 
 
-<script>
-function groupSelect(checkBox){
-    selectClass = ".permissions_"+checkBox.id;
-    if(checkBox.checked == true){
-        $(selectClass).prop('checked', 'checked');
-    }else{
-        $(selectClass).prop('checked', '');
-    }
-}
+@section('additionalJS')
+    <script>
 
-function loadTempImage(input){
-    if (input.files && input.files[0]) {
-        var reader = new FileReader();
+        $(document).ready(function(){
 
-        reader.onload = function (e) {
-            $('#image_empty').attr('src', e.target.result) .width(150)
-                    .height(200);;
+            $('.datepicker').datepicker({
+                orientation: "bottom",
+                autoclose: true,
+                format: 'yyyy/mm/dd'
+            });
+            $("#counter_permissions").select2();
+
+        });
+
+        function groupSelect(checkBox){
+            selectClass = ".permissions_"+checkBox.id;
+            if(checkBox.checked == true){
+                $(selectClass).prop('checked', 'checked');
+            }else{
+                $(selectClass).prop('checked', '');
+            }
+        }
+        function loadTempImage(input){
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#image_empty').attr('src', e.target.result) .width(150)
+                        .height(200);;
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
         }
 
-        reader.readAsDataURL(input.files[0]);
-    }
-}
+    </script>
 
 
-</script>
+@endsection

@@ -6,11 +6,10 @@
     {!! Breadcrumbs::render('user_profile',$employee->id) !!}
 @stop
 
-@include('includes.message-block')
-
 @section('content')
 
     <div class="box box-primary" style="padding:20px">
+        @include('includes.message-block')
         <div class="row" id="form">
             <div class="spinner" id="grid-loader" style="display:none">
                 <div class="rect1"></div>

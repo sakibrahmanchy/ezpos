@@ -11,7 +11,10 @@ class Counter extends Model
     ];
 
     public function sale(){
-        return $this->hasMany('App\Sale');
+        return $this->hasMany('App\Model\Sale');
     }
 
+    public function employees() {
+        return $this->belongsToMany('App\Model\Employee');
+    }
 }

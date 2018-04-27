@@ -493,7 +493,6 @@ class ItemController extends Controller
             }else {
                 return redirect()->route('item_import_excel')->with(["error"=>"Only xls or csv files are allowed."]);
             }
-
         }
         return redirect()->back()->with(["error" => "No files selected"]);
     }
@@ -522,7 +521,6 @@ class ItemController extends Controller
         if(DB::table('items')->whereIn('id',$item_list)->delete())
             return response()->json(["success"=>true],200);
         return response()->json(["success"=>false],200);
-
     }
 
 }

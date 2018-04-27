@@ -140,9 +140,9 @@
                                 <label for="birthday" class="col-sm-3 col-md-3 col-lg-2 control-label text-info wide">Birthday:</label>
                                 <div class="col-sm-9 col-md-9 col-lg-10">
                                     <div class="input-group date">
-                                    <span class="input-group-addon bg">
-                                       <i class="fa fa-calendar"></i>
-                                    </span>
+                                        <span class="input-group-addon bg">
+                                           <i class="fa fa-calendar"></i>
+                                        </span>
                                         <input type="text" name="birthday" value="" id="birthday" class="form-control datepicker">
 
                                     </div>
@@ -197,6 +197,19 @@
                                <h3 class="panel-title"><i class = "pe-7s-info"></i>  Employee Permissions and Access<br></h3>
                             </div>
 
+                            <br><br>
+                            <div class="form-group">
+                                <label for="counter_permissions" class="col-sm-3 col-md-3 col-lg-2 control-label">List of accessible counters:</label>
+                                <div class="col-sm-9 col-md-9 col-lg-10">
+                                    <select class="form-control" id="counter_permissions" name="counter_permissions[]" multiple>
+                                        @foreach($counters as $aCounter)
+                                            <option value="{{ $aCounter->id }}">{{ $aCounter->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    <span class="text-danger">{{ $errors->first('repeat_password') }}</span>
+                                </div>
+                            </div>
+
                             <p class="text-center">Check the boxes below to grant access to modules</p>
                             <div class="panel-body form-group">
 
@@ -233,6 +246,9 @@
             </div>
         </div>
     </div>
+@stop
+
+@section('additionalJS')
 <script>
 
     $(document).ready(function(){
@@ -242,6 +258,7 @@
             autoclose: true,
             format: 'yyyy/mm/dd'
         });
+        $("#counter_permissions").select2();
 
     });
 

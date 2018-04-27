@@ -42,6 +42,20 @@ class SaleController extends Controller
             // Use active cash register
             $customerList = Customer::all();
 
+
+            if(\Illuminate\Support\Facades\Cookie::get('counter_id')!=null){
+                $counter_id = \Illuminate\Support\Facades\Cookie::get('counter_id');
+                $employee = Employee::where("user_id", "=", \Illuminate\Support\Facades\Auth::user()->id)->with('counters')->first();
+                $employeeCounterList = array();
+                foreach($employee->counters as $aCounter) {
+                    array_push($employeeCounterList,$aCounter->id);
+                }
+                if(!in_array($counter_id,$employeeCounterList)) {
+                    return redirect()->route('error-401');
+                }
+            }
+
+
             return view('sales.new_sale', ['customerList' => $customerList]);
         }else{
             // A new cash register should be opened

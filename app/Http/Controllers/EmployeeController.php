@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Enumaration\UserTypes;
+use App\Model\Counter;
 use App\Model\PermissionCategory;
 use App\Model\PermissionName;
 use App\Model\User;
@@ -23,11 +24,11 @@ class EmployeeController extends Controller
 
     public function GetEmployeeForm()
     {
-
         //Load all permissions from database
         $modules = PermissionName::GetAllPermissions();
+        $counters = Counter::all();
 
-        return view('employees.new_employee', ['modules' => $modules]);
+        return view('employees.new_employee', ['counters'=>$counters,'modules' => $modules]);
     }
 
     public function AddEmployee(Request $request)
@@ -38,7 +39,7 @@ class EmployeeController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required',
             'repeat_password' => 'required|same:password',
-            'username' => 'required',
+            'username' => 'required|alpha_dash|unique:users,name',
 			'pin' => 'required|numeric'
 
         ];
@@ -79,7 +80,6 @@ class EmployeeController extends Controller
         $employeeCredentials['employee_number'] = $request->employee_number;
         $employeeCredentials['user_id'] = $userId;
 
-
         $userImageToken = uniqid();
         $file = $request->file('image');
 
@@ -89,19 +89,22 @@ class EmployeeController extends Controller
             $employeeCredentials['image_token'] = $userImageToken.'.jpg';
         }
 
-        $employeeId = \App\Model\Employee::create($employeeCredentials)->id;
+        $employee = \App\Model\Employee::create($employeeCredentials);
         // echo $employeeId;
 
         //Access Permissions to user
         if (isset($request->permissions_actions))
             UserPermission::CreateUserPermissions($request->permissions_actions, $userId);
 
+        if (isset($request->counter_permissions)) {
+            $employee->counters()->attach($request->counter_permissions);
+        }
+
         return redirect()->route('employee_list');
 
 
 
     }
-
 
     public function GetEmployeeList()
     {
@@ -115,21 +118,28 @@ class EmployeeController extends Controller
     public function EditEmployeeGet($employeeId)
     {
 
-        $employeeInfo = DB::table('employees')
-            ->leftJoin('users', 'employees.user_id', '=', 'users.id')->where('employees.id', '=', $employeeId)->select('employees.id as employee_id', 'employees.*', 'users.*')
-            ->first();
+        $employeeInfo = Employee::where("id",$employeeId)->with('user','counters')->first();
 
+        $employeeId = $employeeInfo->id;
         // var_dump($employeeInfo);
-        $employeeUserId = $employeeInfo->user_id;
+        $counters = Counter::all();
+        $employeeUserId = $employeeInfo->user->id;
+        $employeeCounterList = array();
+        foreach($employeeInfo->counters as $aCounter) {
+            array_push($employeeCounterList,$aCounter->id);
+        }
 
         $employeePermissions = UserPermission::GetUserPermissions($employeeUserId);
 
-        return view('employees.employee_edit', ['employee' => $employeeInfo, 'modules' => $employeePermissions]);
+        return view('employees.employee_edit',
+            ["counters"=>$counters,'employee' => $employeeInfo,
+             'modules' => $employeePermissions,"counter_list"=>$employeeCounterList]);
     }
 
 
     public function  EditEmployeePost(Request $request, $employeeId)
     {
+
         $employee = Employee::where("id", "=", $employeeId)->first();
 
         /* var_dump($employee);*/
@@ -137,13 +147,12 @@ class EmployeeController extends Controller
             'first_name' => 'required',
             'email' => 'required|email',
             'repeat_password' => 'same:password',
-            'username' => 'required'
+            'username' => 'required|alpha_dash|unique:users,id,'.$request->username,
         ];
         $allInput = $request->all();
 
         $validator = Validator::make($allInput, $rules);
         if ($validator->fails()) {
-
 
             return redirect()->route('employee_edit', ['employee_id' => $employee->id])
                 ->withErrors($validator)
@@ -197,6 +206,9 @@ class EmployeeController extends Controller
                 UserPermission::CreateUserPermissions($request->permissions_actions, $employee->user_id);
         }
 
+        if (isset($request->counter_permissions)) {
+            $employee->counters()->sync($request->counter_permissions);
+        }
 
         return redirect()->route('employee_list');
 

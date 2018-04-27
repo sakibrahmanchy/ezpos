@@ -14,7 +14,7 @@ class CounterTableSeeder extends Seeder
     {
         $counter = \App\Model\Counter::all();
 
-        if(!is_null($counter)){
+        if(is_null($counter)){
 
             $counter = new \App\Model\Counter();
             $counter->name= "Default";
@@ -23,6 +23,14 @@ class CounterTableSeeder extends Seeder
             $counter->printer_port = "";
             $counter->isDefault = true;
             $counter->save();
+        }
+
+        if(\App\Model\Counter::where("name","Default")->count()>1){
+            $counters = \App\Model\Counter::where("name","Default")->where("id","<>",1)->get();
+
+            foreach($counters as $aCounter) {
+                $aCounter->delete();
+            }
         }
 
     }
