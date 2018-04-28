@@ -157,8 +157,6 @@ class CashRegisterController extends Controller
         $cash_sales = CashRegisterTransaction::where("cash_register_id",$cashRegister->id)->where('transaction_type',CashRegisterTransactionType::$CASH_SALES)->sum('amount');
         $difference = $cashRegister->opening_balance - ($cashRegister->closing_balance + $cash_sales + $total_additions + $total_subtractions);
         try {
-            $settings = SettingsSingleton::get();
-
             $counter_id = Cookie::get('counter_id',null);
             $counter = Counter::where("id",$counter_id)->first();
             $ip_address = $counter->printer_ip;
@@ -176,10 +174,6 @@ class CashRegisterController extends Controller
             $printer->text("-------------------------------------------\n");
             $printer->feed();
 
-//            if($settings["tax_rate"]>0)
-//                $tax = new FooterItem('VAT (' . $settings['tax_rate'] . '%)', $sale->tax_amount);
-//            $total = new FooterItem('Total', $sale->total_amount);
-//            $due = new FooterItem('Due', $sale->due);
 
             $printer->setJustification(Printer::JUSTIFY_LEFT);
             $printer->text( new FooterItem('Register Log Id:', $cashRegister->id));
@@ -194,10 +188,8 @@ class CashRegisterController extends Controller
             $printer->text( new FooterItem('Cash Subtractions:', '$'.number_format( $total_subtractions, 2) ));
             $printer->text( new FooterItem('Difference:', '$'.number_format( $difference, 2) ));
             $printer->feed();
-            /*dd($items);*/
-            /* $printer -> feed();*/
-           // return redirect()->route('sale_receipt', ['sale_id' => $sale_id]);
-            return redirect()->back();
+
+            return redirect()->route('cash_register_log_details',["register_id"=>$cashRegister->id]);
 
         } Catch (\Exception $e) {
             return redirect()->back()->with(["error" => $e->getMessage()]);
@@ -217,7 +209,6 @@ class CashRegisterController extends Controller
         $closedBy = $cashRegister->closedByUser->name;
 
         try {
-            $settings = SettingsSingleton::get();
 
             $counter_id = Cookie::get('counter_id',null);
             $counter = Counter::where("id",$counter_id)->first();
@@ -283,7 +274,7 @@ class CashRegisterController extends Controller
                         number_format($aTransaction->amount,2),
                         date_format($aTransaction->created_at,"h:i:s")
                     ));
-                    $printer-feed();
+                    $printer->feed();
                 }
             }
             $printer->feed();
@@ -310,7 +301,7 @@ class CashRegisterController extends Controller
                         number_format($aTransaction->amount,2),
                         date_format($aTransaction->created_at,"h:i:s")
                     ));
-                    $printer-feed();
+                    $printer->feed();
                 }
             }
             $printer->feed();
