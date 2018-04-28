@@ -194,6 +194,7 @@ Route::group(['middleware' => ['admin']], function () {
     route::get('/report/cash_register_logs/details','Reports\CashRegisterController@detailedReports')->name('cash_register_log_report_details');
     route::post('/report/cash_register_logs/details/ajax','Reports\CashRegisterController@detailedReportsAjax')->name('cash_register_log_report_details_ajax');
 
+
     route::get('/report/transaction/details','Reports\TransactionReportController@detailedReports')->name('report_transaction_details');
     route::post('/report/transaction/details/ajax','Reports\TransactionReportController@detailedReportsAjax')->name('report_transaction_details_ajax');
 
@@ -252,6 +253,8 @@ Route::group(['middleware' => ['admin']], function () {
     route::get('/cash_register/close','CashRegisterController@closeCurrentCashRegister')->name('close_cash_register')->middleware('auth');
     route::post('/cash_register/close','CashRegisterController@closeCashRegisterPost')->name('close_cash_register')->middleware('auth');
     route::get('/cash_register/log_details/{register_id}','CashRegisterController@cashRegisterLogDetails')->name('cash_register_log_details')->middleware('auth');
+    route::get('/cash_register_logs/print/summary/{register_id}','CashRegisterController@printRegisterLogSummary')->name('print_register_log_summary');
+    route::get('/cash_register_logs/print/details/{register_id}','CashRegisterController@printRegisterLogDetails')->name('print_register_log_details');
 
     route::post('file/insert','FileController@InsertFile')->name('insert_file')->middleware('auth');
     route::post('file/item/insert','FileController@InsertItemFile')->name('insert_item_file')->middleware('auth');

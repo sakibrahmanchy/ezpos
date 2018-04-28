@@ -74,6 +74,8 @@ class RouteTokens
         "close_cash_register"=>"sale_add_update",
         "cash_register_log_details"=>"sale_add_update",
         "loyalty_card_use"=>"sale_add_update",
+        "print_register_log_summary" => "sale_add_update",
+        "print_register_log_details" => "sale_add_update",
 
         "report_category_graphical"=>"report_categories",
         "report_category_ajax"=>"report_categories",

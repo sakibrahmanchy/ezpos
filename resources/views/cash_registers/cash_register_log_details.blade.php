@@ -8,10 +8,11 @@
             <div class="row">
 
                 <div class="text-center">
-                    <button class="btn btn-primary text-white hidden-print" id="print_button" onclick="window.print();"> Print </button>
+                    <a class="btn btn-primary text-white hidden-print" id="print_button" href="{{ route('print_register_log_summary',["register_id" => $register->id]) }}"> Print Summary</a>
+                    <a class="btn btn-primary text-white hidden-print" id="print_button" href="{{ route('print_register_log_details',["register_id" => $register->id]) }}"> Print Details</a>
                 </div>
                 <br>
-
+                @php $difference = $register->opening_balance - ($register->closing_balance + $sales + $additions + $subtractions) @endphp
                 <div class="col-md-12">
 
                     <div class="row" id="register_log_details">
@@ -22,12 +23,12 @@
                                 <li class="list-group-item">Close Employee: <strong class="pull-right">{{ $closed_by }}</strong></li>
                                 <li class="list-group-item">Shift Start: <strong class="pull-right">{{ $register->opening_time }}</strong></li>
                                 <li class="list-group-item">Shift End: <strong class="pull-right">{{ $register->closing_time }}</strong></li>
-                                <li class="list-group-item">Open Amount: <strong class="pull-right">${{ $register->opening_balance }}</strong></li>
-                                <li class="list-group-item">Close Amount: <strong class="pull-right">${{ $register->closing_balance }}</strong></li>
-                                <li class="list-group-item">Cash Sales: <strong class="pull-right">${{ $sales }}</strong></li>
-                                <li class="list-group-item">Cash additions: <strong class="pull-right">${{ $additions }}</strong></li>
-                                <li class="list-group-item">Cash subtractions: <strong class="pull-right">${{ $subtractions }}</strong></li>
-                                <li class="list-group-item">Difference: <strong class="pull-right">$0.00</strong></li>
+                                <li class="list-group-item">Open Amount: <strong class="pull-right">${{ number_format( $register->opening_balance, 2) }}</strong></li>
+                                <li class="list-group-item">Close Amount: <strong class="pull-right">${{ number_format( $register->closing_balance, 2) }}</strong></li>
+                                <li class="list-group-item">Cash Sales: <strong class="pull-right">${{ number_format($sales, 2) }}</strong></li>
+                                <li class="list-group-item">Cash additions: <strong class="pull-right">${{ number_format($additions, 2) }}</strong></li>
+                                <li class="list-group-item">Cash subtractions: <strong class="pull-right">${{ number_format($subtractions, 2) }}</strong></li>
+                                <li class="list-group-item">Difference: <strong class="pull-right">{{ $difference >= 0 ? "$".number_format($difference,2) : "-$".number_format((-1) * $difference,2) }}</strong></li>
                                 <li class="list-group-item">Notes: <strong class="pull-right"></strong></li>
                             </ul>
                         </div>
@@ -54,7 +55,7 @@
                                             <tr>
                                                 <td>{{ $aTransaction->created_at }}</td>
                                                 <td>{{ $closed_by }}</td>
-                                                <td>{{ $aTransaction->amount }}</td>
+                                                <td>{{ number_format($aTransaction->amount,2) }}</td>
                                                 <td>{{ $aTransaction->comments }}</td>
                                                 <td>
                                                     @if($aTransaction->transaction_type==\App\Enumaration\CashRegisterTransactionType::$ADD_BALANCE)

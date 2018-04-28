@@ -51,12 +51,12 @@
 
 
                         <ul class="list-group close-amount">
-                            <li class="list-group-item">Open Amount:  <span class="pull-right">${{ $openingBalance }}</span></li>
-                            <li class="list-group-item">Cash Sales:  <span class="pull-right">${{ $sales }}</span></li>
-                            <li class="list-group-item">Cash additions [<a href="">Edit</a>]:  <span class="pull-right">${{ $additions }} </span></li>
-                            <li class="list-group-item">Cash subtractions [<a href="">Edit</a>]:  <span class="pull-right">${{$subtractions  }} </span></li>
+                            <li class="list-group-item">Open Amount:  <span class="pull-right">${{ number_format($openingBalance,2) }}</span></li>
+                            <li class="list-group-item">Cash Sales:  <span class="pull-right">${{ number_format($sales, 2) }}</span></li>
+                            <li class="list-group-item">Cash additions [<a href="">Edit</a>]:  <span class="pull-right">${{ number_format($additions, 2) }} </span></li>
+                            <li class="list-group-item">Cash subtractions [<a href="">Edit</a>]:  <span class="pull-right">${{ number_format($subtractions,2)  }} </span></li>
 
-                            <li class="list-group-item active">You should have  in the register. <span class="pull-right total-amount">{{ $openingBalance + $sales + $additions+ $subtractions }}</span></li>
+                            <li class="list-group-item active">You should have  in the register. <span class="pull-right total-amount">{{ number_format($openingBalance + $sales + $additions+ $subtractions, 2) }}</span></li>
                         </ul>
 
 
