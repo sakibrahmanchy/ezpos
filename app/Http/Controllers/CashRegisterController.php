@@ -197,6 +197,7 @@ class CashRegisterController extends Controller
             /*dd($items);*/
             /* $printer -> feed();*/
            // return redirect()->route('sale_receipt', ['sale_id' => $sale_id]);
+            return redirect()->back();
 
         } Catch (\Exception $e) {
             return redirect()->back()->with(["error" => $e->getMessage()]);
@@ -260,7 +261,6 @@ class CashRegisterController extends Controller
                 }
             }
             $printer->feed();
-
 
             $printer->setJustification(Printer::JUSTIFY_CENTER);
             $printer->text("Cash Subtracted\n");
