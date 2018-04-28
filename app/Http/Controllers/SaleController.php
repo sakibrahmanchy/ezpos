@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enumaration\DateTypes;
 use App\Enumaration\SaleStatus;
+use App\Enumaration\UserTypes;
 use app\Http\Controllers\Reports\ReportTotal;
 use App\Library\SettingsSingleton;
 use App\Model\CashRegister;
@@ -41,17 +42,20 @@ class SaleController extends Controller
         if(!is_null($activeCashRegister)){
             // Use active cash register
             $customerList = Customer::all();
-            if(\Illuminate\Support\Facades\Cookie::get('counter_id')!=null){
-                $counter_id = \Illuminate\Support\Facades\Cookie::get('counter_id');
-                $employee = Employee::where("user_id", "=", \Illuminate\Support\Facades\Auth::user()->id)->with('counters')->first();
-                $employeeCounterList = array();
-                foreach($employee->counters as $aCounter) {
-                    array_push($employeeCounterList,$aCounter->id);
-                }
-                if(!in_array($counter_id,$employeeCounterList)) {
-                    return redirect()->route('error-401');
+            if(Auth::user()->user_type!=UserTypes::$SUPER_ADMIN) {
+                if(\Illuminate\Support\Facades\Cookie::get('counter_id')!=null){
+                    $counter_id = \Illuminate\Support\Facades\Cookie::get('counter_id');
+                    $employee = Employee::where("user_id", "=", \Illuminate\Support\Facades\Auth::user()->id)->with('counters')->first();
+                    $employeeCounterList = array();
+                    foreach($employee->counters as $aCounter) {
+                        array_push($employeeCounterList,$aCounter->id);
+                    }  
+                    if(!in_array($counter_id,$employeeCounterList)) {
+                        return redirect()->route('error-401');
+                    }
                 }
             }
+
             return view('sales.new_sale', ['customerList' => $customerList]);
         }else{
             // A new cash register should be opened

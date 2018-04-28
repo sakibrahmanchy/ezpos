@@ -33,5 +33,10 @@ class CounterTableSeeder extends Seeder
             }
         }
 
+        $counters = \App\Model\Counter::all();
+        $user = \App\Model\User::where("email","algrims@gmail.com")->first();
+        $employee = \App\Model\Employee::where("user_id",$user->id)->first();
+        $employee->counters()->attach($counters);
+
     }
 }
