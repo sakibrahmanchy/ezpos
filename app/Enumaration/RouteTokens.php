@@ -19,6 +19,8 @@ class RouteTokens
         "customer_profile"=>"customer_add_update",
         "customer_balance_add"=>"customer_add_update",
         "customer_transactions"=>"customer_add_update",
+        "customer_assign_price_level"=>"customer_add_update",
+        "customer_remove_price_level"=>"customer_add_update",
         "customer_delete"=>"customer_delete",
         "customers_delete"=>"customer_delete",
 
@@ -45,6 +47,12 @@ class RouteTokens
         "price_rule_delete"=>"price_rules_delete",
         "price_rules_delete"=>"price_rules_delete",
 
+        "new_price_level"=>"price_level_add_update",
+        "price_level_list"=>"price_level_add_update",
+        "price_level_edit"=>"price_level_add_update",
+        "price_level_delete"=>"price_level_delete",
+        "price_levels_delete"=>"price_level_delete",
+
         "new_supplier"=>"suppliers_add_update",
         "supplier_list" => "suppliers_add_update",
         "supplier_edit"=>"suppliers_add_update",
@@ -60,6 +68,7 @@ class RouteTokens
         "sale_add_update" => "sale_edit",
         "sale_last_receipt"=>"sale_receipt",
         "search_sale" =>"sale_search",
+        "item_price"=>"sale_search",
         "sale_receipt"=>"sale_receipt",
         "mail_sale_receipt"=>"sale_receipt",
         "print_sale"=>"sale_receipt",

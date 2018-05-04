@@ -27,6 +27,10 @@ class Item extends Model
         return $this->belongsToMany('App\Model\Sale');
     }
 
+    public function Customer() {
+        return $this->belongsToMany('App\Model\Customer');
+    }
+
     public function Supplier(){
         return $this->belongsTo('App\Model\Supplier','supplier_id');
     }

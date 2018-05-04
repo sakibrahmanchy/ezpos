@@ -201,6 +201,13 @@ else
                         </a>
                     </li>
                 @endif
+                @if(UserHasAccessToModule(\App\Enumaration\PermissionCategories::$PRICE_LEVELS))
+                    <li  class="{{ Request::is('price_level/*') ? 'active' : '' }}">
+                        <a href="{{route('price_level_list')}}">
+                            <i  class="showopacity glyphicon glyphicon-tags"></i><span>Price Levels&nbsp;</span>
+                        </a>
+                    </li>
+                @endif
                 @if(UserHasAccessToModule(\App\Enumaration\PermissionCategories::$SUPPLIER))
                     <li  class="{{ Request::is('supplier/*') ? 'active' : '' }}">
                         <a href="{{route('supplier_list')}}">

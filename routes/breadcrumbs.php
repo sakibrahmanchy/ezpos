@@ -97,6 +97,26 @@ Breadcrumbs::register('price_rule_edit', function($breadcrumbs, $price_rule_id)
     $breadcrumbs->push('Edit Price Rules', route('price_rule_edit',['price_rule_id'=>$price_rule_id]));
 });
 
+
+Breadcrumbs::register('price_level_list', function($breadcrumbs)
+{
+    $breadcrumbs->push('Price Levels', route('price_level_list'),['icon' => 'tag']);
+});
+
+
+Breadcrumbs::register('new_price_level', function($breadcrumbs)
+{
+    $breadcrumbs->parent('price_level_list');
+    $breadcrumbs->push('New Price Level', route('new_price_level'));
+});
+
+Breadcrumbs::register('price_level_edit', function($breadcrumbs, $price_level_id)
+{
+    $breadcrumbs->parent('price_level_list');
+    $breadcrumbs->push('Edit Price Level', route('price_level_edit',['price_level_id'=>$price_level_id]));
+});
+
+
 Breadcrumbs::register('supplier_list', function($breadcrumbs)
 {
     $breadcrumbs->push('Suppliers', route('supplier_list'),['icon' => 'download']);

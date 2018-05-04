@@ -278,6 +278,19 @@ class PermissionNameTableSeeder extends Seeder
                 ),
                 "description"=>"Add, Update, Delete Counters"
             ),
+            "Price Levels" => array(
+                "permissions"=>array(
+                    array(
+                        "permission_name"=>"Add, Update",
+                        "permission_token"=>"price_level_add_update"
+                    ),
+                    array(
+                        "permission_name"=>"Delete",
+                        "permission_token"=>"price_level_delete"
+                    ),
+                ),
+                "description"=>"Add, Update, Delete Price Levels"
+            ),
         );
 
 

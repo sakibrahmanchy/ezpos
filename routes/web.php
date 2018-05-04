@@ -52,6 +52,9 @@ Route::group(['middleware' => ['admin']], function () {
     Route::get('customer/profile/{customer_id}','CustomerController@getCustomerProfile')->name('customer_profile')->middleware('auth');
     Route::get('customer/balance/add','CustomerController@customerAddBalanceGet')->name('customer_balance_add')->middleware('auth');
     Route::post('customer/balance/add','CustomerController@customerAddBalancePost')->name('customer_balance_add')->middleware('auth');
+    Route::get('customer/assign/price_level/{customer_id}','CustomerController@customerAssignPriceLevelGet')->name('customer_assign_price_level')->middleware('auth');
+    Route::post('customer/assign/price_level','CustomerController@customerAssignPriceLevelPost')->name('customer_assign_price_level')->middleware('auth');
+    Route::post('customer/remove/price_level','CustomerController@removePriceLevelPost')->name('customer_remove_price_level')->middleware('auth');
     route::get('customer/edit/{customer_id}','CustomerController@EditCustomerGet')->name('customer_edit')->middleware('auth');
     route::post('customer/edit/{customer_id}','CustomerController@EditCustomerPost')->name('customer_edit')->middleware('auth');
     route::get('customer/delete/{customer_id}','CustomerController@DeleteCustomerGet')->name('customer_delete')->middleware('auth');
@@ -62,6 +65,7 @@ Route::group(['middleware' => ['admin']], function () {
     route::get('item/list','ItemController@GetItemList')->name('item_list')->middleware('auth');
     route::get('item/edit/{item_id}','ItemController@EditItemGet')->name('item_edit')->middleware('auth');
     route::post('item/edit/{item_id}','ItemController@EditItemPost')->name('item_edit')->middleware('auth');
+    route::post('item/price','ItemController@getItemPrice')->name('item_price')->middleware('auth');
     route::get('item/names','ItemController@GetItems')->name('item_names')->middleware('auth');
     route::get('item/image/delete/{item_id}/{image_id}','ItemController@DeleteItemImage')->name('item_image_delete')->middleware('auth');
     route::get('item/names/autocomplete','ItemController@GetItemsAutocomplete' )->name('item_list_autocomplete')->middleware('auth');
@@ -86,6 +90,14 @@ Route::group(['middleware' => ['admin']], function () {
     route::post('price_rule/edit/{price_rule_id}','PriceRuleController@EditPriceRulePost')->name('price_rule_edit')->middleware('auth');
     route::get('price_rule/delete/{price_rule_id}','PriceRuleController@DeletePriceRuleGet')->name('price_rule_delete')->middleware('auth');
     route::post('price_rules/delete','PriceRuleController@DeletePriceRules')->name('price_rules_delete')->middleware('auth');
+
+    route::get('/price_level/new','PriceLevelController@GetPriceLevelForm' )->name('new_price_level')->middleware('auth');
+    route::post('/price_level/new','PriceLevelController@AddPriceLevel')->name('new_price_level')->middleware('auth');
+    route::get('price_level/list','PriceLevelController@GetPriceLevelList')->name('price_level_list')->middleware('auth');
+    route::get('price_level/edit/{price_level_id}','PriceLevelController@EditPriceLevelGet')->name('price_level_edit')->middleware('auth');
+    route::post('price_level/edit/{price_level_id}','PriceLevelController@EditPriceLevelPost')->name('price_level_edit')->middleware('auth');
+    route::get('price_level/delete/{price_level_id}','PriceLevelController@DeletePriceLevelGet')->name('price_level_delete')->middleware('auth');
+    route::post('price_levels/delete','PriceLevelController@DeletePriceLevels')->name('price_levels_delete')->middleware('auth');
 
     route::get('/supplier/new','SupplierController@GetSupplierForm' )->name('new_supplier')->middleware('auth');
     route::post('/supplier/new','SupplierController@AddSupplier')->name('new_supplier')->middleware('auth');

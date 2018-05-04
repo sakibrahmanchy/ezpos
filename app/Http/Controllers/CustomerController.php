@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Model\Customer;
+use App\Model\Item;
 use App\Model\LoyaltyTransaction;
 use App\Model\PaymentLog;
+use App\Model\PriceLevel;
 use App\Model\Sale;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -274,5 +276,36 @@ class CustomerController extends Controller
         $paymentLog = new PaymentLog();
         $paymentLog->addNewPaymentLog( $request->payment_method, $request->amount_to_add,null,$request->customer_id);
         return redirect()->route('customer_balance_add',["customer_id"=>$request->customer_id]);
+    }
+
+    public function customerAssignPriceLevelGet($customerId) {
+        $priceLevels = PriceLevel::all();
+        $items = Item::all();
+        $customer = Customer::where("id",$customerId)->with('Items')->first();
+        return view('customers.customer_price_level_assign',["priceLevels"=>$priceLevels,"allItems"=>$items,"customer"=>$customer]);
+    }
+
+    public function customerAssignPriceLevelPost(Request $request) {
+        $customer = Customer::where("id",$request->customer_id)->first();
+        $id_list = $request->id_list;
+        foreach ($id_list as $anId){
+            if(!$customer->items->contains($anId)) {
+                $customer->Items()->attach([$anId => ["price_level_id"=>$request->price_level_id]]);
+            }else
+            {
+                DB::table('customer_item')
+                    ->where("customer_id",$request->customer_id)
+                    ->where("item_id",$anId)
+                    ->update(["price_level_id"=>$request->price_level_id]);
+            }
+        }
+    }
+
+    public function removePriceLevelPost(Request $request){
+        $customer = Customer::where("id",$request->customer_id)->first();
+        $id_list = $request->id_list;
+        foreach ($id_list as $anId){
+            $customer->Items()->detach($anId);
+        }
     }
 }

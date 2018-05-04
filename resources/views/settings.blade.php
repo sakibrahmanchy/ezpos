@@ -136,6 +136,18 @@
                                     </div>
                                     <br><br><br>
 
+
+                                    <label for="website" class="col-sm-3 col-md-3 col-lg-2 control-label">Website:</label>
+                                    <div class="col-sm-9 col-md-9 col-lg-10">
+                                        <div class="input-group date">
+                                            <span class="input-group-addon bg">
+                                                <i class="fa fa-globe"></i>
+                                            </span>
+                                            <input class="form-control" type="text" name="website" value="{{ $settings['website'] }}">
+                                        </div>
+                                    </div>
+                                    <br><br><br>
+
                                     <div class="panel-heading">
                                         <h3 class="panel-title">
                                             <i class="pe-7s-edit"></i>
@@ -194,6 +206,8 @@
                                         </label>
                                         <input type="hidden" name="negative_inventory" id="negative_inventory_value" value="{{ $settings['negative_inventory'] }}"/>
                                     </div>
+                                    <br><br><br>
+
 
                                     <label for="phone" class="col-sm-3 col-md-3 col-lg-2 control-label">Scan Price from barcode:</label>
                                     <div class="col-sm-9 col-md-9 col-lg-10">

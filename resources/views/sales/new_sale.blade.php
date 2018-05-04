@@ -297,6 +297,17 @@
         var $item;
         var lastFocusedItem;
 
+
+        function checkForCustomerPriceLevels() {
+            $( ".unit-price" ).each(function( index ) {
+
+                var current_unit_price = Number($( this ).attr("data-unit-price"));
+                var current_id = ($( this ).attr('id') );
+                id = current_id.replace("unit-price-","");
+                getItemPrice(id,current_unit_price);
+            });
+        }
+
         $(document).ready(function(e){
 
             $.fn.editable.defaults.mode = 'inline';
@@ -311,6 +322,7 @@
             $("#customer").on('change',function () {
                 calculatePrice();
                 calculateDue();
+                checkForCustomerPriceLevels();
             });
 
             $('.select-payment').on('click mousedown',selectPayment);
@@ -373,7 +385,7 @@
 
                 var a = JSON.stringify(item);
                 itemTotalInfo.push(JSON.parse(a));
-                console.log(item);
+                //console.log(item);
                 if(item.type === "auto"){
                     autoAddItemTOCart(item);
                     return null;
@@ -425,7 +437,7 @@
                     var autoselect = false;
                     if($(("#auto_select")).is(':checked'))
                         autoselect = true;
-                    console.log(request.term);
+                    //console.log(request.term);
                     $.ajax({
                         url: "{{route('item_list_autocomplete')}}",
                         data: { q: request.term, autoselect: autoselect },
@@ -552,7 +564,7 @@
         }
 
         function removeProduct(productId){
-            console.log(productId);
+            //console.log(productId);
             Id = "#product-div-"+productId;
             $(Id).remove();
             $("#product-discount-"+productId).remove();
@@ -644,9 +656,9 @@
                 ' <input type="number" min = "0" class="form-control quantity" id="product-' + item.item_id + '"  onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" onchange = "addItemPriceToRegister(' + item.item_id + ')"  value="1">' +
                 '</td>' +
                     @if(UserHasPermission("edit_sale_cost_price"))
-                        '<td class="col-sm-1 col-md-1 text-center"><a href="javascript:void(0)" data-price-scanned-from-barcode='+item.useScanPrice+' onclick="editItemSalePrice('+item.item_id+')" data-unit-price = "'+(item.useScanPrice? Math.floor(item.new_price*100)/100 : item.selling_price) +'" id="unit-price-' + item.item_id + '">$'+(item.useScanPrice? Math.floor(item.new_price*100)/100 : item.selling_price)+'</a></td>' +
+                        '<td class="col-sm-1 col-md-1 text-center"><a class="unit-price" href="javascript:void(0)" data-price-scanned-from-barcode='+item.useScanPrice+' onclick="editItemSalePrice('+item.item_id+')" data-unit-price = "'+(item.useScanPrice? Math.floor(item.new_price*100)/100 : getItemPrice(item.item_id,item.selling_price)) +'" id="unit-price-' + item.item_id + '">$'+(item.useScanPrice? Math.floor(item.new_price*100)/100 : getItemPrice(item.item_id,item.selling_price))+'</a></td>' +
                     @else
-                        '<td class="col-sm-1 col-md-1 text-center" ><strong data-price-scanned-from-barcode='+item.useScanPrice+' data-unit-price = "'+(item.useScanPrice? Math.floor(item.new_price*100)/100 : item.selling_price) +'" id="unit-price-' + item.item_id + '">$' + (item.useScanPrice? Math.floor(item.new_price*100)/100 : item.selling_price) + '</strong></td>' +
+                        '<td class="col-sm-1 col-md-1 text-center" ><strong class="unit-price" data-price-scanned-from-barcode='+item.useScanPrice+' data-unit-price = "'+(item.useScanPrice? Math.floor(item.new_price*100)/100 : getItemPrice(item.item_id,item.selling_price)) +'" id="unit-price-' + item.item_id + '">$' + (item.useScanPrice? Math.floor(item.new_price*100)/100 : getItemPrice(item.item_id,item.selling_price)) + '</strong></td>' +
                     @endif
                         '<td><input  class="form-control discount-amount" type="number" id="discount-'+ item.item_id+'" onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" onchange = "addItemPriceToRegister(' + item.item_id + ')"  value="0"></td>' +
                 '<td class="col-sm-1 col-md-1 text-center" ><strong data-total-price = "" id ="total-price-' + item.item_id + '" class="total-price"></strong></td>' +
@@ -707,9 +719,9 @@
                 ' <input type="number" min = "0" class="form-control quantity" id="product-' + item.getAttribute('data-id') + '"  onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" onchange = "addItemPriceToRegister(' + item.getAttribute('data-id') + ')"  value="1">' +
                 '</td>'+
                     @if(UserHasPermission("edit_sale_cost_price"))
-                        '<td class="col-sm-1 col-md-1 text-center"><a  href="javascript:void(0)" onclick="editItemSalePrice('+item.getAttribute("data-id")+')" data-unit-price = "'+item.getAttribute('data-sale-price') +'" id="unit-price-' + item.getAttribute('data-id') + '">$'+item.getAttribute('data-sale-price')+'</a></td>' +
+                        '<td class="col-sm-1 col-md-1 text-center"><a class="unit-price"   href="javascript:void(0)" onclick="editItemSalePrice('+item.getAttribute("data-id")+')" data-unit-price = "'+getItemPrice(item.getAttribute('data-id'),item.getAttribute('data-sale-price')) +'" id="unit-price-' + item.getAttribute('data-id') + '">$'+getItemPrice(item.getAttribute('data-id'),item.getAttribute('data-sale-price'))+'</a></td>' +
                     @else
-                        '<td class="col-sm-1 col-md-1 text-center" ><strong data-unit-price = "'+item.getAttribute('data-sale-price') +'" id="unit-price-' +  item.getAttribute('data-id') + '">$' + item.getAttribute('data-sale-price') + '</strong></td>' +
+                        '<td class="col-sm-1 col-md-1 text-center" ><strong class="unit-price" data-unit-price = "'+getItemPrice(item.getAttribute('data-id'),item.getAttribute('data-sale-price')) +'" id="unit-price-' +  item.getAttribute('data-id') + '">$' + getItemPrice(item.getAttribute('data-id'),item.getAttribute('data-sale-price')) + '</strong></td>' +
                     @endif
                         '<td><input  class="form-control discount-amount" type="number" id="discount-'+ item.getAttribute("data-id")+'" onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" onchange = "addItemPriceToRegister(' + item.getAttribute('data-id') + ')"  value="0"></td>' +
                 '<td class="col-sm-1 col-md-1 text-center" ><strong data-total-price = "" id ="total-price-' + item.getAttribute('data-id') + '" class="total-price"></strong></td>' +
@@ -721,15 +733,13 @@
             var itemDiscounts = "";
             $(".product-descriptions").append(itemDescription);
 
-            if(itemTotalInfo[index].discountApplicable){
+            if(itemTotalInfo[index].discountApplicable) {
 
                 itemDiscounts+="<tr id='product-discount-"+item.getAttribute("data-id")+"'><td colspan='5' style='padding-left:23px;font-size: 80%;background: aliceblue;'> Discount Offer: <strong>"+itemTotalInfo[index].discountName+"</strong><br>";
                 itemDiscounts+="Item Discount Amount: $<strong>"+itemTotalInfo[index].discountAmount+"</strong></td>";
                 $("#discount-"+item.getAttribute('data-id')).val(Number(itemTotalInfo[index].discountPercentage).toFixed(2));
                 itemDiscounts+="<input type ='hidden' id='price-rule-"+item.getAttribute("data-id")+"' value = '"+itemTotalInfo[index].id+"'>";
                 calculatePrice();
-
-                //console.log(itemTotalInfo[index].discountAmount);
             }
 
             itemDiscounts += '</tr>';
@@ -772,16 +782,26 @@
             var index = $('.item-suggestion').index(item);
 
             if(itemTotalInfo[index].item_quantity<=0&&itemTotalInfo[index].product_type!=1){
+
                 @if($settings['negative_inventory']=="true")
                 //Continue Selling Products
-                    appendItemToCart(item,index);
+                    if(document.getElementById("product-div-"+item.getAttribute("data-id")) == null) {
+                        appendItemToCart(item, index);
+                    }else{
+                        var itemId = item.getAttribute("data-id");
+                        var itemQuantityFieldName = "#product-"+itemId;
+                        var itemCurrentQuantity = $(itemQuantityFieldName).val();
+                        itemCurrentQuantity++;
+                        $(itemQuantityFieldName).val(itemCurrentQuantity);
+                        addItemPriceToRegister(itemId);
+                    }
                 @else
                     alert("Sorry, product is out of stock.");
                 @endif
             }
             else if(document.getElementById("product-div-"+item.getAttribute("data-id")) == null) {
                 appendItemToCart(item, index);
-            }else{
+            } else {
                 var itemId = item.getAttribute("data-id");
                 var itemQuantityFieldName = "#product-"+itemId;
                 var itemCurrentQuantity = $(itemQuantityFieldName).val();
@@ -814,7 +834,7 @@
                     }
                 },
                 success: function(response, newValue) {
-                    console.log(response);
+                   // console.log(response);
                     $("#unit-price-"+id).editable("destroy");
                     var newItemPrice = newValue;
                     $("#unit-price-"+id).attr("data-unit-price",newItemPrice);
@@ -951,9 +971,6 @@
             $("#amount_tendered").attr('placeholder','');
 
             checkPaymentType();
-
-
-
         }
 
         function layAwaySale(){
@@ -1138,7 +1155,7 @@
                         var itemId = $(this).attr("data-index");
                         var itemType = $(this).attr("data-item-type");
                         var itemRuleId = $(this).attr("data-rule-id");
-                        console.log($(this));
+                       // console.log($(this));
                         if( itemId == 0 ) {
 
                             var currentQuantity = $("#product-discount-quantity").val();
@@ -1207,7 +1224,7 @@
                         }
                     });
 
-                    console.log(productInfos);
+                   // console.log(productInfos);
 
 
                     var saleInfo = {
@@ -1412,6 +1429,45 @@
                 }
             })
             @endif
+        }
+
+
+        function getItemPrice(itemId, previousPrice) {
+            var customer_id = $("#customer").val();
+            $.ajax({
+                url: "{{route('item_price')}}",
+                type: "post",
+                data: {
+                    item_id:itemId,
+                    customer_id: customer_id
+                },
+                success: function(response) {
+//                        status = response.priceLevelStatus;
+//                        if(status=="true") {
+//
+//                            percentage = response.percentage;
+//                            amountToChange = Number(previousPrice * (percentage/100));
+//                            console.log(amountToChange);
+//                            itemPrice = Number(Number(previousPrice) + amountToChange).toFixed(2);
+//                            $("#unit-price-"+itemId).attr("data-unit-price",itemPrice);
+//                            $("#unit-price-"+itemId).html("$"+itemPrice);
+//                            addItemPriceToRegister(itemId);
+//                            return itemPrice;
+//                        }
+//                        else{
+//                            $("#unit-price-"+itemId).attr("data-unit-price",previousPrice);
+//                            $("#unit-price-"+itemId).html("$"+previousPrice );
+//                            addItemPriceToRegister(itemId);
+//                            return previousPrice;
+//                        }
+                    itemPrice = response.price;
+                    console.log(Number(itemPrice));
+                    $("#unit-price-"+itemId).attr("data-unit-price",itemPrice);
+                    $("#unit-price-"+itemId).html("$"+itemPrice);
+                    addItemPriceToRegister(itemId);
+                }
+            });
+
         }
 
 

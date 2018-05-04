@@ -7,12 +7,14 @@ use App\Enumaration\ItemStatus;
 use App\Enumaration\PriceRuleTypes;
 use App\Library\SettingsSingleton;
 use App\Model\Category;
+use App\Model\Customer;
 use App\Model\File;
 use App\Model\ImportLog;
 use App\Model\Item;
 use App\Model\ItemKit;
 use App\Model\ItemsImage;
 use App\Model\Manufacturer;
+use App\Model\PriceLevel;
 use App\Model\Setting;
 use App\Model\Supplier;
 use Faker\Provider\zh_CN\DateTime;
@@ -521,6 +523,27 @@ class ItemController extends Controller
         if(DB::table('items')->whereIn('id',$item_list)->delete())
             return response()->json(["success"=>true],200);
         return response()->json(["success"=>false],200);
+    }
+
+    public function getItemPrice(Request $request) {
+        $item_id = $request->item_id;
+        $customer_id = $request->customer_id;
+        $itemPriceLevel = DB::table("customer_item")
+                             ->where("customer_id",$customer_id)
+                             ->where("item_id",$item_id)
+                             ->first();
+        $itemPrice = Item::where("id",$item_id)->first()->selling_price;
+        if(!is_null($itemPriceLevel)) {
+            $priceLevelId = $itemPriceLevel->price_level_id;
+            $priceLevel = PriceLevel::where("id",$priceLevelId)->first();
+            $percentage = $priceLevel->percentage;
+            $itemPriceToChange = ($itemPrice * ($percentage/100));
+            $newItemPrice = $itemPrice + $itemPriceToChange;
+            return response()->json(["success"=>true,"priceLevelStatus"=>true,"price"=>$newItemPrice]);
+        }
+        else
+            return response()->json(["success"=>true,"priceLevelStatus"=>false,"price"=>$itemPrice]);
+
     }
 
 }

@@ -49,7 +49,7 @@ class SaleController extends Controller
                     $employeeCounterList = array();
                     foreach($employee->counters as $aCounter) {
                         array_push($employeeCounterList,$aCounter->id);
-                    }  
+                    }
                     if(!in_array($counter_id,$employeeCounterList)) {
                         return redirect()->route('error-401');
                     }
@@ -404,12 +404,19 @@ class SaleController extends Controller
             $printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);
             $printer->text($settings['company_name'] . " No." . $sale->id . "\n");
             $printer->selectPrintMode();
-            $printer->text($settings['address'] . "\n\n");
-            $printer->selectPrintMode();
+
+            $printer->text($settings['address'] . "\n");
+            if($settings['phone']!=""||$settings['phone']!=null) {
+                $printer->text('Phone: '.$settings['phone'] . "\n");
+                $printer->selectPrintMode();
+            }
+            if($settings['website']!=""||$settings['website']!=null) {
+                $printer->text('Website: '.$settings['website'] . "\n");
+                $printer->selectPrintMode();
+            }
             $printer->text("Cashier: " . Auth::user()->name . "\n");
             $printer->selectPrintMode();
             $printer->text("------------------------------------------\n");
-
             $header = new \App\Model\Printer\Item("Qty", "Name", "Unit", "Total");
             $printer->setJustification(Printer::JUSTIFY_LEFT);
             $printer->setEmphasis(true);
@@ -441,7 +448,6 @@ class SaleController extends Controller
             $total = new FooterItem('Total', $sale->total_amount);
             $due = new FooterItem('Due', $sale->due);
 
-            $printer->setJustification(Printer::JUSTIFY_LEFT);
             $printer->setEmphasis(true);
             $printer->text($subtotal);
             $printer->setEmphasis(false);
@@ -468,16 +474,21 @@ class SaleController extends Controller
                 }
             }
             $printer->feed();
-            $printer->feed();
-            $printer->setBarcodeHeight(64);
-            $printer->setBarcodeWidth(2);
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
             $printer->setEmphasis(true);
+            $printer->text("CUSTOMER COPY");
+            $printer->feed();
+            $printer->feed();
+            $printer->setJustification(Printer::JUSTIFY_LEFT);
             $printer->text("Change Return Policy");
             $printer->setEmphasis(true);
             $printer->feed();
             $printer->barcode($sale->id, Printer::BARCODE_CODE39);
             $printer->feed();
             $printer->text($settings['company_name']." " . $sale->id);
+            $printer->feed();
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
+            $printer->text("THANK YOU!");
             $printer->feed();
             /*dd($items);*/
             /* $printer -> feed();*/
@@ -575,7 +586,7 @@ class SaleController extends Controller
             $subtotal = new FooterItem('Subtotal', 500.00);
             $tax = new FooterItem('VAT (15%)', 75.00);
             $total = new FooterItem('Total', 575.00);
-            $due = new FooterItem('Due', 0.00);
+            $due = new FooterItem('Change Due', 0.00);
 
             $printer->setJustification(Printer::JUSTIFY_LEFT);
             $printer->setEmphasis(true);
@@ -719,7 +730,6 @@ class SaleController extends Controller
         }
 
 
-
         $customerList = Customer::all();
         //dd($sale->items);
         return view('sales.edit_sale',["sales"=>$sales,"customerList"=>$customerList,"sale_id"=>$sale_id]);
@@ -735,7 +745,5 @@ class SaleController extends Controller
         $sale_id = $sale->EditSale($saleInfo, $productInfos, $paymentInfos, $saleInfo['status'], $sale_id);
         echo $sale_id;
     }
-
-
 
 }
