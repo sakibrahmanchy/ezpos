@@ -31,6 +31,8 @@ class RouteTokens
         "item_image_delete"=>"item_add_update",
         "item_delete"=>"item_delete",
         "items_delete"=>"item_delete",
+        "all_items_data" => "item_search",
+        "item_list_ajax" => "item_search",
 
         "item_import_excel"=>"item_add_update",
         "insert_item_file"=>"item_add_update",

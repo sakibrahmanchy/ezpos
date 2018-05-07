@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enumaration\ImportType;
 use App\Enumaration\ItemStatus;
 use App\Enumaration\PriceRuleTypes;
+use App\Libraries\SSP;
 use App\Library\SettingsSingleton;
 use App\Model\Category;
 use App\Model\Customer;
@@ -65,6 +66,71 @@ class ItemController extends Controller
 
     }
 
+
+    public function GetItemListAjax() {
+        $items = Item::all();
+        return view('items.item_list_ajax',['allItems'=>$items]);
+    }
+
+    public function getAllItemsData(Request $request) {
+
+        $where = '';
+
+        if ($request->item_status != "0")
+            $where .= "item_status = ".$request->item_status;
+
+
+        $allItems = <<<EOT
+(
+     SELECT items.product_id as product_id, items.id as item_id, items.item_name as item_name, items.item_status as item_status,
+            items.isbn as upc, items.item_quantity as quantity, items.item_size as size, items.cost_price as cost_price,   
+            items.selling_price as selling_price, items.item_reorder_level as reorder_level, items.item_replenish_level as replenish_level, 
+            items.days_to_expiration as expire_date, items.price_include_tax as price_include_tax, items.service_item as service_item,
+            categories.category_name as category, suppliers.company_name as supplier
+     FROM items
+     LEFT JOIN categories on items.category_id = categories.id 
+     LEFT JOIN suppliers on items.supplier_id = suppliers.id
+     LEFT JOIN manufacturers on items.manufacturer_id = manufacturers.id 
+     WHERE product_type = 0 and product_type <> 2 
+     AND items.deleted_at is null
+) temp
+EOT;
+
+        $primaryKey = 'item_id';
+
+        $columns = array(
+            array( 'db' => 'product_id', 'dt' => 'product_id' ),
+            array( 'db' => 'item_name', 'dt' => 'item_name' ),
+            array( 'db' => 'item_status', 'dt' => 'item_status' ),
+            array( 'db' => 'supplier', 'dt' => 'supplier' ),
+            array( 'db' => 'upc', 'dt' => 'upc' ),
+            array( 'db' => 'quantity', 'dt' => 'quantity' ),
+            array( 'db' => 'size', 'dt' => 'size' ),
+            array( 'db' => 'cost_price', 'dt' => 'cost_price' ),
+            array( 'db' => 'selling_price', 'dt' => 'selling_price' ),
+            array( 'db' => 'category', 'dt' => 'category' ),
+            array( 'db' => 'reorder_level', 'dt' => 'reorder_level' ),
+            array( 'db' => 'replenish_level', 'dt' => 'replenish_level' ),
+            array( 'db' => 'expire_date', 'dt' => 'expire_date' ),
+            array('db' => 'price_include_tax', 'dt' => 'price_include_tax'),
+            array('db' => 'service_item', 'dt' => 'service_item'),
+            array("db" => "item_id", "dt" => "item_id")
+        );
+
+        $db_connection = config('database.default');
+
+        $sql_details = array(
+            'user' => config('database.connections.'.$db_connection.'.username'),
+            'pass' => config('database.connections.'.$db_connection.'.password'),
+            'db'   => config('database.connections.'.$db_connection.'.database'),
+            'host' => config('database.connections.'.$db_connection.'.host')
+        );
+
+        echo json_encode(
+            SSP::complex( $_GET, $sql_details, $allItems, $primaryKey, $columns, $where )
+        );
+
+    }
 
     public function GetItemList()
     {
