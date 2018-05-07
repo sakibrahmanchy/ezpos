@@ -37,7 +37,7 @@
                     <tbody id="data-table">
                     @foreach($logs as $aLog)
                         <tr>
-                            <td>{{ date('jS \of F, Y h:i:s A',time($aLog->created_at)) }}</td>
+                            <td>{{ $aLog->created_at }}</td>
                             <td>{{ $aLog->user->name }}</td>
                             <td><a href="{{ $aLog->uploaded_file_path }}">Download Imported File</a></td>
                             <td><a href="{{ $aLog->downloaded_file_path }}">Download Log File</a></td>
