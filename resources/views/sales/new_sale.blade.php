@@ -1434,6 +1434,7 @@
 
         function getItemPrice(itemId, previousPrice) {
             var customer_id = $("#customer").val();
+
             $.ajax({
                 url: "{{route('item_price')}}",
                 type: "post",
@@ -1442,24 +1443,7 @@
                     customer_id: customer_id
                 },
                 success: function(response) {
-//                        status = response.priceLevelStatus;
-//                        if(status=="true") {
-//
-//                            percentage = response.percentage;
-//                            amountToChange = Number(previousPrice * (percentage/100));
-//                            console.log(amountToChange);
-//                            itemPrice = Number(Number(previousPrice) + amountToChange).toFixed(2);
-//                            $("#unit-price-"+itemId).attr("data-unit-price",itemPrice);
-//                            $("#unit-price-"+itemId).html("$"+itemPrice);
-//                            addItemPriceToRegister(itemId);
-//                            return itemPrice;
-//                        }
-//                        else{
-//                            $("#unit-price-"+itemId).attr("data-unit-price",previousPrice);
-//                            $("#unit-price-"+itemId).html("$"+previousPrice );
-//                            addItemPriceToRegister(itemId);
-//                            return previousPrice;
-//                        }
+                    console.log('here');
                     itemPrice = response.price;
                     console.log(Number(itemPrice));
                     $("#unit-price-"+itemId).attr("data-unit-price",itemPrice);

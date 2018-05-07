@@ -167,7 +167,7 @@ class ItemController extends Controller
 
         $autoselect = Input::get('autoselect');
 
-        if($autoselect=="true"){
+        if($autoselect=="true") {
 
             $search_param = (string) Input::get('q');
             if($search_param!=""||$search_param!=null){
@@ -185,22 +185,41 @@ class ItemController extends Controller
                         }
                     }
                 }
+                if($priceNeededToBeScanned) {
+                    $items =  DB::table('items')
+                        ->leftJoin('items_images', 'items.id', '=', 'items_images.item_id')
+                        ->leftJoin('files', 'files.id', '=', 'items_images.file_id')
+                        ->leftJoin('item_price_rule','items.id','=','item_price_rule.item_id')
+                        ->leftJoin('price_rules','item_price_rule.price_rule_id','=','price_rules.id')
+                        ->leftJoin('suppliers','suppliers.id','=','items.supplier_id')
+                        ->where(function($query) use ($search_param) {
+                            $query->where('isbn','like',"%".$search_param."%");
+                        })
+                        ->where('items.deleted_at',null)
+                        ->where('items.item_status',ItemStatus::$ACTIVE)
+                        ->select('items.id as item_id','items.*','files.*','price_rules.*','suppliers.*')
+                        ->groupBy('items.item_name')
+                        ->where('items.product_type','<>',2)
+                        ->first();
+                }
+                else {
+                    $items =  DB::table('items')
+                        ->leftJoin('items_images', 'items.id', '=', 'items_images.item_id')
+                        ->leftJoin('files', 'files.id', '=', 'items_images.file_id')
+                        ->leftJoin('item_price_rule','items.id','=','item_price_rule.item_id')
+                        ->leftJoin('price_rules','item_price_rule.price_rule_id','=','price_rules.id')
+                        ->leftJoin('suppliers','suppliers.id','=','items.supplier_id')
+                        ->where(function($query) use ($search_param) {
+                            $query->where('isbn','=',$search_param);
+                        })
+                        ->where('items.deleted_at',null)
+                        ->where('items.item_status',ItemStatus::$ACTIVE)
+                        ->select('items.id as item_id','items.*','files.*','price_rules.*','suppliers.*')
+                        ->groupBy('items.item_name')
+                        ->where('items.product_type','<>',2)
+                        ->first();
+                }
 
-                $items =  DB::table('items')
-                    ->leftJoin('items_images', 'items.id', '=', 'items_images.item_id')
-                    ->leftJoin('files', 'files.id', '=', 'items_images.file_id')
-                    ->leftJoin('item_price_rule','items.id','=','item_price_rule.item_id')
-                    ->leftJoin('price_rules','item_price_rule.price_rule_id','=','price_rules.id')
-                    ->leftJoin('suppliers','suppliers.id','=','items.supplier_id')
-                    ->where(function($query) use ($search_param) {
-                        $query->where('isbn','like',"%".$search_param."%");
-                    })
-                    ->where('items.deleted_at',null)
-                    ->where('items.item_status',ItemStatus::$ACTIVE)
-                    ->select('items.id as item_id','items.*','files.*','price_rules.*','suppliers.*')
-                    ->groupBy('items.item_name')
-                    ->where('items.product_type','<>',2)
-                    ->first();
 
                 if(!is_null($items)) {
 
