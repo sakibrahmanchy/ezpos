@@ -287,13 +287,13 @@ EOT;
                 }
 
 
-                if(!is_null($items)) {
+                        if(!is_null($items)) {
 
-                    $itemsWithItemKits = array($items);
-                    $current_date = new \DateTime('today');
-                    // Check price rules on specific items
+                            $itemsWithItemKits = array($items);
+                            $current_date = new \DateTime('today');
+                            // Check price rules on specific items
 
-                    foreach($itemsWithItemKits as $anItem) {
+                            foreach($itemsWithItemKits as $anItem) {
 
                         if(isset($anItem->item_id)){
 

@@ -255,7 +255,6 @@ class Sale extends Model
 
             }else{
                 if($saleStatus!=SaleStatus::$ESTIMATE){
-                    echo $item_id;
                     if($item_type=="item"){
 
                         $item = Item::where("id",$item_id)->first();

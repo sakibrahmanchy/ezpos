@@ -638,15 +638,17 @@ class SaleController extends Controller
         $sales = DB::table('sales')
             ->join('item_sale','sales.id','=','item_sale.sale_id')
             ->join('items','items.id','=','item_sale.item_id')
-            ->leftJoin('payment_log_sale','sales.id','=','payment_log_sale.sale_id')
-            ->leftJoin('payment_logs','payment_log_sale.payment_log_id','=','payment_logs.id')
             ->leftJoin('suppliers','suppliers.id','=','items.supplier_id')
             ->leftJoin('item_price_rule','items.id','=','item_price_rule.item_id')
             ->leftJoin('price_rules','item_price_rule.price_rule_id','=','price_rules.id')
             ->where('sales.deleted_at',null)
             ->where('items.deleted_at',null)
-            ->where('item_sale.sale_id',$sale_id)
+            ->where('sales.id',$sale_id)
+            ->select('item_sale.*','items.*','sales.*',
+                'suppliers.*','item_price_rule.price_rule_id as price_rule_id','price_rules.*')
             ->get()->toArray();
+
+        $sale_payments = Sale::with('PaymentLogs')->where('id',$sale_id)->first()->PaymentLogs;
 
         $current_date = new \DateTime('today');
         // Check price rules on specific items
@@ -733,7 +735,7 @@ class SaleController extends Controller
 
         $customerList = Customer::all();
         //dd($sale->items);
-        return view('sales.edit_sale',["sales"=>$sales,"customerList"=>$customerList,"sale_id"=>$sale_id]);
+        return view('sales.edit_sale',["sales"=>$sales,"customerList"=>$customerList,"sale_id"=>$sale_id,"payments"=>$sale_payments]);
 
     }
 
