@@ -329,7 +329,7 @@ class SSP {
 		// Main query to actually get the data
 		$data = self::sql_exec( $db, $bindings,
 			"SELECT `".implode("`, `", self::pluck($columns, 'db'))."`
-			 FROM $table
+			 FROM `$table`
 			 $where
 			 $order
 			 $limit"
@@ -338,7 +338,7 @@ class SSP {
 		// Data set length after filtering
 		$resFilterLength = self::sql_exec( $db, $bindings,
 			"SELECT COUNT(`{$primaryKey}`)
-			 FROM   $table
+			 FROM  `$table`
 			 $where"
 		);
 		$recordsFiltered = $resFilterLength[0][0];
@@ -346,7 +346,7 @@ class SSP {
 		// Total data set length
 		$resTotalLength = self::sql_exec( $db, $bindings,
 			"SELECT COUNT(`{$primaryKey}`)
-			 FROM   $table ".
+			 FROM   `$table` ".
 			$whereAllSql
 		);
 		$recordsTotal = $resTotalLength[0][0];

@@ -73,6 +73,7 @@
                 <table  class="table table-bordered table-hover table-striped" id="tableAll">
                     <thead>
                     <tr>
+                        <th></th>
                         <th>Actions</th>
                         <th>Product Id</th>
                         <th>Item Name</th>
@@ -177,6 +178,19 @@
                     {
                         "data": null,
                         "defaultContent": ""
+                    },
+                    {
+                        "data": function (data) {
+                            var url = '{{ route("item_edit", ":item_id") }}';
+                            url = url.replace(':item_id', data.item_id);
+
+                            var dataToReturn = "";
+                            @if(UserHasPermission('item_add_update'))
+                                dataToReturn += `<a href=`+url+`>Edit</a>`;
+                            @endif
+                                return dataToReturn;
+                        },
+                        defaultContent: ""
                     },
                     {
                         "data": "product_id",
