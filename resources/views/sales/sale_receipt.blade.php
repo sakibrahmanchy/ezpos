@@ -32,6 +32,7 @@
 
                                 <li>{{$settings['address']}}</li>
                                 <li>{{$settings['phone']}}</li>
+                                <li>{{$settings['website']}}</li>
 
                             </ul>
                         </div>
@@ -305,6 +306,8 @@
                             </div>
                         </div>
                     </div>
+
+                    <center>CUSTOMER COPY</center>
                     <!-- invoice footer-->
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12">
@@ -326,6 +329,7 @@
                             </div>
                         </div>
                     </div>
+                    <center>THANK YOU!</center>
                 </div>
                 <!--container-->
             </div>

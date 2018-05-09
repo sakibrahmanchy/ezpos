@@ -528,6 +528,7 @@ class SaleController extends Controller
             if (isset($printer)) {
                 $printer->pulse();
                 $printer->close();
+                return redirect()->route('new_sale');
             }
         }
 

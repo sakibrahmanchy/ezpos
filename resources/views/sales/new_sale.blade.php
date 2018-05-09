@@ -386,7 +386,7 @@
                 var a = JSON.stringify(item);
                 itemTotalInfo.push(JSON.parse(a));
                 //console.log(item);
-                if(item.type === "auto"){
+                if(item.scan_type === "auto"){
                     autoAddItemTOCart(item);
                     return null;
                 }else{

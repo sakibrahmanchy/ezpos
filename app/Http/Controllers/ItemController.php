@@ -297,15 +297,12 @@ EOT;
 
                         if(isset($anItem->item_id)){
 
-                            $anItem->type = "auto";
+                            $anItem->scan_type = "auto";
                             if($priceNeededToBeScanned) {
                                 $anItem->new_price = $item_new_price_from_barcode;
                                 $anItem->useScanPrice = true;
                             }
                             if ($anItem->active){
-
-                                if($anItem->unlimited||$anItem->num_times_to_apply>0)
-                                {
 
                                     if($anItem->type==1){
 
@@ -369,7 +366,6 @@ EOT;
                                         }
 
                                     }
-                                }
 
                             }
 
@@ -415,11 +411,8 @@ EOT;
             // Check price rules on specific items
             foreach($itemsWithItemKits as $anItem) {
                 if(isset($anItem->item_id)){
-                    $anItem->type = "list";
+                    $anItem->scan_type = "list";
                     if ($anItem->active){
-
-                        if($anItem->unlimited||$anItem->num_times_to_apply>0)
-                        {
 
                             if($anItem->type==1){
 
@@ -482,7 +475,7 @@ EOT;
                                     // echo "Item should be discounted by ".$anItem->fixed_of." dollar";
                                 }
 
-                            }
+
                         }
 
                     }
