@@ -30,10 +30,9 @@
 
                                 <li>{{$settings['company_name']}}</li>
 
-                                <li>{{$settings['address']}}</li>
+                                <li>{{wordwrap($settings['address'],43,"\n",false)}}</li>
                                 <li>{{$settings['phone']}}</li>
                                 <li>{{$settings['website']}}</li>
-
                             </ul>
                         </div>
                         <!--  sales-->
@@ -274,7 +273,7 @@
                         @foreach($sale->paymentlogs as $aPayment)
                         <div class="row">
                             <div class="col-md-offset-8 col-sm-offset-8 col-xs-offset-2 col-md-2 col-sm-2 col-xs-6">
-                                <div class="invoice-footer-heading">{{$aPayment->payment_type}}:</div>
+                                <div class="invoice-footer-heading">{{$aPayment->payment_type}} Tendered:</div>
                             </div>
                             <div class="col-md-2 col-sm-2 col-xs-4">
                                 <div class="invoice-footer-value invoice-total">
