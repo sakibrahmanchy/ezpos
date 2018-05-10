@@ -405,7 +405,7 @@ class SaleController extends Controller
             $printer->text($settings['company_name'] . " No." . $sale->id . "\n");
             $printer->selectPrintMode();
 
-            $printer->text(wordwrap($settings['address'],43,"\n",false));
+            $printer->text(wordwrap($settings['address'] . "\n",43,"\n",false));
             if($settings['phone']!=""||$settings['phone']!=null) {
                 $printer->text('Phone: '.$settings['phone'] . "\n");
                 $printer->selectPrintMode();
