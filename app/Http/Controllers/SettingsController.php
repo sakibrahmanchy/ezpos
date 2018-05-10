@@ -44,7 +44,7 @@ class SettingsController extends Controller
 
         $denomintaionNames = $request->denomination_name;
         $denomintaionValues = $request->denomination_value;
-        
+
         if(!empty($denomintaionNames))
         for($i = 0; $i<sizeof($denomintaionNames); $i++){
             if(is_null($denomintaionNames[$i]))
