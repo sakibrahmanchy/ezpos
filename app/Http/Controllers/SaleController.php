@@ -446,7 +446,7 @@ class SaleController extends Controller
             if($settings["tax_rate"]>0)
                 $tax = new FooterItem('VAT (' . $settings['tax_rate'] . '%)', $sale->tax_amount);
             $total = new FooterItem('Total', $sale->total_amount);
-            $due = new FooterItem('Due', $sale->due);
+            $due = new FooterItem('Change Due', $sale->due);
 
             $printer->setEmphasis(true);
             $printer->text($subtotal);
@@ -469,7 +469,7 @@ class SaleController extends Controller
                 $printer->feed();
                 $printer->setEmphasis(false);
                 foreach ($sale->paymentlogs as $aPayment) {
-                    $payment = new FooterItem($aPayment->payment_type, $aPayment->paid_amount);
+                    $payment = new FooterItem($aPayment->payment_type." Tendered", $aPayment->paid_amount);
                     $printer->text($payment);
                 }
             }
