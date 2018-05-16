@@ -167,7 +167,7 @@ class SaleController extends Controller
         if (isset($customer->email) && !is_null($customer->email)) {
 
             Mail::send('sales.emails_sales_receipt', ["sale" => $sale], function ($m) use ($sale, $customer) {
-                $m->from('sales@ezpos.com', 'EZPOS');
+                $m->from('sales@mg.grimspos.com', 'EZPOS');
 
                 $pdf = PDF::loadView('sales.sale_receipt_pdf', ["sale" => $sale]);
                 $m->to($customer->email, $customer->name)->subject('Sale receipt for purchase!');
