@@ -170,8 +170,8 @@ class SaleController extends Controller
                 $m->from('sales@mg.grimspos.com', 'EZPOS');
 
                 $pdf = PDF::loadView('sales.sale_receipt_pdf', ["sale" => $sale]);
-                $m->to('sourov.cse.06@gmail.com', $customer->name)->subject('Sale receipt for purchase!');
-                //$m->attachData($pdf->output(), 'invoice.pdf', ['mime' => 'application/pdf']);
+                $m->to($customer->email, $customer->name)->subject('Sale receipt for purchase!');
+                $m->attachData($pdf->output(), 'invoice.pdf', ['mime' => 'application/pdf']);
             });
 
             // check for failures
