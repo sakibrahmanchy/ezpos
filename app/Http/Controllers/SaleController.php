@@ -171,7 +171,7 @@ class SaleController extends Controller
 
                 $pdf = PDF::loadView('sales.sale_receipt_pdf', ["sale" => $sale]);
                 $m->to('sourov.cse.06@gmail.com', $customer->name)->subject('Sale receipt for purchase!');
-                $m->attachData($pdf->output(), 'invoice.pdf', ['mime' => 'application/pdf']);
+                //$m->attachData($pdf->output(), 'invoice.pdf', ['mime' => 'application/pdf']);
             });
 
             // check for failures
