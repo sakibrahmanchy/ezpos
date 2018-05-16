@@ -11,7 +11,7 @@
     <div class="filter-box">
         <div class="row">
             <div class="col-md-6">
-                <div class="input-group pull-left col-md-6 col-sm-12">
+                <div class="input-group pull-left col-md-6 col-sm-6">
                     <input type="text" id="global_filter" class="form-control pull-right global_filter" placeholder="Search">
                     <div class="input-group-btn">
                         <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
