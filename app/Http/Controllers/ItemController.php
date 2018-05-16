@@ -242,12 +242,13 @@ EOT;
                 $priceNeededToBeScanned = false;
                 if(strlen($search_param)==12) {
                     if($scan_price_from_barcode=="true"){
-                        $priceNeededToBeScanned = true;
                         $upc_code_prefix = $scan_price_from_barcode = SettingsSingleton::getByKey('upc_code_prefix');
+
                         if(substr($search_param,0,strlen($upc_code_prefix)) ===  $upc_code_prefix){
                             $item_new_price_from_barcode = (int) substr($search_param,6,12);
                             $item_new_price_from_barcode = $item_new_price_from_barcode / 1000;
                             $search_param = substr($search_param,0,6);
+                            $priceNeededToBeScanned = true;
                         }
                     }
                 }
@@ -285,8 +286,6 @@ EOT;
                         ->where('items.product_type','<>',2)
                         ->first();
                 }
-
-
                         if(!is_null($items)) {
 
                             $itemsWithItemKits = array($items);

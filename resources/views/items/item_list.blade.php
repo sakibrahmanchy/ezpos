@@ -430,6 +430,7 @@
     }
 
     $(document).ready(function(){
+        $.fn.dataTable.ext.errMode = 'none';
 
         activeTab = $("ul#tabs li.active").attr("id");
         activeTable = tabTables[activeTab];
