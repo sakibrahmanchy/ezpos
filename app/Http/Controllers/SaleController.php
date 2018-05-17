@@ -401,10 +401,15 @@ class SaleController extends Controller
             $printer->selectPrintMode();
             $printer->text( $created_at. "\n");
             $printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);
-            $printer->text($settings['company_name'] . " No." . $sale->id . "\n");
+            $printer->text($settings['company_name']);
             $printer->selectPrintMode();
-
-            $printer->text(wordwrap($settings['address'] . "\n",43,"\n",false));
+			$printer->text("Order No." . $sale->id . "\n");
+			
+            if($settings['address_line_1']!=""||$settings['address_line_1']!=null)
+				$printer->text(wordwrap($settings['address_line_1'] . "\n",43,"\n",false));
+			if($settings['address_line_2']!=""||$settings['address_line_2']!=null)
+				$printer->text(wordwrap($settings['address_line_2'] . "\n",43,"\n",false));
+			
             if($settings['phone']!=""||$settings['phone']!=null) {
                 $printer->text('Phone: '.$settings['phone'] . "\n");
                 $printer->selectPrintMode();
@@ -472,6 +477,13 @@ class SaleController extends Controller
                     $printer->text($payment);
                 }
             }
+			
+            
+			if( $sale->comment && strlen($sale->comment)>0 )
+			{
+				$printer->feed();
+				$printer->text(wordwrap( $sale->comment . "\n",43,"\n",false));
+			}
             $printer->feed();
             $printer->setJustification(Printer::JUSTIFY_CENTER);
             $printer->setEmphasis(true);
@@ -484,8 +496,8 @@ class SaleController extends Controller
             $printer->setEmphasis(true);
             $printer->feed();
             $printer->barcode($sale->id, Printer::BARCODE_CODE39);
-            $printer->feed();
-            $printer->text($settings['company_name']." " . $sale->id);
+           // $printer->feed();
+            //$printer->text($settings['company_name']." " . $sale->id);
             $printer->feed();
             $printer->setJustification(Printer::JUSTIFY_CENTER);
             if($print_type==1)
@@ -573,14 +585,30 @@ class SaleController extends Controller
             //$printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);
             //$printer->text($settings['company_name'] . " " . $sale->id . "\n");
             //$printer->text("------------------------------------------\n");
+            $printer = new Printer($connector);
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
+            $printer->text("Receipt\n");
             $printer->selectPrintMode();
-            $printer->text($sale->created_at . "\n");
+            $printer->text( $created_at. "\n");
             $printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);
-            $printer->text($settings['company_name'] . " " . $sale->id . "\n");
+            $printer->text($settings['company_name']);
             $printer->selectPrintMode();
-            $printer->text($settings['address'] . "\n\n");
-            $printer->selectPrintMode();
-            $printer->text("Employee: " . Auth::user()->name . "\n");
+			$printer->text(" No." . $sale->id . "\n");
+			
+			if($settings['address_line_1']!=""||$settings['address_line_1']!=null)
+				$printer->text(wordwrap($settings['address_line_1'] . "\n",43,"\n",false));
+			if($settings['address_line_2']!=""||$settings['address_line_2']!=null)
+				$printer->text(wordwrap($settings['address_line_2'] . "\n",43,"\n",false));
+			
+            if($settings['phone']!=""||$settings['phone']!=null) {
+                $printer->text('Phone: '.$settings['phone'] . "\n");
+                $printer->selectPrintMode();
+            }
+            if($settings['website']!=""||$settings['website']!=null) {
+                $printer->text('Website: '.$settings['website'] . "\n");
+                $printer->selectPrintMode();
+            }
+            $printer->text("Cashier: " . Auth::user()->name . "\n");
             $printer->selectPrintMode();
             $printer->text("------------------------------------------\n");
 
@@ -602,7 +630,7 @@ class SaleController extends Controller
             $total = new FooterItem('Total', 575.00);
             $due = new FooterItem('Change Due', 0.00);
 
-            $printer->setJustification(Printer::JUSTIFY_LEFT);
+            /*$printer->setJustification(Printer::JUSTIFY_LEFT);
             $printer->setEmphasis(true);
             $printer->text($subtotal);
             $printer->setEmphasis(false);
@@ -626,7 +654,26 @@ class SaleController extends Controller
             $printer->barcode($sale->id, Printer::BARCODE_CODE39);
             $printer->feed();
             $printer->text("EZPOS " . $sale->id);
+            $printer->feed();*/
+			$printer->feed();
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
+            $printer->setEmphasis(true);
+            $printer->text("CUSTOMER COPY");
             $printer->feed();
+            $printer->feed();
+            $printer->setJustification(Printer::JUSTIFY_LEFT);
+            $printer->text("Change Return Policy");
+            $printer->setEmphasis(true);
+            $printer->feed();
+            $printer->barcode($sale->id, Printer::BARCODE_CODE39);
+           // $printer->feed();
+            //$printer->text($settings['company_name']." " . $sale->id);
+            $printer->feed();
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
+            $printer->text("THANK YOU!");
+            $printer->feed();
+			
+			
             /*dd($items);*/
             /* $printer -> feed();*/
 
