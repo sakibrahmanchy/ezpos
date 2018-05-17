@@ -10,7 +10,7 @@
      <div class="filter-box">
         <div class="row">
             <div class="col-md-6">
-                <div class="input-group pull-left" style="width: 30%;">
+                <div class="input-group col-md-6 col-sm-6 pull-left">
                     <input type="text" id="global_filter" class="form-control pull-right global_filter" placeholder="Search">
 
                     <div class="input-group-btn">

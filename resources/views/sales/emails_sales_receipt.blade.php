@@ -274,7 +274,7 @@
                                 <td style="padding: 30px; font-family: sans-serif; font-size: 16px; line-height: 22px; color: #444444;">
                                     <h1>{{ $settings['company_name'] }} Invoice Receipt</h1>
                                     <br><br>
-                                    Hello <strong>Sakib Rahman</strong>,<br>
+                                    Hello <strong>{{ $customer->first_name }} {{ $customer->last_name }}</strong>,<br>
                                     <br>
                                     Thank you for shopping with us. Your transaction is successfully completed.<br>
                                     Please check attachments for detailed reciepts.

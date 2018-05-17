@@ -39,7 +39,6 @@ class CustomerController extends Controller
                 ->withInput($request->input());
         }
 
-
         $customerCredentials['first_name'] = $request->first_name;
         $customerCredentials['last_name'] = $request->last_name;
         $customerCredentials['phone'] = $request->phone;

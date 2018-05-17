@@ -88,7 +88,11 @@
                                 Estimate
                             @endif
                         </td>
-                        <td></td>
+                        <td>
+                            @if(isset($suspended_sale->customer))
+                                {{ $suspended_sale->customer->first_name }} {{ $suspended_sale->customer->last_name }}
+                            @endif
+                        </td>
                         <td>
 							{{ implode(',', $suspended_sale->item_names ) }}
                         </td>

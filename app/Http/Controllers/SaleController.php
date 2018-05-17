@@ -108,7 +108,7 @@ class SaleController extends Controller
     public function GetSuspendedSales()
     {
 
-        $suspendedSales = Sale::where('sale_status', SaleStatus::$ESTIMATE)->orWhere('sale_status', SaleStatus::$LAYAWAY)->with('items', 'paymentlogs')->get();
+        $suspendedSales = Sale::where('sale_status', SaleStatus::$ESTIMATE)->orWhere('sale_status', SaleStatus::$LAYAWAY)->with('items', 'paymentlogs','customer')->get();
 
         foreach ($suspendedSales as $aSale) {
             $aSale->item_count = count($aSale->items);
@@ -158,18 +158,17 @@ class SaleController extends Controller
         }, 'paymentlogs', 'customer'])->first();
 
 
-        $customer = new \stdClass();
+
         if (isset($sale->customer->id)) {
-            $customer->name = $sale->customer->name;
-            $customer->email = $sale->customer->email;
+            $customer = Customer::where('id',$sale->customer_id)->first();
         }
 
         if (isset($customer->email) && !is_null($customer->email)) {
 
-            Mail::send('sales.emails_sales_receipt', ["sale" => $sale], function ($m) use ($sale, $customer) {
+            Mail::send('sales.emails_sales_receipt', ["sale" => $sale, "customer" => $customer], function ($m) use ($sale, $customer) {
                 $m->from('sales@mg.grimspos.com', 'EZPOS');
 
-                $pdf = PDF::loadView('sales.sale_receipt_pdf', ["sale" => $sale]);
+                $pdf = PDF::loadView('sales.sale_receipt_pdf', ["sale" => $sale, "customer" => $customer]);
                 $m->to($customer->email, $customer->name)->subject('Sale receipt for purchase!');
                 $m->attachData($pdf->output(), 'invoice.pdf', ['mime' => 'application/pdf']);
             });
@@ -379,9 +378,9 @@ class SaleController extends Controller
 
     }
 
-    public function printSaleReciept($sale_id)
+    public function printSaleReciept($sale_id, Request $request)
     {
-
+        $print_type = $request->print_type;
         $sale = Sale::where("id", $sale_id)->with('items', 'paymentlogs', 'customer')->first();
         if ($sale == null)
             return redirect()->route('new_sale')->with(["error" => 'Sale id not found']);
@@ -476,6 +475,7 @@ class SaleController extends Controller
             $printer->feed();
             $printer->setJustification(Printer::JUSTIFY_CENTER);
             $printer->setEmphasis(true);
+            if($request->print_type==1)
             $printer->text("CUSTOMER COPY");
             $printer->feed();
             $printer->feed();
@@ -488,7 +488,20 @@ class SaleController extends Controller
             $printer->text($settings['company_name']." " . $sale->id);
             $printer->feed();
             $printer->setJustification(Printer::JUSTIFY_CENTER);
-            $printer->text("THANK YOU!");
+            if($print_type==1)
+                $printer->text("THANK YOU!");
+            else
+            {
+                $printer->text("----------------------------------");
+                $printer->feed();
+                $printer->text('Signature');
+                $printer->feed();
+                $printer->feed();
+                $printer->feed();
+                $printer->text("----------------------------------");
+                $printer->feed();
+                $printer->text('Date');
+            }
             $printer->feed();
             /*dd($items);*/
             /* $printer -> feed();*/
