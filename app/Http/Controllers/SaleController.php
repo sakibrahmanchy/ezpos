@@ -401,7 +401,7 @@ class SaleController extends Controller
             $printer->selectPrintMode();
             $printer->text( $created_at. "\n");
             $printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);
-            $printer->text($settings['company_name']);
+            $printer->text($settings['company_name'] . "\n" );
             $printer->selectPrintMode();
 			$printer->text("Order No." . $sale->id . "\n");
 			
@@ -591,9 +591,9 @@ class SaleController extends Controller
             $printer->selectPrintMode();
             $printer->text( $created_at. "\n");
             $printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);
-            $printer->text($settings['company_name']);
+            $printer->text($settings['company_name'] . "\n");
             $printer->selectPrintMode();
-			$printer->text(" No." . $sale->id . "\n");
+			$printer->text("Order No." . $sale->id . "\n");
 			
 			if($settings['address_line_1']!=""||$settings['address_line_1']!=null)
 				$printer->text(wordwrap($settings['address_line_1'] . "\n",43,"\n",false));
