@@ -216,7 +216,7 @@
             </td>
         </tr>
         <tr>
-            <th>Change Due</th>
+            <th>{{$sale->due>=0?'Due': 'Change Due'}}</th>
             <td>  @if($sale->due>=0)
                     ${{$sale->due}}
                 @else

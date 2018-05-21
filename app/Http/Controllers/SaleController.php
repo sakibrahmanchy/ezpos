@@ -450,7 +450,10 @@ class SaleController extends Controller
             if($settings["tax_rate"]>0)
                 $tax = new FooterItem('VAT (' . $settings['tax_rate'] . '%)', $sale->tax_amount);
             $total = new FooterItem('Total', $sale->total_amount);
-            $due = new FooterItem('Change Due', $sale->due);
+			if($sale->due>=0)
+				$due = new FooterItem('Due', $sale->due);
+			else
+				$due = new FooterItem('Change Due', $sale->due);
 
             $printer->setEmphasis(true);
             $printer->text($subtotal);
