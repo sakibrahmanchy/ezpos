@@ -401,7 +401,7 @@ class SaleController extends Controller
             $printer->selectPrintMode();
             $printer->text( $created_at. "\n");
             $printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);
-            $printer->text($settings['company_name']);
+            $printer->text($settings['company_name']. "\n");
             $printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);
 			$printer->text("Order No." . $sale->id . "\n");
 			
@@ -454,7 +454,10 @@ class SaleController extends Controller
             if($settings["tax_rate"]>0)
                 $tax = new FooterItem('VAT (' . $settings['tax_rate'] . '%)', $sale->tax_amount);
             $total = new FooterItem('Total', $sale->total_amount);
-            $due = new FooterItem('Change Due', $sale->due);
+			if($sale->due>=0)
+				$due = new FooterItem('Due', $sale->due);
+			else
+				$due = new FooterItem('Change Due', $sale->due);
 
             $printer->setEmphasis(true);
             $printer->text($subtotal);
@@ -595,9 +598,9 @@ class SaleController extends Controller
             $printer->selectPrintMode();
             $printer->text( $created_at. "\n");
             $printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);
-            $printer->text($settings['company_name']);
+            $printer->text($settings['company_name'] . "\n");
             $printer->selectPrintMode();
-			$printer->text(" No." . $sale->id . "\n");
+			$printer->text("Order No." . $sale->id . "\n");
 			
 			if($settings['address_line_1']!=""||$settings['address_line_1']!=null)
 				$printer->text(wordwrap($settings['address_line_1'] . "\n",43,"\n",false));

@@ -251,7 +251,7 @@
 
                         <div class="row">
                             <div class="col-md-offset-8 col-sm-offset-8 col-xs-offset-2 col-md-2 col-sm-2 col-xs-6">
-                                <div class="invoice-footer-heading">Change Due</div>
+                                <div class="invoice-footer-heading">{{$sale->due>=0?'Due': 'Change Due'}}</div>
                             </div>
                             <div class="col-md-2 col-sm-2 col-xs-4">
                                 <div class="invoice-footer-value invoice-total">
