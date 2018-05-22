@@ -19,6 +19,7 @@ class SettingsTableSeeder extends Seeder
 					"tax_rate" => 15,
 					"address_line_1" => "",
 					"address_line_2" => "",
+					"email_address" => "",
 					"phone" => "",
                     "website" => "",
                     "customer_loyalty_percentage"=>"1",

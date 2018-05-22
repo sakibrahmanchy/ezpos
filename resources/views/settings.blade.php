@@ -157,6 +157,17 @@
                                         </div>
                                     </div>
                                     <br><br><br>
+									
+									<label for="email_address" class="col-sm-3 col-md-3 col-lg-2 control-label">Email Address:</label>
+                                    <div class="col-sm-9 col-md-9 col-lg-10">
+                                        <div class="input-group date">
+                                            <span class="input-group-addon bg">
+                                                <i class="fa fa-globe"></i>
+                                            </span>
+                                            <input class="form-control" type="text" name="email_address" value="{{ $settings['email_address'] }}">
+                                        </div>
+                                    </div>
+                                    <br><br><br>
 
                                     <div class="panel-heading">
                                         <h3 class="panel-title">

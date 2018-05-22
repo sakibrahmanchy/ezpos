@@ -402,13 +402,17 @@ class SaleController extends Controller
             $printer->text( $created_at. "\n");
             $printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);
             $printer->text($settings['company_name']);
-            $printer->selectPrintMode();
+            $printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);
 			$printer->text("Order No." . $sale->id . "\n");
 			
+			$printer->selectPrintMode();
             if($settings['address_line_1']!=""||$settings['address_line_1']!=null)
 				$printer->text(wordwrap($settings['address_line_1'] . "\n",43,"\n",false));
 			if($settings['address_line_2']!=""||$settings['address_line_2']!=null)
 				$printer->text(wordwrap($settings['address_line_2'] . "\n",43,"\n",false));
+			
+			if($settings['email_address']!=""||$settings['email_address']!=null)
+				$printer->text(wordwrap($settings['email_address'] . "\n",43,"\n",false));
 			
             if($settings['phone']!=""||$settings['phone']!=null) {
                 $printer->text('Phone: '.$settings['phone'] . "\n");
