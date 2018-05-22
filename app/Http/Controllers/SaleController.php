@@ -492,24 +492,29 @@ class SaleController extends Controller
 				$printer->text(wordwrap( $sale->comment . "\n",43,"\n",false));
 			}
             $printer->feed();
-            $printer->setJustification(Printer::JUSTIFY_CENTER);
-            $printer->setEmphasis(true);
-            if($request->print_type==1)
-            $printer->text("CUSTOMER COPY");
-            $printer->feed();
-            $printer->feed();
-            $printer->setJustification(Printer::JUSTIFY_LEFT);
-            $printer->text("Change Return Policy");
-            $printer->setEmphasis(true);
-            $printer->feed();
-            $printer->barcode($sale->id, Printer::BARCODE_CODE39);
-           // $printer->feed();
-            //$printer->text($settings['company_name']." " . $sale->id);
-            $printer->feed();
-            $printer->setJustification(Printer::JUSTIFY_CENTER);
+            
+            if( $sale->Customer()->get() )
+			{
+				$customerNameText = "Customer Name: " . $sale->Customer->first_name . " " . $sale->Customer->last_name;
+				$printer->text(wordwrap( $customerNameText . "\n",43,"\n",false));
+			}
+			
+			$printer->setJustification(Printer::JUSTIFY_CENTER);
             if($print_type==1)
+			{
+				$printer->setEmphasis(true);
+				$printer->text("CUSTOMER COPY");
+				$printer->feed();
+				$printer->feed();
+				$printer->setJustification(Printer::JUSTIFY_LEFT);
+				$printer->text("Change Return Policy");
+				$printer->setEmphasis(true);
+				$printer->feed();
+				$printer->feed();
+				$printer->setJustification(Printer::JUSTIFY_CENTER);
                 $printer->text("THANK YOU!");
-            else
+            }
+			else
             {
                 $printer->text("----------------------------------");
                 $printer->feed();
