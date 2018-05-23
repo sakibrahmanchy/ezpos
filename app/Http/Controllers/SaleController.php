@@ -423,7 +423,19 @@ class SaleController extends Controller
                 $printer->selectPrintMode();
             }
             $printer->text("Cashier: " . Auth::user()->name . "\n");
-            $printer->selectPrintMode();
+            if( $sale->Customer()->get() )
+			{
+				$customerNameText = "Customer Name: " . $sale->Customer->first_name . " " . $sale->Customer->last_name;
+				$printer->text(wordwrap( $customerNameText . "\n",43,"\n",false));
+				if($sale->Customer->loyalty_card_number && strlen($sale->Customer->loyalty_card_number)>0)
+				{
+					$loyalityCarNumber = $sale->Customer->loyalty_card_number;
+					$loyalityCarNumberMasked = str_repeat('X', strlen($loyalityCarNumber) - 4) . substr($loyalityCarNumber, -4);
+					$printer->text('Loyality Card No: ' . $loyalityCarNumberMasked . "\n");
+				}
+			}
+			$printer->selectPrintMode();
+			
             $printer->text("------------------------------------------\n");
             $header = new \App\Model\Printer\Item("Qty", "Name", "Unit", "Total");
             $printer->setJustification(Printer::JUSTIFY_LEFT);
@@ -441,6 +453,7 @@ class SaleController extends Controller
                 array_push($items, $toPrint);
             }
 
+			
             $printer->setJustification(Printer::JUSTIFY_LEFT);
             $printer->setEmphasis(false);
             foreach ($items as $item) {
@@ -448,7 +461,7 @@ class SaleController extends Controller
             }
 
             $printer->text("-------------------------------------------\n");
-
+			
 
             $subtotal = new FooterItem('Subtotal', $sale->sub_total_amount);
             if($settings["tax_rate"]>0)
@@ -493,12 +506,6 @@ class SaleController extends Controller
 			}
             $printer->feed();
             
-            if( $sale->Customer()->get() )
-			{
-				$customerNameText = "Customer Name: " . $sale->Customer->first_name . " " . $sale->Customer->last_name;
-				$printer->text(wordwrap( $customerNameText . "\n",43,"\n",false));
-			}
-			
 			$printer->setJustification(Printer::JUSTIFY_CENTER);
             if($print_type==1)
 			{
