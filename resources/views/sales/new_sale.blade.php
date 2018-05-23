@@ -107,7 +107,7 @@
                                             <i class="ion-pause"></i>
                                             Suspend Sale								</button>
                                         <ul class="dropdown-menu sales-dropdown" id = "sale-type" data-selected-type="sale" role="menu">
-                                            <li><a href="#" onclick = "layAwaySale()" id="layaway_sale_button"><i class="ion-pause"></i> Layaway</a></li>
+                                            <li><a href="#" onclick = "layAwaySale()" id="layaway_sale_button"><i class="ion-pause"></i> Charge Account </a></li>
                                             <li><a href="#" onclick = "estimateSale()" id="estimate_sale_button"><i class="ion-help-circled"></i> Estimate</a></li>
 
                                         </ul>
