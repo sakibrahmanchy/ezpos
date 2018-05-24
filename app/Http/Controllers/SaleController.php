@@ -541,6 +541,7 @@ class SaleController extends Controller
             return redirect()->route('sale_receipt', ['sale_id' => $sale_id]);
 
         } Catch (\Exception $e) {
+			//dd($e);
             return redirect()->back()->with(["error" => $e->getMessage()]);
         } finally {
             if (isset($printer)) {
