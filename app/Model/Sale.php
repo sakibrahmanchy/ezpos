@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use App\Model\LoyaltyTransaction;
+use App\Model\CashRegister;
 
 class Sale extends Model
 {
@@ -53,7 +54,9 @@ class Sale extends Model
         if($saleStatus!=1)
             session()->put('success','Sale has been successfully suspended');
 
-
+		$cashRegister = new CashRegister();
+        $activeRegister = $cashRegister->getCurrentActiveRegister();
+		
         $sale = $this->insertSaleInfo($saleInfo,$saleStatus);
         $sale_id = $sale->id;
 
