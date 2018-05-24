@@ -576,6 +576,7 @@
                  $('.no-items').css('display','content');*/
 
             }
+			$('#item-names').focus();
         }
 
         function convertToSale(){

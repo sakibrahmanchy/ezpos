@@ -551,6 +551,14 @@ class SaleController extends Controller
     }
 
 
+	public function PrintRegisterCloseReport(Request $request)
+	{
+		$counter_id = Cookie::get('counter_id',null);
+		$counter = Counter::where("id",$counter_id)->first();
+		$ip_address = $counter->printer_ip;
+		$port = $counter->printer_port;
+	}
+	
     public function popOpenCashDrawer(){
 
         $counter_id = Cookie::get('counter_id',null);

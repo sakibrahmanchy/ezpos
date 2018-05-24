@@ -26,16 +26,16 @@
 
         <li >{{ $settings['company_name'] }}</li>
 		@if($settings['address_line_1']!=""||$settings['address_line_1']!=null)
-        <li><?php echo substr($settings['address_line_1']) ?></li>
+        <li><?php echo $settings['address_line_1'] ?></li>
 		@endif
 		@if($settings['address_line_2']!=""||$settings['address_line_2']!=null)
-        <li><?php echo substr($settings['address_line_2']) ?></li>
+        <li><?php echo $settings['address_line_2'] ?></li>
 		@endif
 		@if($settings['email_address']!=""||$settings['email_address']!=null)
-        <li><?php echo substr($settings['email_address']) ?></li>
+        <li><?php echo $settings['email_address'] ?></li>
 		@endif
 		@if($settings['phone']!=""||$settings['phone']!=null)
-        <li><?php echo substr($settings['phone']) ?></li>
+        <li><?php echo $settings['phone'] ?></li>
 		@endif
     </ul>
     <ul  style="margin-bottom:2px;float:right;">
