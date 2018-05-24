@@ -425,13 +425,13 @@ class SaleController extends Controller
                 $printer->selectPrintMode();
             }
             $printer->text("Cashier: " . Auth::user()->name . "\n");
-            if( $sale->Customer )
+            if( isset($sale->customer->id) )
 			{
-				$customerNameText = "Customer Name: " . $sale->Customer->first_name . " " . $sale->Customer->last_name;
+				$customerNameText = "Customer Name: " . $sale->customer->first_name . " " . $sale->customer->last_name;
 				$printer->text(wordwrap( $customerNameText . "\n",43,"\n",false));
-				if($sale->Customer->loyalty_card_number && strlen($sale->Customer->loyalty_card_number)>0)
+				if($sale->customer->loyalty_card_number && strlen($sale->customer->loyalty_card_number)>0)
 				{
-					$loyalityCarNumber = $sale->Customer->loyalty_card_number;
+					$loyalityCarNumber = $sale->customer->loyalty_card_number;
 					$loyalityCarNumberMasked = str_repeat('X', strlen($loyalityCarNumber) - 4) . substr($loyalityCarNumber, -4);
 					$printer->text('Loyality Card No: ' . $loyalityCarNumberMasked . "\n");
 				}
@@ -541,8 +541,7 @@ class SaleController extends Controller
             return redirect()->route('sale_receipt', ['sale_id' => $sale_id]);
 
         } Catch (\Exception $e) {
-            //return redirect()->back()->with(["error" => $e->getMessage()]);
-			dd($e);
+            return redirect()->back()->with(["error" => $e->getMessage()]);
         } finally {
             if (isset($printer)) {
                 $printer->cut();
