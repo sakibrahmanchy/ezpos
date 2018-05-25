@@ -329,14 +329,14 @@ class CashRegisterController extends Controller
         $cash_sales = CashRegisterTransaction::where("cash_register_id",$cashRegister->id)->where('transaction_type',CashRegisterTransactionType::$CASH_SALES)->sum('amount');
         $difference = $cashRegister->opening_balance - ($cashRegister->closing_balance + $cash_sales + $total_additions + $total_subtractions);
 
-        $paymentAmountSql = "select payment_type, sum(paid_amount) as total_paid_amount from payment_logs where id in ( select payment_log_id from payment_log_sale where sale_id in ( select id from sales where cash_register_id=? ) ) order by payment_type";
-        $paymentAmountTotalList = DB::select( $paymentAmountSql, $cashRegisterId );
+        $paymentAmountSql = "select payment_type, sum(paid_amount) as total_paid_amount from payment_logs where id in ( select payment_log_id from payment_log_sale where sale_id in ( select id from sales where cash_register_id=? ) ) group by payment_type";
+        $paymentAmountTotalList = DB::select( $paymentAmountSql, [$cashRegisterId] );
         
         $checkTotal = 0;
         $creditCardAmountTotal = 0;
         $debitCardAmountTotal = 0;
         $giftCardAmountTotal = 0;
-        $loyalityAmount = 0;
+        $loyalityAmountTotal = 0;
         foreach( $paymentAmountTotalList as $aPaymentTotal )
         {
             if($aPaymentTotal->payment_type=='Check')
