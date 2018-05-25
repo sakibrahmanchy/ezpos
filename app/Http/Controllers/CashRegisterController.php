@@ -145,7 +145,7 @@ class CashRegisterController extends Controller
         //dd($cashRegisterTotal);
     }
 
-    public function printRegisterLogSummary($cashRegisterId)
+    /*public function printRegisterLogSummary($cashRegisterId)
     {
 
         $cashRegister = CashRegister::where("id",$cashRegisterId)->with('OpenedByUser','ClosedByUser','CashRegisterTransactions')->first();
@@ -200,7 +200,7 @@ class CashRegisterController extends Controller
                 $printer->close();
             }
         }
-    }
+    }*/
 
     public function printRegisterLogDetails($cashRegisterId){
 
@@ -316,6 +316,96 @@ class CashRegisterController extends Controller
             }
         }
 
+    }
+
+    public function printRegisterLogSummary($cashRegisterId)
+    {
+        $cashRegister = CashRegister::where("id",$cashRegisterId)->with('OpenedByUser','ClosedByUser','CashRegisterTransactions')->first();
+
+        $openedBy = $cashRegister->OpenedByUser->name;
+        $closedBy = $cashRegister->closedByUser->name;
+        $total_additions = CashRegisterTransaction::where('cash_register_id',$cashRegisterId)->where('transaction_type',CashRegisterTransactionType::$ADD_BALANCE)->sum('amount');
+        $total_subtractions = CashRegisterTransaction::where('cash_register_id',$cashRegisterId)->where('transaction_type',CashRegisterTransactionType::$SUBTRACT_BALANCE)->sum('amount');
+        $cash_sales = CashRegisterTransaction::where("cash_register_id",$cashRegister->id)->where('transaction_type',CashRegisterTransactionType::$CASH_SALES)->sum('amount');
+        $difference = $cashRegister->opening_balance - ($cashRegister->closing_balance + $cash_sales + $total_additions + $total_subtractions);
+
+        $paymentAmountSql = "select payment_type, sum(paid_amount) as total_paid_amount from payment_logs where id in ( select payment_log_id from payment_log_sale where sale_id in ( select id from sales where cash_register_id=? ) ) order by payment_type";
+        $paymentAmountTotalList = DB::select( $paymentAmountSql, $cashRegisterId );
+        
+        $checkTotal = 0;
+        $creditCardAmountTotal = 0;
+        $debitCardAmountTotal = 0;
+        $giftCardAmountTotal = 0;
+        $loyalityAmount = 0;
+        foreach( $paymentAmountTotalList as $aPaymentTotal )
+        {
+            if($aPaymentTotal->payment_type=='Check')
+                $checkTotal = $aPaymentTotal->total_paid_amount;
+            else if($aPaymentTotal->payment_type=='Credit Card')
+                $creditCardAmountTotal = $aPaymentTotal->total_paid_amount;
+            else if($aPaymentTotal->payment_type=='Debit Card')
+                $debitCardAmountTotal = $aPaymentTotal->total_paid_amount;
+            else if($aPaymentTotal->payment_type=='Gift Card')
+                $giftCardAmountTotal = $aPaymentTotal->total_paid_amount;
+            else if($aPaymentTotal->payment_type=='Loyalty Card')
+                $loyalityAmountTotal = $aPaymentTotal->total_paid_amount;
+        }
+
+        try {
+            $counter_id = Cookie::get('counter_id',null);
+            $counter = Counter::where("id",$counter_id)->first();
+            $ip_address = $counter->printer_ip;
+            $port = $counter->printer_port;
+
+            $connector = new NetworkPrintConnector($ip_address, $port);
+
+            $printer = new Printer($connector);
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
+            $printer->text("Register Log Summary\n");
+            $printer->selectPrintMode();
+            $printer->text( date('Y-m-d'). "\n");
+
+
+            $printer->text("-------------------------------------------\n");
+            $printer->feed();
+
+
+            $printer->setJustification(Printer::JUSTIFY_LEFT);
+            $printer->text( new FooterItem('Register Log Id:', $cashRegister->id));
+            $printer->text( new FooterItem('Open Employee:', $openedBy));
+            $printer->text( new FooterItem('Close Employee:', $closedBy));
+            $printer->text( new FooterItem('Shift Start:', $cashRegister->opening_time ));
+            $printer->text( new FooterItem('Shift End:', $cashRegister->closing_time ));
+            $printer->text( new FooterItem('Opening Amount:', '$'.number_format( $cashRegister->opening_balance, 2) ));
+            $printer->text( new FooterItem('Closing Amount:', '$'.number_format( $cashRegister->closing_balance, 2) ));
+            $printer->text( new FooterItem('Cash Sales:', '$'.number_format( $cash_sales, 2) ));
+            $printer->text( new FooterItem('Cash Additions:', '$'.number_format( $total_additions, 2) ));
+            $printer->text( new FooterItem('Cash Subtractions:', '$'.number_format( $total_subtractions, 2) ));
+            $printer->text( new FooterItem('Difference:', '$'.number_format( $difference, 2) ));
+
+            $printer->feed();
+            $printer->feed();
+            $printer->text( new FooterItem('Credit Card Amount:', '$'.number_format( $creditCardAmountTotal, 2) ));
+            $printer->feed();
+            $printer->text( new FooterItem('Debit Card Amount:', '$'.number_format( $debitCardAmountTotal, 2) ));
+            $printer->feed();
+            $printer->text( new FooterItem('Check Amount:', '$'.number_format( $checkTotal, 2) ));
+            $printer->feed();
+            $printer->text( new FooterItem('Gift Card Amount:', '$'.number_format( $giftCardAmountTotal, 2) ));
+            $printer->feed();
+            $printer->text( new FooterItem('Loyalty Card Amount:', '$'.number_format( $loyalityAmountTotal, 2) ));
+            $printer->feed();
+            return redirect()->route('cash_register_log_details',["register_id"=>$cashRegister->id]);
+
+        } Catch (\Exception $e) {
+            return redirect()->back()->with(["error" => $e->getMessage()]);
+        } finally {
+            if (isset($printer)) {
+                $printer->cut();
+                $printer->pulse();
+                $printer->close();
+            }
+        }
     }
 
 }

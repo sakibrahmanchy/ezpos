@@ -57,7 +57,7 @@ class Sale extends Model
 		$cashRegister = new CashRegister();
         $activeRegister = $cashRegister->getCurrentActiveRegister();
 		
-        $sale = $this->insertSaleInfo($saleInfo,$saleStatus);
+        $sale = $this->insertSaleInfo($saleInfo,$saleStatus, $activeRegister->id);
         $sale_id = $sale->id;
 
         $this->insertItemsInSale($productInfos,$sale,$saleStatus);
@@ -73,7 +73,7 @@ class Sale extends Model
         return $sale_id;
     }
 
-    public function insertSaleInfo($saleInfo,$saleStatus){
+    public function insertSaleInfo($saleInfo,$saleStatus, $registerId){
 
         $sale = new Sale();
         $sale->employee_id = Auth::user()->id;
@@ -89,6 +89,7 @@ class Sale extends Model
         $sale->sale_type = $saleInfo['sale_type'];
         $sale->counter_id = Cookie::get("counter_id");
         $sale->comment = $saleInfo["comment"];
+        $sale->cash_register_id = $registerId;
         $sale->save();
 
         return $sale;

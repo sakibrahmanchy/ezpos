@@ -29,23 +29,25 @@
             <div class = "search section">
                 <div class="input-group">
                     <a href="{{route('new_item')}}" target="_blank" class="input-group-addon" id="sizing-addon2" style="background-color:#337ab7;color:white;border:solid #337ab7 1px; "><strong>+</strong></a>
-                    <input type="text"  class="form-control" id = "item-names">
-                    <div class="input-group-btn bs-dropdown-to-select-group">
+                    <auto-complete @set-autocomplete-result="setAutoCompleteResult" :auto-select="auto_select"></auto-complete>
+					
+					<div class="input-group-btn bs-dropdown-to-select-group">
                         <button type="button" class="btn btn-primary dropdown-toggle as-is bs-dropdown-to-select" data-toggle="dropdown">
                             <span data-bind="bs-drp-sel-label">Sale</span>
-                            {{--  <input type="hidden" name="selected_value" data-bind="bs-drp-sel-value" value="">--}}
-
                             <span class="caret"></span>
                             <span class="sr-only">Toggle Dropdown</span>
                         </button>
-                        <ul class="dropdown-menu" role="menu" style="">
+                        <ul class="dropdown-menu" role="menu" style="" >
                             <li data-value="1"><a onclick="convertToSale()"  href="#">Sale</a></li>
                             <li data-value="2"><a onclick="convertToReturn()" href="#">Return</a></li>{{--
                             <li data-value="3"><a href="#">Store Account Payment</a></li>--}}
                         </ul>
                     </div>
                 </div>
-                <input type="checkbox" checked  id = "auto_select"> <b>Add automatically to cart when item found.</b>
+				
+				
+				
+                <input type="checkbox" checked  id="auto_select" v-model="auto_select"> <b>Add automatically to cart when item found.</b>
 
             </div>
 
@@ -85,16 +87,16 @@
 								<input type="number" min="0" class="form-control quantity" value="1" v-model="anItem.bought_quantity">
 							</td>
 							<td class="col-sm-1 col-md-1 text-center">
-								<a class="unit-price editable editable-click" href="javascript:void(0)" style="display: inline;" v-model="anItem.price">anItem.price</a>
+								<inline-edit v-model="anItem.price" ></inline-edit>
 							</td>
 							<td>
 								<input class="form-control discount-amount" type="number" v-model="anItem.discount">
 							</td>
 							<td class="col-sm-1 col-md-1 text-center">
-								<strong class="total-price">${{anItem.bought_quantity*(anItem.price-anItem.discount)}}</strong>
+								<strong class="total-price">@{{anItem.bought_quantity*(anItem.price-anItem.discount)}}</strong>
 							</td>
 							<td class="col-sm-1 col-md-1">
-								<button type="button" class="btn btn-danger" ><span class="pe-7s-trash"></span> Remove</button>
+								<button type="button" class="btn btn-danger" @click="remove(anItem.id)"><span class="pe-7s-trash"></span> Remove</button>
 							</td>
 						</tr>
                     </tbody>
@@ -160,7 +162,7 @@
                                 <div class="input-group contacts" style="padding-top:10px;padding-left:10px">
 
                                     <a href="{{route('new_customer')}}" target="_blank" class="input-group-addon" id="sizing-addon2" style="background-color:#337ab7;color:white;border:solid #337ab7 1px; "><strong>+</strong></a>
-                                    <select id="customer" name="customer" class="add-customer-input keyboardLeft ui-autocomplete-input form-control" data-title="Customer Name" placeholder="Type customer name..." autocomplete="off">
+                                    <select id="customer" name="customer" class="add-customer-input keyboardLeft ui-autocomplete-input form-control" data-title="Customer Name" placeholder="Type customer name..." autocomplete="off" v-model="customer_id">
                                         <option value ="0" selected>Select Customer for sale</option>
                                         @foreach($customerList as $aCustomer)
                                             <option value = "{{$aCustomer->id}}">{{$aCustomer->first_name}} {{$aCustomer->last_name}}</option>
@@ -321,12 +323,251 @@
 @endsection
 
 @section('additionalJS')
+	<style>
+  .autocomplete-results {
+		position: absolute;
+		z-index: 1000;
+		overflow: auto;
+		min-width: 250px;
+		max-height: 150px;
+		margin: 0;
+		margin-top: 34px;
+		padding: 0;
+
+		border: 1px solid #eee;
+		list-style: none;
+		border-radius: 4px;
+		background-color: #fff;
+		box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+  }
+
+  /*.autocomplete-results {
+    padding: 0;
+    margin: 0;
+    border: 1px solid #eeeeee;
+    height: 120px;
+    overflow: auto;
+    width: 100%;
+  }*/
+
+  .autocomplete-result {
+    list-style: none;
+    text-align: left;
+    padding: 4px 2px;
+    cursor: pointer;
+  }
+
+  .autocomplete-result.is-active {
+    background-color: #4AAE9B;
+    color: white;
+  }
+
+</style>
+
 	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+
     <script>
-        var app = new Vue({
+		/********autocomplete starts*******/
+		Vue.component('auto-complete', {
+			template: `<span>
+						<input type="text"  class="form-control" id ="item-names" v-model="item_names" @keyup.down="onArrowDown" @keyup.up="onArrowUp" @keyup.enter="onEnter">
+						<ul id="autocomplete-results"
+							  v-show="isOpen"
+							  class="autocomplete-results"
+							  @mouseleave="ClearSelection"
+							>
+							  <li
+								class="loading"
+								v-if="isLoading"
+							  >
+								Loading results...
+							  </li>
+							  <li v-else v-for="(item, i) in results" :key="i" @click="setResult(item)" class="autocomplete-result" :class="{ 'is-active': i === arrowCounter }"  @mouseover="SetCounter(i)">
+								<img height="50px" :src="GetImageUrl(item)" width="50px" style="margin-right:10px" />
+								<a href="javascript:void(0);">@{{item.item_name}}</a>
+							</li>
+						</ul>
+					</span>`,
+			props: ['autoSelect'],
+			data: function(){
+				return {
+					isOpen: false,
+					item_names: "",
+					results: [],
+					arrowCounter: 0,
+					isLoading: false,
+				}
+			},
+			methods: {
+				SearchProduct() {
+					var that = this;
+					if(this.item_names=="")
+						return;
+					if(this.autoSelect)
+					{
+						axios.get("{{route('item_list_autocomplete')}}", {
+							params: { q: this.item_names, autoselect: true }
+							})
+							.then(function (response) {
+								//handle autoadd
+							})
+							.catch(function (error) {
+							console.log(error);
+							});
+					}
+					else
+					{
+						axios.get("{{route('item_list_autocomplete')}}", {
+							params: { q: this.item_names, autoselect: false }
+							})
+							.then(function (response) {
+								that.isOpen = true;
+								that.results = response.data
+							})
+							.catch(function (error) {
+							console.log(error);
+							});
+					}
+
+				},
+				setResult(selectedItem) {
+					this.search = selectedItem;
+					this.$emit('set-autocomplete-result', selectedItem);
+					this.isOpen = false;
+					this.results = [];
+					this.arrowCounter = -1;
+					this.item_names = "";
+					document.getElementById("item-names").focus();
+				},
+				onArrowDown(evt) {
+					if (this.arrowCounter < this.results.length) {
+					  this.arrowCounter = this.arrowCounter + 1;
+					}
+				},
+				onArrowUp() {
+					if (this.arrowCounter > 0) {
+					  this.arrowCounter = this.arrowCounter -1;
+					}
+				},
+				onEnter() {
+					this.setResult(this.results[this.arrowCounter]);
+				},
+				handleClickOutside(evt) {
+					if (!this.$el.contains(evt.target)) {
+					  this.isOpen = false;
+					  this.arrowCounter = -1;
+					}
+				},
+				SetCounter(index)
+				{
+					this.arrowCounter = index;
+				},
+				ClearSelection()
+				{
+					this.arrowCounter = -1;
+				},
+				GetImageUrl(item)
+				{
+					var img_src = "default-product.jpg";
+
+                    if(item.new_name!=null){
+                        img_src = item.new_name;
+                    }
+					
+					var imageUrl = "";
+					
+					if(item.product_type==1){
+                        imageUrl = '{{asset('img')}}/' + "item-kit.png";
+                    } else{
+						imageUrl = '{{asset('img')}}/' + img_src;
+                    }
+					return imageUrl;
+				}
+			},
+			created: function () {
+				this.debouncedSearch = _.debounce(this.SearchProduct, 500)
+			},
+			watch: {
+				items: function (val, oldValue) {
+					if (val.length !== oldValue.length) {
+					  this.results = val;
+					  this.isLoading = false;
+					}
+				},
+				item_names: function (newQuestion, oldQuestion) {
+					this.debouncedSearch()
+				}
+			},
+			mounted() {
+			  document.addEventListener('click', this.handleClickOutside)
+			},
+			destroyed() {
+			  document.removeEventListener('click', this.handleClickOutside)
+			}
+		})
+	/********autocomplete ends*******/
+	
+	/********** inline edit starts**************/
+	Vue.component('inline-edit', {
+		template: `<span>
+						<a v-if="!editMode" @click="setEditMode()" href="javascript: void(0);">@{{value}}</a>
+						<span v-else>
+							<input type="text" v-model="editedValue" sytle="width: 50%;">
+							<i class="fa fa-check" @click="setValue"></i>
+							<i class="far fa-times-circle" @click="closeEdit"></i>
+						</span>
+					</span>`,
+		props: ['value'],
+		data: function()
+		{
+			return {editMode: false,editedValue:""};
+		},
+		methods:{
+			setEditMode: function(mode){
+				this.editMode = true;
+				this.editedValue = this.value;
+			},
+			setValue()
+			{
+				this.editMode = false;
+				this.$emit('set-edited-data', this.editedValue);
+			},
+			closeEdit()
+			{
+				this.editMode = false;
+			}
+		}
+	})
+	/********** inline edit ends**************/
+	
+		var app = new Vue({
 			el: '#app',
 			data: {
-				itemList: []
+				itemList: [],
+				auto_select: true,
+				customer_id: 0
+			},
+			methods:
+			{
+				setAutoCompleteResult: function(selectedItem)
+				{
+					var that = this
+					axios.post("{{route('item_price')}}", 
+							{ 
+								item_id: selectedItem.id,
+								customer_id: this.customer_id 
+						})
+						.then(function (response) {
+							selectedItem.price = response.data.price;
+							selectedItem.quantity = 1;
+							that.itemList.push(selectedItem);
+						})
+						.catch(function (error) {
+						console.log(error);
+						});
+				}
 			}
 		})
 		
