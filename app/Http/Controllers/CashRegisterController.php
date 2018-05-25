@@ -376,8 +376,8 @@ class CashRegisterController extends Controller
             $printer->text( new FooterItem('Close Employee:', $closedBy));
             $printer->text( new FooterItem('Shift Start:', $cashRegister->opening_time ));
             $printer->text( new FooterItem('Shift End:', $cashRegister->closing_time ));
-            $printer->text( new FooterItem('Opening Amount:', '$'.number_format( $cashRegister->opening_balance, 2) ));
-            $printer->text( new FooterItem('Closing Amount:', '$'.number_format( $cashRegister->closing_balance, 2) ));
+            $printer->text( new FooterItem('Opening Sales:', '$'.number_format( $cashRegister->opening_balance, 2) ));
+            $printer->text( new FooterItem('Closing Sales:', '$'.number_format( $cashRegister->closing_balance, 2) ));
             $printer->text( new FooterItem('Cash Sales:', '$'.number_format( $cash_sales, 2) ));
             $printer->text( new FooterItem('Cash Additions:', '$'.number_format( $total_additions, 2) ));
             $printer->text( new FooterItem('Cash Subtractions:', '$'.number_format( $total_subtractions, 2) ));
@@ -385,15 +385,15 @@ class CashRegisterController extends Controller
 
             $printer->feed();
             $printer->feed();
-            $printer->text( new FooterItem('Credit Card Amount:', '$'.number_format( $creditCardAmountTotal, 2) ));
+            $printer->text( new FooterItem('Credit Card Sales:', '$'.number_format( $creditCardAmountTotal, 2) ));
             $printer->feed();
-            $printer->text( new FooterItem('Debit Card Amount:', '$'.number_format( $debitCardAmountTotal, 2) ));
+            $printer->text( new FooterItem('Debit Card Sales:', '$'.number_format( $debitCardAmountTotal, 2) ));
             $printer->feed();
-            $printer->text( new FooterItem('Check Amount:', '$'.number_format( $checkTotal, 2) ));
+            $printer->text( new FooterItem('Check Sales:', '$'.number_format( $checkTotal, 2) ));
             $printer->feed();
-            $printer->text( new FooterItem('Gift Card Amount:', '$'.number_format( $giftCardAmountTotal, 2) ));
+            $printer->text( new FooterItem('Gift Card Sales:', '$'.number_format( $giftCardAmountTotal, 2) ));
             $printer->feed();
-            $printer->text( new FooterItem('Loyalty Card Amount:', '$'.number_format( $loyalityAmountTotal, 2) ));
+            $printer->text( new FooterItem('Loyalty Card Sales:', '$'.number_format( $loyalityAmountTotal, 2) ));
             $printer->feed();
             return redirect()->route('cash_register_log_details',["register_id"=>$cashRegister->id]);
 
