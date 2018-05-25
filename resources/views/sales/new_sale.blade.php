@@ -427,7 +427,7 @@
             $item.autocomplete({
 
                 minLength: 0,
-                delay: 500,
+                delay: 1500,
                 source: function (request, response) {
                     // request.term is the term searched for.
                     // response is the callback function you must call to update the autocomplete's
