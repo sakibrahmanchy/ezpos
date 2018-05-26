@@ -751,30 +751,27 @@
 
         function autoAddItemTOCart(item){
 
-			var addProduct = false;
             if(item.item_quantity<=0&&item.product_type!=1){
 
                 @if($settings['negative_inventory']=="true")
                 //Continue Selling Products
-                    addProduct = true;
+                    appendItemToCartAuto(item);
                 @else
                 alert("Sorry, product is out of stock.");
                 @endif
             }
-			if(addProduct)
-			{
-				if(document.getElementById("product-div-"+item.item_id) == null) {
-					appendItemToCartAuto(item);
-				}else{
-					var itemId = item.item_id;
-					var itemQuantityFieldName = "#product-"+itemId;
-					var itemCurrentQuantity = $(itemQuantityFieldName).val();
-					itemCurrentQuantity++;
-					$(itemQuantityFieldName).val(itemCurrentQuantity);
-					clearAutoComplete();
-					addItemPriceToRegister(itemId);
-				}
-			}
+            else if(document.getElementById("product-div-"+item.item_id) == null) {
+                appendItemToCartAuto(item);
+            }else{
+                var itemId = item.item_id;
+                var itemQuantityFieldName = "#product-"+itemId;
+                var itemCurrentQuantity = $(itemQuantityFieldName).val();
+                itemCurrentQuantity++;
+                $(itemQuantityFieldName).val(itemCurrentQuantity);
+                clearAutoComplete();
+                addItemPriceToRegister(itemId);
+            }
+
 
             if($('#sale-type').attr("data-selected-type")=="return"){
                 convertToReturn();
