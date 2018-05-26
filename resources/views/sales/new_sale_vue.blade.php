@@ -96,7 +96,7 @@
 								<strong class="total-price">@{{itemList[index].bought_quantity*(itemList[index].price -  itemList[index].discount)}}</strong>
 							</td>
 							<td class="col-sm-1 col-md-1">
-								<button type="button" class="btn btn-danger" @click="Remove(itemList[index].id)"><span class="pe-7s-trash"></span> Remove</button>
+								<button type="button" class="btn btn-danger" @click="Remove(itemList[index].item_id)"><span class="pe-7s-trash"></span> Remove</button>
 							</td>
 						</tr>
                     </tbody>
@@ -162,12 +162,12 @@
                                 <div class="input-group contacts" style="padding-top:10px;padding-left:10px">
 
                                     <a href="{{route('new_customer')}}" target="_blank" class="input-group-addon" id="sizing-addon2" style="background-color:#337ab7;color:white;border:solid #337ab7 1px; "><strong>+</strong></a>
-                                    <select id="customer" name="customer" class="add-customer-input keyboardLeft ui-autocomplete-input form-control" data-title="Customer Name" placeholder="Type customer name..." autocomplete="off" v-model="customer_id">
+                                    <select2 v-model="customer_id">
                                         <option value ="0" selected>Select Customer for sale</option>
                                         @foreach($customerList as $aCustomer)
                                             <option value = "{{$aCustomer->id}}">{{$aCustomer->first_name}} {{$aCustomer->last_name}}</option>
                                         @endforeach
-                                    </select>
+                                    </select2>
                                 </div>
                             </form>
 
@@ -178,7 +178,7 @@
                         <h4 class="text-center"><strong>Receipt</strong></h4>
                         <hr>
                         <div class="card">
-                            <strong>Subtotal</strong> <span style="float: right"><strong data-subtotal="0" class="subtotal">$0.00</strong></span><br>
+                            <strong>Subtotal</strong> <span style="float: right"><strong data-subtotal="0" class="subtotal">$@{{GetSubtotal}}</strong></span><br>
                             <strong>+Tax({{ $tax_rate }}%)</strong><span style="float: right"><strong data-tax="0" id="tax">$0.00</strong></span><br>
                             <strong>Discount all items by percent</strong><span style="float: right"><strong id=""><input id ="allDiscountAmount" type ="number" onkeyup="setAllItemToDiscount()" onkeydown="setAllItemToDiscount()"  onchange = "setAllItemToDiscount()"  placeholder="" style="max-width:45px;float: right" value = "0" ></strong></span><br><br>
                             <strong>Discount entire sale</strong><span style="float: right"><strong id=""><input id ="saleDiscountAmount" onkeyup="setSaleToDiscount()" onkeydown="setSaleToDiscount()" type ="number" placeholder="" style="max-width:45px;float: right" value ="0"></strong></span>
@@ -259,30 +259,6 @@
                     </div></div>
 
             </div>
-        </div>
-		
-		<select2 :options="options"></select2>
-    </div>
-	
-	
-	
-    <div id="edit_item_price_modal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
-
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Edit Price</h4>
-                </div>
-                <div class="modal-body">
-                    <input type = "text" class="form-control" name = "edit_item_price" id = "edit_item_price" placeholder="New Price"><br>
-                    <input type ="hidden" name="edit_item_id" id="edit_item_id" />
-                    <button onclick ="setNewItemPrice()" type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-
         </div>
     </div>
 
@@ -415,7 +391,10 @@
 							params: { q: this.item_names, autoselect: true }
 							})
 							.then(function (response) {
-								//handle autoadd
+								if( response.data.length==1 )
+								{
+									that.setResult(response.data[0])
+								}
 							})
 							.catch(function (error) {
 							console.log(error);
@@ -434,7 +413,6 @@
 							console.log(error);
 							});
 					}
-
 				},
 				setResult(selectedItem) {
 					this.search = selectedItem;
@@ -491,7 +469,7 @@
 				}
 			},
 			created: function () {
-				this.debouncedSearch = _.debounce(this.SearchProduct, 500)
+				this.debouncedSearch = _.debounce(this.SearchProduct, 1500)
 			},
 			watch: {
 				items: function (val, oldValue) {
@@ -500,8 +478,9 @@
 					  this.isLoading = false;
 					}
 				},
-				item_names: function (newQuestion, oldQuestion) {
-					this.debouncedSearch()
+				item_names: function (newValue, oldValue) {
+					if(newValue!=oldValue && newValue!="")
+						this.debouncedSearch()
 				}
 			},
 			mounted() {
@@ -589,21 +568,32 @@
 			itemList: [],
 			auto_select: true,
 			customer_id: 0,
-			options: [{id:1,text: "thus"}]
+			options: [],
+			tax: {{$tax_rate}}
 		},
 		methods:
 		{
 			setAutoCompleteResult: function(selectedItem)
 			{
+				var found = false;
+				for(var index=0;index<this.itemList.length; index++)
+				{
+					if(this.itemList[index].item_id==selectedItem.item_id)
+					{
+						found = true;
+						this.itemList[index].bought_quantity++;
+					}
+				}
+				
+				if(found)
+					return;
+				
 				var that = this
-				axios.post("{{route('item_price')}}", 
-						{ 
-							item_id: selectedItem.id,
-							customer_id: this.customer_id 
-					})
+				
+				this.GetItemPrice(selectedItem.item_id)
 					.then(function (response) {
 						var itemDetails = {
-									id : selectedItem.id,
+									item_id : selectedItem.item_id,
 									item_name : selectedItem.item_name,
 									company_name : selectedItem.company_name,
 									quantity : selectedItem.quantity,
@@ -617,15 +607,61 @@
 					console.log(error);
 					});
 			},
-			Remove: function(){
-				//this.itemList[0].price=14;
-				console.dir(this.itemList)
+			GetItemPrice: function(itemId){
+				return axios.post("{{route('item_price')}}", 
+					{ 
+							item_id: itemId,
+							customer_id: this.customer_id 
+					})
 			},
-			SelectCustomer: function()
-			{
-				
+			Remove: function(itemId){
+				for(var index=0;index<this.itemList.length;index++)
+				{
+					if(this.itemList[index].item_id == itemId)
+					{
+						this.itemList.splice(index, 1);
+					}
+				}
 			}
+		},
+		watch:{
+			customer_id: function (newVal, oldValue) {
+				console.log(newVal);
+				if(newVal==oldValue || newVal=="" || this.itemList.length<=0)
+					return;
+				var that = this;
+				this.itemList.forEach(function(anItem) {
+					this.GetItemPrice(selectedItem.item_id)
+					.then(function (response) {
+						anItem.price =response.data.price;
+					})
+					.catch(function (error) {
+						console.log(error);
+					});
+				});
+			}
+		},
+		computed:{
+			GetSubtotal()
+			{
+				var subtotal = 0;
+				for(var index=0;index<this.itemList.length;index++)
+				{
+					subtotal += Number(this.itemList[index].price);
+				}
+				return subtotal;
+			},
+			GetTax()
+			{
+				return  this.tax * this.GetSubtotal() / 100; 
+			}
+		},
+		created: function(){
+			//this.options;
+		},
+		mounted() {
+			document.getElementById("item-names").focus();
 		}
-	});	
+	});
     </script>
 @stop
