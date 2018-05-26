@@ -66,17 +66,17 @@
                     </tr>
                     </thead>
                     <tbody class = "product-descriptions">
-						<tr v-for="anItem in itemList" class="product-specific-description">
+						<tr v-for="(anItem,index) in itemList" class="product-specific-description">
 							<td class="col-sm-8 col-md-6">
 								<div class="media">
 									<div class="media-body"> 
-										<h6 class="media-heading"><a href="#">@{{anItem.item_name}}</a></h6>
-										<h6 v-if="anItem.company_name" class="media-heading">
-										by <a href="#">@{{anItem.company_name}}</a></h6>
+										<h6 class="media-heading"><a href="#">@{{itemList[index].item_name}}</a></h6>
+										<h6 v-if="itemList[index].company_name" class="media-heading">
+										by <a href="#">@{{itemList[index].company_name}}</a></h6>
 										<span>Status: </span>
-										<span v-if="anItem.item_quantity>10" class="text-success"><strong>In Stock</strong>
+										<span v-if="itemList[index].item_quantity>10" class="text-success"><strong>In Stock</strong>
 										</span>
-										<span v-else-if="anItem.item_quantity<=0" class="text-success"><strong>Out of Stock</strong>
+										<span v-else-if="itemList[index].item_quantity<=0" class="text-success"><strong>Out of Stock</strong>
 										</span>
 										<span v-else class="text-success"><strong>Soon will be out of Stock</strong>
 										</span>
@@ -84,19 +84,19 @@
 								</div>
 							</td> 
 							<td class="col-sm-1 col-md-1" style="text-align: center"> 
-								<input type="number" min="0" class="form-control quantity" value="1" v-model="anItem.bought_quantity">
+								<input min="0" class="form-control quantity" value="1" v-model="itemList[index].bought_quantity">
 							</td>
 							<td class="col-sm-1 col-md-1 text-center">
-								<inline-edit v-model="anItem.price" ></inline-edit>
+								<inline-edit v-model="itemList[index].price" ></inline-edit>
 							</td>
 							<td>
-								<input class="form-control discount-amount" type="number" v-model="anItem.discount">
+								<input class="form-control discount-amount" v-model="itemList[index].discount">
 							</td>
 							<td class="col-sm-1 col-md-1 text-center">
-								<strong class="total-price">@{{anItem.bought_quantity*(anItem.price-anItem.discount)}}</strong>
+								<strong class="total-price">@{{itemList[index].bought_quantity*(itemList[index].price -  itemList[index].discount)}}</strong>
 							</td>
 							<td class="col-sm-1 col-md-1">
-								<button type="button" class="btn btn-danger" @click="remove(anItem.id)"><span class="pe-7s-trash"></span> Remove</button>
+								<button type="button" class="btn btn-danger" @click="Remove(itemList[index].id)"><span class="pe-7s-trash"></span> Remove</button>
 							</td>
 						</tr>
                     </tbody>
@@ -260,8 +260,12 @@
 
             </div>
         </div>
+		
+		<select2 :options="options"></select2>
     </div>
-
+	
+	
+	
     <div id="edit_item_price_modal" class="modal fade" role="dialog">
         <div class="modal-dialog">
 
@@ -364,7 +368,7 @@
 
 </style>
 
-	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.6/vue.js"></script>
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
 
@@ -516,7 +520,7 @@
 						<span v-else>
 							<input type="text" v-model="editedValue" sytle="width: 50%;">
 							<i class="fa fa-check" @click="setValue"></i>
-							<i class="far fa-times-circle" @click="closeEdit"></i>
+							<i class="fa fa-times-circle" @click="closeEdit"></i>
 						</span>
 					</span>`,
 		props: ['value'],
@@ -532,44 +536,96 @@
 			setValue()
 			{
 				this.editMode = false;
-				this.$emit('set-edited-data', this.editedValue);
+				this.$emit('input', this.editedValue)
 			},
 			closeEdit()
 			{
 				this.editMode = false;
 			}
 		}
-	})
+	});
 	/********** inline edit ends**************/
 	
-		var app = new Vue({
-			el: '#app',
-			data: {
-				itemList: [],
-				auto_select: true,
-				customer_id: 0
-			},
-			methods:
+	/*************customer select2************/
+	Vue.component('select2', {
+	  props: ['options', 'value'],
+	  template: `<select>
+		<slot></slot>
+	  </select>`,
+	  mounted: function () {
+		  console.log("ki hoise");
+		var vm = this
+		$(this.$el)
+		  // init select2
+		  .select2({ data: this.options })
+		  .val(this.value)
+		  .trigger('change')
+		  // emit event on change.
+		  .on('change', function () {
+			vm.$emit('input', this.value)
+		  })
+	  },
+	  watch: {
+		value: function (value) {
+		  // update value
+		  $(this.$el)
+			.val(value)
+			.trigger('change')
+		},
+		options: function (options) {
+		  // update options
+		  $(this.$el).empty().select2({ data: options })
+		}
+	  },
+	  destroyed: function () {
+		$(this.$el).off().select2('destroy')
+	  }
+	})
+	/***********customer select2 ends***********************/
+	
+	var app = new Vue({
+		el: '#app',
+		data: {
+			itemList: [],
+			auto_select: true,
+			customer_id: 0,
+			options: [{id:1,text: "thus"}]
+		},
+		methods:
+		{
+			setAutoCompleteResult: function(selectedItem)
 			{
-				setAutoCompleteResult: function(selectedItem)
-				{
-					var that = this
-					axios.post("{{route('item_price')}}", 
-							{ 
-								item_id: selectedItem.id,
-								customer_id: this.customer_id 
-						})
-						.then(function (response) {
-							selectedItem.price = response.data.price;
-							selectedItem.quantity = 1;
-							that.itemList.push(selectedItem);
-						})
-						.catch(function (error) {
-						console.log(error);
-						});
-				}
+				var that = this
+				axios.post("{{route('item_price')}}", 
+						{ 
+							item_id: selectedItem.id,
+							customer_id: this.customer_id 
+					})
+					.then(function (response) {
+						var itemDetails = {
+									id : selectedItem.id,
+									item_name : selectedItem.item_name,
+									company_name : selectedItem.company_name,
+									quantity : selectedItem.quantity,
+									price : response.data.price,
+									bought_quantity : 1,
+									discount : 0
+								}
+						that.itemList.push(itemDetails);
+					})
+					.catch(function (error) {
+					console.log(error);
+					});
+			},
+			Remove: function(){
+				//this.itemList[0].price=14;
+				console.dir(this.itemList)
+			},
+			SelectCustomer: function()
+			{
+				
 			}
-		})
-		
+		}
+	});	
     </script>
 @stop

@@ -78,7 +78,7 @@ class SupplierController extends Controller
 
     public function getSupplierList(){
 
-            $suppliers = Supplier::all();
+            $suppliers = Supplier::orderBy('company_name', 'ASC')->get();
 
 
             return view('suppliers.supplier_list', ["suppliers" => $suppliers]);
