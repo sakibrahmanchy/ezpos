@@ -368,9 +368,9 @@
 
 </style>
 
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.6/vue.js"></script>
-	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+	<script src="{{asset("js/vue/vue.min.js")}}"></script>
+	<script src="{{asset("js/axios/axios.min.js")}}"></script>
+	<script src="{{asset("js/lodash/lodash.min.js")}}"></script>
 
     <script>
 		/********autocomplete starts*******/

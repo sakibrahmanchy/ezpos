@@ -56,7 +56,7 @@ class SaleController extends Controller
                 }
             }
 
-            return view('sales.new_sale', ['customerList' => $customerList]);
+            return view('sales.new_sale_vue', ['customerList' => $customerList]);
         }else{
             // A new cash register should be opened
             return redirect()->route('open_cash_register');
