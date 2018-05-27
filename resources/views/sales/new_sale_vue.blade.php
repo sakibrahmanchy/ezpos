@@ -93,7 +93,9 @@
 								<input class="form-control discount-amount" v-model="itemList[index].discount_percentage">
 							</td>
 							<td class="col-sm-1 col-md-1 text-center">
-								<strong class="total-price">@{{GetLineTotal(index)}}</strong>
+								<strong class="total-price">
+								<currency-input currency-symbol="$" :value="GetLineTotal(index)"></currency-input>
+								</strong>
 							</td>
 							<td class="col-sm-1 col-md-1">
 								<button type="button" class="btn btn-danger" @click="Remove(itemList[index].item_id)"><span class="pe-7s-trash"></span> Remove</button>
@@ -331,6 +333,10 @@
 	<script src="{{asset("js/lodash/lodash.min.js")}}"></script>
 
     <script>
+		/**/
+			//Grid component
+		/**/
+		
 		/********autocomplete starts*******/
 		Vue.component('auto-complete', {
 			template: `<span>
@@ -546,7 +552,32 @@
 		$(this.$el).off().select2('destroy')
 	  }
 	})
+	
 	/***********customer select2 ends***********************/
+	
+	/********************currency symbol******************/
+	Vue.component('currency-input', {
+		template: `<span>
+						@{{currencySymbol}}
+						@{{localValue}}
+					</span>`,
+		props: ['value','currencySymbol'],
+		data: function()
+		{
+			return {
+				localValue: this.value.toFixed(2)
+			}
+		},
+		methods:{
+		},
+		watch: {
+			value:function(value)
+			{
+				this.localValue = this.value.toFixed(2)
+			}
+		}
+	});
+	/*****************************************************/
 	
 	var app = new Vue({
 		el: '#app',
@@ -654,6 +685,7 @@
 				}
 			},
 			CompleteSales: function(){
+				
 				if( this.activePaymentType == 'Cash' || this.activePaymentType == 'Check' || this.activePaymentType == 'Debit Card' || this.activePaymentType == 'Credit Card' )
 				{
 					var aPaymentItem = {
