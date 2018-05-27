@@ -191,7 +191,7 @@
                             Total <span style="float: right"><strong data-total="0" id = "total"> $@{{GetTotalSale}}</strong></span>
                         </div>
                         <div class = "card" style="background-color: #778a9b;color:whitesmoke;font-size:20px;">
-                            Due <span style="float: right"><strong data-due="0" id = "due"> $0.00</strong></span>
+                            Due <span style="float: right"><strong data-due="0" id = "due"> $@{{GetDue}}</strong></span>
                         </div><br>
                         <div class="row">
                             {{--<input type="number" id = "paid-amount" name="paid-amount" class="col-md-8 form-control" style="float:left">
@@ -203,9 +203,13 @@
                             <div class="add-payment">
 
                                 <div class="payment-history">
-
+										<div v-for="(aPayment, index) in paymentList" class="card payment-log" style="margin: 10px">
+											<span class="pe-7s-close-circle" style="float:left" @click="RemovePayment(index)"></span> 
+											<p style="float:left">@{{aPayment.paymentType}}</p>
+											<p style="float:right">@{{aPayment.amount}}</p>
+											<br />
+										</div>
                                 </div>
-                                <input type = "hidden" name="total-paid-amount" data-value="0">
                                 <div style="padding:20px">
 
                                     <div class="side-heading">Add Payment</div>
@@ -215,20 +219,20 @@
 
                                 </div>
 
-
-                                <div class="input-group add-payment-form">
+								<div v-show="activePaymentType=='Gift Card'" style="padding:20px" class="input-group">
+									<label>Gift Card Number</label>
+									<input class="form-control" type="text" name="gift_card_number"  id="gift_card_number" class="add-input numKeyboard form-control" v-model="gift_card_number" />
+								</div>
+								<div v-show="activePaymentType=='Loyalty Card'" style="padding:20px" class="input-group">	
+									<label>Loyalty Card Number</label>
+									<input class="form-control" type="text" name="loyalty_card_number"  id="loyalty_card_number" class="add-input numKeyboard form-control" v-model="loyalty_card_number"/>
+								</div>
+								
+                                <div class="input-group add-payment-form" style="padding:20px">
                                     <input type="number" name="amount_tendered" value="0.00" id="amount_tendered" class="add-input numKeyboard form-control" v-model="amountTendered">
-                                    
-									
-									<span class="input-group-addon" style="background: #5cb85c; border-color: #4cae4c;">
-										<input v-show="activePaymentType=='Gift Card'" class="form-control" type="text" name="gift_card_number"  id="gift_card_number" class="add-input numKeyboard form-control" />
-										
-										<input v-show="activePaymentType=='Loyalty Card'" class="form-control" type="text" name="loyalty_card_number"  id="loyalty_card_number" class="add-input numKeyboard form-control" />
-									</span>
-									
-									<span class="input-group-addon" style="background: #5cb85c; border-color: #4cae4c;">
+									<span class="input-group-addon" style="background: #5cb85c; border-color: #4cae4c;" @click = "CompleteSales()">
 										<a href="javascript:void(0)" class="hidden" id="add_payment_button" onclick = "addPayment()" style=" color:white;text-decoration:none;">Add Payment</a>
-										<a class="javascript:void(0)" id="finish_sale_alternate_button" style=" color:white;text-decoration:none;" onclick = "completeSales()">Complete Sale</a>
+										<a class="javascript:void(0)" id="finish_sale_alternate_button" style=" color:white;text-decoration:none;">Complete Sale</a>
 									</span>
 
 
@@ -558,7 +562,9 @@
 			activePaymentType: "Cash",
 			paymentList: [],
 			paymentTypeList: ['Cash', 'Check','Debit Card', 'Credit Card', 'Gift Card', 'Loyalty Card'],
-			amountTendered: 0.0
+			amountTendered: 0.0,
+			gift_card_number: "",
+			loyalty_card_number: "",
 		},
 		methods:
 		{
@@ -646,8 +652,79 @@
 					'select-payment': true,
 					active: paymentType==this.activePaymentType
 				}
+			},
+			CompleteSales: function(){
+				if( this.activePaymentType == 'Cash' || this.activePaymentType == 'Check' || this.activePaymentType == 'Debit Card' || this.activePaymentType == 'Credit Card' )
+				{
+					var aPaymentItem = {
+						amount: this.amountTendered,
+						paymentType: this.activePaymentType
+					}
+					this.paymentList.push(aPaymentItem);
+				}
+			},
+			ValidateGiftCard: function()
+			{
+				var that = this;
+				axios.post("{{route('gift_card_use')}}", 
+					{ 
+						due: that.amountTendered,
+						gift_card_number: that.gift_card_number
+					}).then(function (response) {
+						if(response.data.success){
+							var aPaymentItem = {
+								amount: that.amountTendered,
+								paymentType: 'Gift Card'
+							}
+							that.paymentList.push(aPaymentItem);
+						}else{
+							$.notify({
+								icon: '',
+								message: response.data.message
+
+							},{
+								type: 'danger',
+								timer: 4000
+							});
+						}
+					})
+					.catch(function (error) {
+						console.log(error);
+					});
+			},
+			ValidateLoyalty: function()
+			{
+				var that = this;
+				axios.post("{{route('loyalty_card_use')}}", 
+					{ 
+						due: that.amountTendered,
+						loyalty_card_number: that.loyalty_card_number
+					}).then(function (response) {
+						if(response.data.success){
+							that.customer_id = response.data.customer_id;
+							var aPaymentItem = {
+								amount: that.amountTendered,
+								paymentType: 'Loyalty Card'
+							}
+							that.paymentList.push(aPaymentItem);
+						}else{
+							$.notify({
+								icon: '',
+								message: response.data.message
+							},{
+								type: 'danger',
+								timer: 4000
+							});
+						}
+					})
+					.catch(function (error) {
+						console.log(error);
+					});
+			},
+			RemovePayment(index)
+			{
+				this.paymentList.splice(index, 1);
 			}
-			
 		},
 		watch:{
 			customer_id: function (newVal, oldValue) {
@@ -690,7 +767,21 @@
 			},
 			GetTotalSale()
 			{
-				return this.GetSubtotal + this.GetTax - this.saleFlatDiscountAmount;
+				return this.GetSubtotal + this.GetTax - Number(this.saleFlatDiscountAmount);
+			},
+			GetDue()
+			{
+				var totalTendered = 0;
+				for(var index=0;index<this.paymentList.length; index++)
+				{
+					totalTendered += Number(this.paymentList[index].amount);
+				}
+				var due = this.GetTotalSale - totalTendered;
+				if(due>0)
+					this.amountTendered = due;
+				else
+					this.amountTendered = 0;
+				return due;
 			}
 		},
 		created: function(){
