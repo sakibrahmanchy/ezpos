@@ -87,19 +87,21 @@
 								<input min="0" class="form-control quantity" value="1" v-model="itemList[index].bought_quantity">
 							</td>
 							<td class="col-sm-1 col-md-1 text-center">
-								<inline-edit v-model="itemList[index].price" ></inline-edit>
+								<inline-edit v-model="itemList[index].price" if-user-permitted="{{UserHasPermission("edit_sale_cost_price")}}" ></inline-edit>
 							</td>
 							<td>
-								<input class="form-control discount-amount" v-model="itemList[index].discount">
+								<input class="form-control discount-amount" v-model="itemList[index].discount_percentage">
 							</td>
 							<td class="col-sm-1 col-md-1 text-center">
-								<strong class="total-price">@{{itemList[index].bought_quantity*(itemList[index].price -  itemList[index].discount)}}</strong>
+								<strong class="total-price">@{{GetLineTotal(index)}}</strong>
 							</td>
 							<td class="col-sm-1 col-md-1">
 								<button type="button" class="btn btn-danger" @click="Remove(itemList[index].item_id)"><span class="pe-7s-trash"></span> Remove</button>
 							</td>
 						</tr>
-                    </tbody>
+                    
+						<tr v-if="itemList.length<=0" class="no-items"> <td colspan="6"><div class="jumbotron text-center"> <h3>There are no items in the cart [Sales]</h3> </div></td> </tr>
+					</tbody>
                     <tfoot>
                     </tfoot>
                 </table>
@@ -179,13 +181,14 @@
                         <hr>
                         <div class="card">
                             <strong>Subtotal</strong> <span style="float: right"><strong data-subtotal="0" class="subtotal">$@{{GetSubtotal}}</strong></span><br>
-                            <strong>+Tax({{ $tax_rate }}%)</strong><span style="float: right"><strong data-tax="0" id="tax">$0.00</strong></span><br>
-                            <strong>Discount all items by percent</strong><span style="float: right"><strong id=""><input id ="allDiscountAmount" type ="number" onkeyup="setAllItemToDiscount()" onkeydown="setAllItemToDiscount()"  onchange = "setAllItemToDiscount()"  placeholder="" style="max-width:45px;float: right" value = "0" ></strong></span><br><br>
-                            <strong>Discount entire sale</strong><span style="float: right"><strong id=""><input id ="saleDiscountAmount" onkeyup="setSaleToDiscount()" onkeydown="setSaleToDiscount()" type ="number" placeholder="" style="max-width:45px;float: right" value ="0"></strong></span>
+                            <strong>+Tax({{ $tax_rate }}%)</strong><span style="float: right"><strong data-tax="0" id="tax">$@{{GetTax}}</strong></span><br>
+                            <strong>Discount all items by percent</strong><span style="float: right"><strong id=""><input id ="allDiscountAmount" type ="number" v-model="allDiscountAmountPercentage" style="max-width:45px;float: right"></strong></span><br><br>
+							
+                            <strong>Discount entire sale</strong><span style="float: right"><strong id=""><input id ="saleFlatDiscountAmount" style="max-width:45px;float: right" v-model="saleFlatDiscountAmount"></strong></span>
                         </div>
 
                         <div class = "card" style="background-color: #778a9b;color:whitesmoke;font-size:20px;">
-                            Total <span style="float: right"><strong data-total="0" id = "total"> $0.00</strong></span>
+                            Total <span style="float: right"><strong data-total="0" id = "total"> $@{{GetTotalSale}}</strong></span>
                         </div>
                         <div class = "card" style="background-color: #778a9b;color:whitesmoke;font-size:20px;">
                             Due <span style="float: right"><strong data-due="0" id = "due"> $0.00</strong></span>
@@ -206,40 +209,27 @@
                                 <div style="padding:20px">
 
                                     <div class="side-heading">Add Payment</div>
-
-                                    <a tabindex="-1" href="#" class="btn btn-pay select-payment active" data-payment="Cash">
-                                        Cash				</a>
-                                    <a tabindex="-1" href="#" class="btn btn-pay select-payment" data-payment="Check">
-                                        Check				</a>
-                                    <a tabindex="-1" href="#" class="btn btn-pay select-payment" data-payment="Debit Card">
-                                        Debit Card				</a>
-                                    <a tabindex="-1" href="#" class="btn btn-pay select-payment" data-payment="Credit Card">
-                                        Credit Card				</a>
-                                    <a tabindex="-1" href="#" class="btn btn-pay select-payment" data-payment="Gift Card">
-                                        Gift Card				</a>
-                                    <a tabindex="-1" href="#" class="btn btn-pay select-payment" data-payment="Loyalty Card">
-                                        Loyalty Card				</a>
+									
+                                    <a tabindex="-1" v-for="aPaymentType in paymentTypeList" href="javascript: void(0);" :class="GetPaymentButtonClass(aPaymentType)" @click="SetActivePaymentType(aPaymentType)" >
+                                        @{{aPaymentType}}</a>
 
                                 </div>
 
 
                                 <div class="input-group add-payment-form">
-                                    <select name="payment_type" id="payment_types" class="hidden" data-value="Cash" >
-                                        <option value="Cash" selected="selected">Cash</option>
-                                        <option value="Check">Check</option>
-                                        <option value="Gift Card">Gift Card</option>
-                                        <option value="Debit Card">Debit Card</option>
-                                        <option value="Credit Card">Credit Card</option>
-                                        <option value="Loyalty Card">Loyalty Card</option>
-                                    </select>
-                                    <input type="number" name="amount_tendered" value="0.00" id="amount_tendered" class="add-input numKeyboard form-control" data-title="Payment Amount" onkeydown="this.onchange()" onkeypress="this.onchange()" onfocus="this.onchange()" onkeyup="this.onchange()" onchange="calculateDue()">
-                                    <input class="hidden form-control" type="text" name="gift_card_number"  id="gift_card_number" class="add-input numKeyboard form-control" >
-                                    <span class="input-group-addon" style="background: #5cb85c; border-color: #4cae4c;">
-                        <input class="hidden form-control" type="text" name="loyalty_card_number"  id="loyalty_card_number" class="add-input numKeyboard form-control" >
-					<span class="input-group-addon" style="background: #5cb85c; border-color: #4cae4c;">
-						<a href="javascript:void(0)" class="hidden" id="add_payment_button" onclick = "addPayment()" style=" color:white;text-decoration:none;">Add Payment</a>
-						<a class="javascript:void(0)" id="finish_sale_alternate_button" style=" color:white;text-decoration:none;" onclick = "completeSales()">Complete Sale</a>
-					</span>
+                                    <input type="number" name="amount_tendered" value="0.00" id="amount_tendered" class="add-input numKeyboard form-control" v-model="amountTendered">
+                                    
+									
+									<span class="input-group-addon" style="background: #5cb85c; border-color: #4cae4c;">
+										<input v-show="activePaymentType=='Gift Card'" class="form-control" type="text" name="gift_card_number"  id="gift_card_number" class="add-input numKeyboard form-control" />
+										
+										<input v-show="activePaymentType=='Loyalty Card'" class="form-control" type="text" name="loyalty_card_number"  id="loyalty_card_number" class="add-input numKeyboard form-control" />
+									</span>
+									
+									<span class="input-group-addon" style="background: #5cb85c; border-color: #4cae4c;">
+										<a href="javascript:void(0)" class="hidden" id="add_payment_button" onclick = "addPayment()" style=" color:white;text-decoration:none;">Add Payment</a>
+										<a class="javascript:void(0)" id="finish_sale_alternate_button" style=" color:white;text-decoration:none;" onclick = "completeSales()">Complete Sale</a>
+									</span>
 
 
                                 </div>
@@ -307,9 +297,6 @@
   .autocomplete-results {
 		position: absolute;
 		z-index: 1000;
-		overflow: auto;
-		min-width: 250px;
-		max-height: 150px;
 		margin: 0;
 		margin-top: 34px;
 		padding: 0;
@@ -321,15 +308,6 @@
 		box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
   }
 
-  /*.autocomplete-results {
-    padding: 0;
-    margin: 0;
-    border: 1px solid #eeeeee;
-    height: 120px;
-    overflow: auto;
-    width: 100%;
-  }*/
-
   .autocomplete-result {
     list-style: none;
     text-align: left;
@@ -337,9 +315,9 @@
     cursor: pointer;
   }
 
-  .autocomplete-result.is-active {
-    background-color: #4AAE9B;
-    color: white;
+  .autocomplete-result.is-active,.autocomplete-result.is-active a{
+    background-color: #3c8dbc;
+    color: #fff;
   }
 
 </style>
@@ -352,8 +330,8 @@
 		/********autocomplete starts*******/
 		Vue.component('auto-complete', {
 			template: `<span>
-						<input type="text"  class="form-control" id ="item-names" v-model="item_names" @keyup.down="onArrowDown" @keyup.up="onArrowUp" @keyup.enter="onEnter">
-						<ul id="autocomplete-results"
+						<input type="text" ref="inlineTextBox"  class="form-control" id ="item-names" v-model="item_names" @keyup.down="onArrowDown" @keyup.up="onArrowUp" @keyup.enter="onEnter">
+						<ul ref="autoSuggestion" id="autocomplete-results"
 							  v-show="isOpen"
 							  class="autocomplete-results"
 							  @mouseleave="ClearSelection"
@@ -484,10 +462,12 @@
 				}
 			},
 			mounted() {
-			  document.addEventListener('click', this.handleClickOutside)
+				document.addEventListener('click', this.handleClickOutside);
+				var inputBoxWidth = this.$refs.inlineTextBox.offsetWidth;
+				this.$refs.autoSuggestion.style.width = inputBoxWidth+'px';
 			},
 			destroyed() {
-			  document.removeEventListener('click', this.handleClickOutside)
+				document.removeEventListener('click', this.handleClickOutside)
 			}
 		})
 	/********autocomplete ends*******/
@@ -502,13 +482,15 @@
 							<i class="fa fa-times-circle" @click="closeEdit"></i>
 						</span>
 					</span>`,
-		props: ['value'],
+		props: ['value','ifUserPermitted'],
 		data: function()
 		{
 			return {editMode: false,editedValue:""};
 		},
 		methods:{
-			setEditMode: function(mode){
+			setEditMode: function(){
+				if(!this.ifUserPermitted)
+					return;
 				this.editMode = true;
 				this.editedValue = this.value;
 			},
@@ -569,12 +551,24 @@
 			auto_select: true,
 			customer_id: 0,
 			options: [],
-			tax: {{$tax_rate}}
+			tax: {{$tax_rate}},
+			negativeInventory: {{$settings['negative_inventory']}},
+			allDiscountAmountPercentage: 0,
+			saleFlatDiscountAmount: 0,
+			activePaymentType: "Cash",
+			paymentList: [],
+			paymentTypeList: ['Cash', 'Check','Debit Card', 'Credit Card', 'Gift Card', 'Loyalty Card'],
+			amountTendered: 0.0
 		},
 		methods:
 		{
 			setAutoCompleteResult: function(selectedItem)
 			{
+				if( selectedItem.quantity<=0 && !this.negativeInventory )
+				{	
+					alert("Sorry, product is out of stock.");
+					return;
+				}
 				var found = false;
 				for(var index=0;index<this.itemList.length; index++)
 				{
@@ -596,11 +590,24 @@
 									item_id : selectedItem.item_id,
 									item_name : selectedItem.item_name,
 									company_name : selectedItem.company_name,
-									quantity : selectedItem.quantity,
+									item_quantity : selectedItem.item_quantity,
 									price : response.data.price,
-									bought_quantity : 1,
-									discount : 0
+									cost_price: selectedItem.cost_price,
+									bought_quantity : 1
 								}
+						if(selectedItem.discountApplicable)
+						{
+							itemDetails.discount_applicable = true;
+							if(this.allDiscountAmountPercentage==0)
+								itemDetails.discount_percentage = selectedItem.discountPercentage;
+							else
+								itemDetails.discount_percentage = this.allDiscountAmountPercentage;
+						}
+						else
+						{
+							itemDetails.discountApplicable = false;
+							itemDetails.discount_percentage = 0;
+						}
 						that.itemList.push(itemDetails);
 					})
 					.catch(function (error) {
@@ -622,7 +629,25 @@
 						this.itemList.splice(index, 1);
 					}
 				}
+			},
+			GetLineTotal: function(index)
+			{
+				return this.itemList[index].bought_quantity * this.itemList[index].price * (100 -  this.itemList[index].discount_percentage)/100;
+			},
+			SetActivePaymentType: function(activePaymentType)
+			{
+				this.activePaymentType = activePaymentType;
+			},
+			GetPaymentButtonClass(paymentType)
+			{
+				return { 
+					btn: true, 
+					'btn-pay': true,
+					'select-payment': true,
+					active: paymentType==this.activePaymentType
+				}
 			}
+			
 		},
 		watch:{
 			customer_id: function (newVal, oldValue) {
@@ -639,6 +664,14 @@
 						console.log(error);
 					});
 				});
+			},
+			allDiscountAmountPercentage: function (newVal, oldValue){
+				if(newVal==oldValue || newVal==0)
+					return;
+				this.itemList.forEach(function(anItem){
+					anItem.discount_percentage = newVal;
+				})
+				
 			}
 		},
 		computed:{
@@ -647,17 +680,20 @@
 				var subtotal = 0;
 				for(var index=0;index<this.itemList.length;index++)
 				{
-					subtotal += Number(this.itemList[index].price);
+					subtotal += this.GetLineTotal(index);
 				}
 				return subtotal;
 			},
 			GetTax()
 			{
-				return  this.tax * this.GetSubtotal() / 100; 
+				return  this.tax * this.GetSubtotal / 100; 
+			},
+			GetTotalSale()
+			{
+				return this.GetSubtotal + this.GetTax - this.saleFlatDiscountAmount;
 			}
 		},
 		created: function(){
-			//this.options;
 		},
 		mounted() {
 			document.getElementById("item-names").focus();

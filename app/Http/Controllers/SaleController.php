@@ -34,7 +34,7 @@ use PhpParser\Node\Scalar\String_;
 class SaleController extends Controller
 {
 
-    public function GetSaleForm()
+    public function GetSaleForm($vue = null)
     {
 
         $cashRegister = new CashRegister();
@@ -55,14 +55,16 @@ class SaleController extends Controller
                     }
                 }
             }
-
-            return view('sales.new_sale', ['customerList' => $customerList]);
+			if($vue)
+				return view('sales.new_sale_vue', ['customerList' => $customerList]);
+			else
+				return view('sales.new_sale', ['customerList' => $customerList]);
         }else{
             // A new cash register should be opened
             return redirect()->route('open_cash_register');
         }
     }
-
+	
     public function AddSale(Request $request)
     {
 		
