@@ -314,6 +314,8 @@
 
             checkPaymentType();
 
+           $("body").addClass("sidebar-collapse");
+
             $item = $('#item-names');
 
             $item.focus();
