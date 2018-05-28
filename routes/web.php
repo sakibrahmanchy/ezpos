@@ -62,7 +62,8 @@ Route::group(['middleware' => ['admin']], function () {
 
     route::get('/item/new','ItemController@GetItemForm' )->name('new_item')->middleware('auth');
     route::post('/item/new','ItemController@AddItem')->name('new_item')->middleware('auth');
-    route::get('item/list','ItemController@GetItemList')->name('item_list')->middleware('auth');
+    route::get('item/list','ItemController@GetItemListAjax')->name('item_list')->middleware('auth');
+    route::get('item/list/ajax','ItemController@GetItemListAjax')->name('item_list_ajax')->middleware('auth');
     route::get('item/edit/{item_id}','ItemController@EditItemGet')->name('item_edit')->middleware('auth');
     route::post('item/edit/{item_id}','ItemController@EditItemPost')->name('item_edit')->middleware('auth');
     route::post('item/price','ItemController@getItemPrice')->name('item_price')->middleware('auth');
@@ -110,7 +111,7 @@ Route::group(['middleware' => ['admin']], function () {
     Route::get('supplier/excel/import','SupplierController@importExcelGet')->name('supplier_import_excel')->middleware('auth');
     Route::post('supplier/excel/import', 'SupplierController@importExcel')->name('supplier_import_excel')->middleware('auth');
 
-    route::get('/sale/new','SaleController@GetSaleForm' )->name('new_sale')->middleware('auth');
+    route::get('/sale/new/{vue?}','SaleController@GetSaleForm' )->name('new_sale')->middleware('auth');
     route::post('/sale/new','SaleController@AddSale')->name('new_sale')->middleware('auth');
     route::post('/sale/suspend','SaleController@SuspendSale')->name('suspend_sale')->middleware('auth');
     route::get('sale/suspended','SaleController@GetSuspendedSale')->name('suspended_sale_list')->middleware('auth');

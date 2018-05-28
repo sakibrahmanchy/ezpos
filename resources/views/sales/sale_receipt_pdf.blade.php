@@ -25,9 +25,18 @@
     <ul style="margin-bottom:2px;float:left;">
 
         <li >{{ $settings['company_name'] }}</li>
-        <li><?php echo substr($settings['address'],20) ?></li>
-        <li>{{ $settings['phone']}}</li>
-
+		@if($settings['address_line_1']!=""||$settings['address_line_1']!=null)
+        <li><?php echo $settings['address_line_1'] ?></li>
+		@endif
+		@if($settings['address_line_2']!=""||$settings['address_line_2']!=null)
+        <li><?php echo $settings['address_line_2'] ?></li>
+		@endif
+		@if($settings['email_address']!=""||$settings['email_address']!=null)
+        <li><?php echo $settings['email_address'] ?></li>
+		@endif
+		@if($settings['phone']!=""||$settings['phone']!=null)
+        <li><?php echo $settings['phone'] ?></li>
+		@endif
     </ul>
     <ul  style="margin-bottom:2px;float:right;">
         <li>
@@ -38,9 +47,16 @@
         <li><span>Counter Name:</span><b>{{ $sale->counter->name }}</b></li>
         <li><span>Employee:</span>{{\Illuminate\Support\Facades\Auth::user()->name }}</li>
         @if(isset($sale->customer->id))
-            @if($sale->customer->first_name!=null)
-                <li><span>Customer:</span>{{$sale->customer->first_name}}</li>
-            @endif
+            <li><span>Customer:</span>{{$sale->customer->first_name}} {{$sale->customer->last_name}}</li>
+			@if($sale->Customer->loyalty_card_number && strlen($sale->Customer->loyalty_card_number)>0)
+				<li>
+				@php
+					$loyalityCarNumber = $sale->Customer->loyalty_card_number;
+					$loyalityCarNumberMasked = str_repeat('X', strlen($loyalityCarNumber) - 4) . substr($loyalityCarNumber, -4);
+					echo $loyalityCarNumberMasked;
+				@endphp
+				</li>
+			@endif
         @endif
     </ul>
 </div>
@@ -216,7 +232,7 @@
             </td>
         </tr>
         <tr>
-            <th>Change Due</th>
+            <th>{{$sale->due>=0?'Due': 'Change Due'}}</th>
             <td>  @if($sale->due>=0)
                     ${{$sale->due}}
                 @else

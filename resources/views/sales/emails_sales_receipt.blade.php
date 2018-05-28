@@ -222,8 +222,35 @@
                                 <td class="hh-force-col-center"  style="text-align: left;">
                                     <strong><h1>{{ $settings['company_name'] }}</h1></strong>
                                 </td>
-
                             </tr>
+							@if($settings['address_line_1']!=""||$settings['address_line_1']!=null)
+							<tr>
+                                <td class="hh-force-col-center"  style="text-align: left;">
+                                    {{ $settings['address_line_1'] }}
+                                </td>
+                            </tr>
+							@endif
+							@if($settings['address_line_2']!=""||$settings['address_line_2']!=null)
+							<tr>
+                                <td class="hh-force-col-center"  style="text-align: left;">
+                                    {{ $settings['address_line_2'] }}
+                                </td>
+                            </tr>
+							@endif
+							@if($settings['email_address']!=""||$settings['email_address']!=null)
+							<tr>
+                                <td class="hh-force-col-center"  style="text-align: left;">
+                                    {{ $settings['email_address'] }}
+                                </td>
+                            </tr>
+							@endif
+							@if($settings['phone']!=""||$settings['phone']!=null)
+							<tr>
+                                <td class="hh-force-col-center"  style="text-align: left;">
+                                    {{ $settings['phone'] }}
+                                </td>
+                            </tr>
+							@endif
                             <tr>
                                 <td height="10" style="font-size: 0; line-height: 0;">&nbsp;</td>
                             </tr>
@@ -274,7 +301,7 @@
                                 <td style="padding: 30px; font-family: sans-serif; font-size: 16px; line-height: 22px; color: #444444;">
                                     <h1>{{ $settings['company_name'] }} Invoice Receipt</h1>
                                     <br><br>
-                                    Hello <strong>Sakib Rahman</strong>,<br>
+                                    Hello <strong>{{ $customer->first_name }} {{ $customer->last_name }}</strong>,<br>
                                     <br>
                                     Thank you for shopping with us. Your transaction is successfully completed.<br>
                                     Please check attachments for detailed reciepts.

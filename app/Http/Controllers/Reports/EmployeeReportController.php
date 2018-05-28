@@ -82,7 +82,7 @@ class EmployeeReportController extends Controller
             $labels = array();
             $values = array();
             foreach($items as $aSale){
-                array_push($labels,$aSale->first_name."".$aSale->last_name." ($".$aSale->total.")");
+                array_push($labels,$aSale->first_name. " ($".$aSale->total.")");
                 array_push($values,$aSale->total);
             }
 

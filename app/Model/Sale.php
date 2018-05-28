@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use App\Model\LoyaltyTransaction;
+use App\Model\CashRegister;
 
 class Sale extends Model
 {
@@ -53,8 +54,10 @@ class Sale extends Model
         if($saleStatus!=1)
             session()->put('success','Sale has been successfully suspended');
 
-
-        $sale = $this->insertSaleInfo($saleInfo,$saleStatus);
+		$cashRegister = new CashRegister();
+        $activeRegister = $cashRegister->getCurrentActiveRegister();
+		
+        $sale = $this->insertSaleInfo($saleInfo,$saleStatus, $activeRegister->id);
         $sale_id = $sale->id;
 
         $this->insertItemsInSale($productInfos,$sale,$saleStatus);
@@ -70,7 +73,7 @@ class Sale extends Model
         return $sale_id;
     }
 
-    public function insertSaleInfo($saleInfo,$saleStatus){
+    public function insertSaleInfo($saleInfo,$saleStatus, $registerId){
 
         $sale = new Sale();
         $sale->employee_id = Auth::user()->id;
@@ -86,6 +89,7 @@ class Sale extends Model
         $sale->sale_type = $saleInfo['sale_type'];
         $sale->counter_id = Cookie::get("counter_id");
         $sale->comment = $saleInfo["comment"];
+        $sale->cash_register_id = $registerId;
         $sale->save();
 
         return $sale;
@@ -255,7 +259,6 @@ class Sale extends Model
 
             }else{
                 if($saleStatus!=SaleStatus::$ESTIMATE){
-                    echo $item_id;
                     if($item_type=="item"){
 
                         $item = Item::where("id",$item_id)->first();

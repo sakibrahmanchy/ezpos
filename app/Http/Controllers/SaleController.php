@@ -34,7 +34,7 @@ use PhpParser\Node\Scalar\String_;
 class SaleController extends Controller
 {
 
-    public function GetSaleForm()
+    public function GetSaleForm($vue = null)
     {
 
         $cashRegister = new CashRegister();
@@ -55,19 +55,23 @@ class SaleController extends Controller
                     }
                 }
             }
-
-            return view('sales.new_sale', ['customerList' => $customerList]);
+			if($vue)
+				return view('sales.new_sale_vue', ['customerList' => $customerList]);
+			else
+				return view('sales.new_sale', ['customerList' => $customerList]);
         }else{
             // A new cash register should be opened
             return redirect()->route('open_cash_register');
         }
     }
-
+	
     public function AddSale(Request $request)
     {
+		
         $saleInfo = $request->sale_info;
         $productInfos = $request->product_infos;
         $paymentInfos = $request->payment_infos;
+		
         $sale = new Sale();
         $sale_id = $sale->InsertSale($saleInfo, $productInfos, $paymentInfos, $saleInfo['status']);
         echo $sale_id;
@@ -108,7 +112,7 @@ class SaleController extends Controller
     public function GetSuspendedSales()
     {
 
-        $suspendedSales = Sale::where('sale_status', SaleStatus::$ESTIMATE)->orWhere('sale_status', SaleStatus::$LAYAWAY)->with('items', 'paymentlogs')->get();
+        $suspendedSales = Sale::where('sale_status', SaleStatus::$ESTIMATE)->orWhere('sale_status', SaleStatus::$LAYAWAY)->with('items', 'paymentlogs','customer')->get();
 
         foreach ($suspendedSales as $aSale) {
             $aSale->item_count = count($aSale->items);
@@ -158,18 +162,17 @@ class SaleController extends Controller
         }, 'paymentlogs', 'customer'])->first();
 
 
-        $customer = new \stdClass();
+
         if (isset($sale->customer->id)) {
-            $customer->name = $sale->customer->name;
-            $customer->email = $sale->customer->email;
+            $customer = Customer::where('id',$sale->customer_id)->first();
         }
 
         if (isset($customer->email) && !is_null($customer->email)) {
 
-            Mail::send('sales.emails_sales_receipt', ["sale" => $sale], function ($m) use ($sale, $customer) {
-                $m->from('sales@ezpos.com', 'EZPOS');
+            Mail::send('sales.emails_sales_receipt', ["sale" => $sale, "customer" => $customer], function ($m) use ($sale, $customer) {
+                $m->from('sales@mg.grimspos.com', 'EZPOS');
 
-                $pdf = PDF::loadView('sales.sale_receipt_pdf', ["sale" => $sale]);
+                $pdf = PDF::loadView('sales.sale_receipt_pdf', ["sale" => $sale, "customer" => $customer]);
                 $m->to($customer->email, $customer->name)->subject('Sale receipt for purchase!');
                 $m->attachData($pdf->output(), 'invoice.pdf', ['mime' => 'application/pdf']);
             });
@@ -379,9 +382,9 @@ class SaleController extends Controller
 
     }
 
-    public function printSaleReciept($sale_id)
+    public function printSaleReciept($sale_id, Request $request)
     {
-
+        $print_type = $request->print_type;
         $sale = Sale::where("id", $sale_id)->with('items', 'paymentlogs', 'customer')->first();
         if ($sale == null)
             return redirect()->route('new_sale')->with(["error" => 'Sale id not found']);
@@ -402,10 +405,19 @@ class SaleController extends Controller
             $printer->selectPrintMode();
             $printer->text( $created_at. "\n");
             $printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);
-            $printer->text($settings['company_name'] . " No." . $sale->id . "\n");
-            $printer->selectPrintMode();
-
-            $printer->text($settings['address'] . "\n");
+            $printer->text($settings['company_name']. "\n");
+            $printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);
+			$printer->text("Order No." . $sale->id . "\n");
+			
+			$printer->selectPrintMode();
+            if($settings['address_line_1']!=""||$settings['address_line_1']!=null)
+				$printer->text(wordwrap($settings['address_line_1'] . "\n",43,"\n",false));
+			if($settings['address_line_2']!=""||$settings['address_line_2']!=null)
+				$printer->text(wordwrap($settings['address_line_2'] . "\n",43,"\n",false));
+			
+			if($settings['email_address']!=""||$settings['email_address']!=null)
+				$printer->text(wordwrap($settings['email_address'] . "\n",43,"\n",false));
+			
             if($settings['phone']!=""||$settings['phone']!=null) {
                 $printer->text('Phone: '.$settings['phone'] . "\n");
                 $printer->selectPrintMode();
@@ -415,7 +427,19 @@ class SaleController extends Controller
                 $printer->selectPrintMode();
             }
             $printer->text("Cashier: " . Auth::user()->name . "\n");
-            $printer->selectPrintMode();
+            if( isset($sale->customer->id) )
+			{
+				$customerNameText = "Customer Name: " . $sale->customer->first_name . " " . $sale->customer->last_name;
+				$printer->text(wordwrap( $customerNameText . "\n",43,"\n",false));
+				if($sale->customer->loyalty_card_number && strlen($sale->customer->loyalty_card_number)>0)
+				{
+					$loyalityCarNumber = $sale->customer->loyalty_card_number;
+					$loyalityCarNumberMasked = str_repeat('X', strlen($loyalityCarNumber) - 4) . substr($loyalityCarNumber, -4);
+					$printer->text('Loyality Card No: ' . $loyalityCarNumberMasked . "\n");
+				}
+			}
+			$printer->selectPrintMode();
+			
             $printer->text("------------------------------------------\n");
             $header = new \App\Model\Printer\Item("Qty", "Name", "Unit", "Total");
             $printer->setJustification(Printer::JUSTIFY_LEFT);
@@ -433,6 +457,7 @@ class SaleController extends Controller
                 array_push($items, $toPrint);
             }
 
+			
             $printer->setJustification(Printer::JUSTIFY_LEFT);
             $printer->setEmphasis(false);
             foreach ($items as $item) {
@@ -440,13 +465,16 @@ class SaleController extends Controller
             }
 
             $printer->text("-------------------------------------------\n");
-
+			
 
             $subtotal = new FooterItem('Subtotal', $sale->sub_total_amount);
             if($settings["tax_rate"]>0)
                 $tax = new FooterItem('VAT (' . $settings['tax_rate'] . '%)', $sale->tax_amount);
             $total = new FooterItem('Total', $sale->total_amount);
-            $due = new FooterItem('Due', $sale->due);
+			if($sale->due>=0)
+				$due = new FooterItem('Due', $sale->due);
+			else
+				$due = new FooterItem('Change Due', $sale->due);
 
             $printer->setEmphasis(true);
             $printer->text($subtotal);
@@ -469,32 +497,53 @@ class SaleController extends Controller
                 $printer->feed();
                 $printer->setEmphasis(false);
                 foreach ($sale->paymentlogs as $aPayment) {
-                    $payment = new FooterItem($aPayment->payment_type, $aPayment->paid_amount);
+                    $payment = new FooterItem($aPayment->payment_type." Tendered", $aPayment->paid_amount);
                     $printer->text($payment);
                 }
             }
+			
+            
+			if( $sale->comment && strlen($sale->comment)>0 )
+			{
+				$printer->feed();
+				$printer->text(wordwrap( $sale->comment . "\n",43,"\n",false));
+			}
             $printer->feed();
-            $printer->setJustification(Printer::JUSTIFY_CENTER);
-            $printer->setEmphasis(true);
-            $printer->text("CUSTOMER COPY");
-            $printer->feed();
-            $printer->feed();
-            $printer->setJustification(Printer::JUSTIFY_LEFT);
-            $printer->text("Change Return Policy");
-            $printer->setEmphasis(true);
-            $printer->feed();
-            $printer->barcode($sale->id, Printer::BARCODE_CODE39);
-            $printer->feed();
-            $printer->text($settings['company_name']." " . $sale->id);
-            $printer->feed();
-            $printer->setJustification(Printer::JUSTIFY_CENTER);
-            $printer->text("THANK YOU!");
+            
+			$printer->setJustification(Printer::JUSTIFY_CENTER);
+            if($print_type==1)
+			{
+				$printer->setEmphasis(true);
+				$printer->text("CUSTOMER COPY");
+				$printer->feed();
+				$printer->feed();
+				$printer->setJustification(Printer::JUSTIFY_LEFT);
+				$printer->text("Change Return Policy");
+				$printer->setEmphasis(true);
+				$printer->feed();
+				$printer->feed();
+				$printer->setJustification(Printer::JUSTIFY_CENTER);
+                $printer->text("THANK YOU!");
+            }
+			else
+            {
+                $printer->text("----------------------------------");
+                $printer->feed();
+                $printer->text('Signature');
+                $printer->feed();
+                $printer->feed();
+                $printer->feed();
+                $printer->text("----------------------------------");
+                $printer->feed();
+                $printer->text('Date');
+            }
             $printer->feed();
             /*dd($items);*/
             /* $printer -> feed();*/
             return redirect()->route('sale_receipt', ['sale_id' => $sale_id]);
 
         } Catch (\Exception $e) {
+			//dd($e);
             return redirect()->back()->with(["error" => $e->getMessage()]);
         } finally {
             if (isset($printer)) {
@@ -507,6 +556,14 @@ class SaleController extends Controller
     }
 
 
+	public function PrintRegisterCloseReport(Request $request)
+	{
+		$counter_id = Cookie::get('counter_id',null);
+		$counter = Counter::where("id",$counter_id)->first();
+		$ip_address = $counter->printer_ip;
+		$port = $counter->printer_port;
+	}
+	
     public function popOpenCashDrawer(){
 
         $counter_id = Cookie::get('counter_id',null);
@@ -528,6 +585,7 @@ class SaleController extends Controller
             if (isset($printer)) {
                 $printer->pulse();
                 $printer->close();
+                return redirect()->route('new_sale');
             }
         }
 
@@ -559,14 +617,30 @@ class SaleController extends Controller
             //$printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);
             //$printer->text($settings['company_name'] . " " . $sale->id . "\n");
             //$printer->text("------------------------------------------\n");
+            $printer = new Printer($connector);
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
+            $printer->text("Receipt\n");
             $printer->selectPrintMode();
-            $printer->text($sale->created_at . "\n");
+            $printer->text( $created_at. "\n");
             $printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);
-            $printer->text($settings['company_name'] . " " . $sale->id . "\n");
+            $printer->text($settings['company_name'] . "\n");
             $printer->selectPrintMode();
-            $printer->text($settings['address'] . "\n\n");
-            $printer->selectPrintMode();
-            $printer->text("Employee: " . Auth::user()->name . "\n");
+			$printer->text("Order No." . $sale->id . "\n");
+			
+			if($settings['address_line_1']!=""||$settings['address_line_1']!=null)
+				$printer->text(wordwrap($settings['address_line_1'] . "\n",43,"\n",false));
+			if($settings['address_line_2']!=""||$settings['address_line_2']!=null)
+				$printer->text(wordwrap($settings['address_line_2'] . "\n",43,"\n",false));
+			
+            if($settings['phone']!=""||$settings['phone']!=null) {
+                $printer->text('Phone: '.$settings['phone'] . "\n");
+                $printer->selectPrintMode();
+            }
+            if($settings['website']!=""||$settings['website']!=null) {
+                $printer->text('Website: '.$settings['website'] . "\n");
+                $printer->selectPrintMode();
+            }
+            $printer->text("Cashier: " . Auth::user()->name . "\n");
             $printer->selectPrintMode();
             $printer->text("------------------------------------------\n");
 
@@ -588,7 +662,7 @@ class SaleController extends Controller
             $total = new FooterItem('Total', 575.00);
             $due = new FooterItem('Change Due', 0.00);
 
-            $printer->setJustification(Printer::JUSTIFY_LEFT);
+            /*$printer->setJustification(Printer::JUSTIFY_LEFT);
             $printer->setEmphasis(true);
             $printer->text($subtotal);
             $printer->setEmphasis(false);
@@ -612,7 +686,26 @@ class SaleController extends Controller
             $printer->barcode($sale->id, Printer::BARCODE_CODE39);
             $printer->feed();
             $printer->text("EZPOS " . $sale->id);
+            $printer->feed();*/
+			$printer->feed();
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
+            $printer->setEmphasis(true);
+            $printer->text("CUSTOMER COPY");
             $printer->feed();
+            $printer->feed();
+            $printer->setJustification(Printer::JUSTIFY_LEFT);
+            $printer->text("Change Return Policy");
+            $printer->setEmphasis(true);
+            $printer->feed();
+            $printer->barcode($sale->id, Printer::BARCODE_CODE39);
+           // $printer->feed();
+            //$printer->text($settings['company_name']." " . $sale->id);
+            $printer->feed();
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
+            $printer->text("THANK YOU!");
+            $printer->feed();
+			
+			
             /*dd($items);*/
             /* $printer -> feed();*/
 
@@ -637,15 +730,17 @@ class SaleController extends Controller
         $sales = DB::table('sales')
             ->join('item_sale','sales.id','=','item_sale.sale_id')
             ->join('items','items.id','=','item_sale.item_id')
-            ->leftJoin('payment_log_sale','sales.id','=','payment_log_sale.sale_id')
-            ->leftJoin('payment_logs','payment_log_sale.payment_log_id','=','payment_logs.id')
             ->leftJoin('suppliers','suppliers.id','=','items.supplier_id')
             ->leftJoin('item_price_rule','items.id','=','item_price_rule.item_id')
             ->leftJoin('price_rules','item_price_rule.price_rule_id','=','price_rules.id')
             ->where('sales.deleted_at',null)
             ->where('items.deleted_at',null)
-            ->where('item_sale.sale_id',$sale_id)
+            ->where('sales.id',$sale_id)
+            ->select('item_sale.*','items.*','sales.*',
+                'suppliers.*','item_price_rule.price_rule_id as price_rule_id','price_rules.*')
             ->get()->toArray();
+
+        $sale_payments = Sale::with('PaymentLogs')->where('id',$sale_id)->first()->PaymentLogs;
 
         $current_date = new \DateTime('today');
         // Check price rules on specific items
@@ -732,7 +827,7 @@ class SaleController extends Controller
 
         $customerList = Customer::all();
         //dd($sale->items);
-        return view('sales.edit_sale',["sales"=>$sales,"customerList"=>$customerList,"sale_id"=>$sale_id]);
+        return view('sales.edit_sale',["sales"=>$sales,"customerList"=>$customerList,"sale_id"=>$sale_id,"payments"=>$sale_payments]);
 
     }
 

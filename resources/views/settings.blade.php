@@ -114,13 +114,23 @@
                                         </div>
                                     </div>
 
-                                    <label for="address" class="col-sm-3 col-md-3 col-lg-2 control-label">Address:</label>
+                                    <label for="address_line_1" class="col-sm-3 col-md-3 col-lg-2 control-label">Address Line 1:</label>
                                     <div class="col-sm-9 col-md-9 col-lg-10">
                                         <div class="input-group date">
                                             <span class="input-group-addon bg ">
                                                 <i class="fa fa-map"></i>
                                             </span>
-                                            <input class="form-control" type="text" name="address" value="{{ $settings['address'] }}">
+                                            <input class="form-control" type="text" name="address_line_1" value="{{ $settings['address_line_1'] }}">
+                                        </div>
+                                    </div>
+									
+									<label for="address_line_2" class="col-sm-3 col-md-3 col-lg-2 control-label">Address Line 2:</label>
+                                    <div class="col-sm-9 col-md-9 col-lg-10">
+                                        <div class="input-group date">
+                                            <span class="input-group-addon bg ">
+                                                <i class="fa fa-map"></i>
+                                            </span>
+                                            <input class="form-control" type="text" name="address_line_2" value="{{ $settings['address_line_2'] }}">
                                         </div>
                                     </div>
                                     <br><br><br>
@@ -144,6 +154,17 @@
                                                 <i class="fa fa-globe"></i>
                                             </span>
                                             <input class="form-control" type="text" name="website" value="{{ $settings['website'] }}">
+                                        </div>
+                                    </div>
+                                    <br><br><br>
+									
+									<label for="email_address" class="col-sm-3 col-md-3 col-lg-2 control-label">Email Address:</label>
+                                    <div class="col-sm-9 col-md-9 col-lg-10">
+                                        <div class="input-group date">
+                                            <span class="input-group-addon bg">
+                                                <i class="fa fa-globe"></i>
+                                            </span>
+                                            <input class="form-control" type="text" name="email_address" value="{{ $settings['email_address'] }}">
                                         </div>
                                     </div>
                                     <br><br><br>

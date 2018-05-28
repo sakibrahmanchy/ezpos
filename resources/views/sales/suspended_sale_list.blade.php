@@ -26,7 +26,7 @@
     <div class="filter-box">
         <div class="row">
             <div class="col-md-6">
-                <div class="input-group pull-left" style="width: 30%;">
+                <div class="input-group pull-left col-md-6">
                     <input type="text" id="global_filter" class="form-control pull-right global_filter" placeholder="Search">
                     <div class="input-group-btn">
                         <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
@@ -88,7 +88,11 @@
                                 Estimate
                             @endif
                         </td>
-                        <td></td>
+                        <td>
+                            @if(isset($suspended_sale->customer))
+                                {{ $suspended_sale->customer->first_name }} {{ $suspended_sale->customer->last_name }}
+                            @endif
+                        </td>
                         <td>
 							{{ implode(',', $suspended_sale->item_names ) }}
                         </td>

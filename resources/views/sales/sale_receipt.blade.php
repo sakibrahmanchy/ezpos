@@ -16,7 +16,8 @@
                     <div class="row">
                         <div class="panel-body panel-pad pull-right">
                             <a  href="{{route('sale_edit',['sale_id'=>$sale->id])}}" class="btn btn-primary">Edit Sale</a>
-                            <a  href="{{route('print_sale',['sale_id'=>$sale->id])}}" class="btn btn-primary">Print</a>
+                            <a  href="{{route('print_sale',['sale_id'=>$sale->id, "print_type"=>1])}}" class="btn btn-primary">Print</a>
+                            <a  href="{{route('print_sale',['sale_id'=>$sale->id, "print_type"=>2])}}" class="btn btn-primary">Print Pickup</a>
                             <a  href="{{route('download_sale_receipt',['sale_id'=>$sale->id])}}" class="btn btn-primary">Download as PDF</a>
                             <a  href="{{route('mail_sale_receipt',['sale_id'=>$sale->id])}}" class="btn btn-primary">Email to customer</a>
                         </div>
@@ -29,10 +30,18 @@
                                 <li class="company-title">{{$settings['company_name']}}, Inc</li>
 
                                 <li>{{$settings['company_name']}}</li>
-
-                                <li>{{$settings['address']}}</li>
-                                <li>{{$settings['phone']}}</li>
-
+								@if($settings['address_line_1']!=""||$settings['address_line_1']!=null)
+								<li><?php echo $settings['address_line_1'] ?></li>
+								@endif
+								@if($settings['address_line_2']!=""||$settings['address_line_2']!=null)
+								<li><?php echo $settings['address_line_2'] ?></li>
+								@endif
+								@if($settings['email_address']!=""||$settings['email_address']!=null)
+								<li><?php echo $settings['email_address'] ?></li>
+								@endif
+								@if($settings['phone']!=""||$settings['phone']!=null)
+								<li><?php echo $settings['phone'] ?></li>
+								@endif
                             </ul>
                         </div>
                         <!--  sales-->
@@ -46,9 +55,16 @@
                                 <li><span>Counter Name: </span><b>{{ $sale->counter->name }}</b></li>
                                 <li><span>Cashier: </span>{{\Illuminate\Support\Facades\Auth::user()->name }}</li>
                                 @if(isset($sale->customer->id))
-                                    @if($sale->customer->first_name!=null)
-                                        <li><span>Customer:</span>{{$sale->customer->first_name}}</li>
-                                    @endif
+                                    <li><span>Customer:</span>{{$sale->customer->first_name}} {{$sale->customer->last_name}}</li>
+									@if($sale->Customer->loyalty_card_number && strlen($sale->Customer->loyalty_card_number)>0)
+										<li>
+										@php
+											$loyalityCarNumber = $sale->Customer->loyalty_card_number;
+											$loyalityCarNumberMasked = str_repeat('X', strlen($loyalityCarNumber) - 4) . substr($loyalityCarNumber, -4);
+											echo $loyalityCarNumberMasked;
+										@endphp
+										</li>
+									@endif
                                 @endif
                             </ul>
                         </div>
@@ -250,7 +266,7 @@
 
                         <div class="row">
                             <div class="col-md-offset-8 col-sm-offset-8 col-xs-offset-2 col-md-2 col-sm-2 col-xs-6">
-                                <div class="invoice-footer-heading">Change Due</div>
+                                <div class="invoice-footer-heading">{{$sale->due>=0?'Due': 'Change Due'}}</div>
                             </div>
                             <div class="col-md-2 col-sm-2 col-xs-4">
                                 <div class="invoice-footer-value invoice-total">
@@ -273,7 +289,7 @@
                         @foreach($sale->paymentlogs as $aPayment)
                         <div class="row">
                             <div class="col-md-offset-8 col-sm-offset-8 col-xs-offset-2 col-md-2 col-sm-2 col-xs-6">
-                                <div class="invoice-footer-heading">{{$aPayment->payment_type}}:</div>
+                                <div class="invoice-footer-heading">{{$aPayment->payment_type}} Tendered:</div>
                             </div>
                             <div class="col-md-2 col-sm-2 col-xs-4">
                                 <div class="invoice-footer-value invoice-total">
@@ -305,6 +321,8 @@
                             </div>
                         </div>
                     </div>
+
+                    <center>CUSTOMER COPY</center>
                     <!-- invoice footer-->
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12">
@@ -326,6 +344,7 @@
                             </div>
                         </div>
                     </div>
+                    <center>THANK YOU!</center>
                 </div>
                 <!--container-->
             </div>

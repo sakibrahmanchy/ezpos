@@ -100,7 +100,7 @@
                                     <i class="ion-pause"></i>
                                     Suspend Sale								</button>
                                 <ul class="dropdown-menu sales-dropdown" role="menu">
-                                    <li><a href="#" onclick = "layAwaySale()" id="layaway_sale_button"><i class="ion-pause"></i> Layaway</a></li>
+                                    <li><a href="#" onclick = "layAwaySale()" id="layaway_sale_button"><i class="ion-pause"></i> Charge Account</a></li>
                                     <li><a href="#" onclick = "estimateSale()" id="estimate_sale_button"><i class="ion-help-circled"></i> Estimate</a></li>
 
                                 </ul>
@@ -392,14 +392,15 @@
             };
 
           var sales = <?php echo json_encode($sales) ?>;
-
+          var payments = <?php echo json_encode($payments)?>;
           index = 0;
             sales.forEach(function(item){
               prepopulateItem(item);
+            });
+
+            payments.forEach(function(item){
                 preLoadPayment(item);
-
-          });
-
+            })
         });
 
 
@@ -440,7 +441,7 @@
                     discountItemPrice = Number($( this ).attr("data-total-price"));
                 }
 
-                if(current_total>0||($(this).attr("id"))=="total-price-discount"||saleType=="return"){
+                if(current_total>0||($(this).attr("id"))=="total-price-discount"||sales_type=="return"){
 
                     subReal += (Number($( this ).attr("data-total-price"))) ;
                 }
@@ -553,7 +554,7 @@
 
         function prepopulateItem(item){
 
-
+             console.log(item);
              if(document.getElementById("product-div-"+item.item_id) == null) {
                 $('.no-items').remove();
                 $('.add-payment').show();
@@ -1046,6 +1047,7 @@
                                 price_rule_id: itemRuleId
 
                             };
+                            console.log(productInfo);
                             productInfos.push(productInfo);
 
 

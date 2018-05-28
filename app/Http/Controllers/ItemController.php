@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enumaration\ImportType;
 use App\Enumaration\ItemStatus;
 use App\Enumaration\PriceRuleTypes;
+use App\Libraries\SSP;
 use App\Library\SettingsSingleton;
 use App\Model\Category;
 use App\Model\Customer;
@@ -65,6 +66,71 @@ class ItemController extends Controller
 
     }
 
+
+    public function GetItemListAjax() {
+        $items = Item::all();
+        return view('items.item_list_ajax',['allItems'=>$items]);
+    }
+
+    public function getAllItemsData(Request $request) {
+
+        $where = '';
+
+        if ($request->item_status != "0")
+            $where .= "item_status = ".$request->item_status;
+
+
+        $allItems = <<<EOT
+(
+     SELECT items.product_id as product_id, items.id as item_id, items.item_name as item_name, items.item_status as item_status,
+            items.isbn as upc, items.item_quantity as quantity, items.item_size as size, items.cost_price as cost_price,   
+            items.selling_price as selling_price, items.item_reorder_level as reorder_level, items.item_replenish_level as replenish_level, 
+            items.days_to_expiration as expire_date, items.price_include_tax as price_include_tax, items.service_item as service_item,
+            categories.category_name as category, suppliers.company_name as supplier
+     FROM items
+     LEFT JOIN categories on items.category_id = categories.id 
+     LEFT JOIN suppliers on items.supplier_id = suppliers.id
+     LEFT JOIN manufacturers on items.manufacturer_id = manufacturers.id 
+     WHERE product_type = 0 and product_type <> 2 
+     AND items.deleted_at is null
+) temp
+EOT;
+
+        $primaryKey = 'item_id';
+
+        $columns = array(
+            array( 'db' => 'product_id', 'dt' => 'product_id' ),
+            array( 'db' => 'item_name', 'dt' => 'item_name' ),
+            array( 'db' => 'item_status', 'dt' => 'item_status' ),
+            array( 'db' => 'supplier', 'dt' => 'supplier' ),
+            array( 'db' => 'upc', 'dt' => 'upc' ),
+            array( 'db' => 'quantity', 'dt' => 'quantity' ),
+            array( 'db' => 'size', 'dt' => 'size' ),
+            array( 'db' => 'cost_price', 'dt' => 'cost_price' ),
+            array( 'db' => 'selling_price', 'dt' => 'selling_price' ),
+            array( 'db' => 'category', 'dt' => 'category' ),
+            array( 'db' => 'reorder_level', 'dt' => 'reorder_level' ),
+            array( 'db' => 'replenish_level', 'dt' => 'replenish_level' ),
+            array( 'db' => 'expire_date', 'dt' => 'expire_date' ),
+            array('db' => 'price_include_tax', 'dt' => 'price_include_tax'),
+            array('db' => 'service_item', 'dt' => 'service_item'),
+            array("db" => "item_id", "dt" => "item_id")
+        );
+
+        $db_connection = config('database.default');
+
+        $sql_details = array(
+            'user' => config('database.connections.'.$db_connection.'.username'),
+            'pass' => config('database.connections.'.$db_connection.'.password'),
+            'db'   => config('database.connections.'.$db_connection.'.database'),
+            'host' => config('database.connections.'.$db_connection.'.host')
+        );
+
+        echo json_encode(
+            SSP::complex( $_GET, $sql_details, $allItems, $primaryKey, $columns, $where )
+        );
+
+    }
 
     public function GetItemList()
     {
@@ -167,7 +233,7 @@ class ItemController extends Controller
 
         $autoselect = Input::get('autoselect');
 
-        if($autoselect=="true"){
+        if($autoselect=="true") {
 
             $search_param = (string) Input::get('q');
             if($search_param!=""||$search_param!=null){
@@ -176,51 +242,66 @@ class ItemController extends Controller
                 $priceNeededToBeScanned = false;
                 if(strlen($search_param)==12) {
                     if($scan_price_from_barcode=="true"){
-                        $priceNeededToBeScanned = true;
                         $upc_code_prefix = $scan_price_from_barcode = SettingsSingleton::getByKey('upc_code_prefix');
+
                         if(substr($search_param,0,strlen($upc_code_prefix)) ===  $upc_code_prefix){
                             $item_new_price_from_barcode = (int) substr($search_param,6,12);
                             $item_new_price_from_barcode = $item_new_price_from_barcode / 1000;
                             $search_param = substr($search_param,0,6);
+                            $priceNeededToBeScanned = true;
                         }
                     }
                 }
+                if($priceNeededToBeScanned) {
+                    $items =  DB::table('items')
+                        ->leftJoin('items_images', 'items.id', '=', 'items_images.item_id')
+                        ->leftJoin('files', 'files.id', '=', 'items_images.file_id')
+                        ->leftJoin('item_price_rule','items.id','=','item_price_rule.item_id')
+                        ->leftJoin('price_rules','item_price_rule.price_rule_id','=','price_rules.id')
+                        ->leftJoin('suppliers','suppliers.id','=','items.supplier_id')
+                        ->where(function($query) use ($search_param) {
+                            $query->where('isbn','like',"%".$search_param."%");
+                        })
+                        ->where('items.deleted_at',null)
+                        ->where('items.item_status',ItemStatus::$ACTIVE)
+                        ->select('items.id as item_id','items.*','files.*','price_rules.*','suppliers.*')
+                        ->groupBy('items.item_name')
+                        ->where('items.product_type','<>',2)
+                        ->first();
+                }
+                else {
+                    $items =  DB::table('items')
+                        ->leftJoin('items_images', 'items.id', '=', 'items_images.item_id')
+                        ->leftJoin('files', 'files.id', '=', 'items_images.file_id')
+                        ->leftJoin('item_price_rule','items.id','=','item_price_rule.item_id')
+                        ->leftJoin('price_rules','item_price_rule.price_rule_id','=','price_rules.id')
+                        ->leftJoin('suppliers','suppliers.id','=','items.supplier_id')
+                        ->where(function($query) use ($search_param) {
+                            $query->where('isbn','=',$search_param);
+                        })
+                        ->where('items.deleted_at',null)
+                        ->where('items.item_status',ItemStatus::$ACTIVE)
+                        ->select('items.id as item_id','items.*','files.*','price_rules.*','suppliers.*')
+                        ->groupBy('items.item_name')
+                        ->where('items.product_type','<>',2)
+                        ->first();
+                }
+                        if(!is_null($items)) {
 
-                $items =  DB::table('items')
-                    ->leftJoin('items_images', 'items.id', '=', 'items_images.item_id')
-                    ->leftJoin('files', 'files.id', '=', 'items_images.file_id')
-                    ->leftJoin('item_price_rule','items.id','=','item_price_rule.item_id')
-                    ->leftJoin('price_rules','item_price_rule.price_rule_id','=','price_rules.id')
-                    ->leftJoin('suppliers','suppliers.id','=','items.supplier_id')
-                    ->where(function($query) use ($search_param) {
-                        $query->where('isbn','like',"%".$search_param."%");
-                    })
-                    ->where('items.deleted_at',null)
-                    ->where('items.item_status',ItemStatus::$ACTIVE)
-                    ->select('items.id as item_id','items.*','files.*','price_rules.*','suppliers.*')
-                    ->groupBy('items.item_name')
-                    ->where('items.product_type','<>',2)
-                    ->first();
+                            $itemsWithItemKits = array($items);
+                            $current_date = new \DateTime('today');
+                            // Check price rules on specific items
 
-                if(!is_null($items)) {
-
-                    $itemsWithItemKits = array($items);
-                    $current_date = new \DateTime('today');
-                    // Check price rules on specific items
-
-                    foreach($itemsWithItemKits as $anItem) {
+                            foreach($itemsWithItemKits as $anItem) {
 
                         if(isset($anItem->item_id)){
 
-                            $anItem->type = "auto";
+                            $anItem->scan_type = "auto";
                             if($priceNeededToBeScanned) {
                                 $anItem->new_price = $item_new_price_from_barcode;
                                 $anItem->useScanPrice = true;
                             }
                             if ($anItem->active){
-
-                                if($anItem->unlimited||$anItem->num_times_to_apply>0)
-                                {
 
                                     if($anItem->type==1){
 
@@ -284,7 +365,6 @@ class ItemController extends Controller
                                         }
 
                                     }
-                                }
 
                             }
 
@@ -330,11 +410,8 @@ class ItemController extends Controller
             // Check price rules on specific items
             foreach($itemsWithItemKits as $anItem) {
                 if(isset($anItem->item_id)){
-                    $anItem->type = "list";
+                    $anItem->scan_type = "list";
                     if ($anItem->active){
-
-                        if($anItem->unlimited||$anItem->num_times_to_apply>0)
-                        {
 
                             if($anItem->type==1){
 
@@ -397,7 +474,7 @@ class ItemController extends Controller
                                     // echo "Item should be discounted by ".$anItem->fixed_of." dollar";
                                 }
 
-                            }
+
                         }
 
                     }

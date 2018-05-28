@@ -107,7 +107,7 @@
                                             <i class="ion-pause"></i>
                                             Suspend Sale								</button>
                                         <ul class="dropdown-menu sales-dropdown" id = "sale-type" data-selected-type="sale" role="menu">
-                                            <li><a href="#" onclick = "layAwaySale()" id="layaway_sale_button"><i class="ion-pause"></i> Layaway</a></li>
+                                            <li><a href="#" onclick = "layAwaySale()" id="layaway_sale_button"><i class="ion-pause"></i> Charge Account </a></li>
                                             <li><a href="#" onclick = "estimateSale()" id="estimate_sale_button"><i class="ion-help-circled"></i> Estimate</a></li>
 
                                         </ul>
@@ -386,7 +386,7 @@
                 var a = JSON.stringify(item);
                 itemTotalInfo.push(JSON.parse(a));
                 //console.log(item);
-                if(item.type === "auto"){
+                if(item.scan_type === "auto"){
                     autoAddItemTOCart(item);
                     return null;
                 }else{
@@ -427,7 +427,7 @@
             $item.autocomplete({
 
                 minLength: 0,
-                delay: 500,
+                delay: 1500,
                 source: function (request, response) {
                     // request.term is the term searched for.
                     // response is the callback function you must call to update the autocomplete's
@@ -576,6 +576,7 @@
                  $('.no-items').css('display','content');*/
 
             }
+			$('#item-names').focus();
         }
 
         function convertToSale(){
@@ -1434,6 +1435,7 @@
 
         function getItemPrice(itemId, previousPrice) {
             var customer_id = $("#customer").val();
+
             $.ajax({
                 url: "{{route('item_price')}}",
                 type: "post",
@@ -1442,24 +1444,7 @@
                     customer_id: customer_id
                 },
                 success: function(response) {
-//                        status = response.priceLevelStatus;
-//                        if(status=="true") {
-//
-//                            percentage = response.percentage;
-//                            amountToChange = Number(previousPrice * (percentage/100));
-//                            console.log(amountToChange);
-//                            itemPrice = Number(Number(previousPrice) + amountToChange).toFixed(2);
-//                            $("#unit-price-"+itemId).attr("data-unit-price",itemPrice);
-//                            $("#unit-price-"+itemId).html("$"+itemPrice);
-//                            addItemPriceToRegister(itemId);
-//                            return itemPrice;
-//                        }
-//                        else{
-//                            $("#unit-price-"+itemId).attr("data-unit-price",previousPrice);
-//                            $("#unit-price-"+itemId).html("$"+previousPrice );
-//                            addItemPriceToRegister(itemId);
-//                            return previousPrice;
-//                        }
+                    console.log('here');
                     itemPrice = response.price;
                     console.log(Number(itemPrice));
                     $("#unit-price-"+itemId).attr("data-unit-price",itemPrice);
