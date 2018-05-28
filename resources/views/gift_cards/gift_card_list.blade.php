@@ -61,10 +61,10 @@
                                     <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><i class="pe-7s-pen"></i>
                                         <span class="caret"></span></button>
                                     <ul class="dropdown-menu">
-                                        @if(UserHasPermission("gift_card_add_update"))
+                                        @if(UserHasPermission("gift_cards_add_update"))
                                             <li><a href="{{route('gift_card_edit',['gift_card_id'=>$gift_card->id])}}">Edit Gift Card</a></li>
                                         @endif
-                                        @if(UserHasPermission("gift_card_delete"))
+                                        @if(UserHasPermission("gift_cards_delete"))
                                             <li><a href="{{route('gift_card_delete',['gift_card_id'=>$gift_card->id])}}">Delete</a></li>
                                         @endif
                                     </ul>

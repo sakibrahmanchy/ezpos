@@ -1158,7 +1158,7 @@
                         var itemId = $(this).attr("data-index");
                         var itemType = $(this).attr("data-item-type");
                         var itemRuleId = $(this).attr("data-rule-id");
-                       // console.log($(this));
+
                         if( itemId == 0 ) {
 
                             var currentQuantity = $("#product-discount-quantity").val();
