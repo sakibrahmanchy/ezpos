@@ -38,8 +38,8 @@
 							<span class="sr-only">Toggle Dropdown</span>
 						</button>
 						<ul class="dropdown-menu" role="menu" style="" >
-							<li data-value="1"><a onclick="convertToSale()"  href="#">Sale</a></li>
-							<li data-value="2"><a onclick="convertToReturn()" href="#">Return</a></li>{{--
+							<li data-value="1"><a @click="convertToSale()"  href="#">Sale</a></li>
+							<li data-value="2"><a @click="convertToReturn()" href="#">Return</a></li>{{--
                             <li data-value="3"><a href="#">Store Account Payment</a></li>--}}
 						</ul>
 					</div>
@@ -343,9 +343,9 @@
 
         });
 
-        function convertToSale(){
-
-            $('#bs-drp-sel-label').text("Sale");
+//        function convertToSale(){
+//
+//            $('#bs-drp-sel-label').text("Sale");
 //            $(".quantity").each(function(index){
 //
 //                var old_value = this.value;
@@ -359,28 +359,28 @@
 //
 //
 //            });
+//
+//        }
+//
+//        function convertToReturn() {
+//
+//            $('#bs-drp-sel-label').text("Return");
+//            $("#sale-type").attr("data-selected-type", "return");
+//            $(".quantity").each(function (index) {
+//
+//                var old_value = this.value;
+//                if (old_value >= 0)
+//                    this.value = (-1) * this.value;
+//                var product_id = this.id.replace(/[^0-9\.-]+/g, "");
+//                product_id = product_id.substr(1, product_id.length);
+//                addItemPriceToRegister(product_id);
+//
+//            });
+//
+//        }
 
 
-        }
 
-        function convertToReturn() {
-
-            $('#bs-drp-sel-label').text("Return");
-            console.log(  $('#bs-drp-sel-label').text());
-            $("#sale-type").attr("data-selected-type", "return");
-            console.log( $("#sale-type").attr("data-selected-type"));
-            $(".quantity").each(function (index) {
-
-                var old_value = this.value;
-                if (old_value >= 0)
-                    this.value = (-1) * this.value;
-                var product_id = this.id.replace(/[^0-9\.-]+/g, "");
-                product_id = product_id.substr(1, product_id.length);
-                addItemPriceToRegister(product_id);
-
-            });
-
-        }
 
         Vue.component('auto-complete', {
             template: `<span>
@@ -603,8 +603,8 @@
         /********************currency symbol******************/
         Vue.component('currency-input', {
             template: `<span>
-						@{{ localValue>0 ? currencySymbol : '-' +  currencySymbol }}
-						@{{localValue>0 ? localValue : (-1) * localValue}}
+						@{{ localValue>=0 ? currencySymbol : '-' +  currencySymbol }}
+						@{{localValue>=0 ? localValue : (-1) * localValue}}
 					</span>`,
             props: ['value','currencySymbol'],
             data: function()
@@ -672,10 +672,20 @@
 
                         this.GetItemPrice(selectedItem.item_id)
                             .then(function (response) {
+								let sale_type =  $("#sale-type").attr("data-selected-type");
+								let bought_quantity = ( sale_type == "sale") ? 1 : -1;
+                                var itemDetails = {
+                                    item_id : selectedItem.item_id,
+                                    item_name : selectedItem.item_name,
+                                    company_name : selectedItem.company_name,
+                                    item_quantity : selectedItem.item_quantity,
+                                    price : response.data.price,
+                                    cost_price: selectedItem.cost_price,
+                                    bought_quantity : bought_quantity,
+									price_rule_id: selectedItem.price_rule_id
 
-                                var itemDetails = selectedItem;
-                                itemDetails.bought_quantity = 1;
-                                itemDetails.price = response.data.price;
+								};
+
 
                                 if(selectedItem.discountApplicable)
                                 {
@@ -716,6 +726,7 @@
                     },
                     GetLineTotal: function(index)
                     {
+                        console.log("Test");
                         if(this.itemList[index].item_id==0)
                             return this.itemList[index].bought_quantity * this.itemList[index].price ;
                         return this.itemList[index].bought_quantity * this.itemList[index].price * (100 -  this.itemList[index].discount_percentage)/100;
@@ -977,7 +988,24 @@
                     RemovePayment(index)
                     {
                         this.paymentList.splice(index, 1);
-                    }
+                    },
+					convertToSale: function() {
+                        $('#bs-drp-sel-label').text("Sale");
+                        $("#sale-type").attr("data-selected-type", "sale");
+                        this.itemList.forEach(function(item){
+                            if(item.bought_quantity<0)
+                                item.bought_quantity = (-1) * item.bought_quantity;
+                        });
+
+					},
+					convertToReturn: function() {
+                        $('#bs-drp-sel-label').text("Return");
+                        $("#sale-type").attr("data-selected-type", "return");
+                        this.itemList.forEach(function(item){
+                            if(item.bought_quantity>0)
+                            item.bought_quantity = (-1) * item.bought_quantity;
+                        });
+					}
                 },
             watch:{
                 customer_id: function (newVal, oldValue) {

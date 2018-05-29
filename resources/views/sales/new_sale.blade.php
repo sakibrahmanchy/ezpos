@@ -584,7 +584,7 @@
         function convertToSale(){
 
             $('#bs-drp-sel-label').text("Sale");
-            $(".quantity").each(function(index){
+            $(".quantity").each(function(index) {
 
                 var old_value = this.value;
                 if(old_value<0){
@@ -594,7 +594,6 @@
                 var product_id = this.id.replace(/[^0-9\.-]+/g, "");
                 product_id = product_id.substr(1,product_id.length);
                 addItemPriceToRegister(product_id);
-
 
             });
 
