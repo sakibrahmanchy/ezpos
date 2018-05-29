@@ -3,351 +3,348 @@
 @section('pageTitle','Sales')
 
 @section('breadcrumbs')
-	{!! Breadcrumbs::render('new_sale') !!}
-	<span><label class="label label-primary pull-right counter-name"><b>{{ \Illuminate\Support\Facades\Cookie::get('counter_name') }}</b></label></span>
-	<br><br>
-	<a href="javascript:void(0)"  onclick="changeCounter()" class="pull-right">Change Location</a>
-	<br>
+    {!! Breadcrumbs::render('new_sale') !!}
+    <span><label class="label label-primary pull-right counter-name"><b>{{ \Illuminate\Support\Facades\Cookie::get('counter_name') }}</b></label></span>
+    <br><br>
+    <a href="javascript:void(0)"  onclick="changeCounter()" class="pull-right">Change Location</a>
+    <br>
 @stop
 
 @section('content')
-	<style>
-		.input-group {
-			padding-left:0px
-		}
-		.card{
-			margin-top:0px;
-			margin-bottom: 10px;
-		}
-	</style>
-	{{--Sale config--}}
+    <style>
+        .input-group {
+            padding-left:0px
+        }
+        .card{
+            margin-top:0px;
+            margin-bottom: 10px;
+        }
+    </style>
+    {{--Sale config--}}
     <?php $tax_rate = $settings['tax_rate'] ; ?>
-	{{--Sale config--}}
+    {{--Sale config--}}
 
-	<div id="app" class="row">
-		<file_explorer @choose-item="ChooseItem"></file_explorer>
-		<div class="col-sm-7" >
-			<div class = "search section">
-				<div class="input-group">
-					<a href="{{route('new_item')}}" target="_blank" class="input-group-addon" id="sizing-addon2" style="background-color:#337ab7;color:white;border:solid #337ab7 1px; "><strong>+</strong></a>
-					<auto-complete @set-autocomplete-result="setAutoCompleteResult" :auto-select="auto_select"></auto-complete>
+    <div class ="alert alert-danger">
+        Editing Sale <strong>EZPOS {{$sale_id }}</strong>
+    </div>
 
-					<div class="input-group-btn bs-dropdown-to-select-group">
-						<button type="button" class="btn btn-primary dropdown-toggle as-is bs-dropdown-to-select" data-toggle="dropdown">
-							<span id="bs-drp-sel-label" data-bind="bs-drp-sel-label">Sale</span>
-							<span class="caret"></span>
-							<span class="sr-only">Toggle Dropdown</span>
-						</button>
-						<ul class="dropdown-menu" role="menu" style="" >
-							<li data-value="1"><a @click="convertToSale()"  href="#">Sale</a></li>
-							<li data-value="2"><a @click="convertToReturn()" href="#">Return</a></li>{{--
+    <div id="app" class="row">
+        <file_explorer @choose-item="ChooseItem"></file_explorer>
+        <div class="col-sm-7" >
+            <div class = "search section">
+                <div class="input-group">
+                    <a href="{{route('new_item')}}" target="_blank" class="input-group-addon" id="sizing-addon2" style="background-color:#337ab7;color:white;border:solid #337ab7 1px; "><strong>+</strong></a>
+                    <auto-complete @set-autocomplete-result="setAutoCompleteResult" :auto-select="auto_select"></auto-complete>
+
+                    <div class="input-group-btn bs-dropdown-to-select-group">
+                        <button type="button" class="btn btn-primary dropdown-toggle as-is bs-dropdown-to-select" data-toggle="dropdown">
+                            <span id="bs-drp-sel-label" data-bind="bs-drp-sel-label">Sale</span>
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu" style="" >
+                            <li data-value="1"><a @click="convertToSale()"  href="#">Sale</a></li>
+                            <li data-value="2"><a @click="convertToReturn()" href="#">Return</a></li>{{--
                             <li data-value="3"><a href="#">Store Account Payment</a></li>--}}
-						</ul>
-					</div>
-				</div>
+                        </ul>
+                    </div>
+                </div>
 
 
 
-				<input type="checkbox" checked  id="auto_select" v-model="auto_select"> <b>Add automatically to cart when item found.</b>
+                <input type="checkbox" checked  id="auto_select" v-model="auto_select"> <b>Add automatically to cart when item found.</b>
 
-			</div>
+            </div>
 
-			<br>
+            <br>
 
-			<div class="card table-responsive" >
-				<table class="table table-hover table-responsive">
-					<thead>
-					<tr>
-						<th>Product</th>
-						<th>Quantity</th>
-						<th class="text-center">Price</th>
-						<th class="text-center">Discount(%)</th>
-						<th class="text-center">Total</th>
-						<th>Actions</th>
-					</tr>
-					</thead>
-					<tbody class = "product-descriptions">
-					<tr v-for="(anItem,index) in itemList" class="product-specific-description">
-						<td class="col-sm-8 col-md-6">
-							<div class="media">
-								<div class="media-body">
-									<h6 class="media-heading"><a href="#">@{{itemList[index].item_name}}</a></h6>
-									<h6 v-if="itemList[index].company_name" class="media-heading">
-										by <a href="#">@{{itemList[index].company_name}}</a></h6>
-									<span>Status: </span>
-									<span v-if="itemList[index].item_quantity>10" class="text-success"><strong>In Stock</strong>
+            <div class="card table-responsive" >
+                <table class="table table-hover table-responsive">
+                    <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th class="text-center">Price</th>
+                        <th class="text-center">Discount(%)</th>
+                        <th class="text-center">Total</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody class = "product-descriptions">
+                    <tr v-for="(anItem,index) in itemList" class="product-specific-description">
+                        <td class="col-sm-8 col-md-6">
+                            <div class="media">
+                                <div class="media-body">
+                                    <h6 class="media-heading"><a href="#">@{{itemList[index].item_name}}</a></h6>
+                                    <h6 v-if="itemList[index].company_name" class="media-heading">
+                                        by <a href="#">@{{itemList[index].company_name}}</a></h6>
+                                    <span>Status: </span>
+                                    <span v-if="itemList[index].item_quantity>10" class="text-success"><strong>In Stock</strong>
 										</span>
-									<span v-else-if="itemList[index].item_quantity<=0" class="text-success"><strong>Out of Stock</strong>
+                                    <span v-else-if="itemList[index].item_quantity<=0" class="text-success"><strong>Out of Stock</strong>
 										</span>
-									<span v-else class="text-success"><strong>Soon will be out of Stock</strong>
+                                    <span v-else class="text-success"><strong>Soon will be out of Stock</strong>
 										</span>
-								</div>
-							</div>
-						</td>
-						<td class="col-sm-1 col-md-1" style="text-align: center">
-							<input min="0" class="form-control quantity" value="1" v-model="itemList[index].items_sold">
-						</td>
-						<td class="col-sm-1 col-md-1 text-center">
-							<inline-edit v-model="itemList[index].unit_price" if-user-permitted="{{UserHasPermission("edit_sale_cost_price")}}" ></inline-edit>
-						</td>
-						<td>
-							<input class="form-control discount-amount" v-model="itemList[index].item_discount_percentage">
-						</td>
-						<td class="col-sm-1 col-md-1 text-center">
-							<strong class="total-price">
-								<currency-input currency-symbol="$" :value="GetLineTotal(index)"></currency-input>
-							</strong>
-						</td>
-						<td class="col-sm-1 col-md-1">
-							<button type="button" class="btn btn-danger" @click="Remove(itemList[index].item_id)"><span class="pe-7s-trash"></span> Remove</button>
-						</td>
-					</tr>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="col-sm-1 col-md-1" style="text-align: center">
+                            <input min="0" class="form-control quantity" value="1" v-model="itemList[index].items_sold">
+                        </td>
+                        <td class="col-sm-1 col-md-1 text-center">
+                            <inline-edit v-model="itemList[index].unit_price" if-user-permitted="{{UserHasPermission("edit_sale_cost_price")}}" ></inline-edit>
+                        </td>
+                        <td>
+                            <input class="form-control discount-amount" v-model="itemList[index].item_discount_percentage">
+                        </td>
+                        <td class="col-sm-1 col-md-1 text-center">
+                            <strong class="total-price">
+                                <currency-input currency-symbol="$" :value="GetLineTotal(index)"></currency-input>
+                            </strong>
+                        </td>
+                        <td class="col-sm-1 col-md-1">
+                            <button type="button" class="btn btn-danger" @click="Remove(itemList[index].item_id)"><span class="pe-7s-trash"></span> Remove</button>
+                        </td>
+                    </tr>
 
-					<tr v-if="itemList.length<=0" class="no-items"> <td colspan="6"><div class="jumbotron text-center"> <h3>There are no items in the cart [Sales]</h3> </div></td> </tr>
-					</tbody>
-					<tfoot>
-					</tfoot>
-				</table>
-			</div>
+                    <tr v-if="itemList.length<=0" class="no-items"> <td colspan="6"><div class="jumbotron text-center"> <h3>There are no items in the cart [Sales]</h3> </div></td> </tr>
+                    </tbody>
+                    <tfoot>
+                    </tfoot>
+                </table>
+            </div>
 
-		</div>
-		<div class ="col-sm-4">
-			<div class="form-group">
-				<div class="row">
-					<div class = "card">
+        </div>
+        <div class ="col-sm-4">
+            <div class="form-group">
+                <div class="row">
+                    <div class = "card">
 
-						<div class="sale-buttons input-group" style = "border-bottom:solid #ddd 1px; padding:10px;max-width: 100%;display: inline-block;">
-							<div class="btn-group input-group-btn">
-								<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-									<strong>...</strong>
-								</button>
-								<ul class="dropdown-menu sales-dropdown" role="menu">
-									<li>
-										<a href="{{route('suspended_sale_list')}}" class="" title="Suspended Sales"><i class="ion-ios-list-outline"></i> Suspended Sales</a>								</li>
-									<li>
-										<a href="{{route('search_sale')}}" class="" title="Search Sales"><i class="ion-search"></i> Search Sales</a>
-									</li>
+                        <div class="sale-buttons input-group" style = "border-bottom:solid #ddd 1px; padding:10px;max-width: 100%;display: inline-block;">
+                            <div class="btn-group input-group-btn">
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                    <strong>...</strong>
+                                </button>
+                                <ul class="dropdown-menu sales-dropdown" role="menu">
+                                    <li>
+                                        <a href="{{route('suspended_sale_list')}}" class="" title="Suspended Sales"><i class="ion-ios-list-outline"></i> Suspended Sales</a>								</li>
+                                    <li>
+                                        <a href="{{route('search_sale')}}" class="" title="Search Sales"><i class="ion-search"></i> Search Sales</a>
+                                    </li>
 
-									<li>
-										<a href="#look-up-receipt" class="look-up-receipt" data-toggle="modal"><i class="ion-document"></i> Lookup Receipt</a>						</li>
+                                    <li>
+                                        <a href="#look-up-receipt" class="look-up-receipt" data-toggle="modal"><i class="ion-document"></i> Lookup Receipt</a>						</li>
 
-									<li><a href="{{route('sale_last_receipt')}}"  target="_blank" class="look-up-receipt" title="Lookup Receipt"><i class="ion-document"></i> Show last sale receipt</a></li>
-									<li><a href="{{route('pop_open_cash_drawer')}}"  class="look-up-receipt" title="Lookup Receipt"><i class="ion-document"></i> Pop Open Cash Drawer</a></li>
-									<li><a href="{{ route('add_cash_to_register') }}">Add cash to register</a></li>
-									<li><a href="{{ route('subtract_cash_from_register') }}">Remove cash from register</a></li>
-									<li><a href="{{ route('customer_balance_add') }}">Add Customer Balance</a></li>
-									<li><a href="{{ route('close_cash_register') }}">Close register</a></li>
-								</ul>
-								<form action="" id="cancel_sale_form" autocomplete="off" method="post" accept-charset="utf-8">
+                                    <li><a href="{{route('sale_last_receipt')}}"  target="_blank" class="look-up-receipt" title="Lookup Receipt"><i class="ion-document"></i> Show last sale receipt</a></li>
+                                    <li><a href="{{route('pop_open_cash_drawer')}}"  class="look-up-receipt" title="Lookup Receipt"><i class="ion-document"></i> Pop Open Cash Drawer</a></li>
+                                    <li><a href="{{ route('add_cash_to_register') }}">Add cash to register</a></li>
+                                    <li><a href="{{ route('subtract_cash_from_register') }}">Remove cash from register</a></li>
+                                    <li><a href="{{ route('customer_balance_add') }}">Add Customer Balance</a></li>
+                                    <li><a href="{{ route('close_cash_register') }}">Close register</a></li>
+                                </ul>
+                                <form action="" id="cancel_sale_form" autocomplete="off" method="post" accept-charset="utf-8">
 
-									<div class="btn-group input-group-btn"  >
-										<button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-											<i class="ion-pause"></i>
-											Suspend Sale								</button>
-										<ul class="dropdown-menu sales-dropdown" id = "sale-type" data-selected-type="sale" role="menu">
-											<li><a href="#" @click = "layAwaySale()" id="layaway_sale_button"><i class="ion-pause"></i> Charge Account </a></li>
-											<li><a href="#" @click = "estimateSale()" id="estimate_sale_button"><i class="ion-help-circled"></i> Estimate</a></li>
+                                    <div class="btn-group input-group-btn"  >
+                                        <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                            <i class="ion-pause"></i>
+                                            Suspend Sale								</button>
+                                        <ul class="dropdown-menu sales-dropdown" id = "sale-type" data-selected-type="sale" role="menu">
+                                            <li><a href="#" @click = "layAwaySale()" id="layaway_sale_button"><i class="ion-pause"></i> Charge Account </a></li>
+                                            <li><a href="#" @click = "estimateSale()" id="estimate_sale_button"><i class="ion-help-circled"></i> Estimate</a></li>
 
-										</ul>
-									</div>
-									<a href="" class="btn btn-danger input-group-addon" id="cancel_sale_button">
-										<i class="ion-close-circled"></i>
-										Cancel Sale				</a>
+                                        </ul>
+                                    </div>
+                                    <a href="" class="btn btn-danger input-group-addon" id="cancel_sale_button">
+                                        <i class="ion-close-circled"></i>
+                                        Cancel Sale				</a>
 
-								</form>
-							</div>
-						</div>
+                                </form>
+                            </div>
+                        </div>
 
-						<!-- If customer is added to the sale -->
+                        <!-- If customer is added to the sale -->
 
-						<div class="customer-form">
+                        <div class="customer-form">
 
-							<!-- if the customer is not set , show customer adding form -->
-							<form action="" id="select_customer_form" autocomplete="off" class="form-inline" method="post" accept-charset="utf-8">
-								<div class="input-group contacts" style="padding-top:10px;padding-left:10px">
+                            <!-- if the customer is not set , show customer adding form -->
+                            <form action="" id="select_customer_form" autocomplete="off" class="form-inline" method="post" accept-charset="utf-8">
+                                <div class="input-group contacts" style="padding-top:10px;padding-left:10px">
 
-									<a href="{{route('new_customer')}}" target="_blank" class="input-group-addon" id="sizing-addon2" style="background-color:#337ab7;color:white;border:solid #337ab7 1px; "><strong>+</strong></a>
-									<select2 v-model="customer_id">
-										<option value ="0" selected>Select Customer for sale</option>
-										@foreach($customerList as $aCustomer)
-											<option value = "{{$aCustomer->id}}">{{$aCustomer->first_name}} {{$aCustomer->last_name}}</option>
-										@endforeach
-									</select2>
-								</div>
-							</form>
+                                    <a href="{{route('new_customer')}}" target="_blank" class="input-group-addon" id="sizing-addon2" style="background-color:#337ab7;color:white;border:solid #337ab7 1px; "><strong>+</strong></a>
+                                    <select2 v-model="customer_id">
+                                        <option value ="0" selected>Select Customer for sale</option>
+                                        @foreach($customerList as $aCustomer)
+                                            <option value = "{{$aCustomer->id}}">{{$aCustomer->first_name}} {{$aCustomer->last_name}}</option>
+                                        @endforeach
+                                    </select2>
+                                </div>
+                            </form>
 
-						</div>
-					</div></div>
+                        </div>
+                    </div></div>
 
-				<div class="row"><div class = "card" >
-						<h4 class="text-center"><strong>Receipt</strong></h4>
-						<hr>
-						<div class="card">
-							<strong>Subtotal</strong> <span style="float: right"><strong data-subtotal="0" class="subtotal"><currency-input currency-symbol="$" :value="GetSubtotal"></currency-input></strong></span><br>
-							<strong>+Tax({{ $tax_rate }}%)</strong><span style="float: right"><strong data-tax="0" id="tax"><currency-input currency-symbol="$" :value="GetTax"></currency-input></strong></span><br>
-							<strong>Discount all items by percent</strong><span style="float: right"><strong id=""><input id ="allDiscountAmount" type ="number" v-model="allDiscountAmountPercentage" style="max-width:45px;float: right"></strong></span><br><br>
+                <div class="row"><div class = "card" >
+                        <h4 class="text-center"><strong>Receipt</strong></h4>
+                        <hr>
+                        <div class="card">
+                            <strong>Subtotal</strong> <span style="float: right"><strong data-subtotal="0" class="subtotal"><currency-input currency-symbol="$" :value="GetSubtotal"></currency-input></strong></span><br>
+                            <strong>+Tax({{ $tax_rate }}%)</strong><span style="float: right"><strong data-tax="0" id="tax"><currency-input currency-symbol="$" :value="GetTax"></currency-input></strong></span><br>
+                            <strong>Discount all items by percent</strong><span style="float: right"><strong id=""><input id ="allDiscountAmount" type ="number" v-model="allDiscountAmountPercentage" style="max-width:45px;float: right"></strong></span><br><br>
 
-							<strong>Discount entire sale</strong><span style="float: right"><strong id=""><input id ="saleFlatDiscountAmount" style="max-width:45px;float: right" v-model="saleFlatDiscountAmount"></strong></span>
-						</div>
+                            <strong>Discount entire sale</strong><span style="float: right"><strong id=""><input id ="saleFlatDiscountAmount" style="max-width:45px;float: right" v-model="saleFlatDiscountAmount"></strong></span>
+                        </div>
 
-						<div class = "card" style="background-color: #778a9b;color:whitesmoke;font-size:20px;">
-							Total <span style="float: right"><strong data-total="0" id = "total"> <currency-input currency-symbol="$" :value="GetTotalSale"></currency-input></strong></span>
-						</div>
-						<div class = "card" style="background-color: #778a9b;color:whitesmoke;font-size:20px;">
-							Due <span style="float: right"><strong data-due="0" id = "due"> <currency-input currency-symbol="$" :value="GetDue"></currency-input></strong></span>
-						</div><br>
-						<div class="row">
-							{{--<input type="number" id = "paid-amount" name="paid-amount" class="col-md-8 form-control" style="float:left">
+                        <div class = "card" style="background-color: #778a9b;color:whitesmoke;font-size:20px;">
+                            Total <span style="float: right"><strong data-total="0" id = "total"> <currency-input currency-symbol="$" :value="GetTotalSale"></currency-input></strong></span>
+                        </div>
+                        <div class = "card" style="background-color: #778a9b;color:whitesmoke;font-size:20px;">
+                            Due <span style="float: right"><strong data-due="0" id = "due"> <currency-input currency-symbol="$" :value="GetDue"></currency-input></strong></span>
+                        </div><br>
+                        <div class="row">
+                            {{--<input type="number" id = "paid-amount" name="paid-amount" class="col-md-8 form-control" style="float:left">
                             <button type="button" class="col-md-4 btn btn-success" style="float:right" onclick = "SubmitSales()">
                                 Checkout <span class="pe-7s-cart"></span>
                             </button><br><br>--}}
 
 
-							<div class="add-payment">
+                            <div class="add-payment">
 
-								<div class="payment-history">
-									<div v-for="(aPayment, index) in paymentList" class="card payment-log" style="margin: 10px">
-										<span class="pe-7s-close-circle" style="float:left" @click="RemovePayment(index)"></span>
-										<p style="float:left">@{{aPayment.payment_type}}</p>
-										<p style="float:right"><currency-input currency-symbol="$" :value="aPayment.paid_amount"></currency-input></p>
-										<br />
-									</div>
-								</div>
-								<div style="padding:20px">
+                                <div class="payment-history">
+                                    <div v-for="(aPayment, index) in paymentList" class="card payment-log" style="margin: 10px">
+                                        <span class="pe-7s-close-circle" style="float:left" @click="RemovePayment(index)"></span>
+                                        <p style="float:left">@{{aPayment.payment_type}}</p>
+                                        <p style="float:right"><currency-input currency-symbol="$" :value="aPayment.paid_amount"></currency-input></p>
+                                        <br />
+                                    </div>
+                                </div>
+                                <div style="padding:20px">
 
-									<div class="side-heading">Add Payment</div>
+                                    <div class="side-heading">Add Payment</div>
 
-									<a tabindex="-1" v-for="aPaymentType in paymentTypeList" href="javascript: void(0);" :class="GetPaymentButtonClass(aPaymentType)" @click="SetActivePaymentType(aPaymentType)" >
-										@{{aPaymentType}}</a>
+                                    <a tabindex="-1" v-for="aPaymentType in paymentTypeList" href="javascript: void(0);" :class="GetPaymentButtonClass(aPaymentType)" @click="SetActivePaymentType(aPaymentType)" >
+                                        @{{aPaymentType}}</a>
 
-								</div>
+                                </div>
 
-								<div v-show="activePaymentType=='Gift Card'" style="padding:20px" class="input-group">
-									<label>Gift Card Number</label>
-									<input class="form-control" type="text" name="gift_card_number"  id="gift_card_number" class="add-input numKeyboard form-control" v-model="gift_card_number" />
-								</div>
-								<div v-show="activePaymentType=='Loyalty Card'" style="padding:20px" class="input-group">
-									<label>Loyalty Card Number</label>
-									<input class="form-control" type="text" name="loyalty_card_number"  id="loyalty_card_number" class="add-input numKeyboard form-control" v-model="loyalty_card_number"/>
-								</div>
+                                <div v-show="activePaymentType=='Gift Card'" style="padding:20px" class="input-group">
+                                    <label>Gift Card Number</label>
+                                    <input class="form-control" type="text" name="gift_card_number"  id="gift_card_number" class="add-input numKeyboard form-control" v-model="gift_card_number" />
+                                </div>
+                                <div v-show="activePaymentType=='Loyalty Card'" style="padding:20px" class="input-group">
+                                    <label>Loyalty Card Number</label>
+                                    <input class="form-control" type="text" name="loyalty_card_number"  id="loyalty_card_number" class="add-input numKeyboard form-control" v-model="loyalty_card_number"/>
+                                </div>
 
-								<div class="input-group add-payment-form" style="padding:20px">
-									<input type="number" name="amount_tendered" value="0.00" id="amount_tendered" class="add-input numKeyboard form-control" v-model="amountTendered">
-									<span class="input-group-addon" style="background: #5cb85c; border-color: #4cae4c;" @click = "CompleteSales()">
+                                <div class="input-group add-payment-form" style="padding:20px">
+                                    <input type="number" name="amount_tendered" value="0.00" id="amount_tendered" class="add-input numKeyboard form-control" v-model="amountTendered">
+                                    <span class="input-group-addon" style="background: #5cb85c; border-color: #4cae4c;" @click = "CompleteSales()">
 										<a href="javascript:void(0)" class="hidden" id="add_payment_button" onclick = "addPayment()" style=" color:white;text-decoration:none;">Add Payment</a>
 										<a class="javascript:void(0)" id="finish_sale_alternate_button" style=" color:white;text-decoration:none;">Complete Sale</a>
 									</span>
 
 
-								</div>
+                                </div>
 
-								<div style="padding:20px">
-									<div class="side-heading">Comments</div>
-									<input type="text" name="comment" id="comment" class="form-control" />
-								</div>
+                                <div style="padding:20px">
+                                    <div class="side-heading">Comments</div>
+                                    <input type="text" name="comment" id="comment" class="form-control" />
+                                </div>
 
-							</div>
-						</div>
+                            </div>
+                        </div>
 
-						<form id = "saleSubmit" method = "post" action = "{{route('new_sale')}}">
+                        <form id = "saleSubmit" method = "post" action = "{{route('new_sale')}}">
 
-							<input type="hidden" name="_token" value="{{ csrf_token() }}">
-						</form>
-					</div></div>
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                        </form>
+                    </div></div>
 
-			</div>
-		</div>
-	</div>
+            </div>
+        </div>
+    </div>
 
 
-	<!-- Look up receipt Modal -->
-	<div id="look-up-receipt" class="modal fade" role="dialog">
-		<div class="modal-dialog">
+    <!-- Look up receipt Modal -->
+    <div id="look-up-receipt" class="modal fade" role="dialog">
+        <div class="modal-dialog">
 
-			<!-- Modal content-->
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
-					<h4 class="modal-title">Lookup Receipt</h4>
-				</div>
-				<div class="modal-body">
-					<input type = "text" class="form-control" name = "receipt-id" id = "receipt-id" placeholder="Sale Id">
-				</div>
-				<div class="modal-footer">
-					<button onclick ="lookUpReceipt()" type="button" class="btn btn-info" data-dismiss="modal">Look Up Receit</button>
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				</div>
-			</div>
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Lookup Receipt</h4>
+                </div>
+                <div class="modal-body">
+                    <input type = "text" class="form-control" name = "receipt-id" id = "receipt-id" placeholder="Sale Id">
+                </div>
+                <div class="modal-footer">
+                    <button onclick ="lookUpReceipt()" type="button" class="btn btn-info" data-dismiss="modal">Look Up Receit</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
 
-		</div>
-	</div>
+        </div>
+    </div>
 
-	<div class="modal fade" id="choose_counter_modal" role="dialog">
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h4 class="modal-title" id="chooseCounter">Choose Counter</h4>
-				</div>
-				<div class="modal-body">
-					<ul class="list-inline choose-counter-home">
+    <div class="modal fade" id="choose_counter_modal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="chooseCounter">Choose Counter</h4>
+                </div>
+                <div class="modal-body">
+                    <ul class="list-inline choose-counter-home">
 
-					</ul>
-				</div>
-			</div>
-		</div>
-	</div>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 
 @endsection
 
 @section('additionalJS')
+    <style>
+        .autocomplete-results {
+            position: absolute;
+            z-index: 1000;
+            margin: 0;
+            margin-top: 34px;
+            padding: 0;
 
+            border: 1px solid #eee;
+            list-style: none;
+            border-radius: 4px;
+            background-color: #fff;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+        }
 
-	<style>
-		.autocomplete-results {
-			position: absolute;
-			z-index: 1000;
-			margin: 0;
-			margin-top: 34px;
-			padding: 0;
+        .autocomplete-result {
+            list-style: none;
+            text-align: left;
+            padding: 4px 2px;
+            cursor: pointer;
+        }
 
-			border: 1px solid #eee;
-			list-style: none;
-			border-radius: 4px;
-			background-color: #fff;
-			box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
-		}
+        .autocomplete-result.is-active,.autocomplete-result.is-active a{
+            background-color: #3c8dbc;
+            color: #fff;
+        }
 
-		.autocomplete-result {
-			list-style: none;
-			text-align: left;
-			padding: 4px 2px;
-			cursor: pointer;
-		}
+    </style>
 
-		.autocomplete-result.is-active,.autocomplete-result.is-active a{
-			background-color: #3c8dbc;
-			color: #fff;
-		}
-
-	</style>
-
-	<script src="{{asset("js/vue/vue.min.js")}}"></script>
-	<script src="{{asset("js/axios/axios.min.js")}}"></script>
-	<script src="{{asset("js/lodash/lodash.min.js")}}"></script>
-	<!-- Vue Components ---->
-	@include('vue_components')
-
-	<script>
+    <script src="{{asset("js/vue/vue.min.js")}}"></script>
+    <script src="{{asset("js/axios/axios.min.js")}}"></script>
+    <script src="{{asset("js/lodash/lodash.min.js")}}"></script>
+    @include('vue_components')
+    <script>
         /**/
         //Grid component
         /**/
-        /********autocomplete starts*******/
+
         $(document).ready(function(e){
             $("body").addClass("sidebar-collapse");
-
         });
-
-
 
         var app = new Vue({
             el: '#app',
@@ -361,12 +358,12 @@
                 allDiscountAmountPercentage: 0,
                 saleFlatDiscountAmount: 0,
                 activePaymentType: "Cash",
-                paymentList: [],
+                paymentList:  <?php echo json_encode($payments)?>,
                 paymentTypeList: ['Cash', 'Check','Debit Card', 'Credit Card', 'Gift Card', 'Loyalty Card'],
                 amountTendered: 0.0,
                 gift_card_number: "",
                 loyalty_card_number: "",
-				sale_type: 1,
+                sale_type: 1,
                 flatDiscountApplied: false
             },
             methods:
@@ -395,8 +392,8 @@
 
                         this.GetItemPrice(selectedItem.item_id)
                             .then(function (response) {
-								let sale_type =  $("#sale-type").attr("data-selected-type");
-								let items_sold = ( sale_type == "sale") ? 1 : -1;
+                                let sale_type =  $("#sale-type").attr("data-selected-type");
+                                let items_sold = ( sale_type == "sale") ? 1 : -1;
                                 var itemDetails = {
                                     item_id : selectedItem.item_id,
                                     item_name : selectedItem.item_name,
@@ -405,9 +402,9 @@
                                     unit_price : response.data.price,
                                     cost_price: selectedItem.cost_price,
                                     items_sold : items_sold,
-									price_rule_id: selectedItem.price_rule_id
+                                    price_rule_id: selectedItem.price_rule_id
 
-								};
+                                };
 
 
                                 if(selectedItem.discountApplicable)
@@ -449,9 +446,10 @@
                     },
                     GetLineTotal: function(index)
                     {
-                        console.log("Test");
+
                         if(this.itemList[index].item_id==0)
                             return this.itemList[index].items_sold * this.itemList[index].unit_price ;
+                        console.log(this.itemList[index].items_sold * this.itemList[index].unit_price);
                         return this.itemList[index].items_sold * this.itemList[index].unit_price * (100 -  this.itemList[index].item_discount_percentage)/100;
                     },
                     SetActivePaymentType: function(activePaymentType)
@@ -500,9 +498,9 @@
 
                         this.SubmitSales(1);
                     },
-					ChooseItem: function(product) {
-						this.itemList.push(product);
-					},
+                    ChooseItem: function(product) {
+                        this.itemList.push(product);
+                    },
                     SubmitSales: function (status) {
                         let customerId = this.customer_id;
                         let subTotalAmount = this.GetSubtotal;
@@ -622,28 +620,29 @@
                                     comment: comment
                                 };
 
-                                axios.post("{{route('new_sale')}}",
+                                var edit_url = '{{ route("sale_edit", ":sale_id") }}';
+                                var edit_route = edit_url.replace(':sale_id', "<?php echo $sale_id ?>");
+
+                                axios.post(edit_route,
                                     {
                                         sale_info: saleInfo,
                                         product_infos: productInfos,
                                         payment_infos: paymentInfos
                                     }).then(function (response) {
 
-									var sale_id = response.data;
-
-									switch (status){
-										case 1:
-											var url = '{{ route("sale_receipt", ":sale_id") }}';
-											url = url.replace(':sale_id', sale_id);
-											window.location.href=url;
-											break;
-										case 2:
-										case 3:
-											var url = '{{ route("new_sale") }}';
-											window.location.href=url;
-											break;
-
-									}
+                                    var sale_id = response.data;
+                                    switch (status){
+                                        case 1:
+                                            var url = '{{ route("sale_receipt", ":sale_id") }}';
+                                            url = url.replace(':sale_id', sale_id);
+                                            window.location.href=url;
+                                            break;
+                                        case 2:
+                                        case 3:
+                                            var url = '{{ route("new_sale") }}';
+                                            window.location.href=url;
+                                            break;
+                                    }
 
                                 })
                                     .catch(function (error) {
@@ -715,7 +714,7 @@
                     {
                         this.paymentList.splice(index, 1);
                     },
-					convertToSale: function() {
+                    convertToSale: function() {
                         $('#bs-drp-sel-label').text("Sale");
                         $("#sale-type").attr("data-selected-type", "sale");
                         this.itemList.forEach(function(item){
@@ -723,15 +722,15 @@
                                 item.items_sold = (-1) * item.items_sold;
                         });
 
-					},
-					convertToReturn: function() {
+                    },
+                    convertToReturn: function() {
                         $('#bs-drp-sel-label').text("Return");
                         $("#sale-type").attr("data-selected-type", "return");
                         this.itemList.forEach(function(item){
                             if(item.items_sold>0)
-                            item.items_sold = (-1) * item.items_sold;
+                                item.items_sold = (-1) * item.items_sold;
                         });
-					}
+                    }
                 },
             watch:{
                 customer_id: function (newVal, oldValue) {
@@ -768,7 +767,7 @@
                             item_name : "Discount",
                             company_name : "",
                             item_quantity : 1,
-                            unit_price : (-1) * newVal,
+                            price : (-1) * newVal,
                             cost_price: (-1) * newVal,
                             items_sold : 1,
                         };
@@ -817,7 +816,9 @@
             },
             mounted() {
                 document.getElementById("item-names").focus();
+                console.log( <?php echo json_encode($payments)?>);
+                this.itemList = <?php echo json_encode($sales) ?>;
             }
         });
-	</script>
+    </script>
 @stop

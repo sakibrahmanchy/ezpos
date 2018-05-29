@@ -291,6 +291,7 @@ else
 <!-- Admin LTE -->
 <script src="{{ asset('js/adminlte.js') }}"></script>
 
+
 <!-- Chart JS -->
 <script src = "{{asset('js/Chart.min.js')}}" type="text/javascript" charset="UTF-8"></script>
 
@@ -322,6 +323,8 @@ else
 <script src={{ asset('js/randomColor.js')}}></script>
 <!-- Bootstrap Editables -->
 <script src="{{ asset('js/bootstrap-editable.js') }}"></script>
+<!-- Vue Components ---->
+<script src="{{ asset('js/vue_components.js') }}"></script>
 
 <script type="text/javascript">
 

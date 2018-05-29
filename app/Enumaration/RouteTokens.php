@@ -77,6 +77,7 @@ class RouteTokens
         "sale_list"=>"sale_add_update",
         "item_list_autocomplete"=>"sale_add_update",
         "sale_edit"=>"sale_add_update",
+        "sale_edit_vue"=>"sale_add_update",
         'download_sale_receipt'=>'sale_receipt',
         "pop_open_cash_drawer"=>"sale_add_update",
         "open_cash_register"=>"sale_add_update",
@@ -87,6 +88,9 @@ class RouteTokens
         "loyalty_card_use"=>"sale_add_update",
         "print_register_log_summary" => "sale_add_update",
         "print_register_log_details" => "sale_add_update",
+        "categories_by_level" => "sale_add_update",
+        "category_parent" =>"sale_add_update",
+        "products_by_categories" => "sale_add_update",
 
         "report_category_graphical"=>"report_categories",
         "report_category_ajax"=>"report_categories",

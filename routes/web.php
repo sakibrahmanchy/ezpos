@@ -117,6 +117,7 @@ Route::group(['middleware' => ['admin']], function () {
     route::get('sale/suspended','SaleController@GetSuspendedSale')->name('suspended_sale_list')->middleware('auth');
     route::get('/sale/receipt/{sale_id}','SaleController@GetSaleReceipt')->name('sale_receipt')->middleware('auth');
     route::get('sale/edit/{sale_id}','SaleController@EditSaleGet')->name('sale_edit')->middleware('auth');
+    route::get('sale/edit/vue/{sale_id}','SaleController@EditSaleVueGet')->name('sale_edit_vue')->middleware('auth');
     route::post('sale/edit/{sale_id}','SaleController@EditSalePost')->name('sale_edit')->middleware('auth');
     route::get('sale/show_last_sale','SaleController@showLastSaleReceipt')->name('sale_last_receipt')->middleware('auth');
     route::get('sale/suspended/list','SaleController@GetSuspendedSales')->name('suspended_sale_list')->middleware('auth');
@@ -223,7 +224,9 @@ Route::group(['middleware' => ['admin']], function () {
     route::post('category/new','CategoryController@AddCategory')->name('new_category')->middleware('auth');
     route::post('category/edit','CategoryController@EditCategory')->name('edit_category')->middleware('auth');
     route::post('category/delete','CategoryController@DeleteCategory')->name('delete_category')->middleware('auth');
-
+    route::get('category/find','CategoryController@FindCategoriesByLevel')->name('categories_by_level')->middleware('auth');
+    route::get('category/parent/find','CategoryController@FindCategoryParent')->name('category_parent')->middleware('auth');
+    route::get('category/products/find','CategoryController@FetchProductsInCategory')->name('products_by_categories')->middleware('auth');
     /*route::get('tag/names','TagController@GetTags')->name('tag_names')->middleware('auth');
     route::get('tag/list','TagController@GetTagList')->name('tag_list')->middleware('auth');
     route::post('tag/new','TagController@AddTag')->name('new_tag')->middleware('auth');
