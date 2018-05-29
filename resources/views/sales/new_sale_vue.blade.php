@@ -33,7 +33,7 @@
 
 					<div class="input-group-btn bs-dropdown-to-select-group">
 						<button type="button" class="btn btn-primary dropdown-toggle as-is bs-dropdown-to-select" data-toggle="dropdown">
-							<span data-bind="bs-drp-sel-label">Sale</span>
+							<span id="bs-drp-sel-label" data-bind="bs-drp-sel-label">Sale</span>
 							<span class="caret"></span>
 							<span class="sr-only">Toggle Dropdown</span>
 						</button>
@@ -340,7 +340,47 @@
         /********autocomplete starts*******/
         $(document).ready(function(e){
             $("body").addClass("sidebar-collapse");
+
         });
+
+        function convertToSale(){
+
+            $('#bs-drp-sel-label').text("Sale");
+//            $(".quantity").each(function(index){
+//
+//                var old_value = this.value;
+//                if(old_value<0){
+//                    this.value = ((-1) * this.value);
+//                }
+//
+//                var product_id = this.id.replace(/[^0-9\.-]+/g, "");
+//                product_id = product_id.substr(1,product_id.length);
+//                addItemPriceToRegister(product_id);
+//
+//
+//            });
+
+
+        }
+
+        function convertToReturn() {
+
+            $('#bs-drp-sel-label').text("Return");
+            console.log(  $('#bs-drp-sel-label').text());
+            $("#sale-type").attr("data-selected-type", "return");
+            console.log( $("#sale-type").attr("data-selected-type"));
+            $(".quantity").each(function (index) {
+
+                var old_value = this.value;
+                if (old_value >= 0)
+                    this.value = (-1) * this.value;
+                var product_id = this.id.replace(/[^0-9\.-]+/g, "");
+                product_id = product_id.substr(1, product_id.length);
+                addItemPriceToRegister(product_id);
+
+            });
+
+        }
 
         Vue.component('auto-complete', {
             template: `<span>
@@ -603,6 +643,7 @@
                 amountTendered: 0.0,
                 gift_card_number: "",
                 loyalty_card_number: "",
+				sale_type: 1,
                 flatDiscountApplied: false
             },
             methods:
