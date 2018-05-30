@@ -327,8 +327,14 @@ class CashRegisterController extends Controller
         $total_additions = CashRegisterTransaction::where('cash_register_id',$cashRegisterId)->where('transaction_type',CashRegisterTransactionType::$ADD_BALANCE)->sum('amount');
         $total_subtractions = CashRegisterTransaction::where('cash_register_id',$cashRegisterId)->where('transaction_type',CashRegisterTransactionType::$SUBTRACT_BALANCE)->sum('amount');
         $cash_sales = CashRegisterTransaction::where("cash_register_id",$cashRegister->id)->where('transaction_type',CashRegisterTransactionType::$CASH_SALES)->sum('amount');
-        $difference = $cashRegister->opening_balance - ($cashRegister->closing_balance + $cash_sales + $total_additions + $total_subtractions);
+        $difference =  ($cashRegister->closing_balance - $cashRegister->opening_balance) - ( $cash_sales + $total_additions - $total_subtractions);
 
+		$changedDue = DB::table('sales')->where('cash_register_id', $cashRegisterId)
+									->where( 'due', '<', 0 )
+									->sum('due');
+		$changedDue = -$changedDue;
+		$expectedClosingSales = $cashRegister->opening_balance + ($cash_sales - $changedDue) +  ($total_additions - $total_subtractions);
+		
         $paymentAmountSql = "select payment_type, sum(paid_amount) as total_paid_amount from payment_logs where id in ( select payment_log_id from payment_log_sale where sale_id in ( select id from sales where cash_register_id=? ) ) group by payment_type";
         $paymentAmountTotalList = DB::select( $paymentAmountSql, [$cashRegisterId] );
         
@@ -378,10 +384,15 @@ class CashRegisterController extends Controller
             $printer->text( new FooterItem('Shift End:', $cashRegister->closing_time ));
             $printer->text( new FooterItem('Opening Sales:', '$'.number_format( $cashRegister->opening_balance, 2) ));
             $printer->text( new FooterItem('Closing Sales:', '$'.number_format( $cashRegister->closing_balance, 2) ));
+			
             $printer->text( new FooterItem('Cash Sales:', '$'.number_format( $cash_sales, 2) ));
+			$printer->text( new FooterItem('Changed Amount:', '$'.number_format( $changedDue, 2) ));
+			
             $printer->text( new FooterItem('Cash Additions:', '$'.number_format( $total_additions, 2) ));
             $printer->text( new FooterItem('Cash Subtractions:', '$'.number_format( $total_subtractions, 2) ));
-            $printer->text( new FooterItem('Difference:', '$'.number_format( $difference, 2) ));
+			
+			$printer->text( new FooterItem('Expected Closing Sales:', '$'.number_format( $expectedClosingSales, 2) ));
+            //$printer->text( new FooterItem('Difference:', '$'.number_format( $difference, 2) ));
 
             $printer->feed();
             $printer->feed();
