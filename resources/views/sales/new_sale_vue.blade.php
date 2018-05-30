@@ -25,7 +25,7 @@
 	{{--Sale config--}}
 
 	<div id="app" class="row">
-		<file_explorer @choose-item="ChooseItem"></file_explorer>
+		<file_explorer @choose-item="ChooseItem" :shown="shown"></file_explorer>
 		<div class="col-sm-7" >
 			<div class = "search section">
 				<div class="input-group">
@@ -43,6 +43,7 @@
 							<li data-value="2"><a @click="convertToReturn()" href="#">Return</a></li>{{--
                             <li data-value="3"><a href="#">Store Account Payment</a></li>--}}
 						</ul>
+						<button class="btn btn-primary" @click="shown = !shown" >Show Grid</button>
 					</div>
 				</div>
 
@@ -354,6 +355,7 @@
             data: {
                 itemList: [],
                 auto_select: true,
+				shown: false,
                 customer_id: 0,
                 options: [],
                 tax: {{$tax_rate}},
@@ -449,7 +451,7 @@
                     },
                     GetLineTotal: function(index)
                     {
-                        console.log("Test");
+
                         if(this.itemList[index].item_id==0)
                             return this.itemList[index].items_sold * this.itemList[index].unit_price ;
                         return this.itemList[index].items_sold * this.itemList[index].unit_price * (100 -  this.itemList[index].item_discount_percentage)/100;
@@ -501,7 +503,22 @@
                         this.SubmitSales(1);
                     },
 					ChooseItem: function(product) {
-						this.itemList.push(product);
+
+                        var found = false;
+                        for(var index=0;index<this.itemList.length; index++)
+                        {
+                            if(this.itemList[index].item_id==product.item_id)
+                            {
+                                found = true;
+                                this.itemList[index].items_sold++;
+                            }
+                        }
+
+                        if(found)
+                            return;
+
+                        this.itemList.push(product);
+
 					},
                     SubmitSales: function (status) {
                         let customerId = this.customer_id;

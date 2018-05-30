@@ -4,32 +4,39 @@
 
     Vue.component('file_explorer',
         {
-            template: `<div>
+            template: `
+                     <transition name="fade">
+                    <div v-show="shown">
                      <ul style="list-style-type: none;">
-						<label v-if="currentParent!==0" style=" cursor: pointer;" @click="SetParent(previousParent)">Go Back</label>
-						
+						<label v-if="currentParent!==0" style=" cursor: pointer;" @click="SetParent(previousParent)">Go Back</label><br>
+
 						<li  class="folder" v-for="(aChild, index) in children" v-if="aChild.type=='category' && index>=start_index && index<=end_index" @click="SetParent(aChild.id)">
-								@{{ aChild.category_name }}
+								<i class="fa fa-folder"></i> @{{ aChild.category_name }}
 						</li>
 						<li class="product-icon " v-for="(aChild, index) in children" v-if="aChild.type=='product' && index>=start_index && index<=end_index" @click="ChooseProduct(aChild)">@{{aChild.item_name}}($ @{{ aChild.unit_price }})</li>
                      </ul>
-					 
-					 <ul v-if="total_page>0">
-						<li v-for="index in total_page" @click="ShowPageItem(index)">@{{index}}</li>
-					 </ul>
-                </div>`,
+
+                     <ul class="pagination" style="margin-top:0px" v-if="total_page>0" style="margin-left: 40px">
+                         <li class="page-item"><a class="page-link" @click="ShowPageItem(current_page-1)" href="#"><</a></li>
+                        <li class="page-item"  v-for="index in total_page" @click="ShowPageItem(index)" v-bind:class="{active:index==current_page}"><a class="page-link" href="#">@{{index}}</a></li>
+                        <li class="page-item"><a @click="ShowPageItem(current_page+1)" class="page-link" href="#">></a></li>
+                     </ul>
+
+                </div>
+                </transition>`,
+            props: ['shown'],
             data: function(){
                 return {
                     /*categoryList: [],
                     productList: [],*/
-					children: [],
+                    children: [],
                     currentParent: 0,
                     previousParent: 0,
-					currentPage: -1,
-					total_page: -1,
-					per_page_item: 10,
-					start_index: 0,
-					end_index: 0,
+                    current_page: -1,
+                    total_page: -1,
+                    per_page_item: 10,
+                    start_index: 0,
+                    end_index: 0,
                 }
             },
             mounted: function () {
@@ -48,16 +55,17 @@
                         axios.get("{{route('products_by_categories')}}"+"?category_id="+category_id,)
                             .then(function (response) {
                                 response.data.data.forEach(function(product) {
+
                                     let productDetails = {
-											type: 'product',
-                                            item_id : product.id,
-                                            item_name : product.item_name,
-                                            company_name : product.company_name,
-                                            item_quantity : product.item_quantity,
-                                            unit_price : product.selling_price,
-                                            cost_price: product.cost_price,
-                                            items_sold : 1,
-                                            price_rule_id: product.price_rule_id
+                                        type: 'product',
+                                        item_id : product.item_id,
+                                        item_name : product.item_name,
+                                        company_name : product.company_name,
+                                        item_quantity : product.item_quantity,
+                                        unit_price : product.selling_price,
+                                        cost_price: product.cost_price,
+                                        items_sold : 1,
+                                        price_rule_id: product.price_rule_id
                                     };
                                     if(product.discountApplicable)
                                     {
@@ -74,8 +82,8 @@
                                     }
                                     that.children.push(productDetails);
                                 });
-								that.total_page = Math.ceil(  that.children.length/that.per_page_item );
-								that.ShowPageItem(1);
+                                that.total_page = Math.ceil(  that.children.length/that.per_page_item );
+                                that.ShowPageItem(1);
                             })
                             .catch(function (error) {
                                 console.log(error);
@@ -110,26 +118,27 @@
                                 //this.categoryList = response.data.data;
                                 response.data.data.forEach(function(category) {
                                     let categoryDetails = {
-										type: 'category',
+                                        type: 'category',
                                         category_name: category.category_name,
                                         parent: category.parent,
                                         id: category.id
                                     };
                                     that.children.push(categoryDetails);
                                 });
-								that.total_page = Math.ceil(  that.children.length/that.per_page_item );
-								that.ShowPageItem(1);
+                                that.total_page = Math.ceil(  that.children.length/that.per_page_item );
+                                that.ShowPageItem(1);
                             })
                             .catch(function (error) {
                                 console.log(error);
                             });
                     },
-					ShowPageItem: function(index)
-					{
-						this.currentPage = index;
-						this.start_index = (this.currentPage-1) * this.per_page_item;
-						this.end_index = this.currentPage * this.per_page_item - 1;
-					}
+                    ShowPageItem: function(index)
+                    {
+                        if(index>this.total_page || index <1 ) return;
+                        this.current_page = index;
+                        this.start_index = (this.current_page-1) * this.per_page_item;
+                        this.end_index = this.current_page * this.per_page_item - 1;
+                    }
                 }
         });
 
@@ -378,7 +387,8 @@
         watch: {
             value:function(value)
             {
-                this.localValue = this.value.toFixed(2)
+
+                this.localValue = Number(this.value).toFixed(2)
             }
         }
     });
