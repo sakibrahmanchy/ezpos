@@ -55,8 +55,9 @@
                             <li class="list-group-item">Cash Sales:  <span class="pull-right">${{ number_format($sales, 2) }}</span></li>
                             <li class="list-group-item">Cash additions [<a href="">Edit</a>]:  <span class="pull-right">${{ number_format($additions, 2) }} </span></li>
                             <li class="list-group-item">Cash subtractions [<a href="">Edit</a>]:  <span class="pull-right">${{ number_format($subtractions,2)  }} </span></li>
+                            <li class="list-group-item">Change Due [<a href="">Edit</a>]:  <span class="pull-right">${{ number_format($change_due,2)  }} </span></li>
 
-                            <li class="list-group-item active">You should have  in the register. <span class="pull-right total-amount">{{ number_format($openingBalance + $sales + $additions+ $subtractions, 2) }}</span></li>
+                            <li class="list-group-item active">You should have  in the register. <span class="pull-right total-amount">{{ number_format($openingBalance + $sales + $additions+ $subtractions-$change_due, 2) }}</span></li>
                         </ul>
 
 
@@ -67,7 +68,7 @@
 
 
                                 <div class="form-group controll-croups1">
-                                    <label for="closing_amount" class="control-label">Closing amount:</label>											<input type="text" name="closing_amount" value="{{ $openingBalance + $sales + $additions- $subtractions }}" id="closing_amount" class="form-control valid">
+                                    <label for="closing_amount" class="control-label">Closing amount:</label>											<input type="text" name="closing_amount" value="{{ $openingBalance + $sales + $additions- $subtractions-$change_due }}" id="closing_amount" class="form-control valid">
                                 </div>
                                 <div class="form-group controll-croups1">
                                     <label for="notes" class="control-label">Notes:</label>											<textarea name="notes" cols="40" rows="10" id="notes" class="form-control text-area"></textarea>

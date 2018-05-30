@@ -22,14 +22,28 @@ class Item {
         $unit_price_cols = 10;
         $total_price_cols = 10;
 
+        $name = wordwrap($this->name . "\n",18,"\n",false);
+        $name_array = explode("\n",$name);
+
 
         $quantity_text = str_pad($this -> quantity, $quantity_cols) ;
-        $name_text = str_pad($this -> name, $name_cols) ;
+        $name_text = str_pad($name_array[0], $name_cols) ;
         $unit_price_text = str_pad($this -> unit_price, $unit_price_cols, ' ', STR_PAD_LEFT);
         $total_price_text = str_pad($this -> total_price,
             $total_price_cols, ' ', STR_PAD_LEFT);
 
-        return "$quantity_text$name_text$unit_price_text$total_price_text\n";
+        $textToReturn="$quantity_text$name_text$unit_price_text$total_price_text\n";
+
+
+        for($i =1;$i<sizeof($name_array);$i++) {
+            if($name_array[$i]!=""){
+                $textToReturn.=str_pad("    ",4);
+                $textToReturn.=str_pad($name_array[$i],10);
+                $textToReturn.="\n";
+            }
+        }
+//        dump($textToReturn);
+        return $textToReturn;
     }
 }
 ?>

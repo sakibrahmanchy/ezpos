@@ -2,6 +2,7 @@
     <table class="table table-bordered table-striped table-reports tablesorter stacktable small-only">
         <thead>
         <tr>
+            <th align="left" class="header">Register Log Id</th>
             <th align="left" class="header">Counter</th>
             <th align="left" class="header">Open Employee</th>
             <th align="left" class="header">Close Employee</th>
@@ -35,6 +36,7 @@
                 $difference = ($aCashRegister->closing_balance) - ($aCashRegister->opening_balance + $saleSum + $additionSum - $subtractionSum);
             @endphp
             <tr>
+                <td><a href="{{route('cash_register_log_details',["register_id"=>$aCashRegister->id])}}">{{ $aCashRegister->id }}</a></td>
                 <td>{{ $aCashRegister->Counter->name }}</td>
                 <td>{{ $aCashRegister->OpenedByUser->name }}</td>
                 <td>{{ $aCashRegister->ClosedByUser->name }}</td>

@@ -393,7 +393,8 @@ class SaleController extends Controller
         try {
             $settings = SettingsSingleton::get();
 
-            $counter = $sale->counter;
+            $counter_id = Cookie::get('counter_id',null);
+            $counter = Counter::where("id",$counter_id)->first();
             $ip_address = $counter->printer_ip;
             $port = $counter->printer_port;
 
@@ -453,6 +454,7 @@ class SaleController extends Controller
                     $item_name = $anItem->item_name.'@'.$anItem->pivot->unit_price.'/'.$anItem->item_size;
                 else
                   $item_name = $anItem->item_name;
+
                 $toPrint = new \App\Model\Printer\Item(round($anItem->pivot->quantity), $item_name, $anItem->pivot->unit_price , $anItem->pivot->total_price);
                 array_push($items, $toPrint);
             }

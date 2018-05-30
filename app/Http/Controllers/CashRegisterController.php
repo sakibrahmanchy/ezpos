@@ -107,11 +107,14 @@ class CashRegisterController extends Controller
         $total_additions = $cashRegister->getTotalAddedAmountInActiveRegister();
         $total_subtractions = $cashRegister->getTotalSubtractedAmountInActiveRegister();
         $cash_sales = $cashRegister->getTotalSaleInCurrentRegister();
-
+        $changedDue = DB::table('sales')->where('cash_register_id', $cashRegister->getCurrentActiveRegister()->id)
+            ->where( 'due', '<', 0 )
+            ->sum('due');
+        $changedDue = -$changedDue;
 
         $denominations = CurrencyDenomination::all();
         return view('cash_registers.close_cash_register',["denominations"=>$denominations,"openingBalance"=>$openingBalance,
-            "additions"=>$total_additions,"subtractions"=>$total_subtractions,"sales"=>$cash_sales]);
+            "additions"=>$total_additions,"subtractions"=>$total_subtractions,"sales"=>$cash_sales,"change_due"=>$changedDue]);
 
     }
 
@@ -137,9 +140,46 @@ class CashRegisterController extends Controller
         $cash_sales = CashRegisterTransaction::where("cash_register_id",$cashRegister->id)->where('transaction_type',CashRegisterTransactionType::$CASH_SALES)->sum('amount');
         $cashRegisterTransactions = $cashRegister->CashRegisterTransactions;
 
+        $changedDue = DB::table('sales')->where('cash_register_id', $cashRegisterId)
+            ->where( 'due', '<', 0 )
+            ->sum('due');
+        $changedDue = -$changedDue;
+        $expectedClosingSales = $cashRegister->opening_balance + ($cash_sales - $changedDue) +  ($total_additions - $total_subtractions);
+
+        $paymentAmountSql = "select payment_type, sum(paid_amount) as total_paid_amount from payment_logs where id in ( select payment_log_id from payment_log_sale where sale_id in ( select id from sales where cash_register_id=? ) ) group by payment_type";
+        $paymentAmountTotalList = DB::select( $paymentAmountSql, [$cashRegisterId] );
+
+        $checkTotal = 0;
+        $creditCardAmountTotal = 0;
+        $debitCardAmountTotal = 0;
+        $giftCardAmountTotal = 0;
+        $loyalityAmountTotal = 0;
+        foreach( $paymentAmountTotalList as $aPaymentTotal )
+        {
+            if($aPaymentTotal->payment_type=='Check')
+                $checkTotal = $aPaymentTotal->total_paid_amount;
+            else if($aPaymentTotal->payment_type=='Credit Card')
+                $creditCardAmountTotal = $aPaymentTotal->total_paid_amount;
+            else if($aPaymentTotal->payment_type=='Debit Card')
+                $debitCardAmountTotal = $aPaymentTotal->total_paid_amount;
+            else if($aPaymentTotal->payment_type=='Gift Card')
+                $giftCardAmountTotal = $aPaymentTotal->total_paid_amount;
+            else if($aPaymentTotal->payment_type=='Loyalty Card')
+                $loyalityAmountTotal = $aPaymentTotal->total_paid_amount;
+        }
+
+        $paymentInfo = array(
+            "checkTotal" => $checkTotal,
+            "creditCardTotal" => $creditCardAmountTotal,
+            "debitCardTotal" => $debitCardAmountTotal,
+            "giftCardTotal" => $giftCardAmountTotal,
+            "loyalityTotal" => $loyalityAmountTotal
+        );
+
         return view('cash_registers.cash_register_log_details',["register"=>$cashRegister,
                 "transactions"=>$cashRegisterTransactions,"opened_by"=>$openedBy,"closed_by"=>$closedBy,
-            "additions"=>$total_additions,"subtractions"=>$total_subtractions,"sales"=>$cash_sales]);
+            "additions"=>$total_additions,"subtractions"=>$total_subtractions,"sales"=>$cash_sales,
+            "paymentInfo"=>$paymentInfo, "changedDue"=>$changedDue]);
 
 
         //dd($cashRegisterTotal);

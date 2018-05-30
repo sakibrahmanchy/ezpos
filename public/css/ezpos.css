@@ -422,11 +422,12 @@ mark{background:#0000cc;color:white;}
     border-width: 1px;
     border-color: #e8ebf1;
     border-style: solid;
-    display:inline-block;
+    display:block;
     padding-left: 5px;
     font-size: 15px;
     text-align: center;
     color:black;
+    float:left;
 }
 
 .folder:hover {
@@ -447,12 +448,12 @@ mark{background:#0000cc;color:white;}
     border-width: 1px;
     border-color: #e8ebf1;
     border-style: solid;
-    display:inline-block;
+    display:block;
     padding-left: 5px;
     font-size: 15px;
     text-align: center;
     color:white;
-
+    float:left;
 }
 
 .product-icon:hover {
@@ -461,7 +462,7 @@ mark{background:#0000cc;color:white;}
 }
 
 .fade-enter-active, .fade-leave-active {
-    transition: opacity .5s;
+    transition: opacity .2s;
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
     opacity: 0;

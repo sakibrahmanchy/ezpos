@@ -393,4 +393,59 @@
         }
     });
     /*****************************************************/
+
+
+
+
+    /***************************************Counter Change*****************/
+
+    function selectCounter(){
+
+        @if(\Illuminate\Support\Facades\Cookie::get('counter_id')==null)
+        $("#choose_counter_modal").modal();
+        $.ajax({
+            url: "{{route('counter_list_ajax')}}",
+            type:"get",
+            dataType: "json",
+            success: function(response){
+                $(".choose-counter-home").html("");
+                counters = response.counters;
+                counters.forEach(function(counter){
+                    var url = '{{ route("counter_set", ":counter_id") }}';
+                    url = url.replace(':counter_id', counter.id);
+                    $(".choose-counter-home").append('<li><a class="set_employee_current_counter_after_login" href="'+url+'">'+counter.name+'</a></li>');
+                });
+            },
+            error: function () {
+
+            }
+        })
+        @endif
+    }
+
+    function changeCounter(){
+
+        $("#choose_counter_modal").modal();
+        $.ajax({
+            url: "{{route('counter_list_ajax')}}",
+            type:"get",
+            dataType: "json",
+            success: function(response){
+                $(".choose-counter-home").html("");
+                counters = response.counters;
+                counters.forEach(function(counter){
+                    var url = '{{ route("counter_set", ":counter_id") }}';
+                    url = url.replace(':counter_id', counter.id);
+                    $(".choose-counter-home").append('<li><a class="set_employee_current_counter_after_login" href="'+url+'">'+counter.name+'</a></li>');
+                });
+            },
+            error: function () {
+
+            }
+        })
+    }
+
+
+
+    /******************************Counter Change ****************************/
 </script>

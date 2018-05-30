@@ -33,8 +33,8 @@
 					<auto-complete @set-autocomplete-result="setAutoCompleteResult" :auto-select="auto_select"></auto-complete>
 
 					<div class="input-group-btn bs-dropdown-to-select-group">
-						<button type="button" class="btn btn-primary dropdown-toggle as-is bs-dropdown-to-select" data-toggle="dropdown">
-							<span id="bs-drp-sel-label" data-bind="bs-drp-sel-label">Sale</span>
+						<button type="button" class="btn btn-success dropdown-toggle as-is bs-dropdown-to-select" data-toggle="dropdown">
+							<span id="bs-drp-sel-label" data-bind="bs-drp-sel-label"><i class="fa fa-shopping-cart" style="margin-right: 5px"></i>Sale</span>
 							<span class="caret"></span>
 							<span class="sr-only">Toggle Dropdown</span>
 						</button>
@@ -43,7 +43,7 @@
 							<li data-value="2"><a @click="convertToReturn()" href="#">Return</a></li>{{--
                             <li data-value="3"><a href="#">Store Account Payment</a></li>--}}
 						</ul>
-						<button class="btn btn-primary" @click="shown = !shown" >Show Grid</button>
+						<button class="btn btn-primary" @click="shown = !shown" ><i class="fa fa-th" style="margin-right: 5px"></i>  Show Grid</button>
 					</div>
 				</div>
 
@@ -837,5 +837,9 @@
                 document.getElementById("item-names").focus();
             }
         });
+
+
+
+
 	</script>
 @stop

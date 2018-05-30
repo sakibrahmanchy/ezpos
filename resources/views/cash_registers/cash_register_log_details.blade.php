@@ -26,6 +26,12 @@
                                 <li class="list-group-item">Open Amount: <strong class="pull-right">${{ number_format( $register->opening_balance, 2) }}</strong></li>
                                 <li class="list-group-item">Close Amount: <strong class="pull-right">${{ number_format( $register->closing_balance, 2) }}</strong></li>
                                 <li class="list-group-item">Cash Sales: <strong class="pull-right">${{ number_format($sales, 2) }}</strong></li>
+                                <li class="list-group-item">Check Sales: <strong class="pull-right">${{ number_format($paymentInfo["checkTotal"], 2) }}</strong></li>
+                                <li class="list-group-item">Credit Card Sales: <strong class="pull-right">${{ number_format($paymentInfo["creditCardTotal"], 2) }}</strong></li>
+                                <li class="list-group-item">Debit Card Sales: <strong class="pull-right">${{ number_format($paymentInfo["debitCardTotal"], 2) }}</strong></li>
+                                <li class="list-group-item">Gift Card Sales: <strong class="pull-right">${{ number_format($paymentInfo["giftCardTotal"], 2) }}</strong></li>
+                                <li class="list-group-item">Loyalty Card Sales: <strong class="pull-right">${{ number_format($paymentInfo["loyalityTotal"], 2) }}</strong></li>
+                                <li class="list-group-item">Change Due: <strong class="pull-right">${{ number_format($changedDue, 2) }}</strong></li>
                                 <li class="list-group-item">Cash additions: <strong class="pull-right">${{ number_format($additions, 2) }}</strong></li>
                                 <li class="list-group-item">Cash subtractions: <strong class="pull-right">${{ number_format($subtractions, 2) }}</strong></li>
                                 <li class="list-group-item">Difference: <strong class="pull-right">{{ $difference >= 0 ? "$".number_format($difference,2) : "-$".number_format((-1) * $difference,2) }}</strong></li>
