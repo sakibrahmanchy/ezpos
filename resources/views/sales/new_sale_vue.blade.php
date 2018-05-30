@@ -806,6 +806,7 @@
                         totalTendered += Number(this.paymentList[index].paid_amount);
                     }
                     var due = this.GetTotalSale - totalTendered;
+                    due = due.toFixed(2);
                     if(due>0)
                         this.amountTendered = due;
                     else
