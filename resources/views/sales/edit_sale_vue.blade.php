@@ -29,7 +29,7 @@
     </div>
 
     <div id="app" class="row">
-        <file_explorer @choose-item="ChooseItem"></file_explorer>
+        <file_explorer @choose-item="ChooseItem" :shown="shown"></file_explorer>
         <div class="col-sm-7" >
             <div class = "search section">
                 <div class="input-group">
@@ -47,6 +47,7 @@
                             <li data-value="2"><a @click="convertToReturn()" href="#">Return</a></li>{{--
                             <li data-value="3"><a href="#">Store Account Payment</a></li>--}}
                         </ul>
+                        <button class="btn btn-primary" @click="shown = !shown" >Show Grid</button>
                     </div>
                 </div>
 
@@ -351,6 +352,7 @@
             data: {
                 itemList: [],
                 auto_select: true,
+                shown: false,
                 customer_id: 0,
                 options: [],
                 tax: {{$tax_rate}},
