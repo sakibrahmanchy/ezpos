@@ -15,7 +15,7 @@
 						</li>
 						<li class="product-icon " v-for="(aChild, index) in children" v-if="aChild.type=='product' && index>=start_index && index<=end_index" @click="ChooseProduct(aChild)">@{{aChild.item_name}}($ @{{ aChild.unit_price }})</li>
                      </ul>
-
+						<div style="clear: both;"></div>
                      <ul class="pagination" style="margin-top:0px" v-if="total_page>0" style="margin-left: 40px">
                          <li class="page-item"><a class="page-link" @click="ShowPageItem(current_page-1)" href="#"><</a></li>
                         <li class="page-item"  v-for="index in total_page" @click="ShowPageItem(index)" v-bind:class="{active:index==current_page}"><a class="page-link" href="#">@{{index}}</a></li>
