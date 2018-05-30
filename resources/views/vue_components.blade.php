@@ -6,17 +6,30 @@
         {
             template: `<div>
                      <ul style="list-style-type: none;">
-                      <label v-if="currentParent!==0" style=" cursor: pointer;" @click="SetParent(previousParent)">Go Back</label>
-                      <li  class="folder" v-for="aCategory in categoryList" @click="SetParent(aCategory.id)">@{{ aCategory.category_name }}</li>
-                      <li class="product-icon " v-for="aProduct in productList" @click="ChooseProduct(aProduct)">@{{aProduct.item_name}}($ @{{ aProduct.unit_price }})</li>
+						<label v-if="currentParent!==0" style=" cursor: pointer;" @click="SetParent(previousParent)">Go Back</label>
+						
+						<li  class="folder" v-for="(aChild, index) in children" v-if="aChild.type=='category' && index>=start_index && index<=end_index" @click="SetParent(aChild.id)">
+								@{{ aChild.category_name }}
+						</li>
+						<li class="product-icon " v-for="(aChild, index) in children" v-if="aChild.type=='product' && index>=start_index && index<=end_index" @click="ChooseProduct(aChild)">@{{aChild.item_name}}($ @{{ aChild.unit_price }})</li>
                      </ul>
+					 
+					 <ul v-if="total_page>0">
+						<li v-for="index in total_page" @click="ShowPageItem(index)">@{{index}}</li>
+					 </ul>
                 </div>`,
             data: function(){
                 return {
-                    categoryList: [],
-                    productList: [],
+                    /*categoryList: [],
+                    productList: [],*/
+					children: [],
                     currentParent: 0,
-                    previousParent: 0
+                    previousParent: 0,
+					currentPage: -1,
+					total_page: -1,
+					per_page_item: 10,
+					start_index: 0,
+					end_index: 0,
                 }
             },
             mounted: function () {
@@ -31,11 +44,12 @@
                     },
                     FetchProducts: function(category_id){
                         var that = this;
-                        this.productList = [];
+                        //this.children = [];
                         axios.get("{{route('products_by_categories')}}"+"?category_id="+category_id,)
                             .then(function (response) {
                                 response.data.data.forEach(function(product) {
                                     let productDetails = {
+											type: 'product',
                                             item_id : product.id,
                                             item_name : product.item_name,
                                             company_name : product.company_name,
@@ -58,8 +72,10 @@
                                         productDetails.discountApplicable = false;
                                         productDetails.item_discount_percentage = 0;
                                     }
-                                    that.productList.push(productDetails);
+                                    that.children.push(productDetails);
                                 });
+								that.total_page = Math.ceil(  that.children.length/that.per_page_item );
+								that.ShowPageItem(1);
                             })
                             .catch(function (error) {
                                 console.log(error);
@@ -77,7 +93,7 @@
                     },
                     SetParent: function(categoryLevel) {
                         var that = this;
-                        this.categoryList = [];
+                        this.children = [];
                         this.currentParent = categoryLevel;
                         if(categoryLevel!=0) {
                             this.FetchParent(this.currentParent).then((parent) => {
@@ -86,7 +102,6 @@
                         }
                         this.FetchCategories(categoryLevel);
                         this.FetchProducts(categoryLevel);
-
                     },
                     FetchCategories: function(categoryLevel){
                         var that = this;
@@ -95,18 +110,26 @@
                                 //this.categoryList = response.data.data;
                                 response.data.data.forEach(function(category) {
                                     let categoryDetails = {
+										type: 'category',
                                         category_name: category.category_name,
                                         parent: category.parent,
                                         id: category.id
                                     };
-                                    that.categoryList.push(categoryDetails);
+                                    that.children.push(categoryDetails);
                                 });
-
+								that.total_page = Math.ceil(  that.children.length/that.per_page_item );
+								that.ShowPageItem(1);
                             })
                             .catch(function (error) {
                                 console.log(error);
                             });
-                    }
+                    },
+					ShowPageItem: function(index)
+					{
+						this.currentPage = index;
+						this.start_index = (this.currentPage-1) * this.per_page_item;
+						this.end_index = this.currentPage * this.per_page_item - 1;
+					}
                 }
         });
 
