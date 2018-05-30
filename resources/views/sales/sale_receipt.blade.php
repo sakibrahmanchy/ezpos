@@ -18,6 +18,8 @@
                             <a  href="{{route('sale_edit',['sale_id'=>$sale->id])}}" class="btn btn-primary">Edit Sale</a>
                             <a  href="{{route('print_sale',['sale_id'=>$sale->id, "print_type"=>1])}}" class="btn btn-primary">Print</a>
                             <a  href="{{route('print_sale',['sale_id'=>$sale->id, "print_type"=>2])}}" class="btn btn-primary">Print Pickup</a>
+                            <a  href="{{route('pop_open_cash_drawer')}}" class="btn btn-primary">Pop Open Cash Drawer</a>
+                            <a  href="{{route('new_sale')}}" class="btn btn-primary">New Sale</a>
                             <a  href="{{route('download_sale_receipt',['sale_id'=>$sale->id])}}" class="btn btn-primary">Download as PDF</a>
                             <a  href="{{route('mail_sale_receipt',['sale_id'=>$sale->id])}}" class="btn btn-primary">Email to customer</a>
                         </div>
