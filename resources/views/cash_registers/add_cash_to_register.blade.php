@@ -35,7 +35,7 @@
 
                         <input type="submit" name="submitf" value="Save" id="submitf" class="submit_button btn btn-primary">
                     </form>				<div class="from-group text-right">
-                        <a href="https://demo.phppointofsale.com/index.php/sales/open_drawer" onclick="window.open('https://demo.phppointofsale.com/index.php/sales/open_drawer', '_blank', 'width=800,height=600,scrollbars=yes,menubar=no,status=yes,resizable=yes,screenx=0,screeny=0'); return false;" class="" target="_blank"><i class="ion-android-open"></i> Pop Open Cash Drawer</a>				</div>
+                        <a href="{{ route('pop_open_cash_drawer') }}" onclick="{{ route('pop_open_cash_drawer') }}" class="" target="_blank"><i class="ion-android-open"></i> Pop Open Cash Drawer</a>				</div>
 
 
                 </div>

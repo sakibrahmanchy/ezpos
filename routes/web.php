@@ -117,6 +117,8 @@ Route::group(['middleware' => ['admin']], function () {
     route::get('sale/suspended','SaleController@GetSuspendedSale')->name('suspended_sale_list')->middleware('auth');
     route::get('/sale/receipt/{sale_id}','SaleController@GetSaleReceipt')->name('sale_receipt')->middleware('auth');
     route::get('sale/edit/{sale_id}','SaleController@EditSaleGet')->name('sale_edit')->middleware('auth');
+    route::get('sale/pre_edit/{sale_id}','SaleController@PreEditSaleGet')->name('sale_pre_edit')->middleware('auth');
+    route::post('sale/pre_edit/{sale_id}','SaleController@PreEditSalePost')->name('sale_pre_edit_post')->middleware('auth');
     route::get('sale/edit/vue/{sale_id}','SaleController@EditSaleVueGet')->name('sale_edit_vue')->middleware('auth');
     route::post('sale/edit/{sale_id}','SaleController@EditSalePost')->name('sale_edit')->middleware('auth');
     route::get('sale/show_last_sale','SaleController@showLastSaleReceipt')->name('sale_last_receipt')->middleware('auth');
@@ -128,6 +130,7 @@ Route::group(['middleware' => ['admin']], function () {
     route::get('sale/print/{sale_id}','SaleController@printSaleReciept')->name('print_sale')->middleware('auth');
     route::get("sale/test_print/{counter_id}","SaleController@testPrint")->name("test_print")->middleware("auth");
     route::get("sale/open_cash_drawer","SaleController@popOpenCashDrawer")->name("pop_open_cash_drawer");
+    route::get("sale/delete/{sale_id}","SaleController@DeleteSale")->name("sale_delete");
 
     route::get('/report/dashboard',function(){
         return view('reports.report_dashboard');

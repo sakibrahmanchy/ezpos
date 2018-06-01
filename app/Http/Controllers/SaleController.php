@@ -98,7 +98,7 @@ class SaleController extends Controller
     public function GetSaleReceipt($sale_id)
     {
 
-        $sale = Sale::where("id", $sale_id)->with('items', 'paymentlogs', 'customer', 'counter')->first();
+        $sale = Sale::withTrashed()->where("id", $sale_id)->with('items', 'paymentlogs', 'customer', 'counter')->first();
 
 
         /*return response()->json(['sale'=>$sale], 200);*/
@@ -132,7 +132,7 @@ class SaleController extends Controller
     public function showLastSaleReceipt()
     {
 
-        $sale = Sale::orderBy('id', 'desc')->first();
+        $sale = Sale::withTrashed()->orderBy('id', 'desc')->first();
         if (!is_null($sale))
             $sale_id = $sale->id;
         else
@@ -146,7 +146,7 @@ class SaleController extends Controller
     {
 
 
-        $sale = Sale::where("id", $sale_id)->with(['items' => function ($query) {
+        $sale = Sale::withTrashed()->where("id", $sale_id)->with(['items' => function ($query) {
             $query->where('items.product_type', '<>', 2);
         }, 'paymentlogs', 'customer'])->first();
 
@@ -157,7 +157,7 @@ class SaleController extends Controller
     public function MailSaleReceipt($sale_id)
     {
 
-        $sale = Sale::where("id", $sale_id)->with(['items' => function ($query) {
+        $sale = Sale::withTrashed()->where("id", $sale_id)->with(['items' => function ($query) {
             $query->where('items.product_type', '<>', 2);
         }, 'paymentlogs', 'customer'])->first();
 
@@ -385,7 +385,7 @@ class SaleController extends Controller
     public function printSaleReciept($sale_id, Request $request)
     {
         $print_type = $request->print_type;
-        $sale = Sale::where("id", $sale_id)->with('items', 'paymentlogs', 'customer')->first();
+        $sale = Sale::withTrashed()->where("id", $sale_id)->with('items', 'paymentlogs', 'customer')->first();
         if ($sale == null)
             return redirect()->route('new_sale')->with(["error" => 'Sale id not found']);
 
@@ -623,7 +623,7 @@ class SaleController extends Controller
             $printer->setJustification(Printer::JUSTIFY_CENTER);
             $printer->text("Receipt\n");
             $printer->selectPrintMode();
-            $printer->text( $created_at. "\n");
+            $printer->text(  $sale->created_at. "\n");
             $printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);
             $printer->text($settings['company_name'] . "\n");
             $printer->selectPrintMode();
@@ -726,6 +726,25 @@ class SaleController extends Controller
     }
 
 
+
+    public function PreEditSaleGet($sale_id){
+        $sale = Sale::with('Customer','Employee')->where("id",$sale_id)->first();
+        if(is_null($sale)) {
+            return redirect()->route('new_sale')->with('error',"Sale id not exist or deleted");
+        }
+        $customers = Customer::all();
+        $employees = Employee::all();
+        return view('sales.pre_edit_sale',["sale_id"=>$sale_id,"sale"=>$sale,"customers"=>$customers,"employees"=>$employees]);
+    }
+    public function PreEditSalePost(Request $request, $sale_id){
+
+        $sale = Sale::with('Customer','Employee')->where("id",$sale_id)->first();
+        $sale->customer_id = $request->customer_id;
+        $sale->employee_id = $request->employee_id;
+        $sale->comment = $request->comment;
+        $sale->save();
+        return redirect()->route("sale_pre_edit",["sale_id"=>$sale_id]);
+    }
 
     public function EditSaleGet($sale_id){
 
@@ -947,6 +966,30 @@ class SaleController extends Controller
         $sale = new Sale();
         $sale_id = $sale->EditSale($saleInfo, $productInfos, $paymentInfos, $saleInfo['status'], $sale_id);
         echo $sale_id;
+    }
+
+    public function DeleteSale($sale_id){
+        $cashRegister = new CashRegister();
+        $currentCashRegister = $cashRegister->getCurrentActiveRegister();
+        if(!is_null($currentCashRegister)) {
+            $sale = Sale::where("id",$sale_id)->first();
+            $sale->refund_status = true;
+            $sale->refund_register_id = $currentCashRegister->id;
+            $sale->save();
+            $sale->delete();
+
+            $sale_items = DB::table('item_sale')->where("sale_id",$sale_id)->get();
+            foreach($sale_items as $anItem) {
+                $item = Item::where("id",$anItem->item_id)->first();
+                $item->item_quantity += $anItem->quantity;
+                $item->save();
+            }
+            return redirect()->route("sale_pre_edit",["sale_id"=>$sale_id]);
+        }else{
+            return redirect()->route("sale_pre_edit",["sale_id"=>$sale_id])->with('error',"No cash register is active");
+        }
+
+
     }
 
 }

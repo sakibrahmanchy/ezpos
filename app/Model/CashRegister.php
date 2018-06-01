@@ -146,4 +146,14 @@ class CashRegister extends Model
 
     }
 
+    public function getRefundedSalesInCashRegister($register_id) {
+        $refundedSales = Sale::withTrashed()->where("refund_register_id",$register_id)->get();
+        return $refundedSales;
+    }
+
+    public function getRefundedSalesAmountInCashRegister($register_id) {
+        $refundedSalesAmount = Sale::withTrashed()->where("refund_register_id",$register_id)->sum('total_amount');
+        return $refundedSalesAmount;
+    }
+
 }

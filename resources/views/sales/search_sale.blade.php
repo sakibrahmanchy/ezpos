@@ -170,7 +170,10 @@
              <tbody>
              @foreach($items as $anItem)
                 <tr>
-                    <td>EZPOS {{$anItem->sale_id}}</td>
+                    <td><a href="{{route('sale_receipt',['sale_id'=>$anItem->sale_id])}}">
+                            <span class="glyphicon glyphicon-print"></span></a>
+                        <a href="{{route('sale_pre_edit',['id'=>$anItem->sale_id])}}"><span class="glyphicon glyphicon-edit"></span></a>
+                        EZPOS {{$anItem->sale_id}}</td>
                     <td> {{$anItem->created_at}}</td>
                     <td> {{$anItem->name}}</td>
                     <td> {{$anItem->first_name}} {{$anItem->last_name}}</td>

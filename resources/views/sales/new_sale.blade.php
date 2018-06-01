@@ -1264,7 +1264,6 @@
                                     var url = '{{ route("new_sale") }}';
                                     window.location.href=url;
                                     break;
-
                             }
                         }
                     });

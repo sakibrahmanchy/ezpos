@@ -131,6 +131,10 @@ class CashRegisterController extends Controller
     }
 
     public function cashRegisterLogDetails($cashRegisterId){
+
+        $cashRegister = new CashRegister();
+        $refunded_sales_amount = $cashRegister->getRefundedSalesAmountInCashRegister($cashRegisterId);
+
         $cashRegister = CashRegister::where("id",$cashRegisterId)->with('OpenedByUser','ClosedByUser','CashRegisterTransactions')->first();
 
         $openedBy = $cashRegister->OpenedByUser->name;
@@ -179,7 +183,7 @@ class CashRegisterController extends Controller
         return view('cash_registers.cash_register_log_details',["register"=>$cashRegister,
                 "transactions"=>$cashRegisterTransactions,"opened_by"=>$openedBy,"closed_by"=>$closedBy,
             "additions"=>$total_additions,"subtractions"=>$total_subtractions,"sales"=>$cash_sales,
-            "paymentInfo"=>$paymentInfo, "changedDue"=>$changedDue]);
+            "paymentInfo"=>$paymentInfo, "changedDue"=>$changedDue,"refundedAmount"=>$refunded_sales_amount]);
 
 
         //dd($cashRegisterTotal);
@@ -243,6 +247,7 @@ class CashRegisterController extends Controller
     }*/
 
     public function printRegisterLogDetails($cashRegisterId){
+
 
         $cashRegister = CashRegister::where("id",$cashRegisterId)->with('OpenedByUser','ClosedByUser','CashRegisterTransactions')->first();
         $transactions = CashRegister::where("id",$cashRegisterId)->with('CashRegisterTransactions')->first()->CashRegisterTransactions;
@@ -360,6 +365,9 @@ class CashRegisterController extends Controller
 
     public function printRegisterLogSummary($cashRegisterId)
     {
+        $cashRegister = new CashRegister();
+        $refunded_sales_amount = $cashRegister->getRefundedSalesAmountInCashRegister($cashRegisterId);
+
         $cashRegister = CashRegister::where("id",$cashRegisterId)->with('OpenedByUser','ClosedByUser','CashRegisterTransactions')->first();
 
         $openedBy = $cashRegister->OpenedByUser->name;
@@ -427,7 +435,8 @@ class CashRegisterController extends Controller
 			
             $printer->text( new FooterItem('Cash Sales:', '$'.number_format( $cash_sales, 2) ));
 			$printer->text( new FooterItem('Changed Amount:', '$'.number_format( $changedDue, 2) ));
-			
+            $printer->text( new FooterItem('Refunded Sale Amount:  ', '$'.number_format( $refunded_sales_amount, 2) ));
+
             $printer->text( new FooterItem('Cash Additions:', '$'.number_format( $total_additions, 2) ));
             $printer->text( new FooterItem('Cash Subtractions:', '$'.number_format( $total_subtractions, 2) ));
 			

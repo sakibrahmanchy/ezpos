@@ -76,6 +76,8 @@ class RouteTokens
         "print_sale"=>"sale_receipt",
         "sale_list"=>"sale_add_update",
         "item_list_autocomplete"=>"sale_add_update",
+        "sale_pre_edit" => "sale_add_update",
+        "sale_pre_edit_post" => "sale_add_update",
         "sale_edit"=>"sale_add_update",
         "sale_edit_vue"=>"sale_add_update",
         'download_sale_receipt'=>'sale_receipt',
@@ -91,6 +93,7 @@ class RouteTokens
         "categories_by_level" => "sale_add_update",
         "category_parent" =>"sale_add_update",
         "products_by_categories" => "sale_add_update",
+        "sale_delete"=>"sale_add_update",
 
         "report_category_graphical"=>"report_categories",
         "report_category_ajax"=>"report_categories",

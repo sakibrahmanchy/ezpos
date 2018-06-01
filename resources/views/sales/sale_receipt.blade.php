@@ -15,7 +15,9 @@
 
                     <div class="row">
                         <div class="panel-body panel-pad pull-right">
-                            <a  href="{{route('sale_edit',['sale_id'=>$sale->id])}}" class="btn btn-primary">Edit Sale</a>
+                            @if(!$sale->refund_status)
+                                <a  href="{{route('sale_edit',['sale_id'=>$sale->id])}}" class="btn btn-primary">Edit Sale</a>
+                            @endif
                             <a  href="{{route('print_sale',['sale_id'=>$sale->id, "print_type"=>1])}}" class="btn btn-primary">Print</a>
                             <a  href="{{route('print_sale',['sale_id'=>$sale->id, "print_type"=>2])}}" class="btn btn-primary">Print Pickup</a>
                             <a  href="{{route('pop_open_cash_drawer')}}" class="btn btn-primary">Pop Open Cash Drawer</a>
@@ -85,7 +87,7 @@
 
                     <br>
                     <!-- invoice items-->
-
+                    <center>@if($sale->refund_status) <label style="font-size: 20px" class="label label-danger">DELETED/VOID</label> @endif</center><br><br>
                     <table  class="table table-hover table-responsive" >
                         <thead>
                         <tr>

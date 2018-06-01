@@ -249,6 +249,12 @@ else
                         </a>
                     </li>
                 @endif
+                <li class = {{ Request::is('settings/*') ? 'active' : '' }}>
+                    <a href="{{route('change_settings')}}">
+                        <i class="fa fa-cog fa-spin fa-fw margin-bottom"></i><span> Settings&nbsp;</span>
+                    </a>
+                </li>
+
             </ul>
         </section>
     </aside>
