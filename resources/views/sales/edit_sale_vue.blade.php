@@ -404,7 +404,7 @@
                                     unit_price : response.data.price,
                                     cost_price: selectedItem.cost_price,
                                     quantity : quantity,
-                                    price_rule_id: selectedItem.price_rule_id
+                                    price_rule_id: ( selectedItem.price_rule_id === null ? 0 : selectedItem.price_rule_id)
 
                                 };
 
@@ -548,6 +548,7 @@
                                 paymentInfos = [];
                                 $.map(this.paymentList, function(value, index) {
                                     var paymentInfo = {
+                                        payment_id: index,
                                         payment_type: value.payment_type,
                                         paid_amount: value.paid_amount
                                     };
@@ -609,13 +610,14 @@
                                             item_discount_percentage: currentDiscountPercentage,
                                             total_price: currentTotal,
                                             discount_amount: discountAmount,
-                                            price_rule_id: item.price_rule_id,
+                                            price_rule_id: (item.price_rule_id === null ? 0 : item.price_rule_id),
                                             sale_discount_amount: salesDiscountAmount,
                                             item_profit: itemProfit,
                                             tax_rate: "{{ $tax_rate }}",
                                             tax_amount: currentTotal * {{ $settings['tax_rate'] }},
                                             is_price_taken_from_barcode: scanStatus
                                         };
+                                        console.log(productInfo);
                                         productInfos.push(productInfo);
                                     }
                                 });

@@ -334,7 +334,7 @@ class Sale extends Model
             $payments = array();
             foreach($paymentInfos as $aPaymentInfo){
 
-                $payment_id = (int) $aPaymentInfo["payment_id"];
+               $payment_id = (int) $aPaymentInfo["payment_id"];
                if($payment_id==0){
 
                     $paymentLog = new PaymentLog();
