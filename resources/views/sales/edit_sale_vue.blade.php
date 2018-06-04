@@ -90,7 +90,7 @@
                             </div>
                         </td>
                         <td class="col-sm-1 col-md-1" style="text-align: center">
-                            <input min="0" class="form-control quantity" value="1" v-model="itemList[index].items_sold">
+                            <input min="0" class="form-control quantity" value="1" v-model="itemList[index].quantity">
                         </td>
                         <td class="col-sm-1 col-md-1 text-center">
                             <inline-edit v-model="itemList[index].unit_price" if-user-permitted="{{UserHasPermission("edit_sale_cost_price")}}" ></inline-edit>
@@ -832,6 +832,7 @@
                 document.getElementById("item-names").focus();
                 console.log( <?php echo json_encode($payments)?>);
                 this.itemList = <?php echo json_encode($sales) ?>;
+                console.log(this.itemList);
             }
         });
     </script>
