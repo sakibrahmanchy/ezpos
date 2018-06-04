@@ -383,7 +383,7 @@
                             if(this.itemList[index].item_id==selectedItem.item_id)
                             {
                                 found = true;
-                                this.itemList[index].items_sold++;
+                                this.itemList[index].quantity++;
                             }
                         }
 
@@ -395,15 +395,15 @@
                         this.GetItemPrice(selectedItem.item_id)
                             .then(function (response) {
                                 let sale_type =  $("#sale-type").attr("data-selected-type");
-                                let items_sold = ( sale_type == "sale") ? 1 : -1;
+                                let quantity = ( sale_type == "sale") ? 1 : -1;
                                 var itemDetails = {
                                     item_id : selectedItem.item_id,
                                     item_name : selectedItem.item_name,
                                     company_name : selectedItem.company_name,
-                                    item_quantity : selectedItem.items_sold,
+                                    item_quantity : selectedItem.item_quantity,
                                     unit_price : response.data.price,
                                     cost_price: selectedItem.cost_price,
-                                    items_sold : items_sold,
+                                    quantity : quantity,
                                     price_rule_id: selectedItem.price_rule_id
 
                                 };
@@ -450,9 +450,9 @@
                     {
 
                         if(this.itemList[index].item_id==0)
-                            return this.itemList[index].items_sold * this.itemList[index].unit_price ;
-                        console.log(this.itemList[index].items_sold * this.itemList[index].unit_price);
-                        return this.itemList[index].items_sold * this.itemList[index].unit_price * (100 -  this.itemList[index].item_discount_percentage)/100;
+                            return this.itemList[index].quantity * this.itemList[index].unit_price ;
+                        console.log(this.itemList[index].quantity * this.itemList[index].unit_price);
+                        return this.itemList[index].quantity * this.itemList[index].unit_price * (100 -  this.itemList[index].item_discount_percentage)/100;
                     },
                     SetActivePaymentType: function(activePaymentType)
                     {
@@ -507,7 +507,7 @@
                             if(this.itemList[index].item_id==product.item_id)
                             {
                                 found = true;
-                                this.itemList[index].items_sold++;
+                                this.itemList[index].quantity++;
                             }
                         }
 
@@ -564,12 +564,12 @@
 
                                         var productInfo = {
                                             item_id:item.item_id,
-                                            quantity: item.items_sold,
+                                            quantity: item.quantity,
                                             item_type: itemType,
                                             cost_price: item.cost_price,
                                             unit_price: item.unit_price,
                                             item_discount_percentage: 0,
-                                            total_price: item.unit_price * item.items_sold,
+                                            total_price: item.unit_price * item.quantity,
                                             price_rule_id: 0
                                         };
 
@@ -577,7 +577,7 @@
                                     }
                                     else{
 
-                                        var currentQuantity = item.items_sold;
+                                        var currentQuantity = item.quantity;
                                         var currentCostPrice = item.cost_price;
                                         var currentUnitPrice = item.unit_price;
                                         var currentDiscountPercentage = item.item_discount_percentage;
@@ -732,8 +732,8 @@
                         $('#bs-drp-sel-label').text("Sale");
                         $("#sale-type").attr("data-selected-type", "sale");
                         this.itemList.forEach(function(item){
-                            if(item.items_sold<0)
-                                item.items_sold = (-1) * item.items_sold;
+                            if(item.quantity<0)
+                                item.quantity = (-1) * item.quantity;
                         });
 
                     },
@@ -741,8 +741,8 @@
                         $('#bs-drp-sel-label').text("Return");
                         $("#sale-type").attr("data-selected-type", "return");
                         this.itemList.forEach(function(item){
-                            if(item.items_sold>0)
-                                item.items_sold = (-1) * item.items_sold;
+                            if(item.quantity>0)
+                                item.quantity = (-1) * item.quantity;
                         });
                     }
                 },
@@ -783,7 +783,7 @@
                             item_quantity : 1,
                             price : (-1) * newVal,
                             cost_price: (-1) * newVal,
-                            items_sold : 1,
+                            quantity : 1,
                         };
                         this.itemList.push(itemDetails);
                     }else{
