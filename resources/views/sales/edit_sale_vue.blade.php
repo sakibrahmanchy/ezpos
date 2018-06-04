@@ -400,7 +400,7 @@
                                     item_id : selectedItem.item_id,
                                     item_name : selectedItem.item_name,
                                     company_name : selectedItem.company_name,
-                                    item_quantity : selectedItem.item_quantity,
+                                    item_quantity : selectedItem.items_sold,
                                     unit_price : response.data.price,
                                     cost_price: selectedItem.cost_price,
                                     items_sold : items_sold,

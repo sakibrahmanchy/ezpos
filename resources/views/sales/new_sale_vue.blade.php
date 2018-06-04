@@ -76,9 +76,9 @@
 									<h6 v-if="itemList[index].company_name" class="media-heading">
 										by <a href="#">@{{itemList[index].company_name}}</a></h6>
 									<span>Status: </span>
-									<span v-if="itemList[index].item_quantity>10" class="text-success"><strong>In Stock</strong>
+									<span v-if="itemList[index].items_sold>10" class="text-success"><strong>In Stock</strong>
 										</span>
-									<span v-else-if="itemList[index].item_quantity<=0" class="text-success"><strong>Out of Stock</strong>
+									<span v-else-if="itemList[index].items_sold<=0" class="text-success"><strong>Out of Stock</strong>
 										</span>
 									<span v-else class="text-success"><strong>Soon will be out of Stock</strong>
 										</span>
@@ -403,7 +403,7 @@
                                     item_id : selectedItem.item_id,
                                     item_name : selectedItem.item_name,
                                     company_name : selectedItem.company_name,
-                                    item_quantity : selectedItem.item_quantity,
+                                    items_sold : selectedItem.items_sold,
                                     unit_price : response.data.price,
                                     cost_price: selectedItem.cost_price,
                                     items_sold : items_sold,
@@ -784,7 +784,7 @@
                             item_id : 0,
                             item_name : "Discount",
                             company_name : "",
-                            item_quantity : 1,
+                            items_sold : 1,
                             unit_price : (-1) * newVal,
                             cost_price: (-1) * newVal,
                             items_sold : 1,
