@@ -144,6 +144,8 @@ class RouteTokens
         "report_sale_summary_hourly"=>"report_sales",
         "cash_register_log_report_details"=>"report_sales",
         "cash_register_log_report_details_ajax"=>"report_sales",
+        "report_sale_deleted"=>"report_sales",
+        "report_sale_deleted_ajax"=>"report_sales",
 
         "report_supplier_graphical"=>"report_suppliers",
         "report_supplier_ajax"=>"report_suppliers",

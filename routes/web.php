@@ -111,12 +111,12 @@ Route::group(['middleware' => ['admin']], function () {
     Route::get('supplier/excel/import','SupplierController@importExcelGet')->name('supplier_import_excel')->middleware('auth');
     Route::post('supplier/excel/import', 'SupplierController@importExcel')->name('supplier_import_excel')->middleware('auth');
 
-    route::get('/sale/new/{vue?}','SaleController@GetSaleForm' )->name('new_sale')->middleware('auth');
+    route::get('/sale/new','SaleController@GetSaleForm' )->name('new_sale')->middleware('auth');
     route::post('/sale/new','SaleController@AddSale')->name('new_sale')->middleware('auth');
     route::post('/sale/suspend','SaleController@SuspendSale')->name('suspend_sale')->middleware('auth');
     route::get('sale/suspended','SaleController@GetSuspendedSale')->name('suspended_sale_list')->middleware('auth');
     route::get('/sale/receipt/{sale_id}','SaleController@GetSaleReceipt')->name('sale_receipt')->middleware('auth');
-    route::get('sale/edit/{sale_id}','SaleController@EditSaleGet')->name('sale_edit')->middleware('auth');
+    route::get('sale/edit/{sale_id}','SaleController@EditSaleVueGet')->name('sale_edit')->middleware('auth');
     route::get('sale/pre_edit/{sale_id}','SaleController@PreEditSaleGet')->name('sale_pre_edit')->middleware('auth');
     route::post('sale/pre_edit/{sale_id}','SaleController@PreEditSalePost')->name('sale_pre_edit_post')->middleware('auth');
     route::get('sale/edit/vue/{sale_id}','SaleController@EditSaleVueGet')->name('sale_edit_vue')->middleware('auth');
@@ -185,6 +185,8 @@ Route::group(['middleware' => ['admin']], function () {
     route::get('/report/sale/graphical/hourly','Reports\SaleReportController@ReportSaleGraphicalHourly')->name('report_sale_graphical_hourly')->middleware('auth');
     route::post('/report/sale/hourly/ajax','Reports\SaleReportController@ReportSaleHourlyAjax')->name('report_sale_hourly_ajax')->middleware('auth');
     route::get('/report/sale/summary/hourly','Reports\SaleReportController@ReportSaleSummaryHourly')->name('report_sale_summary_hourly')->middleware('auth');
+    route::get('/report/sale/deleted','Reports\SaleReportController@ReportSaleDeleted')->name('report_sale_deleted')->middleware('auth');
+    route::post('/report/sale/deleted/ajax','Reports\SaleReportController@ReportSaleDeletedAjax')->name('report_sale_deleted_ajax')->middleware('auth');
 
     route::get('/report/supplier/graphical','Reports\SupplierReportController@ReportSupplierGraphical')->name('report_supplier_graphical')->middleware('auth');
     route::post('/report/supplier/ajax','Reports\SupplierReportController@ReportSupplierAjax')->name('report_supplier_ajax')->middleware('auth');

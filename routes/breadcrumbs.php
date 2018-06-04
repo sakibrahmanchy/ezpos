@@ -423,6 +423,12 @@ Breadcrumbs::register('report_sale_summary', function($breadcrumbs)
     $breadcrumbs->push('Summary', route('report_sale_summary'));
 });
 
+Breadcrumbs::register('report_sale_deleted', function($breadcrumbs)
+{
+    $breadcrumbs->parent('report_sale');
+    $breadcrumbs->push('Deleted', route('report_sale_deleted'));
+});
+
 Breadcrumbs::register('report_sale_detail', function($breadcrumbs)
 {
     $breadcrumbs->parent('report_sale');

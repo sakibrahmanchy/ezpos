@@ -415,6 +415,55 @@ class SaleReportController extends Controller
     }
 
 
+    public function ReportSaleDeleted(Request $request){
+
+        $startDate = date('Y-m-d',strtotime('1970-01-01'));
+        $endDate = date('Y-m-d', strtotime('+1 day', strtotime(date('Y-m-d'))));
+
+        $sales = Sale::withTrashed()->whereDate('created_at','>=',$startDate)->whereDate('created_at','<=',$endDate)
+            ->where('refund_status',true)
+            ->with('customer','paymentLogs','employee')->get();
+
+        $labels = array();
+        $values = array();
+        foreach($sales as $aSale){
+
+            array_push($labels,$aSale->first_name."".$aSale->last_name." ($".$aSale->total.")");
+            array_push($values,$aSale->total);
+        }
+
+        $reportTotal = new ReportTotal();
+        $info = $reportTotal->reportInfo($startDate,$endDate);
+
+        return view('reports.sale.deleted',['sales'=>$sales,'labels'=>$labels,"dataset"=>$values,"info"=>$info]);
+
+    }
+
+
+    public function ReportSaleDeletedAjax(Request $request){
+
+        $startDate = $request->start_date_formatted;
+        $endDate =  $request->end_date_formatted;
+
+        $sales = Sale::withTrashed()->whereDate('created_at','>=',$startDate)->whereDate('created_at','<=',$endDate)
+            ->where('refund_status',true)
+            ->with('customer','paymentLogs','employee','counter')->get();
+
+        $labels = array();
+        $values = array();
+        foreach($sales as $aSale){
+
+            array_push($labels,$aSale->first_name."".$aSale->last_name." ($".$aSale->total.")");
+            array_push($values,$aSale->total);
+        }
+
+        $reportTotal = new ReportTotal();
+        $info = $reportTotal->reportInfo($startDate,$endDate);
+
+
+        return response()->json(['sale'=>$sales,'labels'=>$labels,"dataset"=>$values,"info"=>$info], 200);
+
+    }
 
 
 }
