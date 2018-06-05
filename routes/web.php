@@ -52,7 +52,7 @@ Route::group(['middleware' => ['admin']], function () {
     Route::get('customer/profile/{customer_id}','CustomerController@getCustomerProfile')->name('customer_profile')->middleware('auth');
     Route::get('customer/balance/add','CustomerController@customerAddBalanceGet')->name('customer_balance_add')->middleware('auth');
     Route::post('customer/balance/add','CustomerController@customerAddBalancePost')->name('customer_balance_add')->middleware('auth');
-    Route::get('customer/assign/price_level/{customer_id}','CustomerController@customerAssignPriceLevelGet')->name('customer_assign_price_level')->middleware('auth');
+    Route::get('customer/assign/price_level/{customer_id}','CustomerController@customerAssignPriceLevelGet')->name('customer_assign_price_level_get')->middleware('auth');
     Route::post('customer/assign/price_level','CustomerController@customerAssignPriceLevelPost')->name('customer_assign_price_level')->middleware('auth');
     Route::post('customer/remove/price_level','CustomerController@removePriceLevelPost')->name('customer_remove_price_level')->middleware('auth');
     route::get('customer/edit/{customer_id}','CustomerController@EditCustomerGet')->name('customer_edit')->middleware('auth');

@@ -56,7 +56,7 @@
 
                         @if(UserHasPermission("customer_add_update"))
                             <a href="{{route('customer_edit',['customer_id'=>$customer->id])}}" class="btn btn-primary btn-block">Edit Customer</a>
-                            <a href="{{route('customer_assign_price_level',['customer_id'=>$customer->id])    }}" class="btn btn-primary btn-block">Assign Price Levels</a>
+                            <a href="{{route('customer_assign_price_level_get',['customer_id'=>$customer->id])    }}" class="btn btn-primary btn-block">Assign Price Levels</a>
                         @endif
                     </div>
                     <!-- /.box-body -->

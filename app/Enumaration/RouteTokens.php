@@ -19,6 +19,7 @@ class RouteTokens
         "customer_profile"=>"customer_add_update",
         "customer_balance_add"=>"customer_add_update",
         "customer_transactions"=>"customer_add_update",
+        "customer_assign_price_level_get"=>"customer_add_update",
         "customer_assign_price_level"=>"customer_add_update",
         "customer_remove_price_level"=>"customer_add_update",
         "customer_delete"=>"customer_delete",
