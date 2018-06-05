@@ -13,7 +13,7 @@
     <div class="box box-primary" style="padding:50px">
         <div class = "row">
             <div class="col-md-12">
-                    <a href = "javscript:void(0)" onclick="OpenAddManufacturerDialog()" >[Add manufacturer]</a><br><ul><br>
+                    <a href = "javascript:void(0)" onclick="OpenAddManufacturerDialog()" >[Add manufacturer]</a><br><ul><br>
                     @foreach($manufacturerMenu as $aManufacturer)
                         {{$aManufacturer->manufacturer_name}}  <a class="child" href="javascript:void(0)" id = "{{$aManufacturer->id}}" data-value = "{{$aManufacturer->manufacturer_name}}" onclick="OpenEditManufacturerDialog(this)" >[Edit]</a> <a class="child" href="javascript:void(0)" id = "{{$aManufacturer->id}}" onclick = "deleteManufacturer(this)">[Delete]</a><br>
                     @endforeach

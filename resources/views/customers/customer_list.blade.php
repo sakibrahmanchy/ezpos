@@ -140,7 +140,32 @@
                 dom:"Bt<'row'<'col-sm-12'tr>>" +
                 "<'row'<'col-sm-4'l><'col-sm-8'p>>",
                 buttons: [
-                    'copy', 'csv', 'excel', 'print','colvis'
+                    {
+                        extend: 'pdf',
+                        footer: true,
+                        exportOptions: {
+                            columns: [2,3,4,5,6,7]
+                        }
+                    },
+                    {
+                        extend: 'csv',
+                        exportOptions: {
+                            columns: [2,3,4,5,6,7]
+                        }
+
+                    },
+                    {
+                        extend: 'excel',
+                        footer: false
+                    },
+                    {
+                        extend: 'print',
+                        footer: false
+                    },
+                    {
+                        extend: 'colvis',
+                        footer: false
+                    }
                 ],
 
             });

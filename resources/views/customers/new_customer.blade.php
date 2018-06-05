@@ -123,7 +123,7 @@
 
                         <div class="form-group">
                             <label for="account_number" class="col-sm-3 col-md-3 col-lg-2 control-label">Account #:</label>						<div class="col-sm-9 col-md-9 col-lg-10">
-                                <input type="text" name="account_number" value="{{ old('account_number') }}" id="account_number" class="form-control">
+                                <input type="text"  name="account_number" value="{{ old('account_number') }}" id="account_number" class="form-control">
                             </div>
                         </div>
 

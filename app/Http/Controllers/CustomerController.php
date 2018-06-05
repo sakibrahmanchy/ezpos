@@ -26,7 +26,9 @@ class CustomerController extends Controller
 
         $rules = [
             'first_name' => 'required',
-            'loyalty_card_number'=>'nullable|unique:customers'
+            'loyalty_card_number'=>'nullable|numeric|unique:customers',
+            'account_number'=>'nullable|numeric|unique:customers',
+            'email'=>'nullable|email|unique:customers'
         ];
         $allInput = $request->all();
 
@@ -107,7 +109,9 @@ class CustomerController extends Controller
         /* var_dump($customer);*/
         $rules = [
             'first_name' => 'required',
-            'loyalty_card_number'=>'nullable|unique:customers,loyalty_card_number,'.$customerId,
+            'loyalty_card_number'=>'nullable|numeric|unique:customers,loyalty_card_number,'.$customerId,
+            'account_number'=>'nullable|numeric|unique:customers,account_number,'.$customerId,
+            'email'=>'nullable|email|unique:customers,email,'.$customerId
         ];
         $allInput = $request->all();
 
