@@ -71,8 +71,8 @@
                         <th>Actions</th>
                     </tr>
                     </thead>
-                    <tbody class = "product-descriptions">
-                    <tr v-for="(anItem,index) in itemList" class="product-specific-description">
+                    <tbody v-for="(anItem,index) in itemList" class = "product-descriptions">
+                    <tr class="product-specific-description">
                         <td class="col-sm-8 col-md-6">
                             <div class="media">
                                 <div class="media-body">
@@ -107,9 +107,16 @@
                             <button type="button" class="btn btn-danger" @click="Remove(itemList[index].item_id)"><span class="pe-7s-trash"></span> Remove</button>
                         </td>
                     </tr>
+                    <tr v-if="itemList[index].discountApplicable" >
+                        <td  colspan='5' style='padding-left:23px;font-size: 80%;background: aliceblue;'>
+                            Discount Offer:
+                            <strong>@{{itemList[index].discount_name}}</strong><br>
+                            Item Discount Amount: $<strong>@{{itemList[index].discount_amount}}</strong>
+                        </td>
+                    </tr>
 
-                    <tr v-if="itemList.length<=0" class="no-items"> <td colspan="6"><div class="jumbotron text-center"> <h3>There are no items in the cart [Sales]</h3> </div></td> </tr>
                     </tbody>
+                    <tbody v-if="itemList.length<=0" class="no-items"> <td colspan="6"><div class="jumbotron text-center"> <h3>There are no items in the cart [Sales]</h3> </div></td> </tbody>
                     <tfoot>
                     </tfoot>
                 </table>
@@ -407,15 +414,19 @@
                                     price_rule_id: ( selectedItem.price_rule_id === null ? 0 : selectedItem.price_rule_id)
 
                                 };
-
+                                console.log(selectedItem);
 
                                 if(selectedItem.discountApplicable)
                                 {
-                                    itemDetails.discount_applicable = true;
-                                    if(this.allDiscountAmountPercentage==0)
+                                    itemDetails.discountApplicable = true;
+                                    if(this.allDiscountAmountPercentage === 0||this.allDiscountAmountPercentage === undefined){
                                         itemDetails.item_discount_percentage = selectedItem.discountPercentage;
+                                        itemDetails.discount_amount = selectedItem.discountAmount.toFixed(2);
+                                        itemDetails.discount_name = selectedItem.discountName;
+                                    }
                                     else
                                         itemDetails.item_discount_percentage = this.allDiscountAmountPercentage;
+
                                 }
                                 else
                                 {
@@ -831,9 +842,40 @@
             },
             mounted() {
                 document.getElementById("item-names").focus();
-                console.log( <?php echo json_encode($payments)?>);
-                this.itemList = <?php echo json_encode($sales) ?>;
-                console.log(this.itemList);
+                let fetchedItemList = <?php echo json_encode($sales) ?>;
+                 for( let selectedItem of fetchedItemList) {
+
+                    var itemDetails = {
+                        item_id : selectedItem.item_id,
+                        item_name : selectedItem.item_name,
+                        company_name : selectedItem.company_name,
+                        item_quantity : selectedItem.item_quantity,
+                        unit_price : selectedItem.unit_price,
+                        cost_price: selectedItem.cost_price,
+                        quantity : selectedItem.items_sold,
+                        price_rule_id: ( selectedItem.price_rule_id === null ? 0 : selectedItem.price_rule_id)
+
+                    };
+
+                    if(selectedItem.discountApplicable)
+                    {
+                        itemDetails.discountApplicable = true;
+                        if(this.allDiscountAmountPercentage === 0||this.allDiscountAmountPercentage === undefined){
+                            itemDetails.item_discount_percentage = selectedItem.discountPercentage;
+                            itemDetails.discount_amount = selectedItem.discountAmount.toFixed(2);
+                            itemDetails.discount_name = selectedItem.discountName;
+                        }
+                        else
+                            itemDetails.item_discount_percentage = this.allDiscountAmountPercentage;
+
+                    }
+                    else
+                    {
+                        itemDetails.discountApplicable = false;
+                        itemDetails.item_discount_percentage = 0;
+                    }
+                    this.itemList.push(itemDetails);
+                }
             }
         });
     </script>

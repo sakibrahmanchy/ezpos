@@ -105,18 +105,15 @@
 							</td>
 						</tr>
 
-						<tr v-if="itemList[index].discountApplicable" colspan='5' style='padding-left:23px;font-size: 80%;background: aliceblue;'>
-							Discount Offer:
-							<strong>@{{itemList[index].discount_name}}</strong><br>
-							Item Discount Amount: $<strong>@{{itemList[index].discount_amount}}</strong>
-							<input type ='hidden' id='price-rule-"@{{itemList[index].item_id}}"' value = '"+item.item_id+"'>
+						<tr v-if="itemList[index].discountApplicable" >
+							<td  colspan='5' style='padding-left:23px;font-size: 80%;background: aliceblue;'>
+								Discount Offer:
+								<strong>@{{itemList[index].discount_name}}</strong><br>
+								Item Discount Amount: $<strong>@{{itemList[index].discount_amount}}</strong>
+							</td>
 						</tr>
-					{{--<tr >--}}
-
-					{{--</tr>--}}
-
-						<tr v-if="itemList.length<=0" class="no-items"> <td colspan="6"><div class="jumbotron text-center"> <h3>There are no items in the cart [Sales]</h3> </div></td> </tr>
 					</tbody>
+					<tbody v-if="itemList.length<=0" class="no-items"> <td colspan="6"><div class="jumbotron text-center"> <h3>There are no items in the cart [Sales]</h3> </div></td> </tbody>
 					<tfoot>
 					</tfoot>
 				</table>
@@ -410,7 +407,7 @@
                             .then(function (response) {
                                 let sale_type =  $("#sale-type").attr("data-selected-type");
                                 let items_sold = ( sale_type == "sale") ? 1 : -1;
-                                console.log(selectedItem);
+
                                 var itemDetails = {
                                     item_id : selectedItem.item_id,
                                     item_name : selectedItem.item_name,
@@ -422,7 +419,6 @@
                                     price_rule_id: selectedItem.price_rule_id
 
                                 };
-
 
                                 if(selectedItem.discountApplicable)
                                 {

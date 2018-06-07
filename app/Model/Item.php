@@ -57,11 +57,12 @@ class Item extends Model
         $item->item_replenish_level = $request->replenish_level;
         $item->days_to_expiration = $request->expire_days;
         $item->description = $request->description;
-        if(!is_null($request->tax_included))
+        if(isset($request->tax_included))
             $item->price_include_tax = true;
         else
             $item->price_include_tax = false;
-        if(!is_null($request->is_service))
+
+        if(isset($request->is_service))
             $item->service_item = true;
         else
             $item->service_item = false;
@@ -100,7 +101,6 @@ class Item extends Model
 
         $item = Item::where('id','=',$item_id)->first();
 
-
         $item->isbn = $request->isbn;
         $item->product_id = $request->product_id;
         $item->item_name = $request->item_name;
@@ -113,11 +113,12 @@ class Item extends Model
         $item->item_replenish_level = $request->replenish_level;
         $item->days_to_expiration = $request->expire_days;
         $item->description = $request->description;
-        if(!is_null($request->tax_included))
+        if(isset($request->tax_included))
             $item->price_include_tax = true;
         else
             $item->price_include_tax = false;
-        if(!is_null($request->is_service))
+
+        if(isset($request->is_service))
             $item->service_item = true;
         else
             $item->service_item = false;

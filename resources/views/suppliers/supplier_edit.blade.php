@@ -110,7 +110,7 @@
 
                                     <div class="form-group">
                                         <label for="comments" class="col-sm-3 col-md-3 col-lg-2 control-label ">Comments:</label>	<div class="col-sm-9 col-md-9 col-lg-10">
-                                            <textarea name="comments" cols="17" rows="5" id="comments" value ="{{$supplier->comments}}" class="form-control text-area"></textarea>
+                                            <textarea name="comments" cols="17" rows="5" id="comments" value ="{{$supplier->comments}}" class="form-control text-area">{{$supplier->comments}}</textarea>
                                         </div>
                                     </div>
 
@@ -119,7 +119,7 @@
 
                             <div class="form-group">
                                 <label for="supplier_number" class="col-sm-3 col-md-3 col-lg-2 control-label">supplier number:</label>						<div class="col-sm-9 col-md-9 col-lg-10">
-                                    <input type="text" name="account" value="{{$supplier->supplier_number}}" id="supplier_number" class="form-control">
+                                    <input type="text" name="account" value="{{$supplier->account}}" id="supplier_number" class="form-control">
                                 </div>
                             </div>
 

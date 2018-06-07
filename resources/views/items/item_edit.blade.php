@@ -189,14 +189,15 @@
 
                                     <div class="form-group">
                                         <label for="tax_included" class="col-sm-3 col-md-3 col-lg-2 control-label wide">Prices include Tax:</label>					<div class="col-sm-9 col-md-9 col-lg-10">
-                                            <input type="checkbox" value = "{{$item->price_include_tax }}" name="tax_included" value="1" id="tax_included" class="delete-checkbox">
+                                            <input type="checkbox" value = "{{$item->price_include_tax }}"  {{ $item->price_include_tax == 1  ? 'checked' : '' }} name="tax_included" id="tax_included" class="delete-checkbox">
                                             <label for="tax_included"><span></span></label>
                                         </div>
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="is_service" class="col-sm-3 col-md-3 col-lg-2 control-label wide">Is Service Item (Does not have quantity)?:</label>					<div class="col-sm-9 col-md-9 col-lg-10">
-                                            <input type="checkbox" value = "{{$item->service_item }}" name="is_service" value="1" id="is_service" class="delete-checkbox">
+                                        <label for="is_service" class="col-sm-3 col-md-3 col-lg-2 control-label wide">Is Service Item (Does not have quantity)?:</label>
+                                        <div class="col-sm-9 col-md-9 col-lg-10">
+                                            <input type="checkbox" value = "{{$item->service_item }}" name="is_service"  {{ $item->service_item == 1  ? 'checked' : '' }} id="is_service" class="delete-checkbox">
                                             <label for="is_service"><span></span></label>
                                         </div>
                                     </div>

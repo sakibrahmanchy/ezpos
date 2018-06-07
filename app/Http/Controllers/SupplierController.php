@@ -56,6 +56,7 @@ class SupplierController extends Controller
         $supplierCredentials['country'] = $request->country;
         $supplierCredentials['comments'] = $request->comments;
         $supplierCredentials['account'] = $request->account;
+        $supplierCredentials['email'] = $request->email;
 
         $userImageToken = uniqid();
         $file = $request->file('image');
@@ -124,6 +125,7 @@ class SupplierController extends Controller
         $supplier->country = $request->country;
         $supplier->comments = $request->comments;
         $supplier->account = $request->account;
+        $supplier->email = $request->email;
 
 
         $supplierImageToken = uniqid();

@@ -768,12 +768,10 @@ class SaleController extends Controller
 
         foreach($sales as $anItem) {
 
+
             if(isset($anItem->id)){
 
                 if ($anItem->active){
-
-                    if($anItem->unlimited||$anItem->num_times_to_apply>0)
-                    {
 
                         if($anItem->type==1){
 
@@ -837,7 +835,6 @@ class SaleController extends Controller
                             }
 
                         }
-                    }
 
                 }
 
@@ -874,12 +871,12 @@ class SaleController extends Controller
 
         foreach($sales as $anItem) {
 
+            if(is_null($anItem->price_rule_id))
+                $anItem->price_rule_id = 0;
+
             if(isset($anItem->id)){
 
                 if ($anItem->active){
-
-                    if($anItem->unlimited||$anItem->num_times_to_apply>0)
-                    {
 
                         if($anItem->type==1){
 
@@ -943,7 +940,6 @@ class SaleController extends Controller
                             }
 
                         }
-                    }
 
                 }
 

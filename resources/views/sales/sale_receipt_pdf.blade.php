@@ -98,8 +98,6 @@
             @foreach($anItem->PriceRule as $aPriceRule)
                 @if ($aPriceRule->active)
 
-                    @if($aPriceRule->unlimited||$aPriceRule->num_times_to_apply>0)
-
                         @if($aPriceRule->type==1)
 
                             @if($aPriceRule->percent_off>0)
@@ -129,7 +127,6 @@
                             @endif
                         @endif
                     @endif
-                @endif
             @endforeach
         @endif
     @endforeach
@@ -154,8 +151,6 @@
             @foreach($anItem->PriceRule as $aPriceRule)
                 @if ($aPriceRule->active)
 
-                    @if($aPriceRule->unlimited||$aPriceRule->num_times_to_apply>0)
-
                         @if($aPriceRule->type==1)
 
                             @if($aPriceRule->percent_off>0)
@@ -185,7 +180,6 @@
                             @endif
                         @endif
                     @endif
-                @endif
             @endforeach
         @endif
     @endforeach
