@@ -24,6 +24,8 @@ use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Mail;
+use Mike42\Escpos\PrintConnectors\FilePrintConnector;
+use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 use PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -395,10 +397,17 @@ class SaleController extends Controller
 
             $counter_id = Cookie::get('counter_id',null);
             $counter = Counter::where("id",$counter_id)->first();
-            $ip_address = $counter->printer_ip;
-            $port = $counter->printer_port;
+            if(!isset($request->driver)) {
 
-            $connector = new NetworkPrintConnector($ip_address, $port);
+                $ip_address = $counter->printer_ip;
+                $port = $counter->printer_port;
+
+                $connector = new NetworkPrintConnector($ip_address, $port);
+            }
+            else {
+                $connector = new WindowsPrintConnector($counter->name);
+            }
+
 
             $printer = new Printer($connector);
             $printer->setJustification(Printer::JUSTIFY_CENTER);
@@ -545,7 +554,9 @@ class SaleController extends Controller
             return redirect()->route('sale_receipt', ['sale_id' => $sale_id]);
 
         } Catch (\Exception $e) {
-			//dd($e);
+			if($e->getCode() == 0 ) {
+			    return redirect()->route('print_sale',['sale_id'=>$sale->id, "print_type"=>$request->print_type,'driver'=>1]);
+            }
             return redirect()->back()->with(["error" => $e->getMessage()]);
         } finally {
             if (isset($printer)) {

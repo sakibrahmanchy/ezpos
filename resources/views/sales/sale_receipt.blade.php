@@ -5,6 +5,10 @@
 
 @section('breadcrumbs')
     {!! Breadcrumbs::render('sale_receipt',$sale->id) !!}
+    <span><label class="label label-primary pull-right counter-name"><b>{{ \Illuminate\Support\Facades\Cookie::get('counter_name') }}</b></label></span>
+    <br><br>
+    <a href="javascript:void(0)"  onclick="changeCounter()" class="pull-right">Change Location</a>
+    <br>
 @stop
 
 @section('content')
@@ -120,6 +124,8 @@
                                 @foreach($anItem->PriceRule as $aPriceRule)
                                     @if ($aPriceRule->active)
 
+                                        @if($aPriceRule->unlimited||$aPriceRule->num_times_to_apply>0)
+
                                             @if($aPriceRule->type==1)
 
                                                 @if($aPriceRule->percent_off>0)
@@ -149,6 +155,7 @@
                                                 @endif
                                             @endif
                                         @endif
+                                    @endif
                                 @endforeach
                             @endif
                         @endforeach
@@ -167,6 +174,8 @@
                                 @foreach($anItem->PriceRule as $aPriceRule)
 
                                         @if ($aPriceRule->active)
+
+                                            @if($aPriceRule->unlimited||$aPriceRule->num_times_to_apply>0)
 
                                                 @if($aPriceRule->type==1)
 
@@ -197,6 +206,7 @@
                                                     @endif
                                                 @endif
                                             @endif
+                                        @endif
                                 @endforeach
                             @endif
                         @endforeach
@@ -349,6 +359,20 @@
         </div>
         <br><br>
 
+        <div class="modal fade" id="choose_counter_modal" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="chooseCounter">Choose Counter</h4>
+                    </div>
+                    <div class="modal-body">
+                        <ul class="list-inline choose-counter-home">
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
 
@@ -361,6 +385,58 @@
 
 
 @section('additionalJS')
+<script>
+    /***************************************Counter Change*****************/
 
+    function selectCounter(){
+
+        @if(\Illuminate\Support\Facades\Cookie::get('counter_id')==null)
+        $("#choose_counter_modal").modal();
+        $.ajax({
+            url: "{{route('counter_list_ajax')}}",
+            type:"get",
+            dataType: "json",
+            success: function(response){
+                $(".choose-counter-home").html("");
+                counters = response.counters;
+                counters.forEach(function(counter){
+                    var url = '{{ route("counter_set", ":counter_id") }}';
+                    url = url.replace(':counter_id', counter.id);
+                    $(".choose-counter-home").append('<li><a class="set_employee_current_counter_after_login" href="'+url+'">'+counter.name+'</a></li>');
+                });
+            },
+            error: function () {
+
+            }
+        })
+        @endif
+    }
+
+    function changeCounter(){
+
+        $("#choose_counter_modal").modal();
+        $.ajax({
+            url: "{{route('counter_list_ajax')}}",
+            type:"get",
+            dataType: "json",
+            success: function(response){
+                $(".choose-counter-home").html("");
+                counters = response.counters;
+                counters.forEach(function(counter){
+                    var url = '{{ route("counter_set", ":counter_id") }}';
+                    url = url.replace(':counter_id', counter.id);
+                    $(".choose-counter-home").append('<li><a class="set_employee_current_counter_after_login" href="'+url+'">'+counter.name+'</a></li>');
+                });
+            },
+            error: function () {
+
+            }
+        })
+    }
+
+
+
+    /******************************Counter Change ****************************/
+</script>
 
 @stop
