@@ -765,12 +765,11 @@
                 },
             watch:{
                 customer_id: function (newVal, oldValue) {
-                    console.log(newVal);
                     if(newVal==oldValue || newVal=="" || this.itemList.length<=0)
                         return;
                     var that = this;
                     this.itemList.forEach(function(anItem) {
-                        this.GetItemPrice(selectedItem.item_id)
+                        that.GetItemPrice(anItem.item_id)
                             .then(function (response) {
                                 anItem.unit_price =response.data.price;
                             })
