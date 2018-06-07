@@ -67,55 +67,55 @@
 						<th>Actions</th>
 					</tr>
 					</thead>
-					<tbody class = "product-descriptions">
-					<tr v-for="(anItem,index) in itemList" class="product-specific-description">
-						<td class="col-sm-8 col-md-6">
-							<div class="media">
-								<div class="media-body">
-									<h6 class="media-heading"><a href="#">@{{itemList[index].item_name}}</a></h6>
-									<h6 v-if="itemList[index].company_name" class="media-heading">
-										by <a href="#">@{{itemList[index].company_name}}</a></h6>
-									<span>Status: </span>
-									<span v-if="itemList[index].items_sold>10" class="text-success"><strong>In Stock</strong>
-										</span>
-									<span v-else-if="itemList[index].items_sold<=0" class="text-success"><strong>Out of Stock</strong>
-										</span>
-									<span v-else class="text-success"><strong>Soon will be out of Stock </strong>
-										</span>
-								</div>
-							</div>
-						</td>
-						<td class="col-sm-1 col-md-1" style="text-align: center">
-							<input min="0" class="form-control quantity" value="1" v-model="itemList[index].items_sold">
-						</td>
-						<td class="col-sm-1 col-md-1 text-center">
-							<inline-edit v-model="itemList[index].unit_price" if-user-permitted="{{UserHasPermission("edit_sale_cost_price")}}" ></inline-edit>
-						</td>
-						<td>
-							<input class="form-control discount-amount" v-model="itemList[index].item_discount_percentage">
-						</td>
-						<td class="col-sm-1 col-md-1 text-center">
-							<strong class="total-price">
-								<currency-input currency-symbol="$" :value="GetLineTotal(index)"></currency-input>
-							</strong>
-						</td>
-						<td class="col-sm-1 col-md-1">
-							<button type="button" class="btn btn-danger" @click="Remove(itemList[index].item_id)"><span class="pe-7s-trash"></span> Remove</button>
-						</td>
-						
-						<td v-if="itemList[index].discountApplicable" colspan='5' style='padding-left:23px;font-size: 80%;background: aliceblue;'>
-							Discount Offer:
-							<strong>@{{itemList[index].discountName}}</strong><br>
-							Item Discount Amount: $<strong>@{{itemList[index].discountAmount}}</strong>
-							<input type ='hidden' id='price-rule-"@{{itemList[index].item_id}}"' value = '"+item.item_id+"'>
-						</td>
-					</tr>
+					<tbody  v-for="(anItem,index) in itemList" class = "product-descriptions">
 
+						<tr class="product-specific-description">
+							<td class="col-sm-8 col-md-6">
+								<div class="media">
+									<div class="media-body">
+										<h6 class="media-heading"><a href="#">@{{itemList[index].item_name}}</a></h6>
+										<h6 v-if="itemList[index].company_name" class="media-heading">
+											by <a href="#">@{{itemList[index].company_name}}</a></h6>
+										<span>Status: </span>
+										<span v-if="itemList[index].items_sold>10" class="text-success"><strong>In Stock</strong>
+											</span>
+										<span v-else-if="itemList[index].items_sold<=0" class="text-success"><strong>Out of Stock</strong>
+											</span>
+										<span v-else class="text-success"><strong>Soon will be out of Stock </strong>
+											</span>
+									</div>
+								</div>
+							</td>
+							<td class="col-sm-1 col-md-1" style="text-align: center">
+								<input min="0" class="form-control quantity" value="1" v-model="itemList[index].items_sold">
+							</td>
+							<td class="col-sm-1 col-md-1 text-center">
+								<inline-edit v-model="itemList[index].unit_price" if-user-permitted="{{UserHasPermission("edit_sale_cost_price")}}" ></inline-edit>
+							</td>
+							<td>
+								<input class="form-control discount-amount" v-model="itemList[index].item_discount_percentage">
+							</td>
+							<td class="col-sm-1 col-md-1 text-center">
+								<strong class="total-price">
+									<currency-input currency-symbol="$" :value="GetLineTotal(index)"></currency-input>
+								</strong>
+							</td>
+							<td class="col-sm-1 col-md-1">
+								<button type="button" class="btn btn-danger" @click="Remove(itemList[index].item_id)"><span class="pe-7s-trash"></span> Remove</button>
+							</td>
+						</tr>
+
+						<tr v-if="itemList[index].discountApplicable" colspan='5' style='padding-left:23px;font-size: 80%;background: aliceblue;'>
+							Discount Offer:
+							<strong>@{{itemList[index].discount_name}}</strong><br>
+							Item Discount Amount: $<strong>@{{itemList[index].discount_amount}}</strong>
+							<input type ='hidden' id='price-rule-"@{{itemList[index].item_id}}"' value = '"+item.item_id+"'>
+						</tr>
 					{{--<tr >--}}
 
 					{{--</tr>--}}
 
-					<tr v-if="itemList.length<=0" class="no-items"> <td colspan="6"><div class="jumbotron text-center"> <h3>There are no items in the cart [Sales]</h3> </div></td> </tr>
+						<tr v-if="itemList.length<=0" class="no-items"> <td colspan="6"><div class="jumbotron text-center"> <h3>There are no items in the cart [Sales]</h3> </div></td> </tr>
 					</tbody>
 					<tfoot>
 					</tfoot>
@@ -366,7 +366,7 @@
             data: {
                 itemList: [],
                 auto_select: true,
-				shown: false,
+                shown: false,
                 customer_id: 0,
                 options: [],
                 tax: {{$tax_rate}},
@@ -379,7 +379,7 @@
                 amountTendered: 0.0,
                 gift_card_number: "",
                 loyalty_card_number: "",
-				sale_type: 1,
+                sale_type: 1,
                 flatDiscountApplied: false
             },
             methods:
@@ -408,9 +408,9 @@
 
                         this.GetItemPrice(selectedItem.item_id)
                             .then(function (response) {
-								let sale_type =  $("#sale-type").attr("data-selected-type");
-								let items_sold = ( sale_type == "sale") ? 1 : -1;
-								console.log(selectedItem);
+                                let sale_type =  $("#sale-type").attr("data-selected-type");
+                                let items_sold = ( sale_type == "sale") ? 1 : -1;
+                                console.log(selectedItem);
                                 var itemDetails = {
                                     item_id : selectedItem.item_id,
                                     item_name : selectedItem.item_name,
@@ -419,16 +419,19 @@
                                     unit_price : response.data.price,
                                     cost_price: selectedItem.cost_price,
                                     items_sold : items_sold,
-									price_rule_id: selectedItem.price_rule_id
+                                    price_rule_id: selectedItem.price_rule_id
 
-								};
+                                };
 
 
                                 if(selectedItem.discountApplicable)
                                 {
-                                    itemDetails.discount_applicable = true;
-                                    if(this.allDiscountAmountPercentage === 0||this.allDiscountAmountPercentage === undefined)
+                                    itemDetails.discountApplicable = true;
+                                    if(this.allDiscountAmountPercentage === 0||this.allDiscountAmountPercentage === undefined){
                                         itemDetails.item_discount_percentage = selectedItem.discountPercentage;
+                                        itemDetails.discount_amount = selectedItem.discountAmount.toFixed(2);
+                                        itemDetails.discount_name = selectedItem.discountName;
+                                    }
                                     else
                                         itemDetails.item_discount_percentage = this.allDiscountAmountPercentage;
 
@@ -515,7 +518,7 @@
 
                         this.SubmitSales(1);
                     },
-					ChooseItem: function(product) {
+                    ChooseItem: function(product) {
 
                         var found = false;
                         for(var index=0;index<this.itemList.length; index++)
@@ -532,7 +535,7 @@
 
                         this.itemList.push(product);
 
-					},
+                    },
                     SubmitSales: function (status) {
                         let customerId = this.customer_id;
                         let subTotalAmount = this.GetSubtotal;
@@ -659,21 +662,21 @@
                                         payment_infos: paymentInfos
                                     }).then(function (response) {
 
-									var sale_id = response.data;
+                                    var sale_id = response.data;
 
-									switch (status){
-										case 1:
-											var url = '{{ route("sale_receipt", ":sale_id") }}';
-											url = url.replace(':sale_id', sale_id);
-											window.location.href=url;
-											break;
-										case 2:
-										case 3:
-											var url = '{{ route("new_sale") }}';
-											window.location.href=url;
-											break;
+                                    switch (status){
+                                        case 1:
+                                            var url = '{{ route("sale_receipt", ":sale_id") }}';
+                                            url = url.replace(':sale_id', sale_id);
+                                            window.location.href=url;
+                                            break;
+                                        case 2:
+                                        case 3:
+                                            var url = '{{ route("new_sale") }}';
+                                            window.location.href=url;
+                                            break;
 
-									}
+                                    }
 
                                 })
                                     .catch(function (error) {
@@ -745,7 +748,7 @@
                     {
                         this.paymentList.splice(index, 1);
                     },
-					convertToSale: function() {
+                    convertToSale: function() {
                         $('#bs-drp-sel-label').text("Sale");
                         $("#sale-type").attr("data-selected-type", "sale");
                         this.itemList.forEach(function(item){
@@ -753,15 +756,15 @@
                                 item.items_sold = (-1) * item.items_sold;
                         });
 
-					},
-					convertToReturn: function() {
+                    },
+                    convertToReturn: function() {
                         $('#bs-drp-sel-label').text("Return");
                         $("#sale-type").attr("data-selected-type", "return");
                         this.itemList.forEach(function(item){
                             if(item.items_sold>0)
-                            item.items_sold = (-1) * item.items_sold;
+                                item.items_sold = (-1) * item.items_sold;
                         });
-					}
+                    }
                 },
             watch:{
                 customer_id: function (newVal, oldValue) {
