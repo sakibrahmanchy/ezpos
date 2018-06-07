@@ -80,7 +80,7 @@
 										</span>
 									<span v-else-if="itemList[index].items_sold<=0" class="text-success"><strong>Out of Stock</strong>
 										</span>
-									<span v-else class="text-success"><strong>Soon will be out of Stock</strong>
+									<span v-else class="text-success"><strong>Soon will be out of Stock </strong>
 										</span>
 								</div>
 							</div>
@@ -102,7 +102,18 @@
 						<td class="col-sm-1 col-md-1">
 							<button type="button" class="btn btn-danger" @click="Remove(itemList[index].item_id)"><span class="pe-7s-trash"></span> Remove</button>
 						</td>
+						
+						<td v-if="itemList[index].discountApplicable" colspan='5' style='padding-left:23px;font-size: 80%;background: aliceblue;'>
+							Discount Offer:
+							<strong>@{{itemList[index].discountName}}</strong><br>
+							Item Discount Amount: $<strong>@{{itemList[index].discountAmount}}</strong>
+							<input type ='hidden' id='price-rule-"@{{itemList[index].item_id}}"' value = '"+item.item_id+"'>
+						</td>
 					</tr>
+
+					{{--<tr >--}}
+
+					{{--</tr>--}}
 
 					<tr v-if="itemList.length<=0" class="no-items"> <td colspan="6"><div class="jumbotron text-center"> <h3>There are no items in the cart [Sales]</h3> </div></td> </tr>
 					</tbody>
@@ -399,6 +410,7 @@
                             .then(function (response) {
 								let sale_type =  $("#sale-type").attr("data-selected-type");
 								let items_sold = ( sale_type == "sale") ? 1 : -1;
+								console.log(selectedItem);
                                 var itemDetails = {
                                     item_id : selectedItem.item_id,
                                     item_name : selectedItem.item_name,
@@ -415,10 +427,11 @@
                                 if(selectedItem.discountApplicable)
                                 {
                                     itemDetails.discount_applicable = true;
-                                    if(this.allDiscountAmountPercentage==0)
+                                    if(this.allDiscountAmountPercentage === 0||this.allDiscountAmountPercentage === undefined)
                                         itemDetails.item_discount_percentage = selectedItem.discountPercentage;
                                     else
                                         itemDetails.item_discount_percentage = this.allDiscountAmountPercentage;
+
                                 }
                                 else
                                 {

@@ -177,14 +177,13 @@
                                     <div class="form-group">
                                         <label for="size" class="col-sm-3 col-md-3 col-lg-2 control-label wide">Days to expiration:</label>					<div class="col-sm-9 col-md-9 col-lg-10">
                                             <input type="text" name="expire_days" value="{{ $item->days_to_expiration }}" id="expire_days" class="form-control form-inps">
-                                            <input type="text" name="expire_days" value="{{ $item->days_to_expiration }}" id="expire_days" class="form-control form-inps">
                                             <span class="text-danger">{{ $errors->first('expire_days') }}</span>
                                         </div>
                                     </div>
 
                                     <div class="form-group">
                                         <label for="description" class="col-sm-3 col-md-3 col-lg-2 control-label wide">Description:</label>					<div class="col-sm-9 col-md-9 col-lg-10">
-                                            <textarea name="description" value = "{{ $item->description }}" cols="17" rows="5" id="description" class="form-control  text-area"></textarea>
+                                            <textarea name="description" value = "{{ $item->description }}" cols="17" rows="5" id="description" class="form-control  text-area">{{ $item->description }}</textarea>
                                         </div>
                                     </div>
 

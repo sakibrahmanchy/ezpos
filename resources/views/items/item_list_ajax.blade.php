@@ -148,8 +148,38 @@
                 },
                 dom:"Bt<'row'<'col-sm-12'tr>>" +
                 "<'row'<'col-sm-4'l><'col-sm-8'p>>",
-                "buttons": [
-                    'print', 'csv', 'excel', 'pdf'
+                buttons: [
+                    {
+                        extend: 'pdf',
+                        footer: true,
+                        exportOptions: {
+                            columns: [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
+                        },
+                        orientation : 'landscape',
+                        pageSize : 'LEGAL',
+                        titleAttr : 'PDF'
+                    },
+                    {
+                        extend: 'csv',
+                        exportOptions: {
+                            columns: [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
+                        }
+
+                    },
+                    {
+                        extend: 'excel',
+                        exportOptions: {
+                            columns: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+                        },
+                    },
+                    {
+                        extend: 'print',
+                        footer: false
+                    },
+                    {
+                        extend: 'colvis',
+                        footer: false
+                    }
                 ],
                 "ajax": {
                     url: '{{ route('all_items_data') }}',
@@ -166,8 +196,8 @@
                 "language": {
                     "lengthMenu": 'Shows <select class="form-control">'+
                     '<option value="10">10</option>'+
-                    '<option value="20">25</option>'+
-                    '<option value="30">100</option>'+
+                    '<option value="25">25</option>'+
+                    '<option value="100">100</option>'+
                     '<option value="-1">All</option>'+
                     '</select>'
                 },

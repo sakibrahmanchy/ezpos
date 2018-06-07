@@ -56,7 +56,8 @@ class ItemController extends Controller
             'replenish_level' => 'sometimes|nullable|integer',
             'expire_days' => 'sometimes|nullable|integer',
             'cost_price' => 'required|numeric',
-            'unit_price' => 'required|numeric'
+            'unit_price' => 'required|numeric',
+            'product_id' => 'nullable|unique:items'
         ]);
 
         $item = new Item();
@@ -219,7 +220,8 @@ EOT;
             'replenish_level' => 'sometimes|nullable|integer',
             'expire_days' => 'sometimes|nullable|integer',
             'cost_price' => 'required|numeric',
-            'unit_price' => 'required|numeric'
+            'unit_price' => 'required|numeric',
+            'product_id' => 'nullable|unique:items,product_id,'.$itemId
         ]);
 
         $item = new Item();
