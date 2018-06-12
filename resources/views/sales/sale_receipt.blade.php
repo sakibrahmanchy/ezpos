@@ -278,11 +278,10 @@
                             </div>
                             <div class="col-md-2 col-sm-2 col-xs-4">
                                 <div class="invoice-footer-value invoice-total">
-
                                     @if($sale->due>=0)
                                          ${{  number_format($sale->due, 2) }}
                                     @else
-                                        -${{ (-1) * number_format($sale->due, 2) }}
+                                        -${{  number_format((-1) * $sale->due, 2) }}
                                     @endif
                                 </div>
                             </div>

@@ -228,9 +228,9 @@
         <tr>
             <th>{{$sale->due>=0?'Due': 'Change Due'}}</th>
             <td>  @if($sale->due>=0)
-                    ${{$sale->due}}
+                    ${{ number_format($sale->due, 2) }}
                 @else
-                    -${{ (-1) * $sale->due }}
+                    -${{ number_format((-1) * $sale->due, 2) }}
                 @endif
             </td>
         </tr>
