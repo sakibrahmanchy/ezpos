@@ -575,6 +575,7 @@
 
                                 productInfos = [];
                                 that = this;
+                                let totalDiscount = 0;
                                 $.map(this.itemList, function(item, index) {
 
                                     let itemType = "item";
@@ -618,6 +619,7 @@
 
                                         totalProfit += itemProfit;
                                         totalItemsSold+=currentQuantity;
+                                        totalDiscount += discountAmount;
 
                                         var productInfo = {
                                             item_id:item.item_id,
@@ -650,7 +652,8 @@
                                     profit: totalProfit,
                                     items_sold: totalItemsSold,
                                     sale_type:sale_type,
-                                    comment: comment
+                                    comment: comment,
+                                    total_sales_discount: totalDiscount
                                 };
 
                                 axios.post("{{route('new_sale')}}",

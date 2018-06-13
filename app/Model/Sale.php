@@ -90,6 +90,7 @@ class Sale extends Model
         $sale->counter_id = Cookie::get("counter_id");
         $sale->comment = $saleInfo["comment"];
         $sale->cash_register_id = $registerId;
+        $sale->total_sales_discount = $saleInfo['total_sales_discount'];
         $sale->save();
 
         return $sale;
@@ -223,6 +224,7 @@ class Sale extends Model
         $sale->sale_type = $saleInfo['sale_type'];
         $sale->counter_id = Cookie::get("counter_id");
         $sale->comment = $saleInfo["comment"];
+        $sale->total_sales_discount = $saleInfo["total_sales_discount"];
 
         $sale->save();
 

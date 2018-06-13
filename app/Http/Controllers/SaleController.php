@@ -349,7 +349,6 @@ class SaleController extends Controller
                         unset($magicArray[$key]);
                         $notInOperationLength++;
                     }
-
                 }
 
                 for ($index = 0; $index < $notInOperationLength; $index++) {

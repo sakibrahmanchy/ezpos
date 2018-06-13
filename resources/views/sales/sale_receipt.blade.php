@@ -124,8 +124,6 @@
                                 @foreach($anItem->PriceRule as $aPriceRule)
                                     @if ($aPriceRule->active)
 
-                                        @if($aPriceRule->unlimited||$aPriceRule->num_times_to_apply>0)
-
                                             @if($aPriceRule->type==1)
 
                                                 @if($aPriceRule->percent_off>0)
@@ -155,7 +153,6 @@
                                                 @endif
                                             @endif
                                         @endif
-                                    @endif
                                 @endforeach
                             @endif
                         @endforeach
@@ -174,8 +171,6 @@
                                 @foreach($anItem->PriceRule as $aPriceRule)
 
                                         @if ($aPriceRule->active)
-
-                                            @if($aPriceRule->unlimited||$aPriceRule->num_times_to_apply>0)
 
                                                 @if($aPriceRule->type==1)
 
@@ -206,7 +201,6 @@
                                                     @endif
                                                 @endif
                                             @endif
-                                        @endif
                                 @endforeach
                             @endif
                         @endforeach
@@ -311,7 +305,7 @@
 
 
                         @endforeach
-
+                        @if(!is_null($sale->comment))
                         <div class="row">
                             <div class="col-md-offset-8 col-sm-offset-8 col-xs-offset-2 col-md-2 col-sm-2 col-xs-6"><br>
                                 <div class="invoice-footer-heading"><strong>Comments</strong></div>
@@ -320,6 +314,7 @@
                                 <div class="invoice-footer-heading">{{ $sale->comment }}</div><br>
                             </div><br><br>
                         </div>
+                        @endif
 
                         <div class="row">
                             <div class="col-md-12 col-sm-12 col-xs-12">

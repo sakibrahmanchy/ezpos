@@ -570,6 +570,7 @@
 
                                 productInfos = [];
                                 that = this;
+                                let totalDiscount = 0;
                                 $.map(this.itemList, function(item, index) {
 
                                     let itemType = "item";
@@ -613,6 +614,7 @@
 
                                         totalProfit += itemProfit;
                                         totalItemsSold+=currentQuantity;
+                                        totalDiscount += discountAmount;
 
                                         var productInfo = {
                                             item_id:item.item_id,
@@ -628,9 +630,9 @@
                                             item_profit: itemProfit,
                                             tax_rate: "{{ $tax_rate }}",
                                             tax_amount: currentTotal * {{ $settings['tax_rate'] }},
-                                            is_price_taken_from_barcode: scanStatus
+                                            is_price_taken_from_barcode: scanStatus,
                                         };
-                                        console.log(productInfo);
+
                                         productInfos.push(productInfo);
                                     }
                                 });
@@ -646,7 +648,8 @@
                                     profit: totalProfit,
                                     items_sold: totalItemsSold,
                                     sale_type:sale_type,
-                                    comment: comment
+                                    comment: comment,
+                                    total_sales_discount: totalDiscount
                                 };
 
                                 var edit_url = '{{ route("sale_edit", ":sale_id") }}';
@@ -854,7 +857,7 @@
                         item_quantity : selectedItem.item_quantity,
                         unit_price : selectedItem.unit_price,
                         cost_price: selectedItem.cost_price,
-                        quantity : selectedItem.items_sold,
+                        quantity : selectedItem.quantity,
                         price_rule_id: ( selectedItem.price_rule_id === null ? 0 : selectedItem.price_rule_id)
 
                     };
