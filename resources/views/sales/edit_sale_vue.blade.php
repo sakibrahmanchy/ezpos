@@ -500,7 +500,8 @@
 									paid_amount: this.amountTendered,
 									payment_type: this.activePaymentType
 								}
-								this.paymentList.push(aPaymentItem);
+                                this.paymentList.push(aPaymentItem);
+                                this.SubmitSales(1);
 
 
 							}else if(this.activePaymentType=='Gift Card') {
@@ -510,8 +511,6 @@
 								this.ValidateLoyalty();
 							}
 						}
-
-                        this.SubmitSales(1);
                     },
                     ChooseItem: function(product) {
                         var found = false;
@@ -698,6 +697,7 @@
                                     payment_type: 'Gift Card'
                                 }
                                 that.paymentList.push(aPaymentItem);
+                                this.SubmitSales(1);
                             }else{
                                 $.notify({
                                     icon: '',
@@ -728,6 +728,7 @@
                                     payment_type: 'Loyalty Card: '+that.loyalty_card_number+" ( Balance: "+response.data.current_balance+")"
                                 }
                                 that.paymentList.push(aPaymentItem);
+                                this.SubmitSales(1);
                             }else{
                                 $.notify({
                                     icon: '',

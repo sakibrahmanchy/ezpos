@@ -504,15 +504,13 @@
 									payment_type: this.activePaymentType
 								}
 								this.paymentList.push(aPaymentItem);
-
+                                this.SubmitSales(1);
 
 							}else if(this.activePaymentType=='Gift Card') {
 								this.ValidateGiftCard();
 							}
 							else if(this.activePaymentType=="Loyalty Card"){
 								this.ValidateLoyalty();
-							}else {
-							    this.submitSales(1);
 							}
 						}
                     },
