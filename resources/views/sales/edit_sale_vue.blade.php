@@ -491,23 +491,25 @@
                         this.SubmitSales(3);
                     },
                     CompleteSales: function(){
+						if( this.amountTendered>0 )
+						{
+							if( this.activePaymentType == 'Cash' || this.activePaymentType == 'Check' || this.activePaymentType == 'Debit Card' || this.activePaymentType == 'Credit Card' )
+							{
 
-                        if( this.activePaymentType == 'Cash' || this.activePaymentType == 'Check' || this.activePaymentType == 'Debit Card' || this.activePaymentType == 'Credit Card' )
-                        {
-
-                            var aPaymentItem = {
-                                paid_amount: this.amountTendered,
-                                payment_type: this.activePaymentType
-                            }
-                            this.paymentList.push(aPaymentItem);
+								var aPaymentItem = {
+									paid_amount: this.amountTendered,
+									payment_type: this.activePaymentType
+								}
+								this.paymentList.push(aPaymentItem);
 
 
-                        }else if(this.activePaymentType=='Gift Card') {
-                            this.ValidateGiftCard();
-                        }
-                        else if(this.activePaymentType=="Loyalty Card"){
-                            this.ValidateLoyalty();
-                        }
+							}else if(this.activePaymentType=='Gift Card') {
+								this.ValidateGiftCard();
+							}
+							else if(this.activePaymentType=="Loyalty Card"){
+								this.ValidateLoyalty();
+							}
+						}
 
                         this.SubmitSales(1);
                     },

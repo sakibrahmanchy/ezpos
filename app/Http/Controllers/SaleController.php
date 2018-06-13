@@ -464,7 +464,7 @@ class SaleController extends Controller
                 else
                   $item_name = $anItem->item_name;
 
-                $toPrint = new \App\Model\Printer\Item(round($anItem->pivot->quantity), $item_name, $anItem->pivot->unit_price , $anItem->pivot->total_price);
+                $toPrint = new \App\Model\Printer\Item(round($anItem->pivot->quantity), $item_name, number_format($anItem->pivot->unit_price, 2) , number_format($anItem->pivot->total_price,2) );
                 array_push($items, $toPrint);
             }
 
@@ -478,14 +478,14 @@ class SaleController extends Controller
             $printer->text("-------------------------------------------\n");
 			
 
-            $subtotal = new FooterItem('Subtotal', $sale->sub_total_amount);
+            $subtotal = new FooterItem('Subtotal', number_format($sale->sub_total_amount, 2) );
             if($settings["tax_rate"]>0)
-                $tax = new FooterItem('VAT (' . $settings['tax_rate'] . '%)', $sale->tax_amount);
-            $total = new FooterItem('Total', $sale->total_amount);
+                $tax = new FooterItem('VAT (' . number_format($settings['tax_rate'], 2) . '%)', number_format($sale->tax_amount, 2) );
+            $total = new FooterItem('Total', number_format($sale->total_amount, 2) );
 			if($sale->due>=0)
-				$due = new FooterItem('Due', $sale->due);
+				$due = new FooterItem('Due', number_format($sale->due, 2) );
 			else
-				$due = new FooterItem('Change Due', $sale->due);
+				$due = new FooterItem('Change Due', number_format($sale->due, 2) );
 
             $printer->setEmphasis(true);
             $printer->text($subtotal);
@@ -508,7 +508,7 @@ class SaleController extends Controller
                 $printer->feed();
                 $printer->setEmphasis(false);
                 foreach ($sale->paymentlogs as $aPayment) {
-                    $payment = new FooterItem($aPayment->payment_type." Tendered", $aPayment->paid_amount);
+                    $payment = new FooterItem($aPayment->payment_type." Tendered", number_format($aPayment->paid_amount, 2));
                     $printer->text($payment);
                 }
             }
