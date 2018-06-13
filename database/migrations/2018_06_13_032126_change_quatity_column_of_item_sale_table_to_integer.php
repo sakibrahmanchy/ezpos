@@ -25,8 +25,8 @@ class ChangeQuatityColumnOfItemSaleTableToInteger extends Migration
      */
     public function down()
     {
-        Schema::table('items', function($table) {
-            $table->double('quantity')->change();
+        Schema::table('item_sale', function($table) {
+            $table->decimal('quantity')->change();
         });
     }
 }
