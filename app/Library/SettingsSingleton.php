@@ -10,7 +10,8 @@ class SettingsSingleton
 
     public static function get()
     {
-        if (!isset(self::$settingsData)) {
+        if (!isset(self::$settingsData))
+        {
             $items = DB::table('settings')->get();
 
             $settings = array();
@@ -22,7 +23,8 @@ class SettingsSingleton
         return self::$settingsData;
     }
 
-    public static function getByKey($key){
+    public static function getByKey($key)
+    {
         self::get();
         return (self::$settingsData)[$key];
     }
@@ -35,8 +37,5 @@ class SettingsSingleton
         $settings->save();
 
         self::$settingsData[$key] = $value;
-
-        //DB update
-        //self::$settingsData = ['id' => 4, 'name' => 'yoo'];
     }
 }
