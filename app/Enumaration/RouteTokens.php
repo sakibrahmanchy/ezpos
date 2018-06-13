@@ -171,7 +171,7 @@ class RouteTokens
         "report_transaction_details_ajax" => "report_suspended_sales",
 
         "new_employee"=>"employees_add_update",
-        "employee_list" => "employees_add_update",
+        "employee_list" => "employees_search",
         "employee_edit"=>"employees_add_update",
         "employee_delete"=>"employees_delete",
         "employees_delete"=>"employees_delete",
