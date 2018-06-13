@@ -456,18 +456,31 @@ class SaleController extends Controller
             $printer->text($header);
 
             $items = array();
+            $totalItemPrice = 0;
             foreach ($sale->items as $anItem) {
                 $item_name = "";
-                if($anItem->pivot->is_price_taken_from_barcode)
-                    $item_name = $anItem->item_name.'@'.$anItem->pivot->unit_price.'/'.$anItem->item_size;
-                else
-                  $item_name = $anItem->item_name;
+                if($anItem->product_id!="discount-01!XcQZc003ab") {
+                    if ($anItem->pivot->is_price_taken_from_barcode) {
+                        $item_name = $anItem->item_name . '@'
+                            . $anItem->pivot->unit_price . '/'
+                            . $anItem->item_size;
+                    } else {
+                        $item_name = $anItem->item_name;
+                    }
 
-                $toPrint = new \App\Model\Printer\Item(round($anItem->pivot->quantity), $item_name, number_format($anItem->pivot->unit_price, 2) , number_format($anItem->pivot->total_price,2) );
-                array_push($items, $toPrint);
+                    $lineTotal = $anItem->pivot->quantity
+                        * $anItem->pivot->unit_price;
+                    $totalItemPrice += $lineTotal;
+                    $toPrint = new \App\Model\Printer\Item(
+                        round($anItem->pivot->quantity), $item_name,
+                        number_format($anItem->pivot->unit_price, 2),
+                        number_format($lineTotal, 2)
+                    );
+                    array_push($items, $toPrint);
+                }
             }
 
-			
+
             $printer->setJustification(Printer::JUSTIFY_LEFT);
             $printer->setEmphasis(false);
             foreach ($items as $item) {
@@ -475,20 +488,73 @@ class SaleController extends Controller
             }
 
             $printer->text("-------------------------------------------\n");
-			
 
-            $subtotal = new FooterItem('Subtotal', number_format($sale->sub_total_amount, 2) );
-            if($settings["tax_rate"]>0)
-                $tax = new FooterItem('VAT (' . number_format($settings['tax_rate'], 2) . '%)', number_format($sale->tax_amount, 2) );
-            $total = new FooterItem('Total', number_format($sale->total_amount, 2) );
-			if($sale->due>=0)
-				$due = new FooterItem('Due', number_format($sale->due, 2) );
-			else
-				$due = new FooterItem('Change Due', number_format($sale->due, 2) );
+
+            $subtotal = new FooterItem('Subtotal (Line Total)', number_format($totalItemPrice, 2) );
 
             $printer->setEmphasis(true);
             $printer->text($subtotal);
+
+            $printer->feed();
+
+            $printer->text("------------------Discount----------------------\n");
+            $printer->feed();
+
+            $header = new \App\Model\Printer\Item("Qty", "Name", "Discount(%)", "Total");
+            $printer->setJustification(Printer::JUSTIFY_LEFT);
+            $printer->setEmphasis(true);
+            $printer->text($header);
+
+            $items = array();
+            $totalLineDiscountAmount = 0;
+            foreach ($sale->items as $anItem) {
+                $item_name = "";
+                if($anItem->product_id!="discount-01!XcQZc003ab") {
+                    if($anItem->pivot->is_price_taken_from_barcode)
+                        $item_name = $anItem->item_name.'@'.$anItem->pivot->unit_price.'/'.$anItem->item_size;
+                    else
+                        $item_name = $anItem->item_name;
+                    $amountDiscounted = ($anItem->pivot->unit_price * $anItem->pivot->item_discount_percentage)/100;
+                    $totalLineDiscountAmount += $amountDiscounted;
+                    $toPrint = new \App\Model\Printer\Item(round($anItem->pivot->quantity), $item_name, number_format($anItem->pivot->item_discount_percentage, 2) , number_format($amountDiscounted,2) );
+                    array_push($items, $toPrint);
+                }
+            }
+
+
+            $printer->setJustification(Printer::JUSTIFY_LEFT);
             $printer->setEmphasis(false);
+            foreach ($items as $item) {
+                $printer->text($item);
+            }
+
+            $printer->text("-------------------------------------------\n");
+
+            $printer->setEmphasis(false);
+            $totalLineDiscount = new FooterItem('Total Line Discount ', number_format( $totalLineDiscountAmount, 2));
+            $printer->text($totalLineDiscount);
+            $totalLineDiscount = new FooterItem('Discount From Sale ', number_format( $sale->sales_discount, 2));
+            $printer->text($totalLineDiscount);
+
+            $printer->text("-------------------------------------------\n");
+            $totalDiscount = new FooterItem('Total Discount ', number_format( $totalLineDiscountAmount + $sale->sales_discount, 2));
+            $printer->text($totalDiscount);
+
+            $printer->feed();
+            $printer->feed();
+            $printer->text("-------------------------------------------\n");
+            $printer->setEmphasis(true);
+            $printer->text($subtotal);
+            $printer->text($totalDiscount);
+            $printer->text("-------------------------------------------\n");
+
+            if($settings["tax_rate"]>0)
+                $tax = new FooterItem('VAT (' . number_format($settings['tax_rate'], 2) . '%)', number_format($sale->tax_amount, 2) );
+            $total = new FooterItem('Total', number_format($sale->total_amount, 2) );
+            if($sale->due>=0)
+                $due = new FooterItem('Due', number_format($sale->due, 2) );
+            else
+                $due = new FooterItem('Change Due', number_format($sale->due, 2) );
             if($settings["tax_rate"]>0)
                 $printer->text($tax);
             $printer->setEmphasis(true);
@@ -497,8 +563,6 @@ class SaleController extends Controller
             $printer->text($due);
             $printer->selectPrintMode();
             $printer->feed();
-            $printer->feed();
-
 
             if (!empty($sale->paymentlogs)) {
                 $printer->text("-------------------------------------------\n");
@@ -716,8 +780,8 @@ class SaleController extends Controller
             $printer->setJustification(Printer::JUSTIFY_CENTER);
             $printer->text("THANK YOU!");
             $printer->feed();
-			
-			
+
+            return redirect()->back();
             /*dd($items);*/
             /* $printer -> feed();*/
 
@@ -888,72 +952,70 @@ class SaleController extends Controller
 
                 if ($anItem->active){
 
-                        if($anItem->type==1){
+                    if($anItem->type==1){
 
-                            if($anItem->percent_off>0){
+                        if($anItem->percent_off>0){
 
-                                $rule_start_date = new \DateTime($anItem->start_date);
-                                $rule_expire_date = new \DateTime($anItem->end_date);
+                            $rule_start_date = new \DateTime($anItem->start_date);
+                            $rule_expire_date = new \DateTime($anItem->end_date);
 
-                                if(($current_date>=$rule_start_date) && ($current_date<=$rule_expire_date) ) {
-                                    $discountPercentage = $anItem->percent_off;
-                                    if($discountPercentage>100){
-                                        $anItem->discountPercentage = 100;
-                                        $anItem->itemPrice = $anItem->selling_price;
-                                        $anItem->discountName = $anItem->name;
-                                        $anItem->discountAmount = $anItem->itemPrice*($discountPercentage/100);
-                                        $anItem->itemPriceAfterDiscount = $anItem->itemPrice-$anItem->discountAmount;
-                                        $anItem->discountApplicable = true;
-                                    }else{
-                                        $anItem->discountPercentage = $discountPercentage;
-                                        $anItem->itemPrice = $anItem->selling_price;
-                                        $anItem->discountName = $anItem->name;
-                                        $anItem->discountAmount = $anItem->itemPrice*($discountPercentage/100);
-                                        $anItem->itemPriceAfterDiscount = $anItem->itemPrice-$anItem->discountAmount;
-                                        $anItem->discountApplicable = true;
-                                    }
-
+                            if(($current_date>=$rule_start_date) && ($current_date<=$rule_expire_date) ) {
+                                $discountPercentage = $anItem->percent_off;
+                                if($discountPercentage>100){
+                                    $anItem->discountPercentage = 100;
+                                    $anItem->itemPrice = $anItem->selling_price;
+                                    $anItem->discountName = $anItem->name;
+                                    $anItem->discountAmount = $anItem->itemPrice*($discountPercentage/100);
+                                    $anItem->itemPriceAfterDiscount = $anItem->itemPrice-$anItem->discountAmount;
+                                    $anItem->discountApplicable = true;
                                 }else{
-                                    $anItem->discountApplicable = false;
+                                    $anItem->discountPercentage = $discountPercentage;
+                                    $anItem->itemPrice = $anItem->selling_price;
+                                    $anItem->discountName = $anItem->name;
+                                    $anItem->discountAmount = $anItem->itemPrice*($discountPercentage/100);
+                                    $anItem->itemPriceAfterDiscount = $anItem->itemPrice-$anItem->discountAmount;
+                                    $anItem->discountApplicable = true;
                                 }
 
-                                //echo "Item should be discounted by ".$anItem->percent_off." percent";
-
-                            }else if($anItem->fixed_of>0){
-
-                                $rule_start_date = new \DateTime($anItem->start_date);
-                                $rule_expire_date = new \DateTime($anItem->end_date);
-
-                                if( ($current_date>=$rule_start_date) && ($current_date<=$rule_expire_date) ) {
-                                    $discountPercentage = ($anItem->fixed_of/$anItem->selling_price)*100;
-                                    if($discountPercentage>100){
-                                        $anItem->discountPercentage = 100;
-                                        $anItem->discountAmount = $anItem->selling_price;
-                                        $anItem->discountName = $anItem->name;
-                                        $anItem->itemPrice = $anItem->selling_price;
-                                        $anItem->itemPriceAfterDiscount = $anItem->itemPrice - $anItem->itemPrice;
-                                        $anItem->discountApplicable = true;
-                                    }
-                                    else{
-                                        $anItem->discountPercentage = $discountPercentage;
-                                        $anItem->discountAmount = $anItem->fixed_of;
-                                        $anItem->discountName = $anItem->name;
-                                        $anItem->itemPrice = $anItem->selling_price;
-                                        $anItem->itemPriceAfterDiscount = $anItem->itemPrice - $anItem->discountAmount;
-                                        $anItem->discountApplicable = true;
-                                    }
-
-                                }else{
-                                    $anItem->discountApplicable = false;
-                                }
-                                // echo "Item should be discounted by ".$anItem->fixed_of." dollar";
+                            }else{
+                                $anItem->discountApplicable = false;
                             }
 
+                            //echo "Item should be discounted by ".$anItem->percent_off." percent";
+
+                        }else if($anItem->fixed_of>0){
+
+                            $rule_start_date = new \DateTime($anItem->start_date);
+                            $rule_expire_date = new \DateTime($anItem->end_date);
+
+                            if( ($current_date>=$rule_start_date) && ($current_date<=$rule_expire_date) ) {
+                                $discountPercentage = ($anItem->fixed_of/$anItem->selling_price)*100;
+                                if($discountPercentage>100){
+                                    $anItem->discountPercentage = 100;
+                                    $anItem->discountAmount = $anItem->selling_price;
+                                    $anItem->discountName = $anItem->name;
+                                    $anItem->itemPrice = $anItem->selling_price;
+                                    $anItem->itemPriceAfterDiscount = $anItem->itemPrice - $anItem->itemPrice;
+                                    $anItem->discountApplicable = true;
+                                }
+                                else{
+                                    $anItem->discountPercentage = $discountPercentage;
+                                    $anItem->discountAmount = $anItem->fixed_of;
+                                    $anItem->discountName = $anItem->name;
+                                    $anItem->itemPrice = $anItem->selling_price;
+                                    $anItem->itemPriceAfterDiscount = $anItem->itemPrice - $anItem->discountAmount;
+                                    $anItem->discountApplicable = true;
+                                }
+
+                            }else{
+                                $anItem->discountApplicable = false;
+                            }
+                            // echo "Item should be discounted by ".$anItem->fixed_of." dollar";
                         }
 
+                    }
+
                 }
-
-
             }
         }
 

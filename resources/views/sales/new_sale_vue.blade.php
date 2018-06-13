@@ -511,10 +511,10 @@
 							}
 							else if(this.activePaymentType=="Loyalty Card"){
 								this.ValidateLoyalty();
+							}else {
+							    this.submitSales(1);
 							}
 						}
-
-                        this.SubmitSales(1);
                     },
                     ChooseItem: function(product) {
 
@@ -701,6 +701,7 @@
                                     payment_type: 'Gift Card'
                                 }
                                 that.paymentList.push(aPaymentItem);
+                                this.SubmitSales(1);
                             }else{
                                 $.notify({
                                     icon: '',
@@ -731,6 +732,7 @@
                                     payment_type: 'Loyalty Card: '+that.loyalty_card_number+" ( Balance: "+response.data.current_balance+")"
                                 }
                                 that.paymentList.push(aPaymentItem);
+                                this.SubmitSales(1);
                             }else{
                                 $.notify({
                                     icon: '',
