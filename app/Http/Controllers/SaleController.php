@@ -144,16 +144,21 @@ class SaleController extends Controller
     }
 
 
-    public function DownloadSaleReceipt($sale_id)
+    public function DownloadSaleReceipt(Request $request, $sale_id)
     {
 
 
         $sale = Sale::withTrashed()->where("id", $sale_id)->with(['items' => function ($query) {
             $query->where('items.product_type', '<>', 2);
         }, 'paymentlogs', 'customer'])->first();
+        if(isset($request->receipt_print)) {
 
-        $pdf = PDF::loadView('sales.sale_receipt_pdf', ["sale" => $sale]);
-        return $pdf->download('ezpos-sale-receipt.pdf');
+            return view('sales.web_print',["sale" => $sale]);
+        }else{
+            $pdf = PDF::loadView('sales.sale_receipt_pdf', ["sale" => $sale]);
+            return $pdf->download('ezpos-sale-receipt.pdf');
+        }
+
     }
 
     public function MailSaleReceipt($sale_id)

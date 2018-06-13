@@ -249,6 +249,9 @@ class PermissionNameTableSeeder extends Seeder
                     array("permission_name"=>"Add, Update",
                           "permission_token"=>"gift_cards_add_update"
                     ),
+                    array("permission_name"=>"Search",
+                          "permission_token"=>"gift_cards_search"
+                    ),
                     array(
                         "permission_name"=>"Delete",
                         "permission_token"=>"gift_cards_delete"
@@ -266,6 +269,10 @@ class PermissionNameTableSeeder extends Seeder
                     array(
                         "permission_name"=>"Add, Update",
                         "permission_token"=>"counters_add_update"
+                    ),
+                    array(
+                        "permission_name"=>"Search",
+                        "permission_token"=>"counters_search"
                     ),
                     array(
                         "permission_name"=>"Delete",
@@ -287,6 +294,10 @@ class PermissionNameTableSeeder extends Seeder
                     array(
                         "permission_name"=>"Delete",
                         "permission_token"=>"price_level_delete"
+                    ),
+                    array(
+                        "permission_name"=>"Search",
+                        "permission_token"=>"price_level_search"
                     ),
                 ),
                 "description"=>"Add, Update, Delete Price Levels"

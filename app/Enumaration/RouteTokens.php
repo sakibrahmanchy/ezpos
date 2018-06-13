@@ -14,7 +14,7 @@ class RouteTokens
     public static $ROUTE_TOKENS = array(
 
         "new_customer"=>"customer_add_update",
-        "customer_list"=>"customer_add_update",
+        "customer_list"=>"customer_search",
         "customer_edit"=>"customer_add_update",
         "customer_profile"=>"customer_add_update",
         "customer_balance_add"=>"customer_add_update",
@@ -39,25 +39,25 @@ class RouteTokens
         "insert_item_file"=>"item_add_update",
 
         "new_item_kit"=>"itemkit_add_update",
-        "item_kit_list"=>"itemkit_add_update",
+        "item_kit_list"=>"itemkit_search",
         "item_kit_edit"=>"itemkit_add_update",
         "item_kit_delete"=>"itemkit_delete",
         "item_kits_delete"=>"itemkit_delete",
 
         "new_price_rule"=>"price_rules_add_update",
-        "price_rule_list"=>"price_rules_add_update",
+        "price_rule_list"=>"price_rules_search",
         "price_rule_edit"=>"price_rules_add_update",
         "price_rule_delete"=>"price_rules_delete",
         "price_rules_delete"=>"price_rules_delete",
 
         "new_price_level"=>"price_level_add_update",
-        "price_level_list"=>"price_level_add_update",
+        "price_level_list"=>"price_level_search",
         "price_level_edit"=>"price_level_add_update",
         "price_level_delete"=>"price_level_delete",
         "price_levels_delete"=>"price_level_delete",
 
         "new_supplier"=>"suppliers_add_update",
-        "supplier_list" => "suppliers_add_update",
+        "supplier_list" => "suppliers_search",
         "supplier_edit"=>"suppliers_add_update",
         "supplier_delete"=>"suppliers_delete",
         "suppliers_delete"=>"suppliers_delete",
@@ -193,14 +193,14 @@ class RouteTokens
         "delete_manufacturer"=>"item_manage_manufacturers",
 
         "new_gift_card"=>"gift_cards_add_update",
-        "gift_card_list"=>"gift_cards_add_update",
+        "gift_card_list"=>"gift_cards_search",
         "gift_card_edit"=>"gift_cards_add_update",
         "gift_card_delete"=>"gift_cards_delete",
         "gift_cards_delete"=>"gift_cards_delete",
         "gift_card_use"=>"gift_card_use",
         
         "new_counter"=>"counters_add_update",
-        "counter_list"=>"counters_add_update",
+        "counter_list"=>"counters_search",
         "counter_edit"=>"counters_add_update",
         "counter_delete"=>"counters_delete",
         "counters_delete"=>"counters_delete",

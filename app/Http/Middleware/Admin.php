@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Enumaration\RouteTokens;
 use App\Enumaration\UserTypes;
+use App\Model\User;
 use Closure;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
@@ -20,6 +21,7 @@ class Admin
      */
     public function handle($request, Closure $next)
     {
+
         $user = Auth::user();
 
         $permissions = DB::table('user_permissions')
@@ -32,7 +34,6 @@ class Admin
         $permissionCategoryList = array();
 
         $permissionList= array();
-
         foreach($permissions as $aPermission){
             $permission_token = $aPermission->permission_token;
             if(!in_array($aPermission->permission_category_id, $permissionCategoryList))
@@ -57,12 +58,13 @@ class Admin
             }
         }
 
-
-
         $route_token = RouteTokens::$ROUTE_TOKENS[$request->route()->getName()];
+
+
         if($user->user_type==UserTypes::$EMPLOYEE||$user->user_type==UserTypes::$SUPER_ADMIN)
-            if(in_array($route_token,$permissionList))
+            if(in_array($route_token,$permissionList)){
                 return $next($request);
+            }
         else
             return redirect()->route('error-401');
     }

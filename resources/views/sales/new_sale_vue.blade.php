@@ -741,9 +741,9 @@
                                 });
                             }
                         })
-                            .catch(function (error) {
-                                console.log(error);
-                            });
+						.catch(function (error) {
+							console.log(error);
+						});
                     },
                     RemovePayment(index)
                     {
