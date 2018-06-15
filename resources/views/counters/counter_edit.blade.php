@@ -37,7 +37,19 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group">
+								<div class="form-group">
+                                    <label for="value" class=" col-sm-3 col-md-3 col-lg-2 required control-label ">Printer Connection Type:</label>
+                                    <div class="col-sm-9 col-md-9 col-lg-10">
+										<select name="printer_connection_type" value="{{old("printer_connection_type")}}" class="form-control" id="printer_connection_type">
+											<option value="">Select printer connection</option>
+											<option value="{{\App\Enumaration\PrinterConnectionType::USB_CONNECTON}}">USB Connection</option>
+											<option value="{{\App\Enumaration\PrinterConnectionType::CONNECT_VIA_NETWORK}}">Connect Via IP Address</option>
+										</select>
+                                        <span class="text-danger">{{ $errors->first('printer_connection_type') }}</span>
+                                    </div>
+                                </div>
+								
+                                <div class="form-group networkPrinterProperties">
                                     <label for="value" class=" col-sm-3 col-md-3 col-lg-2 required control-label ">Printer IP:</label>
                                     <div class="col-sm-9 col-md-9 col-lg-10">
                                         <input type="text" name="printer_ip" value="{{ $counter->printer_ip }}" class="form-control" id="printer_ip">
@@ -45,7 +57,7 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group">
+                                <div class="form-group networkPrinterProperties">
                                     <label for="value" class=" col-sm-3 col-md-3 col-lg-2 required control-label ">Printer Port:</label>
                                     <div class="col-sm-9 col-md-9 col-lg-10">
                                         <input type="text" name="printer_port" value="{{ $counter->printer_port }}" class="form-control" id="printer_port">
@@ -65,4 +77,26 @@
         </div>
     </div>
 
+@endsection
+
+
+@section('additionalJS')
+<script>
+	$(document).ready(function(){
+		
+		//$(".networkPrinterProperties").hide();
+		$("#printer_connection_type").val("{{$counter->printer_connection_type}}");
+		@if($counter->printer_connection_type==\App\Enumaration\PrinterConnectionType::USB_CONNECTON)
+			$(".networkPrinterProperties").hide();
+		@endif
+	
+		$("#printer_connection_type").click(function(){
+			var selectedPrinterType = $(this).val();
+			if( selectedPrinterType=="{{\App\Enumaration\PrinterConnectionType::USB_CONNECTON}}" )
+				$(".networkPrinterProperties").hide();
+			else if ( selectedPrinterType=="{{\App\Enumaration\PrinterConnectionType::CONNECT_VIA_NETWORK}}" )
+				$(".networkPrinterProperties").show();
+		});
+	});
+</script>
 @endsection

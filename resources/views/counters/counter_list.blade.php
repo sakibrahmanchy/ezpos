@@ -105,6 +105,7 @@
                         <th>Actions</th>
                         <th>Counter Name</th>
                         <th>Description</th>
+						<th>Printer Connection Type</th>
                         <th>Printer IP</th>
                         <th>Printer Port</th>
                         <th>Default</th>
@@ -129,6 +130,7 @@
                                 </div></td>
                             <td>{{$counter->name}}</td>
                             <td>{{$counter->description}}</td>
+							<td>{{$counter->printer_connection_type==\App\Enumaration\PrinterConnectionType::USB_CONNECTON? "USB Connection": "Connected Via Network"}}</td>
                             <td>{{$counter->printer_ip}}</td>
                             <td>{{$counter->printer_port}}</td>
                             <td><label class="switch">

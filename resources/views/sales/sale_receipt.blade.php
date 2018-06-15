@@ -12,6 +12,11 @@
 @stop
 
 @section('content')
+        <form action="{{route("print_sale")}}" id="printSaleRecieptForm" method="GET" style="display: none;">
+            <input type="hidden" name="sale_id" id="sale_id" value="{{$sale->id}}">
+            <input type="hidden" name="print_type" id="print_type" value="1">
+            <input type="hidden" name="counter_id" id="counter_id" value="{{ \Illuminate\Support\Facades\Cookie::get('counter_id') }}">
+        </form>
 
         <div class="box box-primary" id="receipt_wrapper_inner">
             <div class="panel panel-piluku">
@@ -22,8 +27,10 @@
                             @if(!$sale->refund_status)
                                 <a  href="{{route('sale_edit',['sale_id'=>$sale->id])}}" class="btn btn-primary">Edit Sale</a>
                             @endif
-                            <a  href="{{route('print_sale',['sale_id'=>$sale->id, "print_type"=>1])}}" class="btn btn-primary">Print</a>
-                            <a  href="{{route('print_sale',['sale_id'=>$sale->id, "print_type"=>2])}}" class="btn btn-primary">Print Pickup</a>
+                            <!--<a  href="{{route('print_sale',['sale_id'=>$sale->id, "print_type"=>1])}}" class="btn btn-primary">Print</a>
+                            <a  href="{{route('print_sale',['sale_id'=>$sale->id, "print_type"=>2])}}" class="btn btn-primary">Print Pickup</a>-->
+                            <a  href="javascript: void(0);" id="nomralPrintButton" class="btn btn-primary">Print</a>
+                            <a  href="javascript: void(0);" id="pickupPrintButton" class="btn btn-primary">Print Pickup</a>
                             <a  href="{{route('pop_open_cash_drawer')}}" class="btn btn-primary">Pop Open Cash Drawer</a>
                             <a  href="{{route('new_sale')}}" class="btn btn-primary">New Sale</a>
                             <a  href="{{route('download_sale_receipt',['sale_id'=>$sale->id])}}" class="btn btn-primary">Download as PDF</a>
@@ -368,11 +375,22 @@
             </div>
         </div>
 
-
-
-
-
-
+        <div class="modal fade" id="choose_printer_counter_modal" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="chooseCounter">Choose Counter</h4>
+                    </div>
+                    <div class="modal-body">
+                        <ul class="list-inline choose-counter-home">
+                            @foreach( $counter_list as $aCounter )
+                                <li><a class="set_printing_counter" data-counter-id="{{$aCounter->id}}" href="javascript: void(0);">{{$aCounter->name}}</a></li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 @endsection
 
@@ -428,7 +446,21 @@
         })
     }
 
+	$(document).ready(function(){
+		$("#nomralPrintButton").click(function(){
+			$("#print_type").val('1');
+		});
 
+        $("#pickupPrintButton").click(function(){
+            $("#print_type").val('2');
+        });
+
+        $(".set_printing_counter").click(function(){
+           var counterId = $(this).attr("data-counter-id");
+           $("#counter_id").val(counterId);
+           $("#printSaleRecieptForm").submit();
+        })
+	});
 
     /******************************Counter Change ****************************/
 </script>

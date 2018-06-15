@@ -101,13 +101,13 @@ class SaleController extends Controller
     {
 
         $sale = Sale::withTrashed()->where("id", $sale_id)->with('items', 'paymentlogs', 'customer', 'counter')->first();
-
+        $counterList = Counter::get();
 
         /*return response()->json(['sale'=>$sale], 200);*/
         if ($sale == null)
             return redirect()->back()->with(["error" => "Sale id not found!"]);
         else
-            return view('sales.sale_receipt', ["sale" => $sale]);
+            return view('sales.sale_receipt', ["sale" => $sale, 'counter_list'=>$counterList]);
 
     }
 
@@ -399,17 +399,22 @@ class SaleController extends Controller
         try {
             $settings = SettingsSingleton::get();
 
-            $counter_id = Cookie::get('counter_id',null);
+            $counterId = 0;
+            if($request->has('counter_id'))
+                $counterId = intval($request->has('counter_id'));
+            if($counterId == 0)
+                $counter_id = Cookie::get('counter_id',null);
+            
             $counter = Counter::where("id",$counter_id)->first();
-            if(!isset($request->driver)) {
-
+            
+            if($counter->printer_connection_type && $counter->printer_connection_type==\App\Enumaration\PrinterConnectionType::USB_CONNECTON) {
+                $connector = new WindowsPrintConnector($counter->name);
+            }
+            else {
                 $ip_address = $counter->printer_ip;
                 $port = $counter->printer_port;
 
                 $connector = new NetworkPrintConnector($ip_address, $port);
-            }
-            else {
-                $connector = new WindowsPrintConnector($counter->name);
             }
 
 
@@ -622,9 +627,9 @@ class SaleController extends Controller
             return redirect()->route('sale_receipt', ['sale_id' => $sale_id]);
 
         } Catch (\Exception $e) {
-			if($e->getCode() == 0 ) {
+			/*if($e->getCode() == 0 ) {
 			    return redirect()->route('print_sale',['sale_id'=>$sale->id, "print_type"=>$request->print_type,'driver'=>1]);
-            }
+            }*/
             return redirect()->back()->with(["error" => $e->getMessage()]);
         } finally {
             if (isset($printer)) {
@@ -657,7 +662,15 @@ class SaleController extends Controller
         $port = $counter->printer_port;
 
         try{
-            $connector = new NetworkPrintConnector($ip_address, $port);
+            if($counter->printer_connection_type && $counter->printer_connection_type==\App\Enumaration\PrinterConnectionType::USB_CONNECTON) {
+                $connector = new WindowsPrintConnector($counter->name);
+            }
+            else {
+                $ip_address = $counter->printer_ip;
+                $port = $counter->printer_port;
+
+                $connector = new NetworkPrintConnector($ip_address, $port);
+            }
             $printer = new Printer($connector);
         } Catch (\Exception $e)
         {
@@ -683,7 +696,15 @@ class SaleController extends Controller
         $port = $counter->printer_port;
 
         try{
-            $connector = new NetworkPrintConnector($ip_address, $port);
+            if($counter->printer_connection_type && $counter->printer_connection_type==\App\Enumaration\PrinterConnectionType::USB_CONNECTON) {
+                $connector = new WindowsPrintConnector($counter->name);
+            }
+            else {
+                $ip_address = $counter->printer_ip;
+                $port = $counter->printer_port;
+
+                $connector = new NetworkPrintConnector($ip_address, $port);
+            }
 
             $printer = new Printer($connector);
 
@@ -698,7 +719,7 @@ class SaleController extends Controller
             //$printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);
             //$printer->text($settings['company_name'] . " " . $sale->id . "\n");
             //$printer->text("------------------------------------------\n");
-            $printer = new Printer($connector);
+            //$printer = new Printer($connector);
             $printer->setJustification(Printer::JUSTIFY_CENTER);
             $printer->text("Receipt\n");
             $printer->selectPrintMode();

@@ -260,7 +260,15 @@ class CashRegisterController extends Controller
             $ip_address = $counter->printer_ip;
             $port = $counter->printer_port;
 
-            $connector = new NetworkPrintConnector($ip_address, $port);
+            if($counter->printer_connection_type && $counter->printer_connection_type==\App\Enumaration\PrinterConnectionType::USB_CONNECTON) {
+                $connector = new WindowsPrintConnector($counter->name);
+            }
+            else {
+                $ip_address = $counter->printer_ip;
+                $port = $counter->printer_port;
+
+                $connector = new NetworkPrintConnector($ip_address, $port);
+            }
 
             $printer = new Printer($connector);
             $printer->setJustification(Printer::JUSTIFY_CENTER);

@@ -7,6 +7,7 @@ use App\Model\Counter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
+use \App\Enumaration\PrinterConnectionType;
 
 class CounterController extends Controller
 {
@@ -19,9 +20,10 @@ class CounterController extends Controller
     public function AddCounter(Request $request)
     {
         $this->validate($request,[
-            "name"=>"required",
-            "printer_ip"=>"required",
-            "printer_port"=>"required|numeric"
+            "name" => "required",
+			"printer_connection_type" => "required",
+            "printer_ip" => "required_if:printer_connection_type,{PrinterConnectionType::USB_CONNECTON}|ip",
+            "printer_port" => "required_if:printer_connection_type,{PrinterConnectionType::USB_CONNECTON}|numeric"
         ]);
 
         Counter::create($request->except('_token'));
@@ -56,9 +58,10 @@ class CounterController extends Controller
     public function  EditCounterPost(Request $request, $counter_id)
     {
         $this->validate($request,[
-            "name"=>"required",
-            "printer_ip"=>"required",
-            "printer_port"=>"required|numeric"
+            "name" => "required",
+			"printer_connection_type" => "required",
+            "printer_ip" => "required_if:printer_connection_type,{PrinterConnectionType::USB_CONNECTON}|ip",
+            "printer_port" => "required_if:printer_connection_type,{PrinterConnectionType::USB_CONNECTON}|numeric"
         ]);
 
         $counter = Counter::where("id", "=", $counter_id)->first();
