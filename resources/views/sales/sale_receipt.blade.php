@@ -12,7 +12,7 @@
 @stop
 
 @section('content')
-        <form action="{{route("print_sale")}}" id="printSaleRecieptForm" method="GET" style="display: none;">
+        <form action="{{route("print_sale", ["sale_id"=>$sale->id])}}" id="printSaleRecieptForm" method="GET" style="display: none;">
             <input type="hidden" name="sale_id" id="sale_id" value="{{$sale->id}}">
             <input type="hidden" name="print_type" id="print_type" value="1">
             <input type="hidden" name="counter_id" id="counter_id" value="{{ \Illuminate\Support\Facades\Cookie::get('counter_id') }}">
