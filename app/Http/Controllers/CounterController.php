@@ -22,8 +22,8 @@ class CounterController extends Controller
         $this->validate($request,[
             "name" => "required",
 			"printer_connection_type" => "required",
-            "printer_ip" => "required_if:printer_connection_type,{PrinterConnectionType::USB_CONNECTON}|ip",
-            "printer_port" => "required_if:printer_connection_type,{PrinterConnectionType::USB_CONNECTON}|numeric"
+            "printer_ip" => "required_if:printer_connection_type,{PrinterConnectionType::CONNECT_VIA_NETWORK}|ip",
+            "printer_port" => "required_if:printer_connection_type,{PrinterConnectionType::CONNECT_VIA_NETWORK}|numeric"
         ]);
 
         Counter::create($request->except('_token'));
@@ -60,8 +60,8 @@ class CounterController extends Controller
         $this->validate($request,[
             "name" => "required",
 			"printer_connection_type" => "required",
-            "printer_ip" => "required_if:printer_connection_type,{PrinterConnectionType::USB_CONNECTON}|ip",
-            "printer_port" => "required_if:printer_connection_type,{PrinterConnectionType::USB_CONNECTON}|numeric"
+            "printer_ip" => "required_if:printer_connection_type,{PrinterConnectionType::CONNECT_VIA_NETWORK}|ip",
+            "printer_port" => "required_if:printer_connection_type,{PrinterConnectionType::CONNECT_VIA_NETWORK}|numeric"
         ]);
 
         $counter = Counter::where("id", "=", $counter_id)->first();
