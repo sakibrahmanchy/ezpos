@@ -353,6 +353,9 @@
         /********autocomplete starts*******/
         $(document).ready(function(e){
             $("body").addClass("sidebar-collapse");
+            @if(!\Illuminate\Support\Facades\Cookie::get('counter_id'))
+            changeCounter();
+            @endif
 
         });
 
