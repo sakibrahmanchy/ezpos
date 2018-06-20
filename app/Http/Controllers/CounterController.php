@@ -26,7 +26,7 @@ class CounterController extends Controller
 			"printer_connection_type" => "required",
             'printer_ip' =>  $connectViaNetwork ? 'required|ip' : '',
             "printer_port" =>  $connectViaNetwork ? 'required|numeric' : '',
-            "counter_code" => "required|unique:counters|min:3|max:3|regex:/^[a-zA-Z0-9]+$/u"
+            "counter_code" => "required|numeric"
         ]);
 
         Counter::create($request->except('_token'));
@@ -67,8 +67,7 @@ class CounterController extends Controller
 			"printer_connection_type" => "required",
             'printer_ip' =>  $connectViaNetwork ? 'required|ip' : '',
             "printer_port" =>  $connectViaNetwork ? 'required|numeric' : '',
-            "counter_code" => "required|min:3|max:3|regex:/^[a-zA-Z0-9]+$/u|unique:counters,id,".$counter_id
-
+            "counter_code" => "required|numeric"
         ]);
 
         $counter = Counter::where("id", "=", $counter_id)->first();

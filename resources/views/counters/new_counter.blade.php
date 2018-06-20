@@ -30,17 +30,8 @@
                                     </div>
                                 </div>
 
-                                <label for="name" class="required col-sm-3 col-md-3 col-lg-2 control-label "></label>
-                                <div class="col-sm-9 col-md-9 col-lg-10">
-
-                                    <div class="alert callout callout-warning">
-                                        <h4><i class="icon fa fa-info"></i> Counter Code Tips!</h4>
-                                        Counter code is a unique code for counters which is used for generating sales id. It should be unique and three letters only.
-                                    </div>
-                                </div>
-
                                 <div class="form-group">
-                                    <label for="counter_code" class="required col-sm-3 col-md-3 col-lg-2 control-label ">Counter Code:</label>
+                                    <label for="counter_code" class="required col-sm-3 col-md-3 col-lg-2 control-label ">Starting Id:</label>
                                     <div class="col-sm-9 col-md-9 col-lg-10">
                                         <input type="text" name="counter_code" value="{{ old('counter_code') }}" class="form-control" id="counter_code" >
                                         <span class="text-danger">{{ $errors->first('counter_code') }}</span>
