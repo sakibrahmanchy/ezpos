@@ -175,7 +175,7 @@
                 isOpen: false,
                 item_names: "",
                 results: [],
-                arrowCounter: 0,
+                arrowCounter: -1,
                 isLoading: false,
             }
         },
@@ -233,7 +233,8 @@
                 }
             },
             onEnter() {
-                this.setResult(this.results[this.arrowCounter]);
+				if(this.arrowCounter>=0)
+					this.setResult(this.results[this.arrowCounter]);
             },
             handleClickOutside(evt) {
                 if (!this.$el.contains(evt.target)) {
