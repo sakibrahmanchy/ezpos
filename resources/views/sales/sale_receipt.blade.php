@@ -350,10 +350,10 @@
 @section('additionalJS')
 <script>
     /***************************************Counter Change*****************/
-
+	@if(\Illuminate\Support\Facades\Cookie::get('counter_id')==null)
+		selectCounter();
+	@endif
     function selectCounter(){
-
-        @if(\Illuminate\Support\Facades\Cookie::get('counter_id')==null)
         $("#choose_counter_modal").modal();
         $.ajax({
             url: "{{route('counter_list_ajax')}}",
@@ -371,8 +371,7 @@
             error: function () {
 
             }
-        })
-        @endif
+        });
     }
 
     function changeCounter(){
@@ -400,10 +399,12 @@
 	$(document).ready(function(){
 		$("#nomralPrintButton").click(function(){
 			$("#print_type").val('1');
+			$("#choose_printer_counter_modal").modal();
 		});
 
         $("#pickupPrintButton").click(function(){
             $("#print_type").val('2');
+			$("#choose_printer_counter_modal").modal();
         });
 
         $(".set_printing_counter").click(function(){
