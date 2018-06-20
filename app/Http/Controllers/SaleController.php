@@ -407,7 +407,7 @@ class SaleController extends Controller
             
             $counter = Counter::where("id",$counter_id)->first();
             
-            if($counter->printer_connection_type && $counter->printer_connection_type==\App\Enumaration\PrinterConnectionType::USB_CONNECTON) {
+            if($counter->printer_connection_type && $counter->printer_connection_type==\App\Enumaration\PrinterConnectionType::USB_CONNECTION) {
                 $connector = new WindowsPrintConnector($counter->name);
             }
             else {
@@ -662,7 +662,7 @@ class SaleController extends Controller
         $port = $counter->printer_port;
 
         try{
-            if($counter->printer_connection_type && $counter->printer_connection_type==\App\Enumaration\PrinterConnectionType::USB_CONNECTON) {
+            if($counter->printer_connection_type && $counter->printer_connection_type==\App\Enumaration\PrinterConnectionType::USB_CONNECTION) {
                 $connector = new WindowsPrintConnector($counter->name);
             }
             else {
@@ -696,7 +696,7 @@ class SaleController extends Controller
         $port = $counter->printer_port;
 
         try{
-            if($counter->printer_connection_type && $counter->printer_connection_type==\App\Enumaration\PrinterConnectionType::USB_CONNECTON) {
+            if($counter->printer_connection_type && $counter->printer_connection_type==\App\Enumaration\PrinterConnectionType::USB_CONNECTION) {
                 $connector = new WindowsPrintConnector($counter->name);
             }
             else {
