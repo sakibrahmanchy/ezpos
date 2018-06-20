@@ -30,6 +30,23 @@
                                     </div>
                                 </div>
 
+                                <label for="name" class="required col-sm-3 col-md-3 col-lg-2 control-label "></label>
+                                <div class="col-sm-9 col-md-9 col-lg-10">
+
+                                    <div class="alert callout callout-warning">
+                                        <h4><i class="icon fa fa-info"></i> Counter Code Tips!</h4>
+                                        Counter code is a unique code for counters which is used for generating sales id. It should be unique and three letters only.
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="counter_code" class="required col-sm-3 col-md-3 col-lg-2 control-label ">Counter Code:</label>
+                                    <div class="col-sm-9 col-md-9 col-lg-10">
+                                        <input type="text" name="counter_code" value="{{ old('counter_code') }}" class="form-control" id="counter_code" >
+                                        <span class="text-danger">{{ $errors->first('counter_code') }}</span>
+                                    </div>
+                                </div>
+
                                 <div class="form-group">
                                     <label for="description" class="col-sm-3 col-md-3 col-lg-2 control-label ">Description:</label>	<div class="col-sm-9 col-md-9 col-lg-10">
                                         <textarea name="description" cols="17" rows="5" id="description" class="form-control text-area">{{ old('description ') }}</textarea>
@@ -41,7 +58,7 @@
                                     <div class="col-sm-9 col-md-9 col-lg-10">
 										<select name="printer_connection_type" value="{{old("printer_connection_type")}}" class="form-control" id="printer_connection_type">
 											<option value="">Select printer connection</option>
-											<option value="{{\App\Enumaration\PrinterConnectionType::USB_CONNECTON}}">USB Connection</option>
+											<option value="{{\App\Enumaration\PrinterConnectionType::USB_CONNECTION}}">USB Connection</option>
 											<option value="{{\App\Enumaration\PrinterConnectionType::CONNECT_VIA_NETWORK}}">Connect Via IP Address</option>
 										</select>
                                         <span class="text-danger">{{ $errors->first('printer_connection_type') }}</span>
@@ -87,7 +104,7 @@
 		
 		$("#printer_connection_type").click(function(){
 			var selectedPrinterType = $(this).val();
-			if( selectedPrinterType=="{{\App\Enumaration\PrinterConnectionType::USB_CONNECTON}}" )
+			if( selectedPrinterType=="{{\App\Enumaration\PrinterConnectionType::USB_CONNECTION}}" )
 				$(".networkPrinterProperties").hide();
 			else if ( selectedPrinterType=="{{\App\Enumaration\PrinterConnectionType::CONNECT_VIA_NETWORK}}" )
 				$(".networkPrinterProperties").show();

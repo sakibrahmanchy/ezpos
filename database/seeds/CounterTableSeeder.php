@@ -17,10 +17,22 @@ class CounterTableSeeder extends Seeder
             $counter = new \App\Model\Counter();
             $counter->name= "Default";
             $counter->description = "";
+            $counter->counter_code = "DFT";
             $counter->printer_ip = "";
             $counter->printer_port = "";
             $counter->isDefault = true;
             $counter->save();
+        }
+        else {
+
+            $counters = \App\Model\Counter::all();
+            foreach ($counters as $counter) {
+                if(is_null($counter->counter_code) || $counter->counter_code == "") {
+                    $num_padded = sprintf("%02d", $counter->id);
+                    $counter->counter_code = "C".$num_padded;
+                    $counter->save();
+                }
+            }
         }
 
         if(\App\Model\Counter::where("name","Default")->count()>1){

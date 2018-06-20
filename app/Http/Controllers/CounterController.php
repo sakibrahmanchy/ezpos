@@ -19,11 +19,14 @@ class CounterController extends Controller
 
     public function AddCounter(Request $request)
     {
+        $connectViaNetwork = $request->printer_connection_type == PrinterConnectionType::CONNECT_VIA_NETWORK;
+
         $this->validate($request,[
             "name" => "required",
 			"printer_connection_type" => "required",
-            "printer_ip" => "required_if:printer_connection_type,{PrinterConnectionType::CONNECT_VIA_NETWORK}|ip",
-            "printer_port" => "required_if:printer_connection_type,{PrinterConnectionType::CONNECT_VIA_NETWORK}|numeric"
+            'printer_ip' =>  $connectViaNetwork ? 'required|ip' : '',
+            "printer_port" =>  $connectViaNetwork ? 'required|numeric' : '',
+            "counter_code" => "required|unique:counters|min:3|max:3|regex:/^[a-zA-Z0-9]+$/u"
         ]);
 
         Counter::create($request->except('_token'));
@@ -57,11 +60,15 @@ class CounterController extends Controller
 
     public function  EditCounterPost(Request $request, $counter_id)
     {
+        $connectViaNetwork = $request->printer_connection_type == PrinterConnectionType::CONNECT_VIA_NETWORK;
+
         $this->validate($request,[
             "name" => "required",
 			"printer_connection_type" => "required",
-            "printer_ip" => "required_if:printer_connection_type,{PrinterConnectionType::CONNECT_VIA_NETWORK}|ip",
-            "printer_port" => "required_if:printer_connection_type,{PrinterConnectionType::CONNECT_VIA_NETWORK}|numeric"
+            'printer_ip' =>  $connectViaNetwork ? 'required|ip' : '',
+            "printer_port" =>  $connectViaNetwork ? 'required|numeric' : '',
+            "counter_code" => "required|min:3|max:3|regex:/^[a-zA-Z0-9]+$/u|unique:counters,id,".$counter_id
+
         ]);
 
         $counter = Counter::where("id", "=", $counter_id)->first();

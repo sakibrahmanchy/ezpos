@@ -104,6 +104,7 @@
                         <th></th>
                         <th>Actions</th>
                         <th>Counter Name</th>
+                        <th>Counter Code</th>
                         <th>Description</th>
 						<th>Printer Connection Type</th>
                         <th>Printer IP</th>
@@ -129,8 +130,9 @@
                                     </ul>
                                 </div></td>
                             <td>{{$counter->name}}</td>
+                            <td>{{$counter->counter_code}}</td>
                             <td>{{$counter->description}}</td>
-							<td>{{$counter->printer_connection_type==\App\Enumaration\PrinterConnectionType::USB_CONNECTON? "USB Connection": "Connected Via Network"}}</td>
+							<td>{{ $counter->printer_connection_type==\App\Enumaration\PrinterConnectionType::USB_CONNECTION ? 'USB Connection' : 'Connected Via Network'}}</td>
                             <td>{{$counter->printer_ip}}</td>
                             <td>{{$counter->printer_port}}</td>
                             <td><label class="switch">

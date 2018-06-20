@@ -163,54 +163,6 @@
                                 @endforeach
                             @endif
                         @endforeach
-                        @foreach($sale->itemkits as $anItem)
-                            <tr>
-                                <td> {{ $anItem->item_kit_name }} </td>
-                                <td> ${{ $anItem->selling_price }} </td>
-                                <td> {{ $anItem->pivot->quantity }} </td>
-                                <td> ${{ $anItem->pivot->total_price }} </td>
-                                <td> {{ $anItem->pivot->item_discount_percentage }}% </td>
-
-
-                            </tr>
-                            @if(!is_null($anItem->PriceRule))
-
-                                @foreach($anItem->PriceRule as $aPriceRule)
-
-                                        @if ($aPriceRule->active)
-
-                                                @if($aPriceRule->type==1)
-
-                                                    @if($aPriceRule->percent_off>0)
-
-                                                        @php
-                                                        $current_date = new \DateTime('today');
-                                                        $rule_start_date = new \DateTime($aPriceRule->start_date);
-                                                        $rule_expire_date = new \DateTime($aPriceRule->end_date);
-                                                        @endphp
-
-                                                        @if(($current_date>=$rule_start_date) && ($current_date<=$rule_expire_date) )
-                                                            <tr><td colspan="5" style="padding-left:23px;font-size: 80%;background: aliceblue;"> Discount Offer: <strong>{{$aPriceRule->name}}</strong><br>Item Discount Amount: $<strong>{{$anItem->pivot->discount_amount}}</strong></td></tr>
-                                                        @endif
-
-                                                    @elseif($aPriceRule->fixed_of>0)
-
-                                                        @php
-                                                        $current_date = new \DateTime('today');
-                                                        $rule_start_date = new \DateTime($aPriceRule->start_date);
-                                                        $rule_expire_date = new \DateTime($aPriceRule->end_date);
-                                                        @endphp
-
-                                                        @if(($current_date>=$rule_start_date) && ($current_date<=$rule_expire_date) )
-                                                            <tr><td colspan="5" style="padding-left:23px;font-size: 80%;background: aliceblue;"> Discount Offer: <strong>{{$aPriceRule->name}}</strong><br>Item Discount Amount: $<strong>{{$anItem->pivot->discount_amount}}</strong></td></tr>
-                                                        @endif
-
-                                                    @endif
-                                                @endif
-                                            @endif
-                                @endforeach
-                            @endif
-                        @endforeach
                         </tbody>
                     </table>
                     <hr>
@@ -340,8 +292,8 @@
                             <div id="receipt_type_label" style="display: none;" class="receipt_type_label invoice-policy">
                                 Merchant Copy						</div>
                             <div id="barcode" class="invoice-policy">
-                               <?php echo DNS1D::getBarcodeHTML($sale->id , "C39");	?>					</div>
-                                <p style="padding-left: 28px">EZPOS {{ $sale->id }}</p>
+                               <?php echo DNS1D::getBarcodeHTML($sale->id , "C39",1,50);	?>					</div>
+                                <p >{{ $settings['company_name'] }} {{ $sale->id }}</p>
                             <div id="announcement" class="invoice-policy">
                             </div>
                         </div>
