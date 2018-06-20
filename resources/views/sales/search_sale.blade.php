@@ -151,7 +151,6 @@
 
         </div>
     </div>
-    {{ dd($items) }}
     @if(isset($items))
     <div class="card  table-resonsive">
 

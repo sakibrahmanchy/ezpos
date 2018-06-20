@@ -104,7 +104,7 @@
                         <th></th>
                         <th>Actions</th>
                         <th>Counter Name</th>
-                        <th>Counter Code</th>
+                        <th>Starting Id</th>
                         <th>Description</th>
 						<th>Printer Connection Type</th>
                         <th>Printer IP</th>

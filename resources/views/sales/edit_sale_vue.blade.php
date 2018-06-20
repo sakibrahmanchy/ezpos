@@ -632,7 +632,7 @@
                                             sale_discount_amount: salesDiscountAmount,
                                             item_profit: itemProfit,
                                             tax_rate: "{{ $tax_rate }}",
-                                            tax_amount: currentTotal* (taxRate/100),
+                                            tax_amount: taxAmount,
                                             is_price_taken_from_barcode: scanStatus,
                                         };
 

@@ -50,7 +50,7 @@
                                     <div class="col-sm-9 col-md-9 col-lg-10">
 										<select name="printer_connection_type" value="{{old("printer_connection_type")}}" class="form-control" id="printer_connection_type">
 											<option value="">Select printer connection</option>
-											<option value="{{\App\Enumaration\PrinterConnectionType::USB_CONNECTION}}">USB Connection</option>
+											<option value="{{\App\Enumaration\PrinterConnectionType::USB_CONNECTION}}" >USB Connection</option>
 											<option value="{{\App\Enumaration\PrinterConnectionType::CONNECT_VIA_NETWORK}}">Connect Via IP Address</option>
 										</select>
                                         <span class="text-danger">{{ $errors->first('printer_connection_type') }}</span>

@@ -60,6 +60,7 @@ class CounterController extends Controller
 
     public function  EditCounterPost(Request $request, $counter_id)
     {
+        //dd($request->all());
         $connectViaNetwork = $request->printer_connection_type == PrinterConnectionType::CONNECT_VIA_NETWORK;
 
         $this->validate($request,[

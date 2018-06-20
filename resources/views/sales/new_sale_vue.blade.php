@@ -351,6 +351,7 @@
         //Grid component
         /**/
         /********autocomplete starts*******/
+
         $(document).ready(function(e){
             $("body").addClass("sidebar-collapse");
             @if(!\Illuminate\Support\Facades\Cookie::get('counter_id'))
@@ -637,7 +638,7 @@
                                             sale_discount_amount: salesDiscountAmount,
                                             item_profit: itemProfit,
                                             tax_rate: "{{ $tax_rate }}",
-                                            tax_amount: currentTotal * {{ $settings['tax_rate'] }},
+                                            tax_amount: taxAmount,
                                             is_price_taken_from_barcode: scanStatus
                                         };
                                         productInfos.push(productInfo);
