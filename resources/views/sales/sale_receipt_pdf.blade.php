@@ -226,7 +226,7 @@
     <div>
         <div>
             Change return policy			            </div>
-        <div >
+        <div>
             <?php echo DNS1D::getBarcodeHTML($sale->id , "C39",1,50);	?>					</div>
         <p >{{ $settings['company_name'] }} {{ $sale->id }}</p>
         <div >

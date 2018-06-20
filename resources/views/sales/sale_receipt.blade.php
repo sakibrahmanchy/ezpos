@@ -66,7 +66,7 @@
                                     Sales Receipt						 <br>
                                     <strong>{{date('m/d/Y h:i:s a', time()) }}</strong>
                                 </li>
-                                <li><span>Sale ID: </span>EZPOS No. {{$sale->id}}</li>
+                                <li><span>Sale ID: </span>{{$settings['company_name']}} No. {{$sale->id}}</li>
                                 <li><span>Counter Name: </span><b>{{ $sale->counter->name }}</b></li>
                                 <li><span>Cashier: </span>{{\Illuminate\Support\Facades\Auth::user()->name }}</li>
                                 @if(isset($sale->customer->id))
@@ -282,7 +282,6 @@
                             </div>
                         </div>
                     </div>
-
                     <center>CUSTOMER COPY</center>
                     <!-- invoice footer-->
                     <div class="row">

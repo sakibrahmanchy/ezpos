@@ -351,6 +351,7 @@
         //Grid component
         /**/
         /********autocomplete starts*******/
+        var taxRate = Number("{{ $tax_rate/100}}");
         $(document).ready(function(e){
             $("body").addClass("sidebar-collapse");
             @if(!\Illuminate\Support\Facades\Cookie::get('counter_id'))
@@ -515,6 +516,8 @@
 							else if(this.activePaymentType=="Loyalty Card"){
 								this.ValidateLoyalty();
 							}
+						} else {
+                            this.SubmitSales(1);
 						}
                     },
                     ChooseItem: function(product) {
@@ -635,7 +638,7 @@
                                             sale_discount_amount: salesDiscountAmount,
                                             item_profit: itemProfit,
                                             tax_rate: "{{ $tax_rate }}",
-                                            tax_amount: currentTotal * {{ $settings['tax_rate'] }},
+                                            tax_amount: currentTotal * taxRate,
                                             is_price_taken_from_barcode: scanStatus
                                         };
                                         productInfos.push(productInfo);
@@ -644,7 +647,7 @@
 
                                 var saleInfo = {
                                     subtotal: subTotalAmount,
-                                    tax: taxAmount,
+                                    tax: currentTotal * taxRate,
                                     total: totalAmount,
                                     discount:saleDiscountAmount,
                                     customer_id: customerId,
@@ -857,7 +860,12 @@
             }
         });
 
-
+        function lookUpReceipt(){
+            var sale_id = $("#receipt-id").val();
+            var url = '{{ route("sale_receipt", ":sale_id") }}';
+            url = url.replace(':sale_id', sale_id);
+            window.location.href=url;
+        }
 
 
 	</script>
