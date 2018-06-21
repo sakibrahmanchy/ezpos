@@ -393,7 +393,7 @@ class Sale extends Model
 
                 array_push($payments, $payment_id);
             }
-
+            dd($payments);
             $sale->paymentLogs()->sync($payments);
         }
 

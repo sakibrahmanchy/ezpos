@@ -514,7 +514,9 @@
 							else if(this.activePaymentType=="Loyalty Card"){
 								this.ValidateLoyalty();
 							}
-						}
+						} else {
+                            this.SubmitSales(1);
+                        }
                     },
                     ChooseItem: function(product) {
                         var found = false;
@@ -560,7 +562,7 @@
 
                                 var totalProfit = 0;
                                 var totalItemsSold = 0;
-                                console.log(this.paymentList.length);
+                                console.log(this.paymentList);
                                 paymentInfos = [];
                                 $.map(this.paymentList, function(value, index) {
                                     var paymentInfo = {

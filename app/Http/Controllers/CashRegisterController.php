@@ -159,6 +159,7 @@ class CashRegisterController extends Controller
             ->where( 'due', '<', 0 )
             ->sum('due');
         $changedDue = -$changedDue;
+        $cash_sales = $cash_sales - $changedDue;
         $expectedClosingSales = $cashRegister->opening_balance + ($cash_sales - $changedDue) +  ($total_additions - $total_subtractions);
 
         $paymentAmountSql = "select payment_type, sum(paid_amount) as total_paid_amount from payment_logs where id in ( select payment_log_id from payment_log_sale where sale_id in ( select id from sales where cash_register_id=? ) ) group by payment_type";
@@ -400,7 +401,8 @@ class CashRegisterController extends Controller
 									->sum('due');
 		$changedDue = -$changedDue;
 		$expectedClosingSales = $cashRegister->opening_balance + ($cash_sales - $changedDue) +  ($total_additions - $total_subtractions);
-		
+        $cash_sales = $cash_sales - $changedDue;
+
         $paymentAmountSql = "select payment_type, sum(paid_amount) as total_paid_amount from payment_logs where id in ( select payment_log_id from payment_log_sale where sale_id in ( select id from sales where cash_register_id=? and deleted_at is null ) )  group by payment_type";
         $paymentAmountTotalList = DB::select( $paymentAmountSql, [$cashRegisterId] );
         
@@ -471,7 +473,7 @@ class CashRegisterController extends Controller
             $printer->text( new FooterItem('Loyalty Card Sales:', '$'.number_format( $loyalityAmountTotal, 2) ));
             $printer->feed();
             $printer->feed();
-            $printer->text( new FooterItem('Changed Amount:', '$'.number_format( $changedDue, 2) ));
+//            $printer->text( new FooterItem('Changed Amount:', '$'.number_format( $changedDue, 2) ));
             $printer->text( new FooterItem('Refunded Sale Amount:  ', '$'.number_format( $refunded_sales_amount, 2) ));
 
             $printer->text( new FooterItem('Cash Additions:', '$'.number_format( $total_additions, 2) ));
