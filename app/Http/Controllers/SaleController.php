@@ -398,10 +398,10 @@ class SaleController extends Controller
         try {
             $settings = SettingsSingleton::get();
 
-            $counterId = 0;
+            $counter_id = 0;
             if($request->has('counter_id'))
-                $counterId = intval($request->has('counter_id'));
-            if($counterId == 0)
+                $counter_id = intval($request->has('counter_id'));
+            if($counter_id == 0)
                 $counter_id = Cookie::get('counter_id',null);
             
             $counter = Counter::where("id",$counter_id)->first();
@@ -628,6 +628,7 @@ class SaleController extends Controller
 			/*if($e->getCode() == 0 ) {
 			    return redirect()->route('print_sale',['sale_id'=>$sale->id, "print_type"=>$request->print_type,'driver'=>1]);
             }*/
+			//dd($e);
             return redirect()->back()->with(["error" => $e->getMessage()]);
         } finally {
             if (isset($printer)) {

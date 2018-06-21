@@ -22,8 +22,8 @@ use App\Model\CashRegister;
 class Sale extends Model
 {
     use SoftDeletes;
-    public $incrementing = false;
-    public $keyType = "string";
+    //public $incrementing = false;
+    //public $keyType = "string";
 
     public function Items(){
         return $this->belongsToMany('App\Model\Item')->withPivot('quantity','unit_price',
@@ -89,7 +89,7 @@ class Sale extends Model
     public function insertSaleInfo($saleInfo,$saleStatus, $registerId){
 
         $sale = new Sale();
-        $sale->id = $this->generateSalesID();
+        //$sale->id = $this->generateSalesID();
         $sale->employee_id = Auth::user()->id;
         $sale->customer_id = $saleInfo['customer_id'];
         $sale->sub_total_amount = $saleInfo['subtotal'];

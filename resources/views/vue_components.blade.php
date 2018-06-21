@@ -175,7 +175,7 @@
                 isOpen: false,
                 item_names: "",
                 results: [],
-                arrowCounter: 0,
+                arrowCounter: -1,
                 isLoading: false,
             }
         },
@@ -223,17 +223,21 @@
                 document.getElementById("item-names").focus();
             },
             onArrowDown(evt) {
-                if (this.arrowCounter < this.results.length) {
+                if (this.arrowCounter < this.results.length && !this.autoSelect) {
                     this.arrowCounter = this.arrowCounter + 1;
                 }
             },
             onArrowUp() {
-                if (this.arrowCounter > 0) {
+                if (this.arrowCounter > 0 && !this.autoSelect) {
                     this.arrowCounter = this.arrowCounter -1;
                 }
             },
             onEnter() {
-                this.setResult(this.results[this.arrowCounter]);
+				if(this.arrowCounter>=0 && !this.autoSelect)
+					this.setResult(this.results[this.arrowCounter]);
+				else if(this.autoSelect && this.item_names.length>0)
+					this.SearchProduct();
+					
             },
             handleClickOutside(evt) {
                 if (!this.$el.contains(evt.target)) {
