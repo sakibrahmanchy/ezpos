@@ -1099,7 +1099,7 @@ class SaleController extends Controller
                 $item->item_quantity += $anItem->quantity;
                 $item->save();
             }
-            return redirect()->route("sale_pre_edit",["sale_id"=>$sale_id]);
+            return redirect()->route("new_sale")->with("success", "Sale ID successfully deleted");
         }else{
             return redirect()->route("sale_pre_edit",["sale_id"=>$sale_id])->with('error',"No cash register is active");
         }

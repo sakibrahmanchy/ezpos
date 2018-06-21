@@ -56,8 +56,9 @@
                             <li class="list-group-item">Cash additions [<a href="">Edit</a>]:  <span class="pull-right">${{ number_format($additions, 2) }} </span></li>
                             <li class="list-group-item">Cash subtractions [<a href="">Edit</a>]:  <span class="pull-right">${{ number_format($subtractions,2)  }} </span></li>
                             <li class="list-group-item">Change Due [<a href="">Edit</a>]:  <span class="pull-right">${{ number_format($change_due,2)  }} </span></li>
+                            <li class="list-group-item">Refunded Amount[<a href="">Edit</a>]:  <span class="pull-right">${{ number_format($refunded_amount,2)  }} </span></li>
 
-                            <li class="list-group-item active">You should have  in the register. <span class="pull-right total-amount">{{ number_format($openingBalance + $sales + $additions+ $subtractions-$change_due, 2) }}</span></li>
+                            <li class="list-group-item active">You should have  in the register. <span class="pull-right total-amount">{{ number_format($openingBalance + $sales + $additions+ $subtractions-$change_due-$refunded_amount, 2) }}</span></li>
                         </ul>
 
 
@@ -83,10 +84,6 @@
                                     <input type="submit" id="close_submit" class="btn btn-primary" value="Submit">
                                 </div>
 
-                                <div style="text-align: center;">
-                                    <h3>OR</h3>
-                                    <input type="button" id="logout_without_closing" class="btn btn-danger" value="Logout without closing register (Next employee will close)">
-                                </div>
                             </form></div>
                     </div>
 
