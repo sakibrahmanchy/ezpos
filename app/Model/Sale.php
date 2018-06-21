@@ -192,10 +192,38 @@ class Sale extends Model
             $paymentLogObject = new \App\Model\PaymentLog();
             $paymentLogObject->addNewPaymentLog( $aPaymentInfo["payment_type"], $aPaymentInfo["paid_amount"],$sale,$sale->customer_id);
 
-            if($aPaymentInfo["payment_type"]=="Cash"){
+            switch($aPaymentInfo["payment_type"]){
+                case 'Cash':
+                        $cashRegisterTransaction = new CashRegisterTransaction();
+                        $cashRegisterTransaction->newCashRegisterTransaction($sale_id,$aPaymentInfo["paid_amount"],CashRegisterTransactionType::$CASH_SALES);
+                    break;
+                case 'Check':
+                    $cashRegisterTransaction = new CashRegisterTransaction();
+                    $cashRegisterTransaction->newCashRegisterTransaction($sale_id,$aPaymentInfo["paid_amount"],CashRegisterTransactionType::$CHECK_SALES);
+                    break;
 
-                $cashRegisterTransaction = new CashRegisterTransaction();
-                $cashRegisterTransaction->newCashRegisterTransaction($sale_id,$aPaymentInfo["paid_amount"]);
+                case 'Debit Card':
+                    $cashRegisterTransaction = new CashRegisterTransaction();
+                    $cashRegisterTransaction->newCashRegisterTransaction($sale_id,$aPaymentInfo["paid_amount"],CashRegisterTransactionType::$DEBIT_CARD_SALES);
+                    break;
+
+                case 'Credit Card':
+                    $cashRegisterTransaction = new CashRegisterTransaction();
+                    $cashRegisterTransaction->newCashRegisterTransaction($sale_id,$aPaymentInfo["paid_amount"],CashRegisterTransactionType::$CREDIT_CARD_SALES);
+                    break;
+
+                case 'Gift Card':
+                    $cashRegisterTransaction = new CashRegisterTransaction();
+                    $cashRegisterTransaction->newCashRegisterTransaction($sale_id,$aPaymentInfo["paid_amount"],CashRegisterTransactionType::$GIFT_CARD_SALES);
+                    break;
+
+                case 'Loyalty Card':
+                    $cashRegisterTransaction = new CashRegisterTransaction();
+                    $cashRegisterTransaction->newCashRegisterTransaction($sale_id,$aPaymentInfo["paid_amount"],CashRegisterTransactionType::$LOYALTY_CARD_SALES);
+                    break;
+
+                default:
+                    break;
             }
 
             if(strpos($aPaymentInfo["payment_type"],"Loyalty Card")!==false){

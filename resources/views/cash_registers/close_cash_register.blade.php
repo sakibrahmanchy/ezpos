@@ -53,12 +53,18 @@
                         <ul class="list-group close-amount">
                             <li class="list-group-item">Open Amount:  <span class="pull-right">${{ number_format($openingBalance,2) }}</span></li>
                             <li class="list-group-item">Cash Sales:  <span class="pull-right">${{ number_format($sales, 2) }}</span></li>
-                            <li class="list-group-item">Cash additions [<a href="">Edit</a>]:  <span class="pull-right">${{ number_format($additions, 2) }} </span></li>
-                            <li class="list-group-item">Cash subtractions [<a href="">Edit</a>]:  <span class="pull-right">${{ number_format($subtractions,2)  }} </span></li>
-                            <li class="list-group-item">Change Due [<a href="">Edit</a>]:  <span class="pull-right">${{ number_format($change_due,2)  }} </span></li>
-                            <li class="list-group-item">Refunded Amount[<a href="">Edit</a>]:  <span class="pull-right">${{ number_format($refunded_amount,2)  }} </span></li>
+                            <li class="list-group-item">Check Sales:  <span class="pull-right">${{ number_format($check_sales, 2) }}</span></li>
+                            <li class="list-group-item">Credit Card Sales:  <span class="pull-right">${{ number_format($credit_card_sales, 2) }}</span></li>
+                            <li class="list-group-item">Debit Card Sales:  <span class="pull-right">${{ number_format($debit_card_sales, 2) }}</span></li>
+                            <li class="list-group-item">Gift Card Sales:  <span class="pull-right">${{ number_format($gift_card_sales, 2) }}</span></li>
+                            <li class="list-group-item">Loyalty Card Sales:  <span class="pull-right">${{ number_format($loyalty_card_sales, 2) }}</span></li>
 
-                            <li class="list-group-item active">You should have  in the register. <span class="pull-right total-amount">{{ number_format($openingBalance + $sales + $additions+ $subtractions-$change_due-$refunded_amount, 2) }}</span></li>
+                            <li class="list-group-item">Cash additions   <span class="pull-right">${{ number_format($additions, 2) }} </span></li>
+                            <li class="list-group-item">Cash subtractions   <span class="pull-right">${{ number_format($subtractions,2)  }} </span></li>
+                            <li class="list-group-item">Change Due  <span class="pull-right">${{ number_format($change_due,2)  }} </span></li>
+                            <li class="list-group-item">Refunded Amount   <span class="pull-right">${{ number_format($refunded_amount,2)  }} </span></li>
+
+                            <li class="list-group-item active">You should have  in the register. <span class="pull-right total-amount">{{ number_format($closing_balance, 2) }}</span></li>
                         </ul>
 
 
@@ -69,7 +75,7 @@
 
 
                                 <div class="form-group controll-croups1">
-                                    <label for="closing_amount" class="control-label">Closing amount:</label>											<input type="text" name="closing_amount" value="{{ $openingBalance + $sales + $additions- $subtractions-$change_due }}" id="closing_amount" class="form-control valid">
+                                    <label for="closing_amount" class="control-label">Closing amount:</label>											<input type="text" name="closing_amount" value="{{ number_format($closing_balance, 2)  }}" id="closing_amount" class="form-control valid">
                                 </div>
                                 <div class="form-group controll-croups1">
                                     <label for="notes" class="control-label">Notes:</label>											<textarea name="notes" cols="40" rows="10" id="notes" class="form-control text-area"></textarea>

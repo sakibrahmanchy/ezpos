@@ -107,17 +107,24 @@ class CashRegisterController extends Controller
         $openingBalance = $cashRegister->getActiveRegisterOpeningBalance();
         $total_additions = $cashRegister->getTotalAddedAmountInActiveRegister();
         $total_subtractions = $cashRegister->getTotalSubtractedAmountInActiveRegister();
-        $cash_sales = $cashRegister->getTotalSaleInCurrentRegister();
+        $cash_sales = $cashRegister->getTotalSaleInCurrentRegister(CashRegisterTransactionType::$CASH_SALES);
+        $check_sales = $cashRegister->getTotalSaleInCurrentRegister(CashRegisterTransactionType::$CHECK_SALES);
+        $credit_card_sales = $cashRegister->getTotalSaleInCurrentRegister(CashRegisterTransactionType::$CREDIT_CARD_SALES);
+        $debit_card_sales = $cashRegister->getTotalSaleInCurrentRegister(CashRegisterTransactionType::$DEBIT_CARD_SALES);
+        $gift_card_sales = $cashRegister->getTotalSaleInCurrentRegister(CashRegisterTransactionType::$GIFT_CARD_SALES);
+        $loyalty_card_sales = $cashRegister->getTotalSaleInCurrentRegister(CashRegisterTransactionType::$LOYALTY_CARD_SALES);
         $changedDue = DB::table('sales')->where('cash_register_id', $cashRegister->getCurrentActiveRegister()->id)
             ->where( 'due', '<', 0 )
             ->sum('due');
         $changedDue = -$changedDue;
         $refunded_sales_amount = $cashRegister->getRefundedSalesAmountInCashRegister($cashRegister->getCurrentActiveRegister()->id  );
-
         $denominations = CurrencyDenomination::all();
+        $closing_balance = $openingBalance + $cash_sales + $check_sales + $credit_card_sales + $debit_card_sales + $gift_card_sales + $loyalty_card_sales + $total_additions + $total_subtractions - $changedDue-$refunded_sales_amount;
+
         return view('cash_registers.close_cash_register',["denominations"=>$denominations,"openingBalance"=>$openingBalance,
             "additions"=>$total_additions,"subtractions"=>$total_subtractions,"sales"=>$cash_sales,"change_due"=>$changedDue,
-                                                          "refunded_amount"=>$refunded_sales_amount]);
+            "refunded_amount"=>$refunded_sales_amount],compact('check_sales','credit_card_sales','debit_card_sales',
+            'gift_card_sales','loyalty_card_sales','closing_balance'));
 
     }
 

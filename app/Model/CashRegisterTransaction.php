@@ -15,7 +15,7 @@ class CashRegisterTransaction extends Model
         //return $this->sum('amount')->where('cash_register_transactions.transaction_type',CashRegisterTransactionType::$ADD_BALANCE);
     }
 
-    public function newCashRegisterTransaction($saleId, $paidAmount) {
+    public function newCashRegisterTransaction($saleId, $paidAmount, $paymentType) {
         $cashRegisterTransaction = new CashRegisterTransaction();
 
         $cashRegister = new CashRegister();
@@ -26,8 +26,8 @@ class CashRegisterTransaction extends Model
         if($cashRegisterToChange->save()){
             $cashRegisterTransaction->cash_register_id = $activeCashRegiser->id;
             $cashRegisterTransaction->amount = $paidAmount;
-            $cashRegisterTransaction->transaction_type = CashRegisterTransactionType::$CASH_SALES;
-            $cashRegister->comments = "Cash Sales for sale: ".$saleId;
+            $cashRegisterTransaction->transaction_type = $paymentType;
+            $cashRegister->comments = "Sales for sale: ".$saleId;
             $cashRegisterTransaction->save();
         }
     }

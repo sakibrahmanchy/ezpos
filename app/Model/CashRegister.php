@@ -51,7 +51,7 @@ class CashRegister extends Model
 
 
     public function getCurrentActiveRegister(){
-        return $this->orderBy('created_at', 'desc')->where('closing_balance',null)->first();
+        return $this->orderBy('opening_time', 'desc')->where('closing_balance',null)->first();
     }
 
     public function getTotalAddedAmountInActiveRegister(){
@@ -90,7 +90,7 @@ class CashRegister extends Model
     }
 
     public function getPreviousClosingBalance(){
-        $previousCashRegister = $this->orderBy('created_at', 'desc')->where('closing_balance','<>',null)->first();
+        $previousCashRegister = $this->orderBy('opening_time', 'desc')->where('closing_balance','<>',null)->first();
         if(!is_null($previousCashRegister))
             return $previousCashRegister->closing_balance;
         else
@@ -135,11 +135,11 @@ class CashRegister extends Model
         return false;
     }
 
-    public function getTotalSaleInCurrentRegister(){
+    public function getTotalSaleInCurrentRegister($transactionType){
         $cash_register = $this->getCurrentActiveRegister();
         if(!is_null($cash_register)){
             $total_sales_in_register = CashRegisterTransaction::where("cash_register_id",$cash_register->id)
-                ->where("transaction_type",CashRegisterTransactionType::$CASH_SALES)->sum('amount');
+                ->where("transaction_type",$transactionType)->sum('amount');
             return $total_sales_in_register;
         }
         return 0;
