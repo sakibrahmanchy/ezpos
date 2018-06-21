@@ -255,7 +255,6 @@ class SaleController extends Controller
 
 
                 $fieldPresets = array(
-
                     "1" => "sales.customer_id",
                     "2" => "itemsSN",
                     "3" => "sales.employee_id",
@@ -416,7 +415,6 @@ class SaleController extends Controller
 
                 $connector = new NetworkPrintConnector($ip_address, $port);
             }
-
 
             $printer = new Printer($connector);
             $printer->setJustification(Printer::JUSTIFY_CENTER);

@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 use Mike42\Escpos\PrintConnectors\NetworkPrintConnector;
+use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 use Mike42\Escpos\Printer;
 
 class CashRegisterController extends Controller
@@ -257,8 +258,6 @@ class CashRegisterController extends Controller
 
             $counter_id = Cookie::get('counter_id',null);
             $counter = Counter::where("id",$counter_id)->first();
-            $ip_address = $counter->printer_ip;
-            $port = $counter->printer_port;
 
             if($counter->printer_connection_type && $counter->printer_connection_type==\App\Enumaration\PrinterConnectionType::USB_CONNECTION) {
                 $connector = new WindowsPrintConnector($counter->name);
@@ -366,6 +365,7 @@ class CashRegisterController extends Controller
                 $printer->cut();
                 $printer->pulse();
                 $printer->close();
+                return redirect()->back();
             }
         }
 
@@ -391,7 +391,7 @@ class CashRegisterController extends Controller
 		$changedDue = -$changedDue;
 		$expectedClosingSales = $cashRegister->opening_balance + ($cash_sales - $changedDue) +  ($total_additions - $total_subtractions);
 		
-        $paymentAmountSql = "select payment_type, sum(paid_amount) as total_paid_amount from payment_logs where id in ( select payment_log_id from payment_log_sale where sale_id in ( select id from sales where cash_register_id=? ) ) group by payment_type";
+        $paymentAmountSql = "select payment_type, sum(paid_amount) as total_paid_amount from payment_logs where id in ( select payment_log_id from payment_log_sale where sale_id in ( select id from sales where cash_register_id=? and deleted_at is null ) )  group by payment_type";
         $paymentAmountTotalList = DB::select( $paymentAmountSql, [$cashRegisterId] );
         
         $checkTotal = 0;
@@ -416,10 +416,16 @@ class CashRegisterController extends Controller
         try {
             $counter_id = Cookie::get('counter_id',null);
             $counter = Counter::where("id",$counter_id)->first();
-            $ip_address = $counter->printer_ip;
-            $port = $counter->printer_port;
 
-            $connector = new NetworkPrintConnector($ip_address, $port);
+            if($counter->printer_connection_type && $counter->printer_connection_type==\App\Enumaration\PrinterConnectionType::USB_CONNECTION) {
+                $connector = new WindowsPrintConnector($counter->name);
+            }
+            else {
+                $ip_address = $counter->printer_ip;
+                $port = $counter->printer_port;
+
+                $connector = new NetworkPrintConnector($ip_address, $port);
+            }
 
             $printer = new Printer($connector);
             $printer->setJustification(Printer::JUSTIFY_CENTER);
@@ -442,16 +448,7 @@ class CashRegisterController extends Controller
             $printer->text( new FooterItem('Closing Sales:', '$'.number_format( $cashRegister->closing_balance, 2) ));
 			
             $printer->text( new FooterItem('Cash Sales:', '$'.number_format( $cash_sales, 2) ));
-			$printer->text( new FooterItem('Changed Amount:', '$'.number_format( $changedDue, 2) ));
-            $printer->text( new FooterItem('Refunded Sale Amount:  ', '$'.number_format( $refunded_sales_amount, 2) ));
-
-            $printer->text( new FooterItem('Cash Additions:', '$'.number_format( $total_additions, 2) ));
-            $printer->text( new FooterItem('Cash Subtractions:', '$'.number_format( $total_subtractions, 2) ));
-			
-			$printer->text( new FooterItem('Expected Closing Sales:', '$'.number_format( $expectedClosingSales, 2) ));
             //$printer->text( new FooterItem('Difference:', '$'.number_format( $difference, 2) ));
-
-            $printer->feed();
             $printer->feed();
             $printer->text( new FooterItem('Credit Card Sales:', '$'.number_format( $creditCardAmountTotal, 2) ));
             $printer->feed();
@@ -463,6 +460,14 @@ class CashRegisterController extends Controller
             $printer->feed();
             $printer->text( new FooterItem('Loyalty Card Sales:', '$'.number_format( $loyalityAmountTotal, 2) ));
             $printer->feed();
+            $printer->feed();
+            $printer->text( new FooterItem('Changed Amount:', '$'.number_format( $changedDue, 2) ));
+            $printer->text( new FooterItem('Refunded Sale Amount:  ', '$'.number_format( $refunded_sales_amount, 2) ));
+
+            $printer->text( new FooterItem('Cash Additions:', '$'.number_format( $total_additions, 2) ));
+            $printer->text( new FooterItem('Cash Subtractions:', '$'.number_format( $total_subtractions, 2) ));
+
+            $printer->text( new FooterItem('Expected Closing Sales:', '$'.number_format( $expectedClosingSales, 2) ));
             return redirect()->route('cash_register_log_details',["register_id"=>$cashRegister->id]);
 
         } Catch (\Exception $e) {
