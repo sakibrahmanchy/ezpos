@@ -336,7 +336,7 @@
                     <div class="modal-body">
                         <ul class="list-inline choose-counter-home">
                             @foreach( $counter_list as $aCounter )
-                                <li><a class="set_printing_counter" data-counter-id="{{$aCounter->id}}" href="{{  route('print_sale',['sale_id'=>$sale->id, "print_type"=>1, "counter_id" =>$aCounter->id ]) }}">{{$aCounter->name}}</a></li>
+                                <li><a class="set_employee_current_counter_after_login" data-counter-id="{{$aCounter->id}}" href="{{  route('print_sale',['sale_id'=>$sale->id, "print_type"=>1, "counter_id" =>$aCounter->id ]) }}">{{$aCounter->name}}</a></li>
                             @endforeach
                         </ul>
                     </div>
