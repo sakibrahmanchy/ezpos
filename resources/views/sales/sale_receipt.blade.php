@@ -27,6 +27,7 @@
                             @if(!$sale->refund_status)
                                 <a  href="{{route('sale_edit',['sale_id'=>$sale->id])}}" class="btn btn-primary">Edit Sale</a>
                             @endif
+                            <a  href="javascript:void(0)" onclick="selectPrinterCounter()" class="btn btn-primary">Print In Specific Printer</a>
                             <a  href="{{route('print_sale',['sale_id'=>$sale->id, "print_type"=>1])}}" class="btn btn-primary">Print</a>
                             <a  href="{{route('print_sale',['sale_id'=>$sale->id, "print_type"=>2])}}" class="btn btn-primary">Print Pickup</a>
                             <!--<a  href="javascript: void(0);" id="nomralPrintButton" class="btn btn-primary">Print</a>
@@ -335,7 +336,7 @@
                     <div class="modal-body">
                         <ul class="list-inline choose-counter-home">
                             @foreach( $counter_list as $aCounter )
-                                <li><a class="set_printing_counter" data-counter-id="{{$aCounter->id}}" href="javascript: void(0);">{{$aCounter->name}}</a></li>
+                                <li><a class="set_printing_counter" data-counter-id="{{$aCounter->id}}" href="{{  route('print_sale',['sale_id'=>$sale->id, "print_type"=>1, "counter_id" =>$aCounter->id ]) }}">{{$aCounter->name}}</a></li>
                             @endforeach
                         </ul>
                     </div>
@@ -353,6 +354,11 @@
 	@if(\Illuminate\Support\Facades\Cookie::get('counter_id')==null)
 		selectCounter();
 	@endif
+
+    function selectPrinterCounter() {
+        $("#choose_printer_counter_modal").modal();
+    }
+
     function selectCounter(){
         $("#choose_counter_modal").modal();
         $.ajax({

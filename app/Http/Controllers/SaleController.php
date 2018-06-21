@@ -19,6 +19,7 @@ use App\Model\Printer\FooterItem;
 use App\Model\Sale;
 use App\Model\Supplier;
 use App\Model\User;
+use Faker\Provider\Barcode;
 use Faker\Provider\tr_TR\DateTime;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
@@ -66,14 +67,14 @@ class SaleController extends Controller
             return redirect()->route('open_cash_register');
         }
     }
-	
+
     public function AddSale(Request $request)
     {
-		
+
         $saleInfo = $request->sale_info;
         $productInfos = $request->product_infos;
         $paymentInfos = $request->payment_infos;
-		
+
         $sale = new Sale();
         $sale_id = $sale->InsertSale($saleInfo, $productInfos, $paymentInfos, $saleInfo['status']);
         echo $sale_id;
@@ -400,12 +401,13 @@ class SaleController extends Controller
 
             $counter_id = 0;
             if($request->has('counter_id'))
-                $counter_id = intval($request->has('counter_id'));
+                $counter_id = intval($request->counter_id);
             if($counter_id == 0)
                 $counter_id = Cookie::get('counter_id',null);
-            
+
+
             $counter = Counter::where("id",$counter_id)->first();
-            
+
             if($counter->printer_connection_type && $counter->printer_connection_type==\App\Enumaration\PrinterConnectionType::USB_CONNECTION) {
                 $connector = new WindowsPrintConnector($counter->name);
             }
@@ -425,16 +427,16 @@ class SaleController extends Controller
             $printer->text($settings['company_name']. "\n");
             $printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);
 			$printer->text("Order No." . $sale->id . "\n");
-			
+
 			$printer->selectPrintMode();
             if($settings['address_line_1']!=""||$settings['address_line_1']!=null)
 				$printer->text(wordwrap($settings['address_line_1'] . "\n",43,"\n",false));
 			if($settings['address_line_2']!=""||$settings['address_line_2']!=null)
 				$printer->text(wordwrap($settings['address_line_2'] . "\n",43,"\n",false));
-			
+
 			if($settings['email_address']!=""||$settings['email_address']!=null)
 				$printer->text(wordwrap($settings['email_address'] . "\n",43,"\n",false));
-			
+
             if($settings['phone']!=""||$settings['phone']!=null) {
                 $printer->text('Phone: '.$settings['phone'] . "\n");
                 $printer->selectPrintMode();
@@ -456,7 +458,7 @@ class SaleController extends Controller
 				}
 			}
 			$printer->selectPrintMode();
-			
+
             $printer->text("------------------------------------------\n");
             $header = new \App\Model\Printer\Item("Qty", "Name", "Unit", "Total");
             $printer->setJustification(Printer::JUSTIFY_LEFT);
@@ -505,55 +507,74 @@ class SaleController extends Controller
 
             $printer->feed();
 
-            $printer->text("------------------Discount----------------------\n");
-            $printer->feed();
-
-            $header = new \App\Model\Printer\Item("Qty", "Name", "Discount(%)", "Total");
-            $printer->setJustification(Printer::JUSTIFY_LEFT);
-            $printer->setEmphasis(true);
-            $printer->text($header);
-
+            // Calculating Total Line Discount
             $items = array();
             $totalLineDiscountAmount = 0;
             foreach ($sale->items as $anItem) {
-                $item_name = "";
                 if($anItem->product_id!="discount-01!XcQZc003ab") {
                     if($anItem->pivot->is_price_taken_from_barcode)
                         $item_name = $anItem->item_name.'@'.$anItem->pivot->unit_price.'/'.$anItem->item_size;
                     else
                         $item_name = $anItem->item_name;
-                    $amountDiscounted = ($anItem->pivot->unit_price * $anItem->pivot->item_discount_percentage)/100;
+                    $amountDiscounted = ($anItem->pivot->unit_price * $anItem->pivot->quantity * $anItem->pivot->item_discount_percentage)/100;
                     $totalLineDiscountAmount += $amountDiscounted;
                     $toPrint = new \App\Model\Printer\Item(round($anItem->pivot->quantity), $item_name, number_format($anItem->pivot->item_discount_percentage, 2) , number_format($amountDiscounted,2) );
+                    if($amountDiscounted)
                     array_push($items, $toPrint);
                 }
             }
 
+            $totalDiscountAmount = $totalLineDiscountAmount + $sale->sales_discount;
 
-            $printer->setJustification(Printer::JUSTIFY_LEFT);
-            $printer->setEmphasis(false);
-            foreach ($items as $item) {
-                $printer->text($item);
+            if(!$totalDiscountAmount == 0) {
+                $printer->text("------------------Discount----------------------\n");
+                $printer->feed();
+
+                //Printing Line Discounts
+                if(!$totalLineDiscountAmount == 0) {
+                    $header = new \App\Model\Printer\Item("Qty", "Name", "Discount(%)", "Total");
+                    $printer->setJustification(Printer::JUSTIFY_LEFT);
+                    $printer->setEmphasis(true);
+                    $printer->text($header);
+
+                    $printer->setJustification(Printer::JUSTIFY_LEFT);
+                    $printer->setEmphasis(false);
+                    foreach ($items as $item) {
+                        $printer->text($item);
+                    }
+                    $printer->text("-------------------------------------------\n");
+                    $printer->setEmphasis(true);
+                    $totalLineDiscount = new FooterItem('Total Line Discount ', number_format( $totalLineDiscountAmount, 2));
+                    $printer->text($totalLineDiscount);
+                    $printer->text("-------------------------------------------\n");
+                }
+
+                //Printing Discount On Entire Sale
+                if(! $sale->sales_discount == 0) {
+                    $totalLineDiscount = new FooterItem('Discount On Entire Sale ', number_format( $sale->sales_discount, 2));
+                    $printer->text($totalLineDiscount);
+                    $printer->text("-------------------------------------------\n");
+                }
+
+                //Calculating and printing Total Sales Discount
+                $totalDiscount = new FooterItem('Total Discount ', number_format($totalDiscountAmount , 2));
+                if(!$totalDiscountAmount==0) {
+                    $printer->text($totalDiscount);
+                }
+
+
+                $printer->feed();
+                $printer->feed();
+                $printer->text("-------------------------------------------\n");
+
             }
 
-            $printer->text("-------------------------------------------\n");
 
-            $printer->setEmphasis(false);
-            $totalLineDiscount = new FooterItem('Total Line Discount ', number_format( $totalLineDiscountAmount, 2));
-            $printer->text($totalLineDiscount);
-            $totalLineDiscount = new FooterItem('Discount From Sale ', number_format( $sale->sales_discount, 2));
-            $printer->text($totalLineDiscount);
+            if(!$totalDiscountAmount==0) {
+                $printer->text($subtotal);
+                $printer->text($totalDiscount);
+            }
 
-            $printer->text("-------------------------------------------\n");
-            $totalDiscount = new FooterItem('Total Discount ', number_format( $totalLineDiscountAmount + $sale->sales_discount, 2));
-            $printer->text($totalDiscount);
-
-            $printer->feed();
-            $printer->feed();
-            $printer->text("-------------------------------------------\n");
-            $printer->setEmphasis(true);
-            $printer->text($subtotal);
-            $printer->text($totalDiscount);
             $printer->text("-------------------------------------------\n");
 
             if($settings["tax_rate"]>0)
@@ -583,15 +604,15 @@ class SaleController extends Controller
                     $printer->text($payment);
                 }
             }
-			
-            
+
+
 			if( $sale->comment && strlen($sale->comment)>0 )
 			{
 				$printer->feed();
 				$printer->text(wordwrap( $sale->comment . "\n",43,"\n",false));
 			}
             $printer->feed();
-            
+
 			$printer->setJustification(Printer::JUSTIFY_CENTER);
             if($print_type==1)
 			{
@@ -600,7 +621,7 @@ class SaleController extends Controller
 				$printer->feed();
 				$printer->feed();
 				$printer->setJustification(Printer::JUSTIFY_LEFT);
-				$printer->text("Change Return Policy");
+//				$printer->text("Change Return Policy");
 				$printer->setEmphasis(true);
 				$printer->feed();
 				$printer->feed();
@@ -620,6 +641,7 @@ class SaleController extends Controller
                 $printer->text('Date');
             }
             $printer->feed();
+            $printer->barcode($sale->id."", Printer::BARCODE_CODE39);
             /*dd($items);*/
             /* $printer -> feed();*/
             return redirect()->route('sale_receipt', ['sale_id' => $sale_id]);
@@ -648,7 +670,7 @@ class SaleController extends Controller
 		$ip_address = $counter->printer_ip;
 		$port = $counter->printer_port;
 	}
-	
+
     public function popOpenCashDrawer(){
 
         $counter_id = Cookie::get('counter_id',null);
@@ -727,12 +749,12 @@ class SaleController extends Controller
             $printer->text($settings['company_name'] . "\n");
             $printer->selectPrintMode();
 			$printer->text("Order No." . $sale->id . "\n");
-			
+
 			if($settings['address_line_1']!=""||$settings['address_line_1']!=null)
 				$printer->text(wordwrap($settings['address_line_1'] . "\n",43,"\n",false));
 			if($settings['address_line_2']!=""||$settings['address_line_2']!=null)
 				$printer->text(wordwrap($settings['address_line_2'] . "\n",43,"\n",false));
-			
+
             if($settings['phone']!=""||$settings['phone']!=null) {
                 $printer->text('Phone: '.$settings['phone'] . "\n");
                 $printer->selectPrintMode();

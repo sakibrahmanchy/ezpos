@@ -114,6 +114,7 @@
                             <a class="list-group-item" href="{{ route('report_sale_detail') }}"><i class="icon ti-calendar"></i> Detailed Reports</a>
                             <a class="list-group-item" href="{{ route('report_sale_summary_hourly') }}"><i class="icon ti-receipt"></i> Summary Sales by Time Reports</a>
                             <a class="list-group-item" href="{{ route('report_sale_graphical_hourly') }}"><i class="icon ti-bar-chart-alt"></i> Graphical Summary Sales by Time Reports</a>
+                            <a class="list-group-item" href="{{ route('report_sale_deleted') }}"><i class="icon ti-bar-chart-alt"></i> Deleted Sales</a>
                         </div>
 
                         <div class="list-group categories hidden">
