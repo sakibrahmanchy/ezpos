@@ -61,7 +61,7 @@
 
                             <li class="list-group-item">Cash additions   <span class="pull-right">${{ number_format($additions, 2) }} </span></li>
                             <li class="list-group-item">Cash subtractions   <span class="pull-right">${{ number_format($subtractions,2)  }} </span></li>
-                            <li class="list-group-item">Change Due  <span class="pull-right">${{ number_format($change_due,2)  }} </span></li>
+                            {{--<li class="list-group-item">Change Due  <span class="pull-right">${{ number_format($change_due,2)  }} </span></li>--}}
                             <li class="list-group-item">Refunded Amount   <span class="pull-right">${{ number_format($refunded_amount,2)  }} </span></li>
 
                             <li class="list-group-item active">You should have  in the register. <span class="pull-right total-amount">{{ number_format($closing_balance, 2) }}</span></li>

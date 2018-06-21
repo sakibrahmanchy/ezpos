@@ -117,9 +117,10 @@ class CashRegisterController extends Controller
             ->where( 'due', '<', 0 )
             ->sum('due');
         $changedDue = -$changedDue;
+        $cash_sales = $cash_sales - $changedDue;
         $refunded_sales_amount = $cashRegister->getRefundedSalesAmountInCashRegister($cashRegister->getCurrentActiveRegister()->id  );
         $denominations = CurrencyDenomination::all();
-        $closing_balance = $openingBalance + $cash_sales + $check_sales + $credit_card_sales + $debit_card_sales + $gift_card_sales + $loyalty_card_sales + $total_additions + $total_subtractions - $changedDue-$refunded_sales_amount;
+        $closing_balance = $openingBalance + $cash_sales  + $total_additions + $total_subtractions - $refunded_sales_amount;
 
         return view('cash_registers.close_cash_register',["denominations"=>$denominations,"openingBalance"=>$openingBalance,
             "additions"=>$total_additions,"subtractions"=>$total_subtractions,"sales"=>$cash_sales,"change_due"=>$changedDue,
