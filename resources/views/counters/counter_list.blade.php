@@ -130,7 +130,7 @@
                                     </ul>
                                 </div></td>
                             <td>{{$counter->name}}</td>
-                            <td>{{$counter->counter_code}}</td>
+                            <td>{{$counter->starting_id}}</td>
                             <td>{{$counter->description}}</td>
 							<td>{{ $counter->printer_connection_type==\App\Enumaration\PrinterConnectionType::USB_CONNECTION ? 'USB Connection' : 'Connected Via Network'}}</td>
                             <td>{{$counter->printer_ip}}</td>

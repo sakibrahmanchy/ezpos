@@ -23,7 +23,7 @@
 
                         <select name="report_date_range_simple" id="report_date_range_simple" class="form-control">
                             <option class="dates" value="{{$dateTypes->today}}">Today</option>
-                            <option class="dates"  value="{{$dateTypes->yesterday}}" selected="selected">Yesterday</option>
+                            <option class="dates"  value="{{$dateTypes->yesterday}}" >Yesterday</option>
                             <option class="dates"  value="{{$dateTypes->this_week}}">This Week</option>
                             <option class="dates"   value="{{$dateTypes->last_week}}">Last Week</option>
                             <option class="dates"  value="{{$dateTypes->this_month}}">This Month</option>

@@ -17,7 +17,7 @@ class CounterTableSeeder extends Seeder
             $counter = new \App\Model\Counter();
             $counter->name= "Default";
             $counter->description = "";
-            $counter->counter_code = "DFT";
+            $counter->starting_id = 10000000;
             $counter->printer_ip = "";
             $counter->printer_port = "";
             $counter->isDefault = true;
@@ -26,13 +26,23 @@ class CounterTableSeeder extends Seeder
         else {
 
             $counters = \App\Model\Counter::all();
-            foreach ($counters as $counter) {
-                if(is_null($counter->counter_code) || $counter->counter_code == "") {
-                    $num_padded = sprintf("%02d", $counter->id);
-                    $counter->counter_code = "C".$num_padded;
-                    $counter->save();
-                }
-            }
+            $existingStartingIDs = \App\Model\Counter::pluck('starting_id', 'id')->toArray();
+            dd($existingStartingIDs);
+//            $counterInitiatingValue = 10000000;
+//            foreach ($counters as $counter) {
+//                if(is_null($counter->starting_id) || $counter->starting_id == 0 || $counter->starting_id == $counterInitiatingValue) {
+//                    if($counter->starting_id == $counterInitiatingValue)
+//                    {
+//                        $counterInitiatingValue += 10000000;
+//                        $counter->starting_id = $counterInitiatingValue;
+//                    }
+//                    else {
+//                        $counter->starting_id = $counterInitiatingValue;
+//                        $counterInitiatingValue += 10000000;
+//                    }
+//                }
+//                $counter->save();
+//            }
         }
 
         if(\App\Model\Counter::where("name","Default")->count()>1){

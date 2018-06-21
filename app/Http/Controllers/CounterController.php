@@ -14,6 +14,9 @@ class CounterController extends Controller
 
     public function GetCounterForm()
     {
+        $counters = \App\Model\Counter::all();
+        $existingStartingIDs = \App\Model\Counter::pluck('id','starting_id')->toArray();
+        dd($existingStartingIDs);
         return view('counters.new_counter');
     }
 
@@ -26,7 +29,7 @@ class CounterController extends Controller
 			"printer_connection_type" => "required",
             'printer_ip' =>  $connectViaNetwork ? 'required|ip' : '',
             "printer_port" =>  $connectViaNetwork ? 'required|numeric' : '',
-            "counter_code" => "required|numeric"
+            "starting_id" => "required|numeric"
         ]);
 
         Counter::create($request->except('_token'));
@@ -68,7 +71,7 @@ class CounterController extends Controller
 			"printer_connection_type" => "required",
             'printer_ip' =>  $connectViaNetwork ? 'required|ip' : '',
             "printer_port" =>  $connectViaNetwork ? 'required|numeric' : '',
-            "counter_code" => "required|numeric"
+            "starting_id" => "required|numeric"
         ]);
 
         $counter = Counter::where("id", "=", $counter_id)->first();
