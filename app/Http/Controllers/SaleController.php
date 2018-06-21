@@ -373,7 +373,7 @@ class SaleController extends Controller
 
                 $results = $results->where("sales.deleted_at", null)
                     ->where("items.deleted_at", null)
-                    ->select(DB::raw(('*, COUNT(*) as item_count')))
+                    ->select(DB::raw(('*, COUNT(*) as item_count,sales.created_at as sale_create_date')))
                     ->groupBy('sales.id');
 
 

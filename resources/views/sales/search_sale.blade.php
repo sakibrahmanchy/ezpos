@@ -174,7 +174,7 @@
                             <span class="glyphicon glyphicon-print"></span></a>
                         <a href="{{route('sale_pre_edit',['id'=>$anItem->sale_id])}}"><span class="glyphicon glyphicon-edit"></span></a>
                         EZPOS {{$anItem->sale_id}}</td>
-                    <td> {{$anItem->created_at}}</td>
+                    <td> {{$anItem->sale_create_date}}</td>
                     <td> {{$anItem->name}}</td>
                     <td> {{$anItem->first_name}} {{$anItem->last_name}}</td>
                     <td> {{$anItem->sub_total_amount}}</td>
