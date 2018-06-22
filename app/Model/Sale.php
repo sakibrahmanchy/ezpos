@@ -233,9 +233,8 @@ class Sale extends Model
     }
 
     public function insertSalePaymentInfos($paymentInfos,$sale) {
-
         foreach($paymentInfos as $aPaymentInfo){
-            $this->insertSalePaymentInfos($aPaymentInfo, $sale);
+            $this->insertPaymentInfo($aPaymentInfo, $sale);
         }
     }
 
