@@ -390,7 +390,6 @@ class Sale extends Model
                 }
                 array_push($payments, $payment_id);
             }
-
             $sale->paymentLogs()->sync($payments);
         }
 
