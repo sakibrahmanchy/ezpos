@@ -501,6 +501,7 @@
 							{
 
 								var aPaymentItem = {
+                                    id: 0,
 									paid_amount: this.amountTendered,
 									payment_type: this.activePaymentType
 								}
@@ -514,7 +515,9 @@
 							else if(this.activePaymentType=="Loyalty Card"){
 								this.ValidateLoyalty();
 							}
-						}
+						} else {
+                            this.SubmitSales(1);
+                        }
                     },
                     ChooseItem: function(product) {
                         var found = false;
@@ -560,11 +563,11 @@
 
                                 var totalProfit = 0;
                                 var totalItemsSold = 0;
-                                console.log(this.paymentList.length);
+
                                 paymentInfos = [];
                                 $.map(this.paymentList, function(value, index) {
                                     var paymentInfo = {
-                                        payment_id: index,
+                                        payment_id: value.id,
                                         payment_type: value.payment_type,
                                         paid_amount: value.paid_amount
                                     };
@@ -657,7 +660,7 @@
 
                                 var edit_url = '{{ route("sale_edit", ":sale_id") }}';
                                 var edit_route = edit_url.replace(':sale_id', "<?php echo $sale_id ?>");
-
+                                console.log(paymentInfos);
                                 axios.post(edit_route,
                                     {
                                         sale_info: saleInfo,
@@ -842,7 +845,7 @@
                     }
                     var due = this.GetTotalSale - totalTendered;
                     if(due>0)
-                        this.amountTendered = due;
+                        this.amountTendered = due.toFixed(2);
                     else
                         this.amountTendered = 0;
                     return due;
@@ -851,6 +854,7 @@
             created: function(){
             },
             mounted() {
+                console.log(this.paymentList);
                 document.getElementById("item-names").focus();
                 let fetchedItemList = <?php echo json_encode($sales) ?>;
                  for( let selectedItem of fetchedItemList) {
@@ -871,7 +875,6 @@
                     {
                         itemDetails.discountApplicable = true;
                         if(this.allDiscountAmountPercentage === 0||this.allDiscountAmountPercentage === undefined){
-                            itemDetails.item_discount_percentage = selectedItem.discountPercentage;
                             itemDetails.discount_amount = selectedItem.discountAmount.toFixed(2);
                             itemDetails.discount_name = selectedItem.discountName;
                         }
@@ -884,8 +887,10 @@
                         itemDetails.discountApplicable = false;
                         itemDetails.item_discount_percentage = 0;
                     }
+                    itemDetails.item_discount_percentage = selectedItem.item_discount_percentage;
                     this.itemList.push(itemDetails);
                 }
+
             }
         });
     </script>

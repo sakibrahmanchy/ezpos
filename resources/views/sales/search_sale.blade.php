@@ -22,8 +22,8 @@
                         <label for="simple_radio"><span></span></label>
 
                         <select name="report_date_range_simple" id="report_date_range_simple" class="form-control">
-                            <option class="dates" value="{{$dateTypes->today}}">Today</option>
-                            <option class="dates"  value="{{$dateTypes->yesterday}}" >Yesterday</option>
+                            <option class="dates" value="{{$dateTypes->today}}" selected>Today</option>
+                            <option class="dates"  value="{{$dateTypes->yesterday}}">Yesterday</option>
                             <option class="dates"  value="{{$dateTypes->this_week}}">This Week</option>
                             <option class="dates"   value="{{$dateTypes->last_week}}">Last Week</option>
                             <option class="dates"  value="{{$dateTypes->this_month}}">This Month</option>
@@ -174,7 +174,7 @@
                             <span class="glyphicon glyphicon-print"></span></a>
                         <a href="{{route('sale_pre_edit',['id'=>$anItem->sale_id])}}"><span class="glyphicon glyphicon-edit"></span></a>
                         EZPOS {{$anItem->sale_id}}</td>
-                    <td> {{$anItem->created_at}}</td>
+                    <td> {{$anItem->sale_create_date}}</td>
                     <td> {{$anItem->name}}</td>
                     <td> {{$anItem->first_name}} {{$anItem->last_name}}</td>
                     <td> {{$anItem->sub_total_amount}}</td>

@@ -107,15 +107,25 @@ class CashRegisterController extends Controller
         $openingBalance = $cashRegister->getActiveRegisterOpeningBalance();
         $total_additions = $cashRegister->getTotalAddedAmountInActiveRegister();
         $total_subtractions = $cashRegister->getTotalSubtractedAmountInActiveRegister();
-        $cash_sales = $cashRegister->getTotalSaleInCurrentRegister();
+        $cash_sales = $cashRegister->getTotalSaleInCurrentRegister(CashRegisterTransactionType::$CASH_SALES);
+        $check_sales = $cashRegister->getTotalSaleInCurrentRegister(CashRegisterTransactionType::$CHECK_SALES);
+        $credit_card_sales = $cashRegister->getTotalSaleInCurrentRegister(CashRegisterTransactionType::$CREDIT_CARD_SALES);
+        $debit_card_sales = $cashRegister->getTotalSaleInCurrentRegister(CashRegisterTransactionType::$DEBIT_CARD_SALES);
+        $gift_card_sales = $cashRegister->getTotalSaleInCurrentRegister(CashRegisterTransactionType::$GIFT_CARD_SALES);
+        $loyalty_card_sales = $cashRegister->getTotalSaleInCurrentRegister(CashRegisterTransactionType::$LOYALTY_CARD_SALES);
         $changedDue = DB::table('sales')->where('cash_register_id', $cashRegister->getCurrentActiveRegister()->id)
             ->where( 'due', '<', 0 )
             ->sum('due');
         $changedDue = -$changedDue;
-
+        $cash_sales = $cash_sales - $changedDue;
+        $refunded_sales_amount = $cashRegister->getRefundedSalesAmountInCashRegister($cashRegister->getCurrentActiveRegister()->id  );
         $denominations = CurrencyDenomination::all();
+        $closing_balance = $openingBalance + $cash_sales  + $total_additions + $total_subtractions - $refunded_sales_amount;
+
         return view('cash_registers.close_cash_register',["denominations"=>$denominations,"openingBalance"=>$openingBalance,
-            "additions"=>$total_additions,"subtractions"=>$total_subtractions,"sales"=>$cash_sales,"change_due"=>$changedDue]);
+            "additions"=>$total_additions,"subtractions"=>$total_subtractions,"sales"=>$cash_sales,"change_due"=>$changedDue,
+            "refunded_amount"=>$refunded_sales_amount],compact('check_sales','credit_card_sales','debit_card_sales',
+            'gift_card_sales','loyalty_card_sales','closing_balance'));
 
     }
 
@@ -149,6 +159,7 @@ class CashRegisterController extends Controller
             ->where( 'due', '<', 0 )
             ->sum('due');
         $changedDue = -$changedDue;
+        $cash_sales = $cash_sales - $changedDue;
         $expectedClosingSales = $cashRegister->opening_balance + ($cash_sales - $changedDue) +  ($total_additions - $total_subtractions);
 
         $paymentAmountSql = "select payment_type, sum(paid_amount) as total_paid_amount from payment_logs where id in ( select payment_log_id from payment_log_sale where sale_id in ( select id from sales where cash_register_id=? ) ) group by payment_type";
@@ -390,7 +401,8 @@ class CashRegisterController extends Controller
 									->sum('due');
 		$changedDue = -$changedDue;
 		$expectedClosingSales = $cashRegister->opening_balance + ($cash_sales - $changedDue) +  ($total_additions - $total_subtractions);
-		
+        $cash_sales = $cash_sales - $changedDue;
+
         $paymentAmountSql = "select payment_type, sum(paid_amount) as total_paid_amount from payment_logs where id in ( select payment_log_id from payment_log_sale where sale_id in ( select id from sales where cash_register_id=? and deleted_at is null ) )  group by payment_type";
         $paymentAmountTotalList = DB::select( $paymentAmountSql, [$cashRegisterId] );
         
@@ -461,7 +473,7 @@ class CashRegisterController extends Controller
             $printer->text( new FooterItem('Loyalty Card Sales:', '$'.number_format( $loyalityAmountTotal, 2) ));
             $printer->feed();
             $printer->feed();
-            $printer->text( new FooterItem('Changed Amount:', '$'.number_format( $changedDue, 2) ));
+//            $printer->text( new FooterItem('Changed Amount:', '$'.number_format( $changedDue, 2) ));
             $printer->text( new FooterItem('Refunded Sale Amount:  ', '$'.number_format( $refunded_sales_amount, 2) ));
 
             $printer->text( new FooterItem('Cash Additions:', '$'.number_format( $total_additions, 2) ));
