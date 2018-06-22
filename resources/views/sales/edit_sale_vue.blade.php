@@ -420,6 +420,9 @@
                                 };
                                 console.log(selectedItem);
 
+                                if(selectedItem.useScanPrice)
+                                    itemDetails.unit_price = selectedItem.new_price;
+
                                 if(selectedItem.discountApplicable)
                                 {
                                     itemDetails.discountApplicable = true;
