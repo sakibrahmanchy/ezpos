@@ -4,18 +4,17 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddStartingIdToCountersTable extends Migration
+class ChangeSaleIdColumnOfSalesTableToBigInteger extends Migration
 {
     /**
      * Run the migrations.
      *
      * @return void
      */
-
     public function up()
     {
-        Schema::table('counters', function (Blueprint $table) {
-            $table->bigInteger('starting_id');
+        Schema::table('sales', function (Blueprint $table) {
+            $table->bigInteger('id')->change();
         });
     }
 
@@ -26,9 +25,8 @@ class AddStartingIdToCountersTable extends Migration
      */
     public function down()
     {
-        Schema::table('counters', function (Blueprint $table) {
-            $table->dropColumn('starting_id');
+        Schema::table('sales', function (Blueprint $table) {
+            $table->integer('id')->change();
         });
     }
-
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Model\Counter;
 
+use App\Model\Sale;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
@@ -14,9 +15,6 @@ class CounterController extends Controller
 
     public function GetCounterForm()
     {
-        $counters = \App\Model\Counter::all();
-        $existingStartingIDs = \App\Model\Counter::pluck('id','starting_id')->toArray();
-        dd($existingStartingIDs);
         return view('counters.new_counter');
     }
 
@@ -29,7 +27,7 @@ class CounterController extends Controller
 			"printer_connection_type" => "required",
             'printer_ip' =>  $connectViaNetwork ? 'required|ip' : '',
             "printer_port" =>  $connectViaNetwork ? 'required|numeric' : '',
-            "starting_id" => "required|numeric"
+            "starting_id" => "required|numeric|unique:counters"
         ]);
 
         Counter::create($request->except('_token'));
@@ -71,7 +69,7 @@ class CounterController extends Controller
 			"printer_connection_type" => "required",
             'printer_ip' =>  $connectViaNetwork ? 'required|ip' : '',
             "printer_port" =>  $connectViaNetwork ? 'required|numeric' : '',
-            "starting_id" => "required|numeric"
+            "starting_id" => "required|numeric|unique:counters"
         ]);
 
         $counter = Counter::where("id", "=", $counter_id)->first();

@@ -10,39 +10,34 @@ class CounterTableSeeder extends Seeder
      *
      * @return void
      */
+
+
+
     public function run()
     {
+
+        $counterObject = new \App\Model\Counter();
         if(\App\Model\Counter::all()->count()==0){
 
             $counter = new \App\Model\Counter();
             $counter->name= "Default";
             $counter->description = "";
             $counter->starting_id = 10000000;
-            $counter->printer_ip = "";
-            $counter->printer_port = "";
+            $counter->printer_ip = "192.168.10.51";
+            $counter->printer_port = "9100";
             $counter->isDefault = true;
             $counter->save();
         }
         else {
 
             $counters = \App\Model\Counter::all();
-            $existingStartingIDs = \App\Model\Counter::pluck('starting_id', 'id')->toArray();
-            dd($existingStartingIDs);
-//            $counterInitiatingValue = 10000000;
-//            foreach ($counters as $counter) {
-//                if(is_null($counter->starting_id) || $counter->starting_id == 0 || $counter->starting_id == $counterInitiatingValue) {
-//                    if($counter->starting_id == $counterInitiatingValue)
-//                    {
-//                        $counterInitiatingValue += 10000000;
-//                        $counter->starting_id = $counterInitiatingValue;
-//                    }
-//                    else {
-//                        $counter->starting_id = $counterInitiatingValue;
-//                        $counterInitiatingValue += 10000000;
-//                    }
-//                }
-//                $counter->save();
-//            }
+            foreach ($counters as $counter) {
+                if(is_null($counter->starting_id) || $counter->starting_id == 0) {
+                   $counterObject->generateUniqueStartingId();
+                   $counter->starting_id = $counter::$CURRENT_UNIQUE_STARTING_ID;
+                   $counter->save();
+                }
+            }
         }
 
         if(\App\Model\Counter::where("name","Default")->count()>1){
@@ -52,5 +47,6 @@ class CounterTableSeeder extends Seeder
                 $aCounter->delete();
             }
         }
+        $counterObject->replaceDuplicateStartingIds();
     }
 }
