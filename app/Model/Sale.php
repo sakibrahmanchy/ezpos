@@ -183,54 +183,59 @@ class Sale extends Model
         }
     }
 
-    public function insertSalePaymentInfos($paymentInfos,$sale) {
+    public function insertPaymentInfo($aPaymentInfo, $sale) {
 
         $sale_id = $sale->id;
 
+        $paymentLogObject = new \App\Model\PaymentLog();
+        $insertedPaymentLog = $paymentLogObject->addNewPaymentLog( $aPaymentInfo["payment_type"], $aPaymentInfo["paid_amount"],$sale,$sale->customer_id);
+
+        switch($aPaymentInfo["payment_type"]){
+            case 'Cash':
+                $cashRegisterTransaction = new CashRegisterTransaction();
+                $cashRegisterTransaction->newCashRegisterTransaction($sale_id,$aPaymentInfo["paid_amount"],CashRegisterTransactionType::$CASH_SALES);
+                break;
+            case 'Check':
+                $cashRegisterTransaction = new CashRegisterTransaction();
+                $cashRegisterTransaction->newCashRegisterTransaction($sale_id,$aPaymentInfo["paid_amount"],CashRegisterTransactionType::$CHECK_SALES);
+                break;
+
+            case 'Debit Card':
+                $cashRegisterTransaction = new CashRegisterTransaction();
+                $cashRegisterTransaction->newCashRegisterTransaction($sale_id,$aPaymentInfo["paid_amount"],CashRegisterTransactionType::$DEBIT_CARD_SALES);
+                break;
+
+            case 'Credit Card':
+                $cashRegisterTransaction = new CashRegisterTransaction();
+                $cashRegisterTransaction->newCashRegisterTransaction($sale_id,$aPaymentInfo["paid_amount"],CashRegisterTransactionType::$CREDIT_CARD_SALES);
+                break;
+
+            case 'Gift Card':
+                $cashRegisterTransaction = new CashRegisterTransaction();
+                $cashRegisterTransaction->newCashRegisterTransaction($sale_id,$aPaymentInfo["paid_amount"],CashRegisterTransactionType::$GIFT_CARD_SALES);
+                break;
+
+            case 'Loyalty Card':
+                $cashRegisterTransaction = new CashRegisterTransaction();
+                $cashRegisterTransaction->newCashRegisterTransaction($sale_id,$aPaymentInfo["paid_amount"],CashRegisterTransactionType::$LOYALTY_CARD_SALES);
+                break;
+
+            default:
+                break;
+        }
+
+        if(strpos($aPaymentInfo["payment_type"],"Loyalty Card")!==false){
+            $loyaltyTransaction = new LoyaltyTransaction();
+            $loyaltyTransaction->NewLoyaltyTransaction($sale->customer_id,$aPaymentInfo["paid_amount"],LotyaltyTransactionType::$DEBIT_BALANCE,$sale_id);
+        }
+
+        return $insertedPaymentLog;
+    }
+
+    public function insertSalePaymentInfos($paymentInfos,$sale) {
+
         foreach($paymentInfos as $aPaymentInfo){
-
-            $paymentLogObject = new \App\Model\PaymentLog();
-            $paymentLogObject->addNewPaymentLog( $aPaymentInfo["payment_type"], $aPaymentInfo["paid_amount"],$sale,$sale->customer_id);
-
-            switch($aPaymentInfo["payment_type"]){
-                case 'Cash':
-                        $cashRegisterTransaction = new CashRegisterTransaction();
-                        $cashRegisterTransaction->newCashRegisterTransaction($sale_id,$aPaymentInfo["paid_amount"],CashRegisterTransactionType::$CASH_SALES);
-                    break;
-                case 'Check':
-                    $cashRegisterTransaction = new CashRegisterTransaction();
-                    $cashRegisterTransaction->newCashRegisterTransaction($sale_id,$aPaymentInfo["paid_amount"],CashRegisterTransactionType::$CHECK_SALES);
-                    break;
-
-                case 'Debit Card':
-                    $cashRegisterTransaction = new CashRegisterTransaction();
-                    $cashRegisterTransaction->newCashRegisterTransaction($sale_id,$aPaymentInfo["paid_amount"],CashRegisterTransactionType::$DEBIT_CARD_SALES);
-                    break;
-
-                case 'Credit Card':
-                    $cashRegisterTransaction = new CashRegisterTransaction();
-                    $cashRegisterTransaction->newCashRegisterTransaction($sale_id,$aPaymentInfo["paid_amount"],CashRegisterTransactionType::$CREDIT_CARD_SALES);
-                    break;
-
-                case 'Gift Card':
-                    $cashRegisterTransaction = new CashRegisterTransaction();
-                    $cashRegisterTransaction->newCashRegisterTransaction($sale_id,$aPaymentInfo["paid_amount"],CashRegisterTransactionType::$GIFT_CARD_SALES);
-                    break;
-
-                case 'Loyalty Card':
-                    $cashRegisterTransaction = new CashRegisterTransaction();
-                    $cashRegisterTransaction->newCashRegisterTransaction($sale_id,$aPaymentInfo["paid_amount"],CashRegisterTransactionType::$LOYALTY_CARD_SALES);
-                    break;
-
-                default:
-                    break;
-            }
-
-            if(strpos($aPaymentInfo["payment_type"],"Loyalty Card")!==false){
-                $loyaltyTransaction = new LoyaltyTransaction();
-                $loyaltyTransaction->NewLoyaltyTransaction($sale->customer_id,$aPaymentInfo["paid_amount"],LotyaltyTransactionType::$DEBIT_BALANCE,$sale_id);
-            }
-
+            $this->insertSalePaymentInfos($aPaymentInfo, $sale);
         }
     }
 
@@ -379,21 +384,13 @@ class Sale extends Model
             foreach($paymentInfos as $aPaymentInfo){
 
                $payment_id = (int) $aPaymentInfo["payment_id"];
-               if($payment_id==0){
-
-                    $paymentLog = new PaymentLog();
-
-                    $paymentLog->payment_type = $aPaymentInfo["payment_type"];
-                    $paymentLog->paid_amount = $aPaymentInfo["paid_amount"];
-
-                    $paymentLog->save();
-
-                    $payment_id = $paymentLog->id;
+               if($payment_id==0) {
+                   $insertedPaymentLog = $this->insertPaymentInfo($aPaymentInfo, $sale);
+                   $payment_id = $insertedPaymentLog->id;
                 }
-
                 array_push($payments, $payment_id);
             }
-            dd($payments);
+
             $sale->paymentLogs()->sync($payments);
         }
 

@@ -501,6 +501,7 @@
 							{
 
 								var aPaymentItem = {
+                                    id: 0,
 									paid_amount: this.amountTendered,
 									payment_type: this.activePaymentType
 								}
@@ -562,11 +563,11 @@
 
                                 var totalProfit = 0;
                                 var totalItemsSold = 0;
-                                console.log(this.paymentList);
+
                                 paymentInfos = [];
                                 $.map(this.paymentList, function(value, index) {
                                     var paymentInfo = {
-                                        payment_id: index,
+                                        payment_id: value.id,
                                         payment_type: value.payment_type,
                                         paid_amount: value.paid_amount
                                     };
@@ -659,7 +660,7 @@
 
                                 var edit_url = '{{ route("sale_edit", ":sale_id") }}';
                                 var edit_route = edit_url.replace(':sale_id', "<?php echo $sale_id ?>");
-
+                                console.log(paymentInfos);
                                 axios.post(edit_route,
                                     {
                                         sale_info: saleInfo,
@@ -853,6 +854,7 @@
             created: function(){
             },
             mounted() {
+                console.log(this.paymentList);
                 document.getElementById("item-names").focus();
                 let fetchedItemList = <?php echo json_encode($sales) ?>;
                  for( let selectedItem of fetchedItemList) {
