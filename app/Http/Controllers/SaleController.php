@@ -894,68 +894,69 @@ class SaleController extends Controller
 
                 if ($anItem->active){
 
-                        if($anItem->type==1){
+                    if($anItem->type==1){
 
-                            if($anItem->percent_off>0){
+                        if($anItem->percent_off>0){
 
-                                $rule_start_date = new \DateTime($anItem->start_date);
-                                $rule_expire_date = new \DateTime($anItem->end_date);
+                            $rule_start_date = new \DateTime($anItem->start_date);
+                            $rule_expire_date = new \DateTime($anItem->end_date);
 
-                                if(($current_date>=$rule_start_date) && ($current_date<=$rule_expire_date) ) {
-                                    $discountPercentage = $anItem->percent_off;
-                                    if($discountPercentage>100){
-                                        $anItem->discountPercentage = 100;
-                                        $anItem->itemPrice = $anItem->selling_price;
-                                        $anItem->discountName = $anItem->name;
-                                        $anItem->discountAmount = $anItem->itemPrice*($discountPercentage/100);
-                                        $anItem->itemPriceAfterDiscount = $anItem->itemPrice-$anItem->discountAmount;
-                                        $anItem->discountApplicable = true;
-                                    }else{
-                                        $anItem->discountPercentage = $discountPercentage;
-                                        $anItem->itemPrice = $anItem->selling_price;
-                                        $anItem->discountName = $anItem->name;
-                                        $anItem->discountAmount = $anItem->itemPrice*($discountPercentage/100);
-                                        $anItem->itemPriceAfterDiscount = $anItem->itemPrice-$anItem->discountAmount;
-                                        $anItem->discountApplicable = true;
-                                    }
+                            if(($current_date>=$rule_start_date) && ($current_date<=$rule_expire_date) ) {
+                                $discountPercentage = $anItem->percent_off;
 
+                                if($discountPercentage>100){
+                                    $anItem->discountPercentage = 100;
+                                    $anItem->itemPrice = $anItem->selling_price;
+                                    $anItem->discountName = $anItem->name;
+                                    $anItem->discountAmount = $anItem->itemPrice*($discountPercentage/100);
+                                    $anItem->itemPriceAfterDiscount = $anItem->itemPrice-$anItem->discountAmount;
+                                    $anItem->discountApplicable = true;
                                 }else{
-                                    $anItem->discountApplicable = false;
+                                    $anItem->discountPercentage = $discountPercentage;
+                                    $anItem->itemPrice = $anItem->selling_price;
+                                    $anItem->discountName = $anItem->name;
+                                    $anItem->discountAmount = $anItem->itemPrice*($discountPercentage/100);
+                                    $anItem->itemPriceAfterDiscount = $anItem->itemPrice-$anItem->discountAmount;
+                                    $anItem->discountApplicable = true;
                                 }
 
-                                //echo "Item should be discounted by ".$anItem->percent_off." percent";
-
-                            }else if($anItem->fixed_of>0){
-
-                                $rule_start_date = new \DateTime($anItem->start_date);
-                                $rule_expire_date = new \DateTime($anItem->end_date);
-
-                                if( ($current_date>=$rule_start_date) && ($current_date<=$rule_expire_date) ) {
-                                    $discountPercentage = ($anItem->fixed_of/$anItem->selling_price)*100;
-                                    if($discountPercentage>100){
-                                        $anItem->discountPercentage = 100;
-                                        $anItem->discountAmount = $anItem->selling_price;
-                                        $anItem->discountName = $anItem->name;
-                                        $anItem->itemPrice = $anItem->selling_price;
-                                        $anItem->itemPriceAfterDiscount = $anItem->itemPrice - $anItem->itemPrice;
-                                        $anItem->discountApplicable = true;
-                                    }
-                                    else{
-                                        $anItem->discountPercentage = $discountPercentage;
-                                        $anItem->discountAmount = $anItem->fixed_of;
-                                        $anItem->discountName = $anItem->name;
-                                        $anItem->itemPrice = $anItem->selling_price;
-                                        $anItem->itemPriceAfterDiscount = $anItem->itemPrice - $anItem->discountAmount;
-                                        $anItem->discountApplicable = true;
-                                    }
-
-                                }else{
-                                    $anItem->discountApplicable = false;
-                                }
-                                // echo "Item should be discounted by ".$anItem->fixed_of." dollar";
+                            }else{
+                                $anItem->discountApplicable = false;
                             }
 
+                            //echo "Item should be discounted by ".$anItem->percent_off." percent";
+
+                        }else if($anItem->fixed_of>0){
+
+                            $rule_start_date = new \DateTime($anItem->start_date);
+                            $rule_expire_date = new \DateTime($anItem->end_date);
+
+                            if( ($current_date>=$rule_start_date) && ($current_date<=$rule_expire_date) ) {
+                                $discountPercentage = ($anItem->fixed_of/$anItem->selling_price)*100;
+                                if($discountPercentage>100){
+                                    $anItem->discountPercentage = 100;
+                                    $anItem->discountAmount = $anItem->selling_price;
+                                    $anItem->discountName = $anItem->name;
+                                    $anItem->itemPrice = $anItem->selling_price;
+                                    $anItem->itemPriceAfterDiscount = $anItem->itemPrice - $anItem->itemPrice;
+                                    $anItem->discountApplicable = true;
+                                }
+                                else{
+                                    $anItem->discountPercentage = $discountPercentage;
+                                    $anItem->discountAmount = $anItem->fixed_of;
+                                    $anItem->discountName = $anItem->name;
+                                    $anItem->itemPrice = $anItem->selling_price;
+                                    $anItem->itemPriceAfterDiscount = $anItem->itemPrice - $anItem->discountAmount;
+                                    $anItem->discountApplicable = true;
+                                }
+
+                            }else{
+                                $anItem->discountApplicable = false;
+                            }
+                            // echo "Item should be discounted by ".$anItem->fixed_of." dollar";
                         }
+
+                    }
 
                 }
 

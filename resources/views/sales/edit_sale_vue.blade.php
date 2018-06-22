@@ -845,7 +845,7 @@
                     }
                     var due = this.GetTotalSale - totalTendered;
                     if(due>0)
-                        this.amountTendered = due;
+                        this.amountTendered = due.toFixed(2);
                     else
                         this.amountTendered = 0;
                     return due;
@@ -875,7 +875,6 @@
                     {
                         itemDetails.discountApplicable = true;
                         if(this.allDiscountAmountPercentage === 0||this.allDiscountAmountPercentage === undefined){
-                            itemDetails.item_discount_percentage = selectedItem.discountPercentage;
                             itemDetails.discount_amount = selectedItem.discountAmount.toFixed(2);
                             itemDetails.discount_name = selectedItem.discountName;
                         }
@@ -888,8 +887,10 @@
                         itemDetails.discountApplicable = false;
                         itemDetails.item_discount_percentage = 0;
                     }
+                    itemDetails.item_discount_percentage = selectedItem.item_discount_percentage;
                     this.itemList.push(itemDetails);
                 }
+
             }
         });
     </script>
