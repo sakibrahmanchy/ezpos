@@ -180,9 +180,9 @@
 
                                     <a href="{{route('new_customer')}}" target="_blank" class="input-group-addon" id="sizing-addon2" style="background-color:#337ab7;color:white;border:solid #337ab7 1px; "><strong>+</strong></a>
                                     <select2 v-model="customer_id">
-                                        <option value ="0" selected>Select Customer for sale</option>
+                                        <option value ="0">Select Customer for sale</option>
                                         @foreach($customerList as $aCustomer)
-                                            <option value = "{{$aCustomer->id}}">{{$aCustomer->first_name}} {{$aCustomer->last_name}}</option>
+                                                <option  value = "{{$aCustomer->id}}">{{$aCustomer->first_name}} {{$aCustomer->last_name}}</option>
                                         @endforeach
                                     </select2>
                                 </div>
@@ -364,7 +364,7 @@
                 itemList: [],
                 auto_select: true,
                 shown: false,
-                customer_id: 0,
+                customer_id: {{ $sales[0]->customer_id  }},
                 options: [],
                 tax: {{$tax_rate}},
                 negativeInventory: {{$settings['negative_inventory']}},
