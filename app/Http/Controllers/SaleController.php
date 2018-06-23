@@ -895,7 +895,7 @@ class SaleController extends Controller
 
                             if( ($current_date>=$rule_start_date) && ($current_date<=$rule_expire_date) ) {
                                 $discountPercentage = ($anItem->fixed_of/$anItem->selling_price)*100;
-                                if($discountPercentage>100){
+                                if($discountPercentage>100) {
                                     $anItem->discountPercentage = 100;
                                     $anItem->discountAmount = $anItem->selling_price;
                                     $anItem->discountName = $anItem->name;
@@ -1041,8 +1041,9 @@ class SaleController extends Controller
         $saleInfo = $request->sale_info;
         $productInfos = $request->product_infos;
         $paymentInfos = $request->payment_infos;
+        $deletedTransactions = $request->deletedTransactions;
         $sale = new Sale();
-        $sale_id = $sale->EditSale($saleInfo, $productInfos, $paymentInfos, $saleInfo['status'], $sale_id);
+        $sale_id = $sale->EditSale($saleInfo, $productInfos, $paymentInfos, $deletedTransactions,$saleInfo['status'], $sale_id);
         echo $sale_id;
     }
 

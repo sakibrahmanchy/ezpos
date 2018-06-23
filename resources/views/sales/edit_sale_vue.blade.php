@@ -377,7 +377,8 @@
                 gift_card_number: "",
                 loyalty_card_number: "",
                 sale_type: 1,
-                flatDiscountApplied: false
+                flatDiscountApplied: false,
+                deletedTransactions: []
             },
             methods:
                 {
@@ -663,12 +664,14 @@
 
                                 var edit_url = '{{ route("sale_edit", ":sale_id") }}';
                                 var edit_route = edit_url.replace(':sale_id', "<?php echo $sale_id ?>");
-                                console.log(paymentInfos);
+
                                 axios.post(edit_route,
                                     {
                                         sale_info: saleInfo,
                                         product_infos: productInfos,
-                                        payment_infos: paymentInfos
+                                        payment_infos: paymentInfos,
+                                        deletedTransactions: this.deletedTransactions
+
                                     }).then(function (response) {
 
                                     var sale_id = response.data;
@@ -755,7 +758,8 @@
                     },
                     RemovePayment(index)
                     {
-                        this.paymentList.splice(index, 1);
+                         this.deletedTransactions.push(this.paymentList[index].id);
+                         this.paymentList.splice(index, 1);
                     },
                     convertToSale: function() {
                         $('#bs-drp-sel-label').text("Sale");
@@ -857,7 +861,6 @@
             created: function(){
             },
             mounted() {
-                console.log(this.paymentList);
                 document.getElementById("item-names").focus();
                 let fetchedItemList = <?php echo json_encode($sales) ?>;
                  for( let selectedItem of fetchedItemList) {

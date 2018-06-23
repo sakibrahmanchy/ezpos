@@ -4,6 +4,7 @@ namespace App\Model;
 
 use App\Enumaration\CashRegisterTransactionType;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class CashRegisterTransaction extends Model
 {
@@ -12,10 +13,9 @@ class CashRegisterTransaction extends Model
 
     public function totalAdditions(){
         return CashRegisterTransaction::where("id",$this->id)->sum('amount');
-        //return $this->sum('amount')->where('cash_register_transactions.transaction_type',CashRegisterTransactionType::$ADD_BALANCE);
     }
 
-    public function newCashRegisterTransaction($saleId, $paidAmount, $paymentType) {
+    public function newCashRegisterTransaction($saleId, $paidAmount, $paymentType, $paymentLogId) {
         $cashRegisterTransaction = new CashRegisterTransaction();
 
         $cashRegister = new CashRegister();
@@ -27,8 +27,14 @@ class CashRegisterTransaction extends Model
             $cashRegisterTransaction->cash_register_id = $activeCashRegiser->id;
             $cashRegisterTransaction->amount = $paidAmount;
             $cashRegisterTransaction->transaction_type = $paymentType;
-            $cashRegister->comments = "Sales for sale: ".$saleId;
+            $cashRegisterTransaction->comments = "Sales for sale: ".$saleId;
+            $cashRegisterTransaction->payment_log_id = $paymentLogId;
             $cashRegisterTransaction->save();
         }
+    }
+
+
+    public function deleleCashRegisterTransactionByPaymentLogId($paymentLogId) {
+        DB::table('cash_register_transactions')->where("payment_log_id",$paymentLogId)->delete();
     }
 }
