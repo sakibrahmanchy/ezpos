@@ -180,7 +180,7 @@
                     <td> {{$anItem->sub_total_amount}}</td>
                     <td> {{$anItem->total_amount}}</td>
                     <td> {{$anItem->tax_amount}}</td>
-                    <td> {{$anItem->discount_amount}}</td>
+                    <td> {{$anItem->total_sales_discount}}</td>
                 </tr>
              @endforeach
              </tbody>

@@ -713,9 +713,6 @@ class SaleController extends Controller
         $settings = SettingsSingleton::get();
 
         $counter = Counter::where("id",$counter_id)->first();
-        $ip_address = $counter->printer_ip;
-        $port = $counter->printer_port;
-
         try{
             if($counter->printer_connection_type && $counter->printer_connection_type==\App\Enumaration\PrinterConnectionType::USB_CONNECTION) {
                 $connector = new WindowsPrintConnector($counter->name);
@@ -736,11 +733,6 @@ class SaleController extends Controller
             $sale->id = 12345;
             $sale->created_at = "1/19/2018";
 
-
-            //$printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);
-            //$printer->text($settings['company_name'] . " " . $sale->id . "\n");
-            //$printer->text("------------------------------------------\n");
-            //$printer = new Printer($connector);
             $printer->setJustification(Printer::JUSTIFY_CENTER);
             $printer->text("Receipt\n");
             $printer->selectPrintMode();
@@ -780,36 +772,6 @@ class SaleController extends Controller
             $printer->text($toPrint);
             $printer->text("-------------------------------------------\n");
 
-            $subtotal = new FooterItem('Subtotal', 500.00);
-            $tax = new FooterItem('VAT (15%)', 75.00);
-            $total = new FooterItem('Total', 575.00);
-            $due = new FooterItem('Change Due', 0.00);
-
-            /*$printer->setJustification(Printer::JUSTIFY_LEFT);
-            $printer->setEmphasis(true);
-            $printer->text($subtotal);
-            $printer->setEmphasis(false);
-            $printer->text($tax);
-            $printer->setEmphasis(true);
-            $printer->text($total);
-            $printer->setEmphasis(false);
-            $printer->text($due);
-            $printer->selectPrintMode();
-            $printer->feed();
-            $printer->feed();
-
-            $printer->feed();
-            $printer->feed();
-            $printer->setBarcodeHeight(64);
-            $printer->setBarcodeWidth(2);
-            $printer->setEmphasis(true);
-            $printer->text("Change Return Policy");
-            $printer->setEmphasis(true);
-            $printer->feed();
-            $printer->barcode($sale->id, Printer::BARCODE_CODE39);
-            $printer->feed();
-            $printer->text("EZPOS " . $sale->id);
-            $printer->feed();*/
 			$printer->feed();
             $printer->setJustification(Printer::JUSTIFY_CENTER);
             $printer->setEmphasis(true);
