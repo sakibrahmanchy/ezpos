@@ -180,9 +180,9 @@
 
                                     <a href="{{route('new_customer')}}" target="_blank" class="input-group-addon" id="sizing-addon2" style="background-color:#337ab7;color:white;border:solid #337ab7 1px; "><strong>+</strong></a>
                                     <select2 v-model="customer_id">
-                                        <option value ="0" selected>Select Customer for sale</option>
+                                        <option value ="0">Select Customer for sale</option>
                                         @foreach($customerList as $aCustomer)
-                                            <option value = "{{$aCustomer->id}}">{{$aCustomer->first_name}} {{$aCustomer->last_name}}</option>
+                                                <option  value = "{{$aCustomer->id}}">{{$aCustomer->first_name}} {{$aCustomer->last_name}}</option>
                                         @endforeach
                                     </select2>
                                 </div>
@@ -364,7 +364,7 @@
                 itemList: [],
                 auto_select: true,
                 shown: false,
-                customer_id: 0,
+                customer_id: {{ $sales[0]->customer_id  }},
                 options: [],
                 tax: {{$tax_rate}},
                 negativeInventory: {{$settings['negative_inventory']}},
@@ -377,7 +377,8 @@
                 gift_card_number: "",
                 loyalty_card_number: "",
                 sale_type: 1,
-                flatDiscountApplied: false
+                flatDiscountApplied: false,
+                deletedTransactions: []
             },
             methods:
                 {
@@ -419,6 +420,9 @@
 
                                 };
                                 console.log(selectedItem);
+
+                                if(selectedItem.useScanPrice)
+                                    itemDetails.unit_price = selectedItem.new_price;
 
                                 if(selectedItem.discountApplicable)
                                 {
@@ -660,12 +664,14 @@
 
                                 var edit_url = '{{ route("sale_edit", ":sale_id") }}';
                                 var edit_route = edit_url.replace(':sale_id', "<?php echo $sale_id ?>");
-                                console.log(paymentInfos);
+
                                 axios.post(edit_route,
                                     {
                                         sale_info: saleInfo,
                                         product_infos: productInfos,
-                                        payment_infos: paymentInfos
+                                        payment_infos: paymentInfos,
+                                        deletedTransactions: this.deletedTransactions
+
                                     }).then(function (response) {
 
                                     var sale_id = response.data;
@@ -752,7 +758,8 @@
                     },
                     RemovePayment(index)
                     {
-                        this.paymentList.splice(index, 1);
+                         this.deletedTransactions.push(this.paymentList[index].id);
+                         this.paymentList.splice(index, 1);
                     },
                     convertToSale: function() {
                         $('#bs-drp-sel-label').text("Sale");
@@ -854,7 +861,6 @@
             created: function(){
             },
             mounted() {
-                console.log(this.paymentList);
                 document.getElementById("item-names").focus();
                 let fetchedItemList = <?php echo json_encode($sales) ?>;
                  for( let selectedItem of fetchedItemList) {

@@ -248,7 +248,7 @@ EOT;
 
                         if(substr($search_param,0,strlen($upc_code_prefix)) ===  $upc_code_prefix){
                             $item_new_price_from_barcode = (int) substr($search_param,6,12);
-                            $item_new_price_from_barcode = $item_new_price_from_barcode / 1000;
+                            $item_new_price_from_barcode =  ((int)($item_new_price_from_barcode / 10))/100;
                             $search_param = substr($search_param,0,6);
                             $priceNeededToBeScanned = true;
                         }

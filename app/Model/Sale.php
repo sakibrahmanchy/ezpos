@@ -212,31 +212,37 @@ class Sale extends Model
         switch($aPaymentInfo["payment_type"]){
             case 'Cash':
                 $cashRegisterTransaction = new CashRegisterTransaction();
-                $cashRegisterTransaction->newCashRegisterTransaction($sale_id,$aPaymentInfo["paid_amount"],CashRegisterTransactionType::$CASH_SALES);
+                $cashRegisterTransaction->newCashRegisterTransaction($sale_id,$aPaymentInfo["paid_amount"],
+                    CashRegisterTransactionType::$CASH_SALES,$insertedPaymentLog->id);
                 break;
             case 'Check':
                 $cashRegisterTransaction = new CashRegisterTransaction();
-                $cashRegisterTransaction->newCashRegisterTransaction($sale_id,$aPaymentInfo["paid_amount"],CashRegisterTransactionType::$CHECK_SALES);
+                $cashRegisterTransaction->newCashRegisterTransaction($sale_id,$aPaymentInfo["paid_amount"],
+                    CashRegisterTransactionType::$CHECK_SALES,$insertedPaymentLog->id);
                 break;
 
             case 'Debit Card':
                 $cashRegisterTransaction = new CashRegisterTransaction();
-                $cashRegisterTransaction->newCashRegisterTransaction($sale_id,$aPaymentInfo["paid_amount"],CashRegisterTransactionType::$DEBIT_CARD_SALES);
+                $cashRegisterTransaction->newCashRegisterTransaction($sale_id,$aPaymentInfo["paid_amount"],
+                    CashRegisterTransactionType::$DEBIT_CARD_SALES,$insertedPaymentLog->id);
                 break;
 
             case 'Credit Card':
                 $cashRegisterTransaction = new CashRegisterTransaction();
-                $cashRegisterTransaction->newCashRegisterTransaction($sale_id,$aPaymentInfo["paid_amount"],CashRegisterTransactionType::$CREDIT_CARD_SALES);
+                $cashRegisterTransaction->newCashRegisterTransaction($sale_id,
+                    $aPaymentInfo["paid_amount"],CashRegisterTransactionType::$CREDIT_CARD_SALES,$insertedPaymentLog->id);
                 break;
 
             case 'Gift Card':
                 $cashRegisterTransaction = new CashRegisterTransaction();
-                $cashRegisterTransaction->newCashRegisterTransaction($sale_id,$aPaymentInfo["paid_amount"],CashRegisterTransactionType::$GIFT_CARD_SALES);
+                $cashRegisterTransaction->newCashRegisterTransaction($sale_id,$aPaymentInfo["paid_amount"],
+                    CashRegisterTransactionType::$GIFT_CARD_SALES,$insertedPaymentLog->id);
                 break;
 
             case 'Loyalty Card':
                 $cashRegisterTransaction = new CashRegisterTransaction();
-                $cashRegisterTransaction->newCashRegisterTransaction($sale_id,$aPaymentInfo["paid_amount"],CashRegisterTransactionType::$LOYALTY_CARD_SALES);
+                $cashRegisterTransaction->newCashRegisterTransaction($sale_id,$aPaymentInfo["paid_amount"],
+                    CashRegisterTransactionType::$LOYALTY_CARD_SALES,$insertedPaymentLog->id);
                 break;
 
             default:
@@ -269,7 +275,7 @@ class Sale extends Model
 
 
 
-    public function editSale($saleInfo, $productInfos,$paymentInfos , $saleStatus, $sale_id){
+    public function editSale($saleInfo, $productInfos,$paymentInfos, $deletedTransactions, $saleStatus, $sale_id){
 
         if($saleStatus!=1)
             session()->put('success','Sale has been successfully suspended');
@@ -409,6 +415,11 @@ class Sale extends Model
                 array_push($payments, $payment_id);
             }
             $sale->paymentLogs()->sync($payments);
+        }
+
+        foreach ($deletedTransactions as $aDeletedTransaction) {
+            $cashRegisterTransaction = new CashRegisterTransaction();
+            $cashRegisterTransaction->deleleCashRegisterTransactionByPaymentLogId($aDeletedTransaction);
         }
 
         return $sale_id;
