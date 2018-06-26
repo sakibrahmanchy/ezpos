@@ -35,7 +35,7 @@
                                 <li class="list-group-item">Refunded Sale Amount: <strong class="pull-right">${{ number_format($refundedAmount, 2) }}</strong></li>
                                 <li class="list-group-item">Cash additions: <strong class="pull-right">${{ number_format($additions, 2) }}</strong></li>
                                 <li class="list-group-item">Cash subtractions: <strong class="pull-right">${{ number_format($subtractions, 2) }}</strong></li>
-                                <li class="list-group-item">Difference: <strong class="pull-right">{{ $difference >= 0 ? "$".number_format($difference,2) : "-$".number_format((-1) * $difference,2) }}</strong></li>
+                                {{--<li class="list-group-item">Difference: <strong class="pull-right">{{ $difference >= 0 ? "$".number_format($difference,2) : "-$".number_format((-1) * $difference,2) }}</strong></li>--}}
                                 <li class="list-group-item">Notes: <strong class="pull-right"></strong></li>
                             </ul>
                         </div>
