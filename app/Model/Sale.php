@@ -398,6 +398,12 @@ class Sale extends Model
             $sale->paymentLogs()->sync($payments);
         }
 
+        if( $saleInfo['customer_id'] != 0){
+            //Check if customer has a loyalty card or not
+            $this->addCustomerLoyaltyBalance($sale->customer_id, $sale_id, $sale->total_amount);
+        }
+
+
         foreach ($deletedTransactions as $aDeletedTransaction) {
             $cashRegisterTransaction = new CashRegisterTransaction();
             $cashRegisterTransaction->deleleCashRegisterTransactionByPaymentLogId($aDeletedTransaction);
