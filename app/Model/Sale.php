@@ -22,8 +22,8 @@ use App\Model\CashRegister;
 class Sale extends Model
 {
     use SoftDeletes;
-    //public $incrementing = false;
-    //public $keyType = "string";
+    public $incrementing = false;
+    public $keyType = "string";
 
     public function Items(){
         return $this->belongsToMany('App\Model\Item')->withPivot('quantity','unit_price',
@@ -78,18 +78,37 @@ class Sale extends Model
     public function generateRandomNumber($digits) {
         return rand(pow(10, $digits-1), pow(10, $digits)-1);
     }
+
+
+    public function getMaxSaleIdByCounter($counterId) {
+        $saleId = Sale::where("counter_id",$counterId)->max("id");
+        $counter = Counter::where("id",$counterId)->first();
+        if(is_null($saleId) || $saleId == 0 || $saleId < $counter->starting_id)
+           return $counter->starting_id;
+        return $saleId+1;
+    }
+
+    /**
+     * @return bigInteger value related to current counter
+     */
     public function generateSalesID() {
-        $timestamp = date("Ymdhs",time());
-        $randomNumber = $this->generateRandomNumber(3);
+        //Previous algo, not currently active
+//        $timestamp = date("Ymdhs",time());
+//        $randomNumber = $this->generateRandomNumber(3);
+//        $counterCode = Counter::where("id",$counterId)->first()->counter_code;
+
         $counterId = Cookie::get("counter_id");
-        $counterCode = Counter::where("id",$counterId)->first()->counter_code;
-        return $counterCode.$timestamp.$randomNumber;
+        $counter = Counter::where("id",$counterId)->first();
+        if(is_null($counter))
+            return redirect()->route('new_sale')->with('Error', 'No counters Selected');
+
+        return $this->getMaxSaleIdByCounter($counterId);
     }
 
     public function insertSaleInfo($saleInfo,$saleStatus, $registerId){
 
         $sale = new Sale();
-        //$sale->id = $this->generateSalesID();
+        $sale->id = $this->generateSalesID();
         $sale->employee_id = Auth::user()->id;
         $sale->customer_id = $saleInfo['customer_id'];
         $sale->sub_total_amount = $saleInfo['subtotal'];
@@ -403,7 +422,7 @@ class Sale extends Model
             $this->addCustomerLoyaltyBalance($sale->customer_id, $sale_id, $sale->total_amount);
         }
 
-
+		
         foreach ($deletedTransactions as $aDeletedTransaction) {
             $cashRegisterTransaction = new CashRegisterTransaction();
             $cashRegisterTransaction->deleleCashRegisterTransactionByPaymentLogId($aDeletedTransaction);

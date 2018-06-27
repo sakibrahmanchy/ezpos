@@ -32,10 +32,10 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="counter_code" class="required col-sm-3 col-md-3 col-lg-2 control-label ">Starting Id:</label>
+                                    <label for="starting_id" class="required col-sm-3 col-md-3 col-lg-2 control-label ">Starting Id:</label>
                                     <div class="col-sm-9 col-md-9 col-lg-10">
-                                        <input type="text" name="counter_code" value="{{ $counter->counter_code }}" class="form-control" id="counter_code" >
-                                        <span class="text-danger">{{ $errors->first('counter_code') }}</span>
+                                        <input type="text" name="starting_id" value="{{ $counter->starting_id }}" class="form-control" id="starting_id" >
+                                        <span class="text-danger">{{ $errors->first('starting_id') }}</span>
                                     </div>
                                 </div>
 

@@ -124,13 +124,10 @@
                                             <li><a href="{{route('counter_edit',['counter_id'=>$counter->id])}}">Edit Counter</a></li>
                                             <li><a href="{{route('test_print',['counter_id'=>$counter->id])}}">Test Print</a></li>
                                         @endif
-                                        @if(UserHasPermission("counters_delete") && !$counter->isDefault)
-                                            <li><a href="{{route('counter_delete',['counter_id'=>$counter->id])}}">Delete</a></li>
-                                        @endif
                                     </ul>
                                 </div></td>
                             <td>{{$counter->name}}</td>
-                            <td>{{$counter->counter_code}}</td>
+                            <td>{{$counter->starting_id}}</td>
                             <td>{{$counter->description}}</td>
 							<td>{{ $counter->printer_connection_type==\App\Enumaration\PrinterConnectionType::USB_CONNECTION ? 'USB Connection' : 'Connected Via Network'}}</td>
                             <td>{{$counter->printer_ip}}</td>
