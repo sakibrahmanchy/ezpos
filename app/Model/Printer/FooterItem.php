@@ -12,8 +12,8 @@ class FooterItem {
 
     public function __toString() {
         //total = 42
-        $name_cols = 25;
-        $value_cols = 17;
+        $name_cols = 20;
+        $value_cols = 22;
 
         $name_text = str_pad($this -> name, $name_cols) ;
         $value_text = str_pad($this -> value, $value_cols, ' ', STR_PAD_LEFT);
