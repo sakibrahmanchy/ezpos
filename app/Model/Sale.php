@@ -422,6 +422,7 @@ class Sale extends Model
             $this->addCustomerLoyaltyBalance($sale->customer_id, $sale_id, $sale->total_amount);
         }
 
+		
         foreach ($deletedTransactions as $aDeletedTransaction) {
             $cashRegisterTransaction = new CashRegisterTransaction();
             $cashRegisterTransaction->deleleCashRegisterTransactionByPaymentLogId($aDeletedTransaction);
