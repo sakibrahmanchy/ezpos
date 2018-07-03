@@ -11,7 +11,7 @@ class Transaction extends Model
 
 
     public function addNewTransaction($customer_id, $sale_id = null, $amount_paid, $sale_amount = 0,
-        $payment_transaction_type,$payment_log_id){
+        $payment_transaction_type, $payment_log_id){
 
         $transactionData = array(
             "customer_id" => $customer_id,

@@ -96,7 +96,7 @@
                                     <!-- small box -->
                                     <div class="small-box bg-aqua">
                                         <div class="inner">
-                                            <h3> {{ $saleTotal->count() }}</h3>
+                                            <h3> {{ $saleTotal }}</h3>
 
                                             <p>Total Orders</p>
                                         </div>
@@ -182,13 +182,13 @@
                                             <th align="left" class="header">Description</th>
                                             <th>Sale Amount</th>
                                             <th align="right" class="header">Amount Paid</th>
-                                            <th allign="right" class="header">Due</th>
+                                            <!--<th allign="right" class="header">Due</th>-->
                                         </tr>
                                         </thead>
                                         @php $due = 0; @endphp
                                         <tbody id="data-table">
-                                        @foreach($transactionHistory[0]->transactions as $aTransaction)
-                                            @php $due += ( $aTransaction->sale_amount - $aTransaction->amount_paid ); @endphp
+                                        @foreach($customer->transactions as $aTransaction)
+                                            @php $due += ( $aTransaction->sale_amount - $aTransaction->paid_amount ); @endphp
                                             <tr>
                                                 <td>##{{$aTransaction->id}}</td>
                                                 <td>{{$aTransaction->created_at}}</td>
@@ -200,8 +200,8 @@
                                                     @endif
                                                 </td>
                                                 <td><strong style="font-size: 18px;">${{ $aTransaction->sale_amount }}</strong></td>
-                                                <td><strong style="font-size: 18px;">${{ $aTransaction->amount_paid }}</strong></td>
-                                                <td><strong style="font-size: 18px;">${{  $due }}</strong></td>
+                                                <td><strong style="font-size: 18px;">${{ $aTransaction->paid_amount }}</strong></td>
+                                                <!--<td><strong style="font-size: 18px;">${{  $due }}</strong></td>-->
                                             </tr>
                                         @endforeach
                                         </tbody>

@@ -17,7 +17,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use App\Model\LoyaltyTransaction;
+use App\Model\CustomerTransaction;
 use App\Model\CashRegister;
+use DB;
 
 class Sale extends Model
 {
@@ -64,16 +66,43 @@ class Sale extends Model
 
         $this->insertItemsInSale($productInfos,$sale,$saleStatus);
 
-        if(!is_null($paymentInfos))
+		if(!is_null($paymentInfos))
             $this->insertSalePaymentInfos($paymentInfos,$sale);
 
         if( $saleInfo['customer_id'] != 0){
             //Check if customer has a loyalty card or not
             $this->addCustomerLoyaltyBalance($sale->customer_id, $sale_id, $sale->total_amount);
+			$this->InsertIntoCustomerAccount($sale->customer_id, $sale_id, $sale->total_amount, $sale->due, $sale->cash_register_id,$sale->status );
         }
 
         return $sale_id;
     }
+	
+	
+	public function InsertIntoCustomerAccount( $customer_id, $sale_id, $sale_amount, $due_amount, $cash_register_id, $sale_status )
+	{
+		$paid_amount = $sale_amount - $due_amount;
+		if( $sale_status==\App\Enumaration\SaleStatus::$LAYAWAY )
+		{
+			$paid_amount = 0;
+			$due_amount = $sale_amount;
+		}
+		$customerTransactionObj = new CustomerTransaction();
+		$customerTransactionObj->transaction_type = \App\Enumaration\CustomerTransactionType::SALE;
+		$customerTransactionObj->sale_id = $sale_id;
+		$customerTransactionObj->sale_amount = $sale_amount;
+		$customerTransactionObj->paid_amount = $paid_amount;
+		$customerTransactionObj->customer_id = $customer_id;
+		$customerTransactionObj->cash_register_id = $cash_register_id;
+		$customerTransactionObj->save();
+		
+		
+		if($due_amount<0)
+			$due_amount = 0;
+		
+		$updateCustomerBalanceQuery = "update customers set account_balance=account_balance+? where id=?";
+		DB::update( $updateCustomerBalanceQuery, [ $due_amount, $customer_id] );
+	}
 
     public function generateRandomNumber($digits) {
         return rand(pow(10, $digits-1), pow(10, $digits)-1);

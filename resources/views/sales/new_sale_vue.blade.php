@@ -491,7 +491,13 @@
                     layAwaySale: function () {
                         let total = this.GetTotalSale;
                         let due = this.GetDue;
-                        if(due>0) this.CompleteSales();
+                        //if(due>0) this.CompleteSales();
+						if(!this.customer_id){
+							alert("Please choose a customer id");
+							return;
+						}
+						//for charged account there will be no payment
+						this.paymentList.splice(0,this.paymentList.length);
                         this.SubmitSales(2);
                     },
                     estimateSale: function () {

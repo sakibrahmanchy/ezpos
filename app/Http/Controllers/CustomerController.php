@@ -8,6 +8,7 @@ use App\Model\LoyaltyTransaction;
 use App\Model\PaymentLog;
 use App\Model\PriceLevel;
 use App\Model\Sale;
+use App\Model\CustomerTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -23,7 +24,6 @@ class CustomerController extends Controller
 
     public function AddCustomer(Request $request)
     {
-
         $rules = [
             'first_name' => 'required',
             'loyalty_card_number'=>'nullable|numeric|unique:customers',
@@ -241,14 +241,17 @@ class CustomerController extends Controller
 
     public function getCustomerProfile($customer_id){
         $customerInfo = Customer::with('transactions','transactionSum')->where("id",$customer_id)->first();
-        $transactionHistory = Customer::with('transactions','transactionSum')
-            ->where('id',$customer_id)->take(2)->get();
-        $saleInfo = Sale::with('items')->where('customer_id',$customer_id)->take(7)->get();
-        $saleTotalInfo = Sale::where('customer_id',$customer_id)->get();
+
+		/*if($customerInfo->transactions->count()>0)
+		{
+			$oldestTransaction = $customerInfo->transactions->last();
+			$oldestTransactionId = $oldestTransaction->id;
+			$due = $customerInfo->GetPreviousDue( $customer_id, $oldestTransactionId );
+		}*/
+        $totalSale = Sale::where('customer_id',$customer_id)->count();
         return view('customers.customer_profile',["customer"=>$customerInfo,
-                                                  'sales'=>$saleInfo,
-                                                  "saleTotal"=>$saleTotalInfo,
-                                                  "transactionHistory"=>$transactionHistory]);
+                                                  "saleTotal"=>$totalSale
+												  ]);
     }
 
 
@@ -276,6 +279,15 @@ class CustomerController extends Controller
             "payment_method" => "required",
             "amount_to_add" => "required"
         ]);
+		$customerTransactionObj = new CustomerTransaction();
+		$customerTransactionObj->customer_id = $request->customer_id;
+		$customerTransactionObj->transaction_type = \App\Enumaration\CustomerTransactionType::PAYMENT;
+		$customerTransactionObj->paid_amount = $request->amount_to_add;
+		$customerTransactionObj->save();
+		
+		$updateCustomerBalanceQuery = "update customers set account_balance=account_balance-? where id=?";
+		DB::update( $updateCustomerBalanceQuery, [ $request->amount_to_add, $request->customer_id] );
+		
         $paymentLog = new PaymentLog();
         $paymentLog->addNewPaymentLog( $request->payment_method, $request->amount_to_add,null,$request->customer_id);
         return redirect()->route('customer_balance_add',["customer_id"=>$request->customer_id]);

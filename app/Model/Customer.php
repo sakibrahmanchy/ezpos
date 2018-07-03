@@ -22,17 +22,19 @@ class Customer extends Model
         'country', 'comments','comapny_name','account_number','taxable','loyalty_card_number','balance', 'email'];
 
     public function transactionSum()  {
-        return $this->hasMany('App\Model\Transaction')
+        /*return $this->hasMany('App\Model\Transaction')
             ->selectRaw('sum(sale_amount) as total_receivable, sum(sale_amount-amount_paid) as totalDue, sum(amount_paid) as totalPaid, customer_id' )
-            ->groupBy('customer_id');
+            ->groupBy('customer_id');*/
+		return $this->hasMany('App\Model\CustomerTransaction')
+					->selectRaw('sum(sale_amount) as total_receivable, sum(sale_amount-paid_amount) as totalDue, sum(paid_amount) as totalPaid, customer_id' );
     }
 
     public function getBalance($customer_id,$date) {
 
-        $sql = 'select sum(sale_amount) as total_receivable, sum(sale_amount-amount_paid) as totalDue, 
-                                               sum(amount_paid) as totalPaid, customer_id from transactions 
+        $sql = 'select sum(sale_amount) as total_receivable, sum(sale_amount-paid_amount) as totalDue, 
+                                               sum(paid_amount) as totalPaid, customer_id from customer_transactions   
                                                where customer_id = ?
-                                               and date(created_at) <= ? group by customer_id';
+                                               and date(created_at) <= ?';
 
         $generatedResult = DB::select($sql,array($customer_id,$date));
 
@@ -45,6 +47,20 @@ class Customer extends Model
 
 
     public function transactions()  {
-        return $this->hasMany('App\Model\Transaction')->orderBy('id','asc');
-    }}
+        return $this->hasMany('App\Model\CustomerTransaction')->orderBy('id','desc')->take(10);
+    }
+	
+	public function GetPreviousDue($customer_id,$oldest_id)
+	{
+		 $sql = 'select sum(sale_amount-paid_amount) as totalDue 
+								from customer_transactions where customer_id = ? and id < ?';
+
+        $generatedResult = DB::select($sql,array($customer_id,$oldest_id));
+
+        $totalDue = 0;
+        if(!empty($generatedResult))
+            $totalDue = $generatedResult[0]->totalDue;
+		return $totalDue;
+	}
+}
 

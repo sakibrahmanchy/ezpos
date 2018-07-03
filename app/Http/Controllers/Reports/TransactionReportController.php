@@ -21,7 +21,7 @@ class TransactionReportController extends Controller{
             $openingDue = $customer->getBalance($customer_id,$startDate);
             $closingDue = $customer->getBalance($customer_id,$endDate);
 
-            $transactionHistory = Customer::with('transactions','transactionSum')
+            $transactionHistory = Customer::with('transactions')
                 ->where('id',$customer_id)->get();
 
 
