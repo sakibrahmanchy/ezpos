@@ -19,15 +19,15 @@ class CreateCustomerTransactionsTable extends Migration
 			$table->double('sale_amount', 10,2);
 			$table->double('paid_amount', 10,2);
 			$table->integer('cash_register_id');
-			$table->bigInteger('sale_id')->nullable()->unsigned();
+			$table->bigInteger('sale_id')->unsigned()->nullable();
 			$table->integer('customer_id')->unsigned();
 			$table->timestamps();
         });
 		
-		Schema::table('customer_transactions', function($table) {
+		/*Schema::table('customer_transactions', function($table) {
 			$table->foreign('sale_id')->references('id')->on('sales');
 			$table->foreign('customer_id')->references('id')->on('customers');
-		});
+		});*/
 
     }
 
