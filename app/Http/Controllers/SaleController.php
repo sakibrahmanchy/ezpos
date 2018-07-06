@@ -500,7 +500,7 @@ class SaleController extends Controller
             $printer->text("-------------------------------------------\n");
 
 
-            $subtotal = new FooterItem('Subtotal (Line Total)', number_format($totalItemPrice, 2) );
+            $subtotal = new FooterItem('Subtotal', number_format($totalItemPrice, 2) );
 
             $printer->setEmphasis(true);
             $printer->text($subtotal);
