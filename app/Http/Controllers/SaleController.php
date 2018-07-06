@@ -695,6 +695,7 @@ class SaleController extends Controller
             $printer = new Printer($connector);
         } Catch (\Exception $e)
         {
+			dd( $e->getTrace());
             return redirect()->route('new_sale')->with(["error" => $e->getMessage()]);
         } finally{
             if (isset($printer)) {
