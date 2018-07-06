@@ -265,6 +265,17 @@ class CashRegisterController extends Controller
         $transactions = CashRegister::where("id",$cashRegisterId)->with('CashRegisterTransactions')->first()->CashRegisterTransactions;
         $closedBy = $cashRegister->closedByUser->name;
 
+		
+		$paymentAmountSql = "select sales.id, sales.total_amount, sales.created_at from payment_logs 
+								join payment_log_sale 
+									on payment_logs.id=payment_log_sale.payment_log_id
+								join sales 
+									on payment_log_sale.sale_id = sales.id
+								where sales.cash_register_id=? 
+									and sales.deleted_at is null 
+									and payment_logs.payment_type='Cash'";
+		$cashSaleList = DB::select( $paymentAmountSql, [$cashRegisterId] );
+		
         try {
 
             $counter_id = Cookie::get('counter_id',null);
@@ -342,34 +353,70 @@ class CashRegisterController extends Controller
             }
             $printer->feed();
 
+			
+			$printer->setJustification(Printer::JUSTIFY_CENTER);
+			$printer->text("Cash Sales\n");
+			$printer->text("------------------------\n");
+			$printer->feed();
 
-            $printer->setJustification(Printer::JUSTIFY_CENTER);
-            $printer->text("Cash Sales\n");
-            $printer->text("------------------------\n");
-            $printer->feed();
+			$header = new \App\Model\Printer\RegisterDetails("Date", "Employee", "Amount");
+			$printer->setJustification(Printer::JUSTIFY_LEFT);
+			$printer->setEmphasis(true);
+			$printer->text($header);
+			$printer->setEmphasis(false);
+			$printer->feed();
+			foreach($cashSaleList as $aCashSale ) {
 
-            $header = new \App\Model\Printer\RegisterDetails("Date", "Employee", "Amount");
-            $printer->setJustification(Printer::JUSTIFY_LEFT);
-            $printer->setEmphasis(true);
-            $printer->text($header);
-            $printer->setEmphasis(false);
-            $printer->feed();
-            foreach($transactions as $aTransaction ) {
+					$printer->text(new RegisterDetails(
+						date( "Y-m-d", strtotime($aCashSale->created_at) ),
+						$closedBy,
+						number_format($aCashSale->total_amount,2),
+						date( "h:i:s" ,strtotime($aCashSale->created_at) )
+					));
+					$printer->feed();
+			}
+			$printer->feed();
+			
+			
+			$cashRegisterTransactionTypeArr = array(
+										//CashRegisterTransactionType::$CASH_SALES => "Cash Sales",
+										CashRegisterTransactionType::$CHECK_SALES => "Check Sales",
+										CashRegisterTransactionType::$DEBIT_CARD_SALES => "Debit Card Sales",
+										CashRegisterTransactionType::$CREDIT_CARD_SALES => "Credit Card Sales",
+										CashRegisterTransactionType::$GIFT_CARD_SALES => "Gift Card Sales",
+										CashRegisterTransactionType::$LOYALTY_CARD_SALES => "Loyalty Card Sales",
+									);
+			foreach( $cashRegisterTransactionTypeArr as $cashRegisterTypeId=>$cashRegisterTypeName  )
+			{
+				$printer->setJustification(Printer::JUSTIFY_CENTER);
+				$printer->text("{$cashRegisterTypeName}\n");
+				$printer->text("------------------------\n");
+				$printer->feed();
 
-                if($aTransaction->transaction_type==\App\Enumaration\CashRegisterTransactionType::$CASH_SALES)
-                {
-                    $printer->text(new RegisterDetails(
-                        date_format($aTransaction->created_at,"Y-m-d"),
-                        $closedBy,
-                        number_format($aTransaction->amount,2),
-                        date_format($aTransaction->created_at,"h:i:s")
-                    ));
-                    $printer->feed();
-                }
-            }
-            $printer->feed();
+				$header = new \App\Model\Printer\RegisterDetails("Date", "Employee", "Amount");
+				$printer->setJustification(Printer::JUSTIFY_LEFT);
+				$printer->setEmphasis(true);
+				$printer->text($header);
+				$printer->setEmphasis(false);
+				$printer->feed();
+				foreach($transactions as $aTransaction ) {
+
+					if($aTransaction->transaction_type==$cashRegisterTypeId)
+					{
+						$printer->text(new RegisterDetails(
+							date_format($aTransaction->created_at,"Y-m-d"),
+							$closedBy,
+							number_format($aTransaction->amount,2),
+							date_format($aTransaction->created_at,"h:i:s")
+						));
+						$printer->feed();
+					}
+				}
+				$printer->feed();
+			}
 
         } Catch (\Exception $e) {
+			//dd($e);
             return redirect()->back()->with(["error" => $e->getMessage()]);
         } finally {
             if (isset($printer)) {
