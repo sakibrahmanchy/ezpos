@@ -389,16 +389,20 @@
                             alert("Sorry, product is out of stock.");
                             return;
                         }
+						
                         var found = false;
                         for(var index=0;index<this.itemList.length; index++)
                         {
-                            if(this.itemList[index].item_id==selectedItem.item_id)
+                            if( this.itemList[index].item_id==selectedItem.item_id)
                             {
-                                found = true;
-                                this.itemList[index].quantity++;
+								if( !selectedItem.useScanPrice 
+									|| ( selectedItem.useScanPrice && selectedItem.new_price==this.itemList[index].unit_price ) )
+								{
+									found = true;
+									this.itemList[index].items_sold++;
+								}
                             }
                         }
-
                         if(found)
                             return;
 
