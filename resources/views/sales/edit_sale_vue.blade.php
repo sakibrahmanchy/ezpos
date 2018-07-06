@@ -245,9 +245,10 @@
 
                                 <div class="input-group add-payment-form" style="padding:20px">
                                     <input type="number" name="amount_tendered" value="0.00" id="amount_tendered" class="add-input numKeyboard form-control" v-model="amountTendered">
-                                    <span class="input-group-addon" style="background: #5cb85c; border-color: #4cae4c;" @click = "CompleteSales()">
-										<a href="javascript:void(0)" class="hidden" id="add_payment_button" onclick = "addPayment()" style=" color:white;text-decoration:none;">Add Payment</a>
-										<a class="javascript:void(0)" id="finish_sale_alternate_button" style=" color:white;text-decoration:none;">Complete Sale</a>
+                                    <span class="input-group-addon" style="background: #5cb85c; border-color: #4cae4c; cursor: pointer;" @click = "CompleteSales()">
+										<!--<a href="javascript:void(0)" class="hidden" id="add_payment_button" onclick = "addPayment()" style=" color:white;text-decoration:none;">Add Payment</a>
+										<a class="javascript:void(0)" id="finish_sale_alternate_button" style=" color:white;text-decoration:none;">Complete Sale</a>-->
+										Complete Sale
 									</span>
 
 
