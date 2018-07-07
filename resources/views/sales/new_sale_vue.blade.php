@@ -572,7 +572,7 @@
                             if(due>0&&customerId!=0)
                                 confirmText = "Are you sure to leave due for this customer?";
 
-                            if( status==1 || confirm(confirmText)) {
+                            if( confirm(confirmText)) {
 
                                 if ($('#sale-type').attr("data-selected-type") == "return") {
                                     sale_type = "{{ \App\Enumaration\SaleTypes::$RETURN  }}";
