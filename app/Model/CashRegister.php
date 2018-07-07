@@ -94,7 +94,7 @@ class CashRegister extends Model
     }
 
     public function getPreviousClosingBalance(){
-        $previousCashRegister = $this->orderBy('opening_time', 'desc')->where('closing_balance','<>',null)->first();
+        $previousCashRegister = $this->orderBy('opening_time', 'desc')->where('closing_balance','<>',null)->where( 'user_id',Auth::id() )->first();
         if(!is_null($previousCashRegister))
             return $previousCashRegister->closing_balance;
         else
