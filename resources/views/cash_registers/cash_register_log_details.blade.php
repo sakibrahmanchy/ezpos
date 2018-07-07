@@ -60,17 +60,31 @@
                                         <tbody>
                                         @foreach($transactions as $aTransaction )
                                             <tr>
-                                                <td>{{ $aTransaction->created_at }}</td>
+                                                <td>{{ $aTransaction['created_at'] }}</td>
                                                 <td>{{ $closed_by }}</td>
-                                                <td>{{ number_format($aTransaction->amount,2) }}</td>
-                                                <td>{{ $aTransaction->comments }}</td>
+                                                <td>{{ number_format($aTransaction['amount'],2) }}</td>
                                                 <td>
-                                                    @if($aTransaction->transaction_type==\App\Enumaration\CashRegisterTransactionType::$ADD_BALANCE)
+                                                    @if(isset($aTransaction['sale_id']))
+                                                        For sale: {{$aTransaction['sale_id']}}
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @if($aTransaction['payment_type']==\App\Enumaration\CashRegisterTransactionType::$ADD_BALANCE)
                                                         Cash added
-                                                    @elseif($aTransaction->transaction_type==\App\Enumaration\CashRegisterTransactionType::$SUBTRACT_BALANCE)
+                                                    @elseif($aTransaction['payment_type']==\App\Enumaration\CashRegisterTransactionType::$SUBTRACT_BALANCE)
                                                         Cash subtracted
-                                                    @else
-                                                        Cash from Sale
+                                                    @elseif($aTransaction['payment_type']==\App\Enumaration\CashRegisterTransactionType::$CASH_SALES)
+                                                        Cash Sale
+                                                    @elseif($aTransaction['payment_type']==\App\Enumaration\CashRegisterTransactionType::$CHECK_SALES)
+                                                        Check Sale
+                                                    @elseif($aTransaction['payment_type']==\App\Enumaration\CashRegisterTransactionType::$DEBIT_CARD_SALES)
+                                                        Debit Card Sale
+                                                    @elseif($aTransaction['payment_type']==\App\Enumaration\CashRegisterTransactionType::$CREDIT_CARD_SALES)
+                                                        Credit Card Sale
+                                                    @elseif($aTransaction['payment_type']==\App\Enumaration\CashRegisterTransactionType::$GIFT_CARD_SALES)
+                                                        Gift Card Sale
+                                                    @elseif($aTransaction['payment_type']==\App\Enumaration\CashRegisterTransactionType::$LOYALTY_CARD_SALES)
+                                                        Loyalty Card Sale
                                                     @endif
                                                 </td>
                                             </tr>
