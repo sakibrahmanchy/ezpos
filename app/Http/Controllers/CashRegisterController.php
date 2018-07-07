@@ -42,6 +42,7 @@ class CashRegisterController extends Controller
         $cashRegisterOpenInfo = array(
             "opening_balance" => $opening_balance,
             "counter_id" => $counter_id,
+			"user_id" => Auth::id(),
             "opening_time" => $opening_time,
             "current_balance"=>$current_balance,
             "opened_by"  => $opened_by
