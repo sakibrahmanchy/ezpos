@@ -303,7 +303,7 @@
                             <a v-if="!editMode" @click="setEditMode()" href="javascript: void(0);"> <currency-input currency-symbol="$" :value="value"></currency-input></a>
                             <span v-else>
 
-                                <input type="text" v-model="editedValue" sytle="width: 50%;">
+                                <input type="text" v-model="editedValue" class="form-control">
                                 <i class="fa fa-check" @click="setValue"></i>
                                 <i class="fa fa-times-circle" @click="closeEdit"></i>
                             </span>
@@ -374,8 +374,7 @@
     /********************currency symbol******************/
     Vue.component('currency-input', {
         template: `<span>
-                            @{{ localValue>=0 ? currencySymbol : '-' +  currencySymbol }}
-                            @{{localValue>=0 ? localValue : (-1) * localValue}}
+                            @{{ localValue>=0 ? currencySymbol : '-' +  currencySymbol }}@{{localValue>=0 ? localValue : (-1) * localValue}}
                         </span>`,
         props: ['value','currencySymbol'],
         data: function()

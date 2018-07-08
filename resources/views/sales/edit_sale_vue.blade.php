@@ -65,9 +65,9 @@
                     <tr>
                         <th>Product</th>
                         <th>Quantity</th>
-                        <th class="text-center">Price</th>
+                        <th class="text-center">&nbsp;&nbsp;&nbsp;&nbsp;Price&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
                         <th class="text-center">Discount(%)</th>
-                        <th class="text-center">Total</th>
+                        <th class="text-center">&nbsp;&nbsp;&nbsp;&nbsp;Total&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
                         <th>Actions</th>
                     </tr>
                     </thead>
