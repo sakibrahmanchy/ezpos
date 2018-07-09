@@ -136,4 +136,14 @@ class CounterController extends Controller
                                                         ->withCookie(cookie('counter_id', $counter->id, 45000));
 
     }
+	
+	public function SetCounterAjax($counter_id, Request $request){
+
+        $counter = Counter::where("id",$counter_id)->first();
+
+		
+        return response(json_encode($counter))->withCookie(cookie('counter_name', $counter->name, 45000))
+                                                        ->withCookie(cookie('counter_id', $counter->id, 45000));
+
+    }
 }

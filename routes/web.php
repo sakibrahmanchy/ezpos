@@ -263,7 +263,7 @@ Route::group(['middleware' => ['admin']], function () {
     route::post('counter/set/default','CounterController@SetDefaultCounter')->name('counter_set_default')->middleware('auth');
     route::post('counters/delete','CounterController@DeleteCounters')->name('counters_delete')->middleware('auth');
     route::get('counter/set/{counter_id}','CounterController@SetCounter')->name('counter_set')->middleware('auth');
-
+	route::get('counter/ajax/set/{counter_id}','CounterController@SetCounterAjax')->name('counter_set_ajax')->middleware('auth');
 
     route::get("/cash_register/open","CashRegisterController@openNewCashRegisterGet")->name('open_cash_register')->middleware('auth');
     route::post('/cash_register/open','CashRegisterController@openNewCashRegister')->name('open_cash_register')->middleware('auth');

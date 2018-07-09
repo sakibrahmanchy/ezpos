@@ -67,6 +67,7 @@ class RouteTokens
         "new_sale"=>"sale_add_update",
         "counter_list_ajax"=>"sale_add_update",
         "counter_set"=>"sale_add_update",
+        "counter_set_ajax"=>"sale_add_update",
         "suspended_sale_list"=>"sale_add_update",
         "sale_add_update" => "sale_edit",
         "sale_last_receipt"=>"sale_receipt",

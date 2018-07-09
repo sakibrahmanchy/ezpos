@@ -428,18 +428,35 @@
 
     function changeCounter(){
 
-        $("#choose_counter_modal").modal();
+        
         $.ajax({
             url: "{{route('counter_list_ajax')}}",
             type:"get",
             dataType: "json",
             success: function(response){
+				$("#choose_counter_modal").modal();
                 $(".choose-counter-home").html("");
                 counters = response.counters;
                 counters.forEach(function(counter){
-                    var url = '{{ route("counter_set", ":counter_id") }}';
-                    url = url.replace(':counter_id', counter.id);
-                    $(".choose-counter-home").append('<li><a class="set_employee_current_counter_after_login" href="'+url+'">'+counter.name+'</a></li>');
+                    var oneCounterHtml = '<li><a class="set_employee_current_counter_after_login" href="javascript:void(0)" data-counter-id="' + counter.id + '">'+counter.name+'</a></li>';
+					var counterJqueryElement = $(oneCounterHtml);
+					
+					counterJqueryElement.find('.set_employee_current_counter_after_login').click(function(){
+						var counterId = $(this).attr("data-counter-id");
+						var url = '{{ route("counter_set_ajax", ":counter_id") }}';
+						url = url.replace(':counter_id', counterId);
+						
+						$.ajax({
+							url: url,
+							type:"get",
+							dataType: "json",
+							success: function(response){
+								$("#choose_counter_modal").modal('hide');
+								$(".counter-name").html('<b>'+response.name+'</b>');
+							}
+						});	
+					});
+                    $(".choose-counter-home").append(counterJqueryElement);
                 });
             },
             error: function () {
