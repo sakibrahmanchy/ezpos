@@ -174,7 +174,7 @@
 										<th class="text-center">&nbsp;&nbsp;&nbsp;&nbsp;Price&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
 										<th class="text-center">Disc%</th>
 										<th class="text-center">&nbsp;&nbsp;&nbsp;&nbsp;Total&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
-										<th>Actions</th>
+										<th>Del</th>
 									</tr>
 									</thead>
 									<tbody v-for="(anItem,index) in itemList" class = "product-descriptions">
