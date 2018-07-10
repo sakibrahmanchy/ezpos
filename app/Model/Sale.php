@@ -110,11 +110,11 @@ class Sale extends Model
 
 
     public function getMaxSaleIdByCounter($counterId) {
-        $saleId = Sale::where("counter_id",$counterId)->max("id");
+        $saleId = Sale::withTrashed()->where("counter_id",$counterId)->max("id");
         $counter = Counter::where("id",$counterId)->first();
         if(is_null($saleId) || $saleId == 0 || $saleId < $counter->starting_id)
            return $counter->starting_id;
-        return intval($saleId)+1;
+        return $saleId+1;
     }
 
     /**
