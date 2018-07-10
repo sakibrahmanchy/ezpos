@@ -312,7 +312,7 @@ class CashRegisterController extends Controller
         $cashRegister = CashRegister::where("id",$cashRegisterId)->with('OpenedByUser','ClosedByUser','CashRegisterTransactions')->first();
         $transactions = CashRegister::where("id",$cashRegisterId)->with('CashRegisterTransactions')->first()->CashRegisterTransactions;
         $closedBy = $cashRegister->closedByUser->name;
-
+		//dump($transactions);
 		
 		$paymentAmountSql = "select sales.id, sum(payment_logs.paid_amount) as total_cash_sale from payment_logs 
 								join payment_log_sale 
@@ -323,6 +323,7 @@ class CashRegisterController extends Controller
 									and sales.deleted_at is null 
 									and payment_logs.payment_type='Cash' group by sales.id";
 		$cashSaleList = DB::select( $paymentAmountSql, [$cashRegisterId] );
+		//dd($cashSaleList);
         if( count($cashSaleList)>0 )
         {
             $saleIdArr = [];
@@ -340,11 +341,12 @@ class CashRegisterController extends Controller
                     if( $aCashSale->id==$salesDetails->id )
                     {
                         $aCashSale->created_at = $salesDetails->created_at;
-                        $aCashSale->amount = floatval($aCashSale->total_cash_sale) - floatval($salesDetails->due) ;
+                        $aCashSale->amount = floatval($aCashSale->total_cash_sale) + floatval($salesDetails->due) ;
                         break;
                     }
                 }
             }
+			unset($aCashSale);
         }
 
         try {
@@ -524,6 +526,12 @@ class CashRegisterController extends Controller
 									->where( 'sale_type', \App\Enumaration\SaleTypes::$SALE )
 									->where( 'sale_status', \App\Enumaration\SaleStatus::$SUCCESS )
 									->sum('total_amount');
+		$totalReturnSale = DB::table('sales')->where('cash_register_id', $cashRegisterId)	
+									->where( 'sale_type', \App\Enumaration\SaleTypes::$RETURN )
+									->where( 'sale_status', \App\Enumaration\SaleStatus::$SUCCESS )
+									->sum('total_amount');
+		if($totalReturnSale<0)
+			$totalReturnSale = -$totalReturnSale;
 		
 		$changedDue = DB::table('sales')->where('cash_register_id', $cashRegisterId)
 									->where( 'due', '<', 0 )
@@ -603,6 +611,7 @@ class CashRegisterController extends Controller
             $printer->text( new FooterItem('Cash Subtractions:', '$'.number_format( $total_subtractions, 2) ));
 
             $printer->text( new FooterItem('Total Sales:', '$'.number_format( $totalSale, 2) ));
+			$printer->text( new FooterItem('Return Sales:', '$'.number_format( $totalReturnSale, 2) ));
             return redirect()->route('cash_register_log_details',["register_id"=>$cashRegister->id]);
 
         } Catch (\Exception $e) {
