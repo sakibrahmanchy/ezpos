@@ -210,7 +210,7 @@
 											</strong>
 										</td>
 										<td class="col-sm-1 col-md-1">
-											<button type="button" class="btn btn-danger" @click="Remove(itemList[index].item_id)"><span class="pe-7s-trash"></span> Remove</button>
+											<button type="button" class="btn btn-danger" @click="Remove(itemList[index].item_id)"><span class="pe-7s-trash"></span></button>
 										</td>
 									</tr>
 									<tr v-if="itemList[index].discountApplicable" >
