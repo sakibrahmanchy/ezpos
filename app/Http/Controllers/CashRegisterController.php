@@ -513,6 +513,10 @@ class CashRegisterController extends Controller
         $cash_sales = CashRegisterTransaction::where("cash_register_id",$cashRegister->id)->where('transaction_type',CashRegisterTransactionType::$CASH_SALES)->sum('amount');
         $difference =  ($cashRegister->closing_balance - $cashRegister->opening_balance) - ( $cash_sales + $total_additions - $total_subtractions);
 
+		//total sale
+		$totalSale = DB::table('sales')->where('cash_register_id', $cashRegisterId)
+									->sum('total_amount');
+		
 		$changedDue = DB::table('sales')->where('cash_register_id', $cashRegisterId)
 									->where( 'due', '<', 0 )
 									->sum('due');
@@ -574,7 +578,8 @@ class CashRegisterController extends Controller
             $printer->text( new FooterItem('Shift Start:', date('Y-m-d h:i:s a',strtotime($cashRegister->opening_time)) ));
             $printer->text( new FooterItem('Shift End:', date('Y-m-d h:i:s a',strtotime($cashRegister->closing_time)) ));
             $printer->text( new FooterItem('Opening Sales:', '$'.number_format( $cashRegister->opening_balance, 2) ));
-            $printer->text( new FooterItem('Closing Sales:', '$'.number_format( $cashRegister->closing_balance, 2) ));
+            //$printer->text( new FooterItem('Closing Sales:', '$'.number_format( $cashRegister->closing_balance, 2) ));
+            $printer->text( new FooterItem('Closing Sales:', '$'.number_format( $expectedClosingSales, 2) ));
 			
             $printer->text( new FooterItem('Cash Sales:', '$'.number_format( $cash_sales, 2) ));
             //$printer->text( new FooterItem('Difference:', '$'.number_format( $difference, 2) ));
@@ -589,7 +594,7 @@ class CashRegisterController extends Controller
             $printer->text( new FooterItem('Cash Additions:', '$'.number_format( $total_additions, 2) ));
             $printer->text( new FooterItem('Cash Subtractions:', '$'.number_format( $total_subtractions, 2) ));
 
-            $printer->text( new FooterItem('Expect Close Sales:', '$'.number_format( $expectedClosingSales, 2) ));
+            $printer->text( new FooterItem('Total Sales:', '$'.number_format( $totalSale, 2) ));
             return redirect()->route('cash_register_log_details',["register_id"=>$cashRegister->id]);
 
         } Catch (\Exception $e) {

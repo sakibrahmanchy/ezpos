@@ -225,7 +225,7 @@
 										<div class="sale-buttons input-group" style = "border-bottom:solid #ddd 1px; padding:10px;max-width: 100%;display: inline-block;">
 											<div class="btn-group input-group-btn">
 												<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-													<strong>...</strong>
+													<strong>More option</strong>
 												</button>
 												<ul class="dropdown-menu sales-dropdown" role="menu">
 													<li>
