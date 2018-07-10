@@ -152,6 +152,7 @@ class CashRegisterController extends Controller
 
         $saleList = Sale::where('cash_register_id', $cashRegisterId)->with('PaymentLogs')->get();
         $allTransactionArr = [];
+		
         foreach( $saleList as $aSale )
         {
             $cashAmount = 0;
@@ -178,7 +179,7 @@ class CashRegisterController extends Controller
 
             if( $cashAmount > 0 )
             {
-                $cashAmount  -= $aSale->due ;
+                $cashAmount  += $aSale->due ;
                 $allTransactionArr[] = [
                                 'sale_id' => $aSale->id,
                                 'created_at' => $aSale->created_at,
@@ -514,7 +515,14 @@ class CashRegisterController extends Controller
         $difference =  ($cashRegister->closing_balance - $cashRegister->opening_balance) - ( $cash_sales + $total_additions - $total_subtractions);
 
 		//total sale
-		$totalSale = DB::table('sales')->where('cash_register_id', $cashRegisterId)
+		$totalSale = DB::table('sales')->where('cash_register_id', $cashRegisterId)	
+									->where( 'sale_type', \App\Enumaration\SaleTypes::$SALE )
+									->where( 'sale_status', \App\Enumaration\SaleStatus::$SUCCESS )
+									->sum('total_amount');
+									
+		$totalChargeCustomerSale = DB::table('sales')->where('cash_register_id', $cashRegisterId)	
+									->where( 'sale_type', \App\Enumaration\SaleTypes::$SALE )
+									->where( 'sale_status', \App\Enumaration\SaleStatus::$SUCCESS )
 									->sum('total_amount');
 		
 		$changedDue = DB::table('sales')->where('cash_register_id', $cashRegisterId)
