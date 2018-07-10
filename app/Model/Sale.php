@@ -114,7 +114,7 @@ class Sale extends Model
         $counter = Counter::where("id",$counterId)->first();
         if(is_null($saleId) || $saleId == 0 || $saleId < $counter->starting_id)
            return $counter->starting_id;
-        return $saleId+1;
+        return intval($saleId)+1;
     }
 
     /**
