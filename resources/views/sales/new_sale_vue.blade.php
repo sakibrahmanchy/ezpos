@@ -12,12 +12,24 @@
 
 @section('content')
 	<style>
-		.input-group {
-			padding-left:0px
+		*{
+			font-weight: bold!important;
 		}
-		.card{
-			margin-top:0px;
-			margin-bottom: 10px;
+		 .input-group {
+            padding-left:0px
+        }
+        .card{
+            margin-top:0px;
+            margin-bottom: 10px;
+        }
+		.dropdown-menu > li > a
+		{
+			color: #000!important;
+			font-weight: bold;
+		}
+		.btn
+		{
+			font-weight: bold;
 		}
 	</style>
 	{{--Sale config--}}
@@ -98,6 +110,12 @@
 			color: #fff;
 		}
 
+		.dropdown-menu > li > a
+		{
+			color: #000!important;
+			font-weight: bold;
+		}
+		
 	</style>
 
 	<script src="{{asset("js/vue/vue.min.js")}}"></script>

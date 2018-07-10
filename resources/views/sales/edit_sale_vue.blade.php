@@ -12,13 +12,25 @@
 
 @section('content')
     <style>
-        .input-group {
+       *{
+			font-weight: bold!important;
+		}
+		 .input-group {
             padding-left:0px
         }
         .card{
             margin-top:0px;
             margin-bottom: 10px;
         }
+		.dropdown-menu > li > a
+		{
+			color: #000!important;
+			font-weight: bold;
+		}
+		.btn
+		{
+			font-weight: bold;
+		}
     </style>
     {{--Sale config--}}
     <?php $tax_rate = $settings['tax_rate'] ; ?>
@@ -225,17 +237,18 @@
 										<div class="sale-buttons input-group" style = "border-bottom:solid #ddd 1px; padding:10px;max-width: 100%;display: inline-block;">
 											<div class="btn-group input-group-btn">
 												<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-													<strong>More option</strong>
+													<strong>Options</strong>
 												</button>
 												<ul class="dropdown-menu sales-dropdown" role="menu">
 													<li>
 														<a href="{{route('suspended_sale_list')}}" class="" title="Suspended Sales"><i class="ion-ios-list-outline"></i> Suspended Sales</a>								</li>
 													<li>
-														<a href="{{route('search_sale')}}" class="" title="Search Sales"><i class="ion-search"></i> Search Sales</a>
+														<a href="{{route('search_sale')}}" class="" title="Search Sales"><i class="ion-search"></i>Search Sales</a>
 													</li>
 
 													<li>
-														<a href="#look-up-receipt" class="look-up-receipt" data-toggle="modal"><i class="ion-document"></i> Lookup Receipt</a>						</li>
+														<a href="#look-up-receipt" class="look-up-receipt" data-toggle="modal"><i class="ion-document"></i> Lookup Receipt</a>
+													</li>
 
 													<li><a href="{{route('sale_last_receipt')}}"  target="_blank" class="look-up-receipt" title="Lookup Receipt"><i class="ion-document"></i> Show last sale receipt</a></li>
 													<li><a href="{{route('pop_open_cash_drawer')}}"  class="look-up-receipt" title="Lookup Receipt"><i class="ion-document"></i> Pop Open Cash Drawer</a></li>
@@ -258,7 +271,7 @@
 													</div>
 													<a href="" class="btn btn-danger input-group-addon" id="cancel_sale_button">
 														<i class="ion-close-circled"></i>
-														Cancel Sale				</a>
+														Cancel Sale</a>
 
 												</form>
 											</div>

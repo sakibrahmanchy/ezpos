@@ -12,6 +12,11 @@
 @stop
 
 @section('content')
+		<style>
+			*{
+				font-weight: bold!important;
+			}
+		</style>
         <form action="{{route("print_sale", ["sale_id"=>$sale->id])}}" id="printSaleRecieptForm" method="GET" style="display: none;">
             <input type="hidden" name="sale_id" id="sale_id" value="{{$sale->id}}">
             <input type="hidden" name="print_type" id="print_type" value="1">
