@@ -312,36 +312,37 @@ class CashRegisterController extends Controller
         $cashRegister = CashRegister::where("id",$cashRegisterId)->with('OpenedByUser','ClosedByUser','CashRegisterTransactions')->first();
         $transactions = CashRegister::where("id",$cashRegisterId)->with('CashRegisterTransactions')->first()->CashRegisterTransactions;
         $closedBy = $cashRegister->closedByUser->name;
-		//dump($transactions);
-		
-		$paymentAmountSql = "select sales.id, sum(payment_logs.paid_amount) as total_cash_sale from payment_logs 
+
+		$paymentAmountSql = "select sales.id,  payment_logs.payment_type , sum(payment_logs.paid_amount) as total_sale from payment_logs 
 								join payment_log_sale 
 									on payment_logs.id=payment_log_sale.payment_log_id
 								join sales 
 									on payment_log_sale.sale_id = sales.id
 								where sales.cash_register_id=? 
-									and sales.deleted_at is null 
-									and payment_logs.payment_type='Cash' group by sales.id";
-		$cashSaleList = DB::select( $paymentAmountSql, [$cashRegisterId] );
+									and sales.deleted_at is null
+									and sales.sale_type = ?
+									and sales.sale_status = ? group by sales.id, payment_logs.payment_type";
+		$allTransactionArr = DB::select( $paymentAmountSql, [$cashRegisterId, \App\Enumaration\SaleTypes::$SALE, \App\Enumaration\SaleStatus::$SUCCESS] );
 		//dd($cashSaleList);
-        if( count($cashSaleList)>0 )
+        if( count($allTransactionArr)>0 )
         {
             $saleIdArr = [];
-            foreach($cashSaleList as $aCashSale)
-                $saleIdArr[] = $aCashSale->id;
+            foreach($allTransactionArr as $aSale)
+                $saleIdArr[] = $aSale->id;
 
             $saleDetailsArr = DB::table('sales')->whereIn('id', $saleIdArr)->get();
-            foreach( $cashSaleList as &$aCashSale )
+            //foreach( $cashSaleList as &$aCashSale )
+			foreach($allTransactionArr as &$aSale)
             {
                 //$aCashSale->sale_added_on = ;
-                $aCashSale->created_at = date('Y-m-d');
-                $aCashSale->amount = 0;
+                $aSale->created_at = date('Y-m-d');
+                $aSale->amount = 0;
                 foreach( $saleDetailsArr as $salesDetails )
                 {
-                    if( $aCashSale->id==$salesDetails->id )
+                    if( $aSale->id==$salesDetails->id )
                     {
-                        $aCashSale->created_at = $salesDetails->created_at;
-                        $aCashSale->amount = floatval($aCashSale->total_cash_sale) + floatval($salesDetails->due) ;
+                        $aSale->created_at = $salesDetails->created_at;
+                        $aSale->total_sale = floatval($aSale->total_sale) + floatval($salesDetails->due) ;
                         break;
                     }
                 }
@@ -427,7 +428,7 @@ class CashRegisterController extends Controller
             $printer->feed();
 
 			
-			$printer->setJustification(Printer::JUSTIFY_CENTER);
+			/*$printer->setJustification(Printer::JUSTIFY_CENTER);
 			$printer->text("Cash Sales\n");
 			$printer->text("------------------------\n");
 			$printer->feed();
@@ -448,21 +449,21 @@ class CashRegisterController extends Controller
 					));
 					$printer->feed();
 			}
-			$printer->feed();
+			$printer->feed();*/
 			
 			
-			$cashRegisterTransactionTypeArr = array(
-										//CashRegisterTransactionType::$CASH_SALES => "Cash Sales",
-										CashRegisterTransactionType::$CHECK_SALES => "Check Sales",
-										CashRegisterTransactionType::$DEBIT_CARD_SALES => "Debit Card Sales",
-										CashRegisterTransactionType::$CREDIT_CARD_SALES => "Credit Card Sales",
-										CashRegisterTransactionType::$GIFT_CARD_SALES => "Gift Card Sales",
-										CashRegisterTransactionType::$LOYALTY_CARD_SALES => "Loyalty Card Sales",
+			$paymentTypeMapping = array(
+										'Cash' => "Cash Sales",
+										'Check' => "Cheque Sales",
+										"Debit Card" => "Debit Card Sales",
+										"Credit Card" => "Credit Card Sales",
+										"Gift Card" => "Gift Card Sales",
+										"Loyalty Card" => "Loyalty Card Sales",
 									);
-			foreach( $cashRegisterTransactionTypeArr as $cashRegisterTypeId=>$cashRegisterTypeName  )
+			foreach( $paymentTypeMapping as $paymentTypeDB=>$paymentTypeShow  )
 			{
 				$printer->setJustification(Printer::JUSTIFY_CENTER);
-				$printer->text("{$cashRegisterTypeName}\n");
+				$printer->text("{$paymentTypeShow}\n");
 				$printer->text("------------------------\n");
 				$printer->feed();
 
@@ -472,15 +473,15 @@ class CashRegisterController extends Controller
 				$printer->text($header);
 				$printer->setEmphasis(false);
 				$printer->feed();
-				foreach($transactions as $aTransaction ) {
+				foreach($allTransactionArr as $aTransaction ) {
 
-					if($aTransaction->transaction_type==$cashRegisterTypeId)
+					if($aTransaction->payment_type==$paymentTypeDB)
 					{
 						$printer->text(new RegisterDetails(
-							date_format($aTransaction->created_at,"Y-m-d"),
+							date("Y-m-d" , strtotime($aTransaction->created_at)),
 							$closedBy,
-							number_format($aTransaction->amount,2),
-							date_format($aTransaction->created_at,"h:i:s")
+							number_format($aTransaction->total_sale,2),
+							date("h:i:s", strtotime($aTransaction->created_at))
 						));
 						$printer->feed();
 					}
@@ -489,6 +490,7 @@ class CashRegisterController extends Controller
 			}
 
         } Catch (\Exception $e) {
+			//dd($e);
 			//dd($e);
             return redirect()->back()->with(["error" => $e->getMessage()]);
         } finally {
@@ -514,6 +516,8 @@ class CashRegisterController extends Controller
         $total_additions = CashRegisterTransaction::where('cash_register_id',$cashRegisterId)->where('transaction_type',CashRegisterTransactionType::$ADD_BALANCE)->sum('amount');
         $total_subtractions = CashRegisterTransaction::where('cash_register_id',$cashRegisterId)->where('transaction_type',CashRegisterTransactionType::$SUBTRACT_BALANCE)->sum('amount');
         $cash_sales = CashRegisterTransaction::where("cash_register_id",$cashRegister->id)->where('transaction_type',CashRegisterTransactionType::$CASH_SALES)->sum('amount');
+		
+		
         $difference =  ($cashRegister->closing_balance - $cashRegister->opening_balance) - ( $cash_sales + $total_additions - $total_subtractions);
 
 		//total sale
@@ -534,6 +538,8 @@ class CashRegisterController extends Controller
 			$totalReturnSale = -$totalReturnSale;
 		
 		$changedDue = DB::table('sales')->where('cash_register_id', $cashRegisterId)
+									->where( 'sale_type', \App\Enumaration\SaleTypes::$SALE )
+									->where( 'sale_status', \App\Enumaration\SaleStatus::$SUCCESS )
 									->where( 'due', '<', 0 )
 									->sum('due');
 		$changedDue = -$changedDue;
