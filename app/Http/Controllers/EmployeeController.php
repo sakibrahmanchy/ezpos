@@ -152,7 +152,7 @@ class EmployeeController extends Controller
 							'required',
 							'alpha_dash',
 							Rule::unique('users')->ignore($employee->user_id),
-						]
+						],
 			'pin' => [
 						'digits:4',
 						Rule::unique('users')->ignore($employee->user_id),
