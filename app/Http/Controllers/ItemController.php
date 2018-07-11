@@ -272,20 +272,54 @@ EOT;
                         ->first();
                 }
                 else {
+					//check if product exists by normal match query
+					//it will solve if both query DB with checkdigit-scan with checkdigit, DB without checkdigit-scan without checkdigit
+					$matchedItem = DB::table('items')
+										->where('isbn','=',$search_param)
+										->where('deleted_at',null)
+										->where('item_status',ItemStatus::$ACTIVE)
+										->where('product_type','<>',2)
+										->first();
+					if(!$matchedItem)
+					{
+						//check DB checkdigit-scan without checkdigit
+						$matchedItem = DB::table('items')
+										->where('isbn','like', '_' . $search_param . '_' )
+										->where('deleted_at',null)
+										->where('item_status',ItemStatus::$ACTIVE)
+										->where('product_type','<>',2)
+										->first();
+					}
+					
+					if(!$matchedItem)
+					{
+						//check DB without checkdigit-scan with checkdigit
+						$cleanedParam = strpos($search_param, 1 , -1);
+						$matchedItem = DB::table('items')
+										->where('isbn','=',$cleanedParam)
+										->where('deleted_at',null)
+										->where('item_status',ItemStatus::$ACTIVE)
+										->where('product_type','<>',2)
+										->first();
+					}
+					if(!$matchedItem)
+						return json_encode([]);
+				
                     $items =  DB::table('items')
                         ->leftJoin('items_images', 'items.id', '=', 'items_images.item_id')
                         ->leftJoin('files', 'files.id', '=', 'items_images.file_id')
                         ->leftJoin('item_price_rule','items.id','=','item_price_rule.item_id')
                         ->leftJoin('price_rules','item_price_rule.price_rule_id','=','price_rules.id')
                         ->leftJoin('suppliers','suppliers.id','=','items.supplier_id')
-                        ->where(function($query) use ($search_param) {
+                        /*->where(function($query) use ($search_param) {
                             $query->where('isbn','=',$search_param);
                         })
                         ->where('items.deleted_at',null)
-                        ->where('items.item_status',ItemStatus::$ACTIVE)
+                        ->where('items.item_status',ItemStatus::$ACTIVE)*/
                         ->select('items.id as item_id','price_rules.id as price_rule_id','items.*','files.*','price_rules.*','suppliers.*')
                         ->groupBy('items.item_name')
-                        ->where('items.product_type','<>',2)
+                        //->where('items.product_type','<>',2)
+						->where('items.id',$matchedItem->id)
                         ->first();
                 }
                 if(!is_null($items)) {
