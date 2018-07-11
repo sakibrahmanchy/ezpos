@@ -61,13 +61,18 @@
 					</span>
                 @endif
 
-                <input type="password" data-role="keypad" data-key-size="60" data-open="true" data-length="4" data-position="bottom-right" data-cls-keys="bg-cyan fg-white" data-cls-backspace="bg-darkOrange fg-white" data-cls-clear="bg-darkRed fg-white" placeholder="Enter pin" name="pin">
+                <input type="password" data-role="keypad" data-key-size="60" data-open="false" data-length="4" data-position="bottom-right" data-cls-keys="bg-cyan fg-white" data-cls-backspace="bg-darkOrange fg-white" data-cls-clear="bg-darkRed fg-white" placeholder="Enter pin" name="pin">
             </div>
 
             <div class="row">
                 <!-- /.col -->
                 <div class="col-xs-4">
                     <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
+                </div>
+				
+				<div class="col-xs-8">
+                    <!--<button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>-->
+					<a href="{{route("login")}}" class="btn btn-primary btn-block btn-flat">By email/password</a>
                 </div>
                 <!-- /.col -->
             </div>
