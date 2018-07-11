@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\ImageManagerStatic as Image;
 use Illuminate\Contracts\Support\Collection;
+use Illuminate\Validation\Rule;
 
 class EmployeeController extends Controller
 {
@@ -36,11 +37,11 @@ class EmployeeController extends Controller
 
         $rules = [
             'first_name' => 'required',
-            'email' => 'required|email|unique:users,email',
+            'email' => 'required|email|unique:users,email|unique:users,pin',
             'password' => 'required',
             'repeat_password' => 'required|same:password',
             'username' => 'required|alpha_dash|unique:users,name',
-			'pin' => 'required|numeric'
+			'pin' => 'unique:users,pin|digits:4'
 
         ];
         $allInput = $request->all();
@@ -147,7 +148,15 @@ class EmployeeController extends Controller
             'first_name' => 'required',
             'email' => 'required|email',
             'repeat_password' => 'same:password',
-            'username' => 'required|alpha_dash|unique:users,id,'.$request->username,
+            'username' => [
+							'required',
+							'alpha_dash',
+							Rule::unique('users')->ignore($employee->user_id),
+						]
+			'pin' => [
+						'digits:4',
+						Rule::unique('users')->ignore($employee->user_id),
+					]
         ];
         $allInput = $request->all();
 
