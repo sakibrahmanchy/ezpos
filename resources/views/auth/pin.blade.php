@@ -57,8 +57,8 @@
 
                 @if ($errors->has('pin'))
                     <span class="help-block">
-                            {{ $errors->first('pin') }}
-                        </span>
+						{{ $errors->first('pin') }}
+					</span>
                 @endif
 
                 <input type="password" data-role="keypad" data-key-size="60" data-open="true" data-length="4" data-position="bottom-right" data-cls-keys="bg-cyan fg-white" data-cls-backspace="bg-darkOrange fg-white" data-cls-clear="bg-darkRed fg-white" placeholder="Enter pin" name="pin">
