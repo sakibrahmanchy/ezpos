@@ -238,6 +238,8 @@ EOT;
         if($autoselect=="true") {
 
             $search_param = (string) Input::get('q');
+			$search_param = preg_replace('/[^0-9]/','',$search_param);
+
             if($search_param!=""||$search_param!=null){
                 $scan_price_from_barcode = SettingsSingleton::getByKey('scan_price_from_barcode');
                 $item_new_price_from_barcode = -1;
