@@ -82,11 +82,11 @@ class Sale extends Model
 	public function InsertIntoCustomerAccount( $customer_id, $sale_id, $sale_amount, $due_amount, $cash_register_id, $sale_status )
 	{
 		$paid_amount = $sale_amount - $due_amount;
-		if( $sale_status==\App\Enumaration\SaleStatus::$LAYAWAY )
+		/*if( $sale_status==\App\Enumaration\SaleStatus::$LAYAWAY )
 		{
 			$paid_amount = 0;
 			$due_amount = $sale_amount;
-		}
+		}*/
 		$customerTransactionObj = new CustomerTransaction();
 		$customerTransactionObj->transaction_type = \App\Enumaration\CustomerTransactionType::SALE;
 		$customerTransactionObj->sale_id = $sale_id;
@@ -102,6 +102,32 @@ class Sale extends Model
 		
 		$updateCustomerBalanceQuery = "update customers set account_balance=account_balance+? where id=?";
 		DB::update( $updateCustomerBalanceQuery, [ $due_amount, $customer_id] );
+	}
+	
+	public function UpdateCustomerAccount( $customer_id, $sale_id, $sale_amount, $due_amount, $cash_register_id, $sale_status )
+	{
+		$paid_amount = $sale_amount - $due_amount;
+		/*if( $sale_status==\App\Enumaration\SaleStatus::$LAYAWAY )
+		{
+			$paid_amount = 0;
+			$due_amount = $sale_amount;
+		}*/
+		$customerTrandactionInfo = CustomerTransaction::where('sale_id', $sale_id )
+							->where('transaction_type' , \App\Enumaration\CustomerTransactionType::SALE)
+							->first();
+		if($customerTrandactionInfo)
+		{
+			if(!$customer_id)
+				$customerTrandactionInfo->delete();
+			else
+				$customerTrandactionInfo->update([
+					'paid_amount' => $paid_amount,
+					'sale_amount' => $sale_amount,
+					'customer_id' => $customer_id
+				]);
+		}
+		else
+			$this->InsertIntoCustomerAccount( $customer_id, $sale_id, $sale_amount, $due_amount, $cash_register_id, $sale_status );
 	}
 
     public function generateRandomNumber($digits) {
@@ -457,6 +483,9 @@ class Sale extends Model
             $cashRegisterTransaction->deleleCashRegisterTransactionByPaymentLogId($aDeletedTransaction);
         }
 
+		
+		$this->UpdateCustomerAccount( $sale->customer_id, $sale_id, $sale->total_amount, $sale->due, $sale->cash_register_id, $sale->status );
+		
         return $sale_id;
 
 

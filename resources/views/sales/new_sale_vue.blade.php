@@ -524,7 +524,7 @@
 							return;
 						}
 						//for charged account there will be no payment
-						this.paymentList.splice(0,this.paymentList.length);
+						//this.paymentList.splice(0,this.paymentList.length);
                         this.SubmitSales(2);
                     },
                     estimateSale: function () {

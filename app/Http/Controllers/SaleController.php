@@ -820,7 +820,8 @@ class SaleController extends Controller
         $employees = Employee::all();
         return view('sales.pre_edit_sale',["sale_id"=>$sale_id,"sale"=>$sale,"customers"=>$customers,"employees"=>$employees]);
     }
-    public function PreEditSalePost(Request $request, $sale_id){
+    
+	public function PreEditSalePost(Request $request, $sale_id){
 
         $sale = Sale::with('Customer','Employee')->where("id",$sale_id)->first();
         $sale->customer_id = $request->customer_id;
