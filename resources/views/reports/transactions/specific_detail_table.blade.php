@@ -11,8 +11,8 @@
     </thead>
     @php $due = 0; @endphp
     <tbody id="data-table">
-    @foreach($info["transactionHistory"][0]->transactions as $aTransaction)
-        @php $due += ( $aTransaction->sale_amount - $aTransaction->amount_paid ); @endphp
+    @foreach($info["transactionHistory"][0]->allTransactions as $aTransaction)
+        @php $due += ( $aTransaction->sale_amount - $aTransaction->paid_amount ); @endphp
         <tr>
             <td>##{{$aTransaction->id}}</td>
             <td>{{$aTransaction->created_at}}</td>
@@ -24,7 +24,7 @@
                 @endif
             </td>
             <td><strong style="font-size: 18px;">${{ $aTransaction->sale_amount }}</strong></td>
-            <td><strong style="font-size: 18px;">${{ $aTransaction->amount_paid }}</strong></td>
+            <td><strong style="font-size: 18px;">${{ $aTransaction->paid_amount }}</strong></td>
             <td><strong style="font-size: 18px;">${{  $due }}</strong></td>
         </tr>
     @endforeach

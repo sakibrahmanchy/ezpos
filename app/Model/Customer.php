@@ -50,6 +50,10 @@ class Customer extends Model
         return $this->hasMany('App\Model\CustomerTransaction')->orderBy('id','desc')->take(10);
     }
 	
+	public function allTransactions()  {
+        return $this->hasMany('App\Model\CustomerTransaction')->orderBy('id','desc')->take(10);
+    }
+	
 	public function GetPreviousDue($customer_id,$oldest_id)
 	{
 		 $sql = 'select sum(sale_amount-paid_amount) as totalDue 

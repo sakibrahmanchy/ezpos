@@ -18,10 +18,10 @@ class TransactionReportController extends Controller{
             $customer_id = $request->customer_id;
 
             $customer = new Customer();
-            $openingDue = $customer->getBalance($customer_id,$startDate);
+            $openingDue = intval($customer->getBalance($customer_id,$startDate));
             $closingDue = $customer->getBalance($customer_id,$endDate);
 
-            $transactionHistory = Customer::with('transactions')
+            $transactionHistory = Customer::with('allTransactions')
                 ->where('id',$customer_id)->get();
 
 
