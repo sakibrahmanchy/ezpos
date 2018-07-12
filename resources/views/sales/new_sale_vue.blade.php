@@ -707,11 +707,11 @@
 
                                     switch (status){
                                         case 1:
-                                            var url = '{{ route("sale_receipt", ":sale_id") }}';
+                                        case 2:
+											var url = '{{ route("sale_receipt", ":sale_id") }}';
                                             url = url.replace(':sale_id', sale_id);
                                             window.location.href=url;
                                             break;
-                                        case 2:
                                         case 3:
                                             var url = '{{ route("new_sale") }}';
                                             window.location.href=url;
