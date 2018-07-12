@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use \App\Enumaration\PrinterConnectionType;
+use Illuminate\Validation\Rule;
 
 class CounterController extends Controller
 {
@@ -69,7 +70,11 @@ class CounterController extends Controller
 			"printer_connection_type" => "required",
             'printer_ip' =>  $connectViaNetwork ? 'required|ip' : '',
             "printer_port" =>  $connectViaNetwork ? 'required|numeric' : '',
-            "starting_id" => "required|numeric|unique:counters"
+            "starting_id" => [
+								'required',
+								'numeric',
+								Rule::unique('counters')->ignore($counter_id)
+							]
         ]);
 
         $counter = Counter::where("id", "=", $counter_id)->first();
