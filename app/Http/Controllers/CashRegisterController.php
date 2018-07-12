@@ -323,6 +323,14 @@ class CashRegisterController extends Controller
 									and sales.sale_type = ?
 									and sales.sale_status = ? group by sales.id, payment_logs.payment_type";
 		$allTransactionArr = DB::select( $paymentAmountSql, [$cashRegisterId, \App\Enumaration\SaleTypes::$SALE, \App\Enumaration\SaleStatus::$SUCCESS] );
+		
+		$salesChargeAccountTransactionList = Sale::where('due', '>', '0')
+					->where('sale_status',\App\Enumaration\SaleStatus::$LAYAWAY )
+					->where('sale_type', \App\Enumaration\SaleTypes::$SALE)
+					->where('cash_register_id', $cashRegisterId)
+					->with('Customer')
+					->get();
+		
 		//dd($cashSaleList);
         if( count($allTransactionArr)>0 )
         {
@@ -426,30 +434,6 @@ class CashRegisterController extends Controller
                 }
             }
             $printer->feed();
-
-			
-			/*$printer->setJustification(Printer::JUSTIFY_CENTER);
-			$printer->text("Cash Sales\n");
-			$printer->text("------------------------\n");
-			$printer->feed();
-
-			$header = new \App\Model\Printer\RegisterDetails("Date", "Employee", "Amount");
-			$printer->setJustification(Printer::JUSTIFY_LEFT);
-			$printer->setEmphasis(true);
-			$printer->text($header);
-			$printer->setEmphasis(false);
-			$printer->feed();
-			foreach($cashSaleList as $aCashSale ) {
-
-					$printer->text(new RegisterDetails(
-						date( "Y-m-d", strtotime($aCashSale->created_at) ),
-						$closedBy,
-						number_format($aCashSale->amount,2),
-						date( "h:i:s" ,strtotime($aCashSale->created_at) )
-					));
-					$printer->feed();
-			}
-			$printer->feed();*/
 			
 			
 			$paymentTypeMapping = array(
@@ -489,6 +473,31 @@ class CashRegisterController extends Controller
 				$printer->feed();
 			}
 
+			
+			$printer->setJustification(Printer::JUSTIFY_CENTER);
+			$printer->text("Charge Account\n");
+			$printer->text("------------------------\n");
+			$printer->feed();
+
+			$header = new \App\Model\Printer\RegisterDetails("Date", "Customer", "Amount");
+			$printer->setJustification(Printer::JUSTIFY_LEFT);
+			$printer->setEmphasis(true);
+			$printer->text($header);
+			$printer->setEmphasis(false);
+			$printer->feed();
+			foreach($salesChargeAccountTransactionList as $asalesChargeAccountTransaction ) {
+					$due = $asalesChargeAccountTransaction->due;
+					$customerName = $asalesChargeAccountTransaction->Customer->first_name . ' ' . $asalesChargeAccountTransaction->Customer->last_name;
+					$printer->text(new RegisterDetails(
+						date( "Y-m-d", strtotime($asalesChargeAccountTransaction->created_at) ),
+						$customerName,
+						number_format($due,2),
+						date( "h:i:s" ,strtotime($asalesChargeAccountTransaction->created_at) )
+					));
+					$printer->feed();
+			}
+			$printer->feed();
+			
         } Catch (\Exception $e) {
 			//dd($e);
 			//dd($e);
@@ -548,6 +557,13 @@ class CashRegisterController extends Controller
 
         $paymentAmountSql = "select payment_type, sum(paid_amount) as total_paid_amount from payment_logs where id in ( select payment_log_id from payment_log_sale where sale_id in ( select id from sales where cash_register_id=? and deleted_at is null ) )  group by payment_type";
         $paymentAmountTotalList = DB::select( $paymentAmountSql, [$cashRegisterId] );
+		
+		$totalCharAccountAmount = DB::table('sales')
+					->where('due', '>', '0')
+					->where('sale_status',\App\Enumaration\SaleStatus::$LAYAWAY )
+					->where('sale_type', \App\Enumaration\SaleTypes::$SALE)
+					->where('cash_register_id', $cashRegisterId)
+					->sum('due');
         
         $checkTotal = 0;
         $creditCardAmountTotal = 0;
@@ -618,6 +634,7 @@ class CashRegisterController extends Controller
 
             $printer->text( new FooterItem('Total Sales:', '$'.number_format( $totalSale, 2) ));
 			$printer->text( new FooterItem('Return Sales:', '$'.number_format( $totalReturnSale, 2) ));
+			$printer->text( new FooterItem('Charge Account Sales:', '$'.number_format( $totalCharAccountAmount, 2) ));
             return redirect()->route('cash_register_log_details',["register_id"=>$cashRegister->id]);
 
         } Catch (\Exception $e) {
