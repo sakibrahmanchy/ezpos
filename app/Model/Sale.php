@@ -136,8 +136,27 @@ class Sale extends Model
 
 
     public function getMaxSaleIdByCounter($counterId) {
-        $saleId = Sale::withTrashed()->where("counter_id",$counterId)->max("id");
-        $counter = Counter::where("id",$counterId)->first();
+		$counter = Counter::where("id",$counterId)->first();
+		/*$nextCounter = Counter::where('starting_id','>',$counter->starting_id)
+										->orderBy('starting_id', 'desc')
+										->first();
+		
+        $saleId = Sale::withTrashed()
+						->where("counter_id",$counterId);
+		if($nextCounter)
+			$saleId = $saleId->where('id','<',$nextCounter->starting_id);
+		$saleId	= $saleId->max("id");*/
+        
+		$saleId = Sale::withTrashed()
+						->where("counter_id",$counterId)
+						->whereNotIn(DB::raw('id+1'),function($q) use ($counterId)
+								{
+								   $q->from('sales')
+									->select('id');
+								})
+						->where('id','>', $counter->starting_id )
+						->min('id');
+		
         if(is_null($saleId) || $saleId == 0 || $saleId < $counter->starting_id)
            return $counter->starting_id;
         return $saleId+1;
