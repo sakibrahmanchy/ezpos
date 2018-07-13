@@ -514,13 +514,13 @@
                     layAwaySale: function () {
                         let total = this.GetTotalSale;
                         let due = this.GetDue;
-                        if(due>0) this.CompleteSales();
+                        //if(due>0) this.CompleteSales();
                         this.SubmitSales(2);
                     },
                     estimateSale: function () {
                         let total = this.GetTotalSale;
                         let due = this.GetDue;
-                        if(due>0) this.CompleteSales();
+                        //if(due>0) this.CompleteSales();
                         this.SubmitSales(3);
                     },
                     CompleteSales: function(){
@@ -702,11 +702,11 @@
                                     var sale_id = response.data;
                                     switch (status){
                                         case 1:
-                                            var url = '{{ route("sale_receipt", ":sale_id") }}';
+                                        case 2:
+											var url = '{{ route("sale_receipt", ":sale_id") }}';
                                             url = url.replace(':sale_id', sale_id);
                                             window.location.href=url;
                                             break;
-                                        case 2:
                                         case 3:
                                             var url = '{{ route("new_sale") }}';
                                             window.location.href=url;
