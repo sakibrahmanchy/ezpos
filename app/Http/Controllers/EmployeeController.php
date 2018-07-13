@@ -154,7 +154,7 @@ class EmployeeController extends Controller
 							Rule::unique('users','name')->ignore($employee->user_id),
 						],
 			'pin' => [
-						'digits:4',
+						//'digits:4',
 						Rule::unique('users')->ignore($employee->user_id),
 					]
         ];
