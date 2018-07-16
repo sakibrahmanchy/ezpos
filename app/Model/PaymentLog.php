@@ -3,6 +3,8 @@
 namespace App\Model;
 
 use App\Enumaration\PaymentTransactionTypes;
+use App\Enumaration\PaymentTypes;
+use App\Http\Controllers\CashRegisterController;
 use Illuminate\Database\Eloquent\Model;
 
 class PaymentLog extends Model
@@ -15,12 +17,20 @@ class PaymentLog extends Model
 
     public function addNewPaymentLog($payment_type, $paid_amount,
 
-        $sale = null, $customer_id ) {
+        $sale = null, $customer_id , $comments) {
 
         $paymentLog = new PaymentLog();
 
         $paymentLog->payment_type = $payment_type;
         $paymentLog->paid_amount = $paid_amount;
+        if(!is_null($sale)) {
+            $paymentLog->sale_id = $sale->id;
+        }
+        else {
+            $cash_register = new CashRegister();
+            $paymentLog->cash_register_id = $cash_register->getCurrentActiveRegister()->id;
+        }
+        $paymentLog->comments = $comments;
 
         $paymentLog->save();
 

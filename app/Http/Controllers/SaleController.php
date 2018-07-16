@@ -86,9 +86,10 @@ class SaleController extends Controller
 
         $saleInfo = $request->sale_info;
         $productInfos = $request->product_infos;
+        $paymentInfos = $request->payment_infos;
 
         $sale = new Sale();
-        $sale->InsertSale($saleInfo, $productInfos, $saleInfo['status']);
+        $sale->InsertSale($saleInfo, $productInfos, $paymentInfos, $saleInfo['status']);
 
     }
 

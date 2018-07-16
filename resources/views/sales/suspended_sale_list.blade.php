@@ -45,24 +45,14 @@
                 </div>
             </div>
         </div>
-        <div class="row hidden" id="selectButtonHolder" style="margin-top:10px">
-            <div class="col-md-12">
-                <div class="input-group">
-                    <button style="margin-right:5px" class="btn btn-danger" id="deleteButton">Delete Row(s)</button>
-                    <button style="margin-right:5px" class="btn btn-default" id="selectAllButton">Select All</button>
-                    <button class="btn btn-default" id="clearAllButton">Clear All</button>
-                </div>
-            </div>
-        </div>
     </div>
 
     <div class="box box-primary" style="padding:20px">
-        <div class="card table-responsive">
+        <div class="table-responsive">
 
             <table  class="table table-hover " >
                 <thead>
                 <tr>
-                    <th></th>
                     <th>Suspended Sale Id</th>
                     <th>Date</th>
                     <th>Type</th>
@@ -78,7 +68,6 @@
                 <tbody>
                 @foreach($suspended_sales as $suspended_sale)
                     <tr>
-                        <td></td>
                         <td>EZPOS {{$suspended_sale->id}} </td>
                         <td>{{$suspended_sale->created_at}}</td>
                         <td>
@@ -129,15 +118,6 @@
             table = $('.table').DataTable({
 
                 pageLength:10,
-                columnDefs: [{
-                    orderable: false,
-                    className: 'select-checkbox',
-                    targets:   0
-                }],
-                select: {
-                    style:    'multi',
-                    selector: 'td:first-child'
-                },
                 dom:"Bt<'row'<'col-sm-12'tr>>" +
                 "<'row'<'col-sm-4'l><'col-sm-8'p>>",
                 buttons: [

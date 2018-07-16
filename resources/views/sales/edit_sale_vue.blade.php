@@ -277,11 +277,11 @@
 											</div>
 										</div>
 
-										<!-- If customer is added to the sale -->
+										{{--  If customer is added to the sale --}}
 
 										<div class="customer-form">
 
-											<!-- if the customer is not set , show customer adding form -->
+											{{-- if the customer is not set , show customer adding form --}}
 											<form action="" id="select_customer_form" autocomplete="off" class="form-inline" method="post" accept-charset="utf-8">
 												<div class="input-group contacts" style="padding-top:10px;padding-left:10px">
 

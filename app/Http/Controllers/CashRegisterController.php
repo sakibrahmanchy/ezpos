@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Enumaration\PaymentTypes;
 use App\Library\SettingsSingleton;
 use App\Model\CashRegisterTransaction;
 use App\Enumaration\CashRegisterTransactionType;
 use App\Model\Counter;
 use App\Model\CurrencyDenomination;
 use App\Model\CashRegister;
+use App\Model\PaymentLog;
 use App\Model\Sale;
 use App\Model\Printer\FooterItem;
 use App\Model\Printer\Item;
@@ -161,20 +163,23 @@ class CashRegisterController extends Controller
             $debitCardAmount = 0;
             $giftCardAmount = 0;
             $loyalityAmount = 0;
+
+
             foreach( $aSale->PaymentLogs as $aPaymentLog )
             {
-                if( $aPaymentLog->payment_type=="Cash" )
+                if( $aPaymentLog->payment_type==PaymentTypes::$TypeList["Cash"] )
                     $cashAmount += floatval($aPaymentLog->paid_amount);
-                else if($aPaymentLog->payment_type=="Check")
+                else if($aPaymentLog->payment_type==PaymentTypes::$TypeList["Check"])
                     $chequeAmount += floatval($aPaymentLog->paid_amount);
-                else if($aPaymentLog->payment_type=="Credit Card")
+                else if($aPaymentLog->payment_type==PaymentTypes::$TypeList["Credit Card"])
                     $creditCardAmount += floatval($aPaymentLog->paid_amount);
-                else if($aPaymentLog->payment_type=="Debit Card")
+                else if($aPaymentLog->payment_type==PaymentTypes::$TypeList["Debit Card"])
                     $debitCardAmount += floatval($aPaymentLog->paid_amount);
-                else if($aPaymentLog->payment_type=="Gift Card")
+                else if($aPaymentLog->payment_type==PaymentTypes::$TypeList["Gift Card"])
                     $giftCardAmount += floatval($aPaymentLog->paid_amount);
-                else if($aPaymentLog->payment_type=="Loyalty Card")
+                else if($aPaymentLog->payment_type==PaymentTypes::$TypeList["Loyalty Card"])
                     $loyalityAmount += floatval($aPaymentLog->paid_amount);
+
             }
 
             if( $cashAmount > 0 )
@@ -232,33 +237,41 @@ class CashRegisterController extends Controller
                                 'amount' => $loyalityAmount  
                             ];
             }
+
         }
 
-        foreach( $cashRegister->CashRegisterTransactions as $aCashRegisterTransaction )
+
+
+        foreach( $cashRegister->PaymentLogs as $aCashRegisterTransaction )
         {
-            if($aCashRegisterTransaction->transaction_type ==\App\Enumaration\CashRegisterTransactionType::$ADD_BALANCE)
+            $addedAmount = 0;
+            $subtractedAmount = 0;
+
+            if($aCashRegisterTransaction->payment_type ==\App\Enumaration\CashRegisterTransactionType::$ADD_BALANCE)
             {
+                $addedAmount += floatval(($aCashRegisterTransaction->paid_amount));
                 $allTransactionArr[] = [
                                 'created_at' => $aCashRegisterTransaction->created_at,
                                 'payment_type' => \App\Enumaration\CashRegisterTransactionType::$ADD_BALANCE,
-                                'amount' => $chequeAmount  
+                                'amount' => $addedAmount
                             ];
             }
-            if($aCashRegisterTransaction->transaction_type ==\App\Enumaration\CashRegisterTransactionType::$SUBTRACT_BALANCE)
+            if($aCashRegisterTransaction->payment_type ==\App\Enumaration\CashRegisterTransactionType::$SUBTRACT_BALANCE)
             {
+                $subtractedAmount += floatval(($aCashRegisterTransaction->paid_amount));
                 $allTransactionArr[] = [
                                 'created_at' => $aCashRegisterTransaction->created_at,
                                 'payment_type' => \App\Enumaration\CashRegisterTransactionType::$SUBTRACT_BALANCE,
-                                'amount' => $chequeAmount  
+                                'amount' => $subtractedAmount
                             ];
             }
         }
 
         $openedBy = $cashRegister->OpenedByUser->name;
         $closedBy = $cashRegister->closedByUser->name;
-        $total_additions = CashRegisterTransaction::where('cash_register_id',$cashRegisterId)->where('transaction_type',CashRegisterTransactionType::$ADD_BALANCE)->sum('amount');
-        $total_subtractions = CashRegisterTransaction::where('cash_register_id',$cashRegisterId)->where('transaction_type',CashRegisterTransactionType::$SUBTRACT_BALANCE)->sum('amount');
-        $cash_sales = CashRegisterTransaction::where("cash_register_id",$cashRegister->id)->where('transaction_type',CashRegisterTransactionType::$CASH_SALES)->sum('amount');
+        $total_additions = PaymentLog::where('cash_register_id',$cashRegisterId)->where('payment_type',CashRegisterTransactionType::$ADD_BALANCE)->sum('paid_amount');
+        $total_subtractions = PaymentLog::where('cash_register_id',$cashRegisterId)->where('payment_type',CashRegisterTransactionType::$SUBTRACT_BALANCE)->sum('paid_amount');
+        $cash_sales = PaymentLog::where("cash_register_id",$cashRegister->id)->where('payment_type',CashRegisterTransactionType::$CASH_SALES)->sum('paid_amount');
         $cashRegisterTransactions = $cashRegister->CashRegisterTransactions;
 
         $changedDue = DB::table('sales')->where('cash_register_id', $cashRegisterId)
@@ -396,7 +409,7 @@ class CashRegisterController extends Controller
             $printer->feed();
             foreach($transactions as $aTransaction ) {
 
-                if($aTransaction->transaction_type==\App\Enumaration\CashRegisterTransactionType::$ADD_BALANCE)
+                if($aTransaction->payment_type==\App\Enumaration\CashRegisterTransactionType::$ADD_BALANCE)
                 {
                     $printer->text(new RegisterDetails(
                         date_format($aTransaction->created_at,"Y-m-d"),
@@ -422,7 +435,7 @@ class CashRegisterController extends Controller
             $printer->feed();
             foreach($transactions as $aTransaction ) {
 
-                if($aTransaction->transaction_type==\App\Enumaration\CashRegisterTransactionType::$SUBTRACT_BALANCE)
+                if($aTransaction->payment_type==\App\Enumaration\CashRegisterTransactionType::$SUBTRACT_BALANCE)
                 {
                     $printer->text(new RegisterDetails(
                         date_format($aTransaction->created_at,"Y-m-d"),
@@ -522,9 +535,9 @@ class CashRegisterController extends Controller
 
         $openedBy = $cashRegister->OpenedByUser->name;
         $closedBy = $cashRegister->closedByUser->name;
-        $total_additions = CashRegisterTransaction::where('cash_register_id',$cashRegisterId)->where('transaction_type',CashRegisterTransactionType::$ADD_BALANCE)->sum('amount');
-        $total_subtractions = CashRegisterTransaction::where('cash_register_id',$cashRegisterId)->where('transaction_type',CashRegisterTransactionType::$SUBTRACT_BALANCE)->sum('amount');
-        $cash_sales = CashRegisterTransaction::where("cash_register_id",$cashRegister->id)->where('transaction_type',CashRegisterTransactionType::$CASH_SALES)->sum('amount');
+        $total_additions = PaymentLog::where('cash_register_id',$cashRegisterId)->where('payment_type',CashRegisterTransactionType::$ADD_BALANCE)->sum('paid_amount');
+        $total_subtractions = PaymentLog::where('cash_register_id',$cashRegisterId)->where('payment_type',CashRegisterTransactionType::$SUBTRACT_BALANCE)->sum('paid_amount');
+        $cash_sales = PaymentLog::where("cash_register_id",$cashRegister->id)->where('payment_type',CashRegisterTransactionType::$CASH_SALES)->sum('paid_amount');
 		
 		
         $difference =  ($cashRegister->closing_balance - $cashRegister->opening_balance) - ( $cash_sales + $total_additions - $total_subtractions);

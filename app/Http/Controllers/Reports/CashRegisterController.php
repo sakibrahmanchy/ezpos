@@ -6,6 +6,7 @@ use App\Model\CashRegisterTransaction;
 use App\Enumaration\CashRegisterTransactionType;
 use App\Http\Controllers\Controller;
 use App\Model\CashRegister;
+use App\Model\PaymentLog;
 use Illuminate\Http\Request;
 
 class CashRegisterController extends Controller{
@@ -55,9 +56,9 @@ class CashRegisterController extends Controller{
 
     public function totalDetails($startDate,$endDate)
     {
-        $cashSales = CashRegisterTransaction::where('created_at', '>=', $startDate)
+        $cashSales = PaymentLog::where('created_at', '>=', $startDate)
             ->where('created_at', '<=', $endDate)
-            ->where("transaction_type",CashRegisterTransactionType::$CASH_SALES)->sum('amount');
+            ->where("payment_type",CashRegisterTransactionType::$CASH_SALES)->sum('paid_amount');
 
         $cashRegisters = CashRegister::with('CashRegisterTransactions','additionSum','subtractionSum','saleSum')
             ->whereDate('opening_time', '>=', $startDate)

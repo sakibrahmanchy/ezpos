@@ -23,27 +23,32 @@ class CashRegister extends Model
     }
 
     public function CashRegisterTransactions(){
-        return $this->hasMany('App\Model\CashRegisterTransaction','cash_register_id','id');
+//        return $this->hasMany('App\Model\CashRegisterTransaction','cash_register_id','id');
+        return $this->hasMany('App\Model\PaymentLog','cash_register_id','id');
+    }
+
+    public function PaymentLogs(){
+        return $this->hasMany('App\Model\PaymentLog','cash_register_id','id');
     }
 
     public function additionSum(){
-            return $this->CashRegisterTransactions()
-            ->selectRaw('cash_register_id, sum(amount) as aggregate')
-            ->where("transaction_type",CashRegisterTransactionType::$ADD_BALANCE)
+            return $this->PaymentLogs()
+            ->selectRaw('cash_register_id, sum(paid_amount) as aggregate')
+            ->where("payment_type",CashRegisterTransactionType::$ADD_BALANCE)
             ->groupBy('cash_register_id');
     }
 
     public function subtractionSum(){
-        return $this->CashRegisterTransactions()
-            ->selectRaw('cash_register_id, sum(amount) as aggregate')
-            ->where("transaction_type",CashRegisterTransactionType::$SUBTRACT_BALANCE)
+        return $this->PaymentLogs()
+            ->selectRaw('cash_register_id, sum(paid_amount) as aggregate')
+            ->where("payment_type",CashRegisterTransactionType::$SUBTRACT_BALANCE)
             ->groupBy('cash_register_id');
     }
 
     public function saleSum(){
-        return $this->CashRegisterTransactions()
-            ->selectRaw('cash_register_id, sum(amount) as aggregate')
-            ->where("transaction_type",CashRegisterTransactionType::$CASH_SALES)
+        return $this->PaymentLogs()
+            ->selectRaw('cash_register_id, sum(paid_amount) as aggregate')
+            ->where("payment_type",CashRegisterTransactionType::$CASH_SALES)
             ->groupBy('cash_register_id');
     }
 
@@ -63,8 +68,8 @@ class CashRegister extends Model
         $cash_register = $this->getCurrentActiveRegister();
         if(!is_null($cash_register)){
             $cashRegisterId = $cash_register->id;
-            $addedTotal = CashRegisterTransaction::where("cash_register_id",$cashRegisterId)
-                ->where("transaction_type",CashRegisterTransactionType::$ADD_BALANCE)->sum("amount");
+            $addedTotal = PaymentLog::where("cash_register_id",$cashRegisterId)
+                ->where("payment_type",CashRegisterTransactionType::$ADD_BALANCE)->sum("paid_amount");
             return $addedTotal;
         }
         return 0;
@@ -85,9 +90,9 @@ class CashRegister extends Model
         $cash_register = $this->getCurrentActiveRegister();
         if(!is_null($cash_register)){
             $cashRegisterId = $cash_register->id;
-            $subtractedTotal = CashRegisterTransaction::where("cash_register_id",$cashRegisterId)
-                ->where("transaction_type",CashRegisterTransactionType::$SUBTRACT_BALANCE)
-                ->sum("amount");
+            $subtractedTotal = PaymentLog::where("cash_register_id",$cashRegisterId)
+                ->where("payment_type",CashRegisterTransactionType::$SUBTRACT_BALANCE)
+                ->sum("paid_amount");
             return $subtractedTotal;
         }
         return 0;
@@ -107,13 +112,15 @@ class CashRegister extends Model
 
             $cash_register->current_balance += $amount;
             if($cash_register->save()){
-                $cashRegisterTransaction = new CashRegisterTransaction();
-                $cashRegisterTransaction->create([
-                    "cash_register_id"=>$cash_register->id,
-                    "amount"=>$amount,
-                    "transaction_type"=>CashRegisterTransactionType::$ADD_BALANCE,
-                    "comments" => $comment
-                ]);
+//                $cashRegisterTransaction = new CashRegisterTransaction();
+//                $cashRegisterTransaction->create([
+//                    "cash_register_id"=>$cash_register->id,
+//                    "amount"=>$amount,
+//                    "payment_type"=>CashRegisterTransactionType::$ADD_BALANCE,
+//                    "comments" => $comment
+//                ]);
+                $paymentLog = new PaymentLog;
+                $paymentLog->addNewPaymentLog(CashRegisterTransactionType::$ADD_BALANCE,$amount,null,null,$comment);
                 return true;
             }
         }
@@ -126,13 +133,15 @@ class CashRegister extends Model
 
             $cash_register->current_balance -= $amount;
             if($cash_register->save()){
-                $cashRegisterTransaction = new CashRegisterTransaction();
-                $cashRegisterTransaction->create([
-                    "cash_register_id"=>$cash_register->id,
-                    "amount"=>$amount,
-                    "transaction_type"=>CashRegisterTransactionType::$SUBTRACT_BALANCE,
-                    "comments" => $comment
-                ]);
+//                $cashRegisterTransaction = new CashRegisterTransaction();
+//                $cashRegisterTransaction->create([
+//                    "cash_register_id"=>$cash_register->id,
+//                    "amount"=>$amount,
+//                    "payment_type"=>CashRegisterTransactionType::$SUBTRACT_BALANCE,
+//                    "comments" => $comment
+//                ]);
+                $paymentLog = new PaymentLog;
+                $paymentLog->addNewPaymentLog(CashRegisterTransactionType::$SUBTRACT_BALANCE,$amount,null,null,$comment);
                 return true;
             }
         }
@@ -142,8 +151,8 @@ class CashRegister extends Model
     public function getTotalSaleInCurrentRegister($transactionType){
         $cash_register = $this->getCurrentActiveRegister();
         if(!is_null($cash_register)){
-            $total_sales_in_register = CashRegisterTransaction::where("cash_register_id",$cash_register->id)
-                ->where("transaction_type",$transactionType)->sum('amount');
+            $total_sales_in_register = PaymentLog::where("cash_register_id",$cash_register->id)
+                ->where("payment_type",$transactionType)->sum('paid_amount');
             return $total_sales_in_register;
         }
         return 0;
