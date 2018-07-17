@@ -33,7 +33,6 @@ class HomeController extends Controller
     }
 
     public function getDashBoard(){
-
         $page_data = [
             'page_title' => 'Dashboard',
             'page_subtile' => ''

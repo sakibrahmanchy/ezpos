@@ -20,7 +20,7 @@
                             <ul class="list-group">
                                 <li class="list-group-item">Register log ID: <strong class="pull-right">{{ $register->id }}</strong></li>
                                 <li class="list-group-item">Open Employee: <strong class="pull-right">{{ $opened_by }}</strong></li>
-                                <li class="list-group-item">Close Employee: <strong class="pull-right">{{ $closed_by }}</strong></li>
+                                {{--<li class="list-group-item">Close Employee: <strong class="pull-right">{{ $closed_by }}</strong></li>--}}
                                 <li class="list-group-item">Shift Start: <strong class="pull-right">{{ $register->opening_time }}</strong></li>
                                 <li class="list-group-item">Shift End: <strong class="pull-right">{{ $register->closing_time }}</strong></li>
                                 <li class="list-group-item">Open Amount: <strong class="pull-right">${{ number_format( $register->opening_balance, 2) }}</strong></li>
@@ -31,7 +31,7 @@
                                 <li class="list-group-item">Debit Card Sales: <strong class="pull-right">${{ number_format($paymentInfo["debitCardTotal"], 2) }}</strong></li>
                                 <li class="list-group-item">Gift Card Sales: <strong class="pull-right">${{ number_format($paymentInfo["giftCardTotal"], 2) }}</strong></li>
                                 <li class="list-group-item">Loyalty Card Sales: <strong class="pull-right">${{ number_format($paymentInfo["loyalityTotal"], 2) }}</strong></li>
-                                <li class="list-group-item">Change Due: <strong class="pull-right">${{ number_format($changedDue, 2) }}</strong></li>
+                                {{--<li class="list-group-item">Change Due: <strong class="pull-right">${{ number_format($changedDue, 2) }}</strong></li>--}}
                                 <li class="list-group-item">Refunded Sale Amount: <strong class="pull-right">${{ number_format($refundedAmount, 2) }}</strong></li>
                                 <li class="list-group-item">Cash additions: <strong class="pull-right">${{ number_format($additions, 2) }}</strong></li>
                                 <li class="list-group-item">Cash subtractions: <strong class="pull-right">${{ number_format($subtractions, 2) }}</strong></li>
@@ -51,7 +51,7 @@
                                         <thead>
                                         <tr>
                                             <th>Date</th>
-                                            <th>Employee</th>
+                                            {{--<th>Employee</th>--}}
                                             <th>Amount</th>
                                             <th>Notes</th>
                                             <th>Type</th>
@@ -61,8 +61,8 @@
                                         @foreach($transactions as $aTransaction )
                                             <tr>
                                                 <td>{{ $aTransaction['created_at'] }}</td>
-                                                <td>{{ $closed_by }}</td>
-                                                <td>{{ number_format($aTransaction['amount'],2) }}</td>
+                                                {{--<td>{{ $closed_by }}</td>--}}
+                                                <td>$   {{ number_format($aTransaction['amount'],2) }}</td>
                                                 <td>
                                                     @if(isset($aTransaction['sale_id']))
                                                         For sale: {{$aTransaction['sale_id']}}

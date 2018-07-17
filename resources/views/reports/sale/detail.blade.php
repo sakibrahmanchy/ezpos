@@ -156,7 +156,7 @@
                                 <td>
 
                                     @foreach($aSale->paymentLogs as $aPayment)
-                                        <span style="color: #0976b4;">{{$aPayment->payment_type}}</span>: ${{$aPayment->paid_amount}}<br>
+                                        <span style="color: #0976b4;">{{array_search($aPayment->payment_type, \App\Enumaration\PaymentTypes::$TypeList)}}</span>: ${{$aPayment->paid_amount}}<br>
                                     @endforeach
 
                                 </td>

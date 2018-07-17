@@ -256,7 +256,7 @@
                         @foreach($sale->paymentlogs as $aPayment)
                         <div class="row">
                             <div class="col-md-offset-8 col-sm-offset-8 col-xs-offset-2 col-md-2 col-sm-2 col-xs-6">
-                                <div class="invoice-footer-heading">{{$aPayment->payment_type}} Tendered:</div>
+                                <div class="invoice-footer-heading">{{array_search($aPayment->payment_type, \App\Enumaration\PaymentTypes::$TypeList) }} Tendered:</div>
                             </div>
                             <div class="col-md-2 col-sm-2 col-xs-4">
                                 <div class="invoice-footer-value invoice-total">

@@ -291,15 +291,15 @@ class CashRegisterController extends Controller
         $loyalityAmountTotal = 0;
         foreach( $paymentAmountTotalList as $aPaymentTotal )
         {
-            if($aPaymentTotal->payment_type=='Check')
+            if($aPaymentTotal->payment_type==PaymentTypes::$TypeList['Check'])
                 $checkTotal = $aPaymentTotal->total_paid_amount;
-            else if($aPaymentTotal->payment_type=='Credit Card')
+            else if($aPaymentTotal->payment_type==PaymentTypes::$TypeList['Credit Card'])
                 $creditCardAmountTotal = $aPaymentTotal->total_paid_amount;
-            else if($aPaymentTotal->payment_type=='Debit Card')
+            else if($aPaymentTotal->payment_type==PaymentTypes::$TypeList['Debit Card'])
                 $debitCardAmountTotal = $aPaymentTotal->total_paid_amount;
-            else if($aPaymentTotal->payment_type=='Gift Card')
+            else if($aPaymentTotal->payment_type==PaymentTypes::$TypeList['Gift Card'])
                 $giftCardAmountTotal = $aPaymentTotal->total_paid_amount;
-            else if($aPaymentTotal->payment_type=='Loyalty Card')
+            else if($aPaymentTotal->payment_type==PaymentTypes::$TypeList['Loyalty Card'])
                 $loyalityAmountTotal = $aPaymentTotal->total_paid_amount;
         }
 
@@ -315,11 +315,10 @@ class CashRegisterController extends Controller
                 "transactions"=>$allTransactionArr,"opened_by"=>$openedBy,"closed_by"=>$closedBy,
             "additions"=>$total_additions,"subtractions"=>$total_subtractions,"sales"=>$cash_sales,
             "paymentInfo"=>$paymentInfo, "changedDue"=>$changedDue,"refundedAmount"=>$refunded_sales_amount]);
-        //dd($cashRegisterTotal);
     }
 
 
-    public function printRegisterLogDetails($cashRegisterId){
+    public function printRegisterLogDetails($cashRegisterId) {
 
 
         $cashRegister = CashRegister::where("id",$cashRegisterId)->with('OpenedByUser','ClosedByUser','CashRegisterTransactions')->first();
@@ -344,7 +343,7 @@ class CashRegisterController extends Controller
 					->with('Customer')
 					->get();
 		
-		//dd($cashSaleList);
+
         if( count($allTransactionArr)>0 )
         {
             $saleIdArr = [];

@@ -5,7 +5,7 @@
     Vue.component('file_explorer',
         {
             template: `
-                     <transition name="fade">
+                   <transition name="fade">
                     <div v-show="shown">
                      <ul style="list-style-type: none;">
 						<label v-if="currentParent!==0" style=" cursor: pointer;" @click="SetParent(previousParent)">Go Back</label><br>
