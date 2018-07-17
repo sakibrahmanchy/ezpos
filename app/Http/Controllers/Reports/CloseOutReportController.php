@@ -44,7 +44,7 @@ class CloseOutReportController extends Controller
         $sales = DB::table('payment_logs')
             ->selectRaw('payment_type, sum(paid_amount) as paid_amount')
             ->join('payment_log_sale','payment_logs.id','=','payment_log_sale.payment_log_id')
-            ->whereIn('sale_id',$saleIds)
+            ->whereIn('payment_log_sale.sale_id',$saleIds)
             ->groupBy('payment_type')->get();
 
         $saleIds = Sale::where('sale_type',SaleTypes::$SALE)->select('id')
@@ -53,7 +53,7 @@ class CloseOutReportController extends Controller
         $salePayments = DB::table('payment_logs')
             ->selectRaw('payment_type, sum(paid_amount) as paid_amount')
             ->join('payment_log_sale','payment_logs.id','=','payment_log_sale.payment_log_id')
-            ->whereIn('sale_id',$saleIds)
+            ->whereIn('payment_log_sale.sale_id',$saleIds)
             ->groupBy('payment_type')->get();
 
         $saleIds = Sale::where('sale_type',SaleTypes::$RETURN)->select('id')
@@ -62,7 +62,7 @@ class CloseOutReportController extends Controller
         $returnPayments = DB::table('payment_logs')
             ->selectRaw('payment_type, sum(paid_amount) as paid_amount')
             ->join('payment_log_sale','payment_logs.id','=','payment_log_sale.payment_log_id')
-            ->whereIn('sale_id',$saleIds)
+            ->whereIn('payment_log_sale.sale_id',$saleIds)
             ->groupBy('payment_type')->get();
 
         $inventoryItems = Item::sum('item_quantity');
@@ -115,7 +115,7 @@ class CloseOutReportController extends Controller
         $sales = DB::table('payment_logs')
             ->selectRaw('payment_type, sum(paid_amount) as paid_amount')
             ->join('payment_log_sale','payment_logs.id','=','payment_log_sale.payment_log_id')
-            ->whereIn('sale_id',$saleIds)
+            ->whereIn('payment_log_sale.sale_id',$saleIds)
             ->groupBy('payment_type')->get();
 
         $saleIds = Sale::where('sale_type',SaleTypes::$SALE)
@@ -127,7 +127,7 @@ class CloseOutReportController extends Controller
         $salePayments = DB::table('payment_logs')
             ->selectRaw('payment_type, sum(paid_amount) as paid_amount')
             ->join('payment_log_sale','payment_logs.id','=','payment_log_sale.payment_log_id')
-            ->whereIn('sale_id',$saleIds)
+            ->whereIn('payment_log_sale.sale_id',$saleIds)
             ->groupBy('payment_type')->get();
 
         $saleIds = Sale::where('sale_type',SaleTypes::$RETURN)

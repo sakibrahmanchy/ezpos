@@ -36,11 +36,11 @@ class Permission
             array_push($permissionList, $permission_token);
         }
 
-        dd($request->route()->getName());
+//        dd($request->route()->getName());
 
-        /*if($user->user_type==UserTypes::$EMPLOYEE||$user->user_type==UserTypes::$SUPER_ADMIN)
+        if($user->user_type==UserTypes::$EMPLOYEE||$user->user_type==UserTypes::$SUPER_ADMIN)
             return $next($request);
         else
-            return redirect()->back();*/
+            return redirect()->back();
     }
 }
