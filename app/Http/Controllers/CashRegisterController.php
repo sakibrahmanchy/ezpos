@@ -39,7 +39,7 @@ class CashRegisterController extends Controller
         $counter_id = Cookie::get('counter_id');
         $opening_balance = $request->opening_balance;
         $current_balance = $opening_balance;
-        date_default_timezone_set(date_default_timezone_get());
+        //date_default_timezone_set(date_default_timezone_get());
         $opening_time =   date('Y-m-d h:i:s', time());
         $opened_by = Auth::user()->id;
         $cashRegisterOpenInfo = array(

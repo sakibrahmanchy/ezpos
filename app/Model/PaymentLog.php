@@ -26,10 +26,9 @@ class PaymentLog extends Model
         if(!is_null($sale)) {
             $paymentLog->sale_id = $sale->id;
         }
-        else {
-            $cash_register = new CashRegister();
-            $paymentLog->cash_register_id = $cash_register->getCurrentActiveRegister()->id;
-        }
+        
+		$cash_register = new CashRegister();
+        $paymentLog->cash_register_id = $cash_register->getCurrentActiveRegister()->id;
         $paymentLog->comments = $comments;
 
         $paymentLog->save();
