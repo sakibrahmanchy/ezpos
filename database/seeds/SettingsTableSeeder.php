@@ -12,33 +12,11 @@ class SettingsTableSeeder extends Seeder
      * @return void
      */
 
-    protected function updateDotEnv($key, $newValue, $delim='')
-    {
 
-        $path = base_path('.env');
-        // get old value from current env
-        $oldValue = env($key);
-
-        // was there any change?
-        if ($oldValue === $newValue) {
-            return;
-        }
-
-        // rewrite file content with changed data
-        if (file_exists($path)) {
-            // replace current value with new value
-            file_put_contents(
-                $path, str_replace(
-                    $key.'='.$delim.$oldValue.$delim,
-                    $key.'='.$delim.$newValue.$delim,
-                    file_get_contents($path)
-                )
-            );
-        }
-    }
 
     public function run()
     {
+
 		$settingsArr = [
 					"company_name" => "EZ POS",
 					"company_logo" => "logo.png",
@@ -54,7 +32,7 @@ class SettingsTableSeeder extends Seeder
                     "upc_code_prefix"=>"200",
                     "item_size" => "lbs",
                     "default_opening_amount" => "100",
-                    "session_lifetime"=>1
+                    "session_lifetime"=>15
 				];
 		foreach( $settingsArr as $key=>$value )
 		{
@@ -65,16 +43,14 @@ class SettingsTableSeeder extends Seeder
 				$setting->key = $key;
 				$setting->value = $value;
 				$setting->save();
+
+                \App\Libraries\ConfigUpdater::updateDotEnv('lifetime',$settingsArr['session_lifetime']);
+                \Illuminate\Support\Facades\Artisan::call('cache:clear');
+                \Illuminate\Support\Facades\Artisan::call('config:clear');
+                \Illuminate\Support\Facades\Artisan::call('config:cache');
 			}
 		}
-		//$this->updateDotEnv('SESSION_LIFETIME',$settingsArr['session_lifetime']);
-//        \Config::set('session.lifetime', $settingsArr['session_lifetime'] );
-//
-////        config(['session.lifetime' => $settingsArr['session_lifetime']]);
-////        \Illuminate\Support\Facades\Artisan::call('cache:clear');
-////        \Illuminate\Support\Facades\Artisan::call('config:clear');
-////        \Illuminate\Support\Facades\Artisan::call('config:cache');
-//        echo \Config::get('session.lifetime');
+
 
     }
 }

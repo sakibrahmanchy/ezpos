@@ -70,19 +70,11 @@
     <div class="box box-primary" style="padding:20px">
         @include('includes.message-block')
         <div class="row" id="form">
-            <div class="spinner" id="grid-loader" style="display:none">
-                <div class="rect1"></div>
-                <div class="rect2"></div>
-                <div class="rect3"></div>
-            </div>
+
             <div class="col-md-12">
 
                 <form action="{{ route('save_settings') }}" id="user_form" class="form-horizontal" method="post" accept-charset="utf-8" enctype="multipart/form-data">
                     {{-- {{ csrf_field() }}--}}
-
-                    <div class="panel panel-piluku">
-
-
                         <div class="panel-body">
 
                             <div class="row">
@@ -96,19 +88,33 @@
                                     </div>
                                     <br>
 
-                                    <label for="first_name" class="required col-sm-3 col-md-3 col-lg-2 control-label ">Company Name:</label>			<div class="col-sm-9 col-md-9 col-lg-10">
+                                    <label for="first_name" class="required col-sm-3 col-md-3 col-lg-2 control-label ">Company Name:</label>
+                                    <div class="col-sm-9 col-md-9 col-lg-10">
                                         <input type="text" name="company_name" value="{{$settings['company_name']}}" class="form-control" id="company_name" >
                                         <span class="text-danger">{{ $errors->first('company_name') }}</span>
                                     </div>
+
                                     <br><br><br>
+
                                     <div class="form-group">
-                                        <label for="image_id" class="col-sm-3 col-md-3 col-lg-2 control-label ">Select Company Logo:</label>			<div class="col-sm-9 col-md-9 col-lg-10">
+                                        <label for="image_id" class="col-sm-3 col-md-3 col-lg-2 control-label ">Select Company Logo:</label>
+                                        <div class="col-sm-9 col-md-9 col-lg-10">
                                             <ul class="list-unstyled avatar-list">
                                                 <li>
-                                                    <input type="file" name="image" onchange = "loadTempImage(this)" id="image" class="filestyle" tabindex="-1" style="position: absolute; clip: rect(0px 0px 0px 0px);"><div class="bootstrap-filestyle input-group"><input type="text" class="form-control " disabled=""> <span class="group-span-filestyle input-group-btn" tabindex="0"><label for="image" class="btn btn-file-upload "><span class="pe-7s-folder"></span> <span class="buttonText">Choose file</span></label></span></div>&nbsp;
+                                                    <input type="file" name="image" onchange = "loadTempImage(this)" id="image" class="filestyle" tabindex="-1" style="position: absolute; clip: rect(0px 0px 0px 0px);">
+                                                    <div class="bootstrap-filestyle input-group">
+                                                        <input type="text" class="form-control " disabled="">
+                                                        <span class="group-span-filestyle input-group-btn" tabindex="0">
+                                                            <label for="image" class="btn btn-file-upload ">
+                                                                <span class="pe-7s-folder"></span>
+                                                                <span class="buttonText">Choose file</span>
+                                                            </label>
+                                                        </span>
+                                                    </div>&nbsp;
                                                 </li>
                                                 <li>
-                                                    <div class="col-lg-2" id="avatar"><img src="{{asset('img/logo.png?'.rand())}}" class="img-responsive logo-preview" id="image_empty" alt=""></div>
+                                                    <div class="col-lg-2" id="avatar"><img src="{{asset('img/logo.png?'.rand())}}" class="img-responsive logo-preview" id="image_empty" alt="">
+                                                    </div>
                                                 </li>
                                             </ul>
                                         </div>
@@ -239,9 +245,7 @@
                                         <input type="hidden" name="scan_price_from_barcode" id="scan_price_from_barcode_value" value="{{ $settings['scan_price_from_barcode'] }}"/>
                                     </div>
 
-
                                 </div>
-
                             </div>
 
                         </div>
@@ -260,7 +264,8 @@
 
                         <br><br>
                         <div class="form-group" data-keyword="currency">
-                            <label class="col-sm-3 col-md-3 col-lg-2 control-label ">Currency Denominations:</label>						<div class="table-responsive col-sm-9 col-md-4 col-lg-4">
+                            <label class="col-sm-3 col-md-3 col-lg-2 control-label ">Currency Denominations:</label>
+                            <div class="table-responsive col-sm-9 col-md-4 col-lg-4">
                                 <table id="currency_denoms" class="table">
                                     <thead>
                                     <tr>
@@ -287,13 +292,33 @@
                         </div>
 
 
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                <i class="pe-7s-edit"></i>
+                                User Configurations
+                            </h3>
+                        </div>
+                        <br>
+
+                        <div class="upc_code_prefix_holder hidden">
+                            <label for="upc_code_prefix" class="col-sm-3 col-md-3 col-lg-2 control-label required">Session Duration:</label>
+                            <div class="col-sm-9 col-md-9 col-lg-10">
+                                <div class="input-group date">
+                                                <span class="input-group-addon bg">
+                                                 <i class="fa fa-clock-o"></i>
+                                                </span>
+                                    <input class="form-control"  name="session_lifetime" value="{{ $settings['session_lifetime'] }}">
+                                </div>
+                            </div>
+                        </div>
+                        <br><br><br>
+
                         <div class="form-actions pull-right">
-                            <input type="submit" value="Submit" id="submitf" class="btn floating-button btn-primary float_right">
+                            <input type="submit" value="Submit" id="submitf" class="btn btn-primary float_right">
                         </div>
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                    </div>
+                 </form>
             </div>
-            </form>	</div>
     </div>
     </div>
 @endsection

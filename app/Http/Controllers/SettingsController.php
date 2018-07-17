@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Libraries\ConfigUpdater;
 use App\Library\SettingsSingleton;
 use App\Model\CurrencyDenomination;
 use App\Model\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManagerStatic as Image;
+
 
 class SettingsController extends Controller
 {
@@ -56,6 +58,11 @@ class SettingsController extends Controller
             CurrencyDenomination::create($array);
         }
 
+
+        ConfigUpdater::updateDotEnv('lifetime',$settingsChange['session_lifetime']);
+        \Illuminate\Support\Facades\Artisan::call('cache:clear');
+        \Illuminate\Support\Facades\Artisan::call('config:clear');
+        \Illuminate\Support\Facades\Artisan::call('config:cache');
 
         return redirect()->route('change_settings');
 
