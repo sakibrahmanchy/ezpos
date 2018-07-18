@@ -289,7 +289,7 @@ class CustomerController extends Controller
 		DB::update( $updateCustomerBalanceQuery, [ $request->amount_to_add, $request->customer_id] );
 		
         $paymentLog = new PaymentLog();
-        $paymentLog->addNewPaymentLog( $request->payment_method, $request->amount_to_add,null,$request->customer_id);
+        $paymentLog->addNewPaymentLog( $request->payment_method, $request->amount_to_add,null,$request->customer_id,null);
         return redirect()->route('customer_balance_add',["customer_id"=>$request->customer_id]);
     }
 

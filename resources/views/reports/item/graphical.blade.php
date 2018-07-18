@@ -1,7 +1,7 @@
 
 @extends('layouts.master')
 
-@section('pageTitle','Item Kit Graphical Report')
+@section('pageTitle','Items Graphical Report')
 
 @section('breadcrumbs')
     {!! Breadcrumbs::render('report_item_graphical') !!}
@@ -9,7 +9,6 @@
 
 @section('content')
     <?php $dateTypes = new \App\Enumaration\DateTypes(); ?>
-
     <div class="filter-box">
         <div class="row">
             <div class="col-md-12">
@@ -113,7 +112,7 @@
                      data:  dataset,
                      backgroundColor:backgroundColor,
 
-                     borderWidth: 1
+                     borderWidth: 3
                  }]
              },
              options: {

@@ -38,6 +38,7 @@ class ItemReportController extends Controller
         $labels = array();
         $values = array();
         foreach($items as $aSale){
+            $aSale->item_name = str_replace("'"," ",$aSale->item_name);
             array_push($labels,$aSale->item_name." ($".$aSale->total.")");
             array_push($values,$aSale->total);
         }
@@ -97,6 +98,7 @@ class ItemReportController extends Controller
         $labels = array();
         $values = array();
         foreach($items as $aSale){
+            $aSale->item_name = str_replace("''"," ",$aSale->item_name);
             array_push($labels,$aSale->item_name." ($".$aSale->total.")");
             array_push($values,$aSale->total);
         }
@@ -156,6 +158,7 @@ class ItemReportController extends Controller
         $labels = array();
         $values = array();
         foreach($items as $aSale){
+            $aSale->item_name = str_replace("''"," ",$aSale->item_name);
             array_push($labels,$aSale->item_name." ($".$aSale->total.")");
             array_push($values,$aSale->total);
         }

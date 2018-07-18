@@ -277,6 +277,63 @@ class CashRegisterController extends Controller
     }
 
 
+    public function getPaymentAmountTotalList($cashRegisterId, $sale_status = array()) {
+        return PaymentLog::join('sales','sales.id','=','payment_logs.sale_id')
+            ->where('payment_logs.cash_register_id','=',$cashRegisterId)
+            ->whereIn('sales.sale_status',$sale_status)
+            ->where('sale_type',SaleTypes::$SALE)
+            ->groupBy('payment_logs.payment_type')
+            ->select(DB::raw('payment_type, sum(paid_amount) as total_paid_amount'))
+            ->get();
+
+    }
+
+    public function generatePaymentAmount($cashRegisterId, $sale_status = array()) {
+//        $paymentAmountSql = "select payment_type, sum(paid_amount) as total_paid_amount from payment_logs where id in ( select payment_log_id from payment_log_sale where sale_id in ( select id from sales where cash_register_id=? and sale_status in $sale_status) ) group by payment_type";
+//        $paymentAmountTotalList = DB::select( $paymentAmountSql, [$cashRegisterId, $sale_status] );
+
+        $paymentAmountTotalList = $this->getPaymentAmountTotalList($cashRegisterId,$sale_status);
+
+        $cashTotal = 0;
+        $checkTotal = 0;
+        $creditCardAmountTotal = 0;
+        $debitCardAmountTotal = 0;
+        $giftCardAmountTotal = 0;
+        $loyalityAmountTotal = 0;
+        $changedDue = DB::table('sales')->where('cash_register_id', $cashRegisterId)
+            ->where( 'due', '<', 0 )
+            ->where('sale_status',$sale_status)
+            ->sum('due');
+        $changedDue = -$changedDue;
+
+        foreach( $paymentAmountTotalList as $aPaymentTotal )
+        {
+            if($aPaymentTotal->payment_type==PaymentTypes::$TypeList['Cash'])
+                $cashTotal = $aPaymentTotal->total_paid_amount;
+            if($aPaymentTotal->payment_type==PaymentTypes::$TypeList['Check'])
+                $checkTotal = $aPaymentTotal->total_paid_amount;
+            else if($aPaymentTotal->payment_type==PaymentTypes::$TypeList['Credit Card'])
+                $creditCardAmountTotal = $aPaymentTotal->total_paid_amount;
+            else if($aPaymentTotal->payment_type==PaymentTypes::$TypeList['Debit Card'])
+                $debitCardAmountTotal = $aPaymentTotal->total_paid_amount;
+            else if($aPaymentTotal->payment_type==PaymentTypes::$TypeList['Gift Card'])
+                $giftCardAmountTotal = $aPaymentTotal->total_paid_amount;
+            else if($aPaymentTotal->payment_type==PaymentTypes::$TypeList['Loyalty Card'])
+                $loyalityAmountTotal = $aPaymentTotal->total_paid_amount;
+        }
+
+        $paymentInfo = array(
+            "cashTotal" => $cashTotal - $changedDue,
+            "checkTotal" => $checkTotal,
+            "creditCardTotal" => $creditCardAmountTotal,
+            "debitCardTotal" => $debitCardAmountTotal,
+            "giftCardTotal" => $giftCardAmountTotal,
+            "loyalityTotal" => $loyalityAmountTotal
+        );
+
+        return $paymentInfo;
+    }
+
     public function cashRegisterLogDetails($cashRegisterId) {
 
         $cashRegister = new CashRegister();
@@ -290,7 +347,10 @@ class CashRegisterController extends Controller
 
         $allTransactionArr = $this->generateTransactionData($saleList,$cashRegister,SaleStatus::$SUCCESS);
 
-        $suspendedTransactions = $this->generateTransactionData($saleList,$cashRegister,SaleStatus::$LAYAWAY);
+        $suspendedTransactionsLayAway = $this->generateTransactionData($saleList,$cashRegister,SaleStatus::$LAYAWAY);
+        $suspendedTransactionsEstimate = $this->generateTransactionData($saleList,$cashRegister,SaleStatus::$ESTIMATE);
+        $suspendedSalesTransactionsMerged = array_merge($suspendedTransactionsLayAway,$suspendedTransactionsEstimate);
+
 
         $openedBy = $cashRegister->OpenedByUser->name;
         $closedBy = $cashRegister->closedByUser->name;
@@ -306,40 +366,14 @@ class CashRegisterController extends Controller
         $cash_sales = $cash_sales - $changedDue;
         $expectedClosingSales = $cashRegister->opening_balance + ($cash_sales - $changedDue) +  ($total_additions - $total_subtractions);
 
-        $paymentAmountSql = "select payment_type, sum(paid_amount) as total_paid_amount from payment_logs where id in ( select payment_log_id from payment_log_sale where sale_id in ( select id from sales where cash_register_id=? ) ) group by payment_type";
-        $paymentAmountTotalList = DB::select( $paymentAmountSql, [$cashRegisterId] );
 
-        $checkTotal = 0;
-        $creditCardAmountTotal = 0;
-        $debitCardAmountTotal = 0;
-        $giftCardAmountTotal = 0;
-        $loyalityAmountTotal = 0;
-        foreach( $paymentAmountTotalList as $aPaymentTotal )
-        {
-            if($aPaymentTotal->payment_type==PaymentTypes::$TypeList['Check'])
-                $checkTotal = $aPaymentTotal->total_paid_amount;
-            else if($aPaymentTotal->payment_type==PaymentTypes::$TypeList['Credit Card'])
-                $creditCardAmountTotal = $aPaymentTotal->total_paid_amount;
-            else if($aPaymentTotal->payment_type==PaymentTypes::$TypeList['Debit Card'])
-                $debitCardAmountTotal = $aPaymentTotal->total_paid_amount;
-            else if($aPaymentTotal->payment_type==PaymentTypes::$TypeList['Gift Card'])
-                $giftCardAmountTotal = $aPaymentTotal->total_paid_amount;
-            else if($aPaymentTotal->payment_type==PaymentTypes::$TypeList['Loyalty Card'])
-                $loyalityAmountTotal = $aPaymentTotal->total_paid_amount;
-        }
-
-        $paymentInfo = array(
-            "checkTotal" => $checkTotal,
-            "creditCardTotal" => $creditCardAmountTotal,
-            "debitCardTotal" => $debitCardAmountTotal,
-            "giftCardTotal" => $giftCardAmountTotal,
-            "loyalityTotal" => $loyalityAmountTotal
-        );
+        $paymentInfo = $this->generatePaymentAmount($cashRegisterId,[SaleStatus::$SUCCESS]);
+        $paymentInfoSuspended = $this->generatePaymentAmount($cashRegisterId, [SaleStatus::$LAYAWAY, SaleStatus::$ESTIMATE]);
 
         return view('cash_registers.cash_register_log_details',["register"=>$cashRegister,
-                "transactions"=>$allTransactionArr,"opened_by"=>$openedBy,"closed_by"=>$closedBy,
-            "additions"=>$total_additions,"subtractions"=>$total_subtractions,"sales"=>$cash_sales,
-            "paymentInfo"=>$paymentInfo, "changedDue"=>$changedDue,"refundedAmount"=>$refunded_sales_amount]);
+                "transactions"=>$allTransactionArr,"suspendedTransactions"=>$suspendedSalesTransactionsMerged,
+            "opened_by"=>$openedBy,"closed_by"=>$closedBy, "additions"=>$total_additions,"subtractions"=>$total_subtractions,"sales"=>$cash_sales,
+            "paymentInfo"=>$paymentInfo, "paymentSuspended" => $paymentInfoSuspended, "changedDue"=>$changedDue, "refundedAmount"=>$refunded_sales_amount]);
     }
 
 
@@ -357,6 +391,14 @@ class CashRegisterController extends Controller
                             ->select(DB::raw('sale_id,sum(paid_amount) as total_sale,payment_type'))
                             ->groupBy('sale_id','payment_type')
                             ->get();
+
+		$suspendedTransactionArr = PaymentLog::where("payment_logs.cash_register_id",$cashRegisterId)
+            ->join('sales','sales.id','=','payment_logs.sale_id')
+            ->whereIn("sale_status",[SaleStatus::$ESTIMATE, SaleStatus::$LAYAWAY])
+            ->where("sale_type",SaleTypes::$SALE)
+            ->select(DB::raw('sale_id,sum(paid_amount) as total_sale,payment_type'))
+            ->groupBy('sale_id','payment_type')
+            ->get();
 
 
 		$salesChargeAccountTransactionList = Sale::where('due', '>', '0')
@@ -423,7 +465,7 @@ class CashRegisterController extends Controller
             $printer->text("-------------------------\n");
             $printer->feed();
 
-            $header = new \App\Model\Printer\RegisterDetails("Date", "Employee", "Amount");
+            $header = new \App\Model\Printer\RegisterDetails("Date", "Sale Id", "Amount");
             $printer->setJustification(Printer::JUSTIFY_LEFT);
             $printer->setEmphasis(true);
             $printer->text($header);
@@ -435,7 +477,7 @@ class CashRegisterController extends Controller
                 {
                     $printer->text(new RegisterDetails(
                         date_format($aTransaction->created_at,"Y-m-d"),
-                        $closedBy,
+                        $aTransaction->sale_id,
                         number_format($aTransaction->amount,2),
                         date_format($aTransaction->created_at,"h:i:s")
                     ));
@@ -449,7 +491,7 @@ class CashRegisterController extends Controller
             $printer->text("-----------------------\n");
             $printer->feed();
 
-            $header = new \App\Model\Printer\RegisterDetails("Date", "Employee", "Amount");
+            $header = new \App\Model\Printer\RegisterDetails("Date", "Sale Id", "Amount");
             $printer->setJustification(Printer::JUSTIFY_LEFT);
             $printer->setEmphasis(true);
             $printer->text($header);
@@ -461,7 +503,7 @@ class CashRegisterController extends Controller
                 {
                     $printer->text(new RegisterDetails(
                         date_format($aTransaction->created_at,"Y-m-d"),
-                        $closedBy,
+                        $aTransaction->sale_id,
                         number_format($aTransaction->amount,2),
                         date_format($aTransaction->created_at,"h:i:s")
                     ));
@@ -486,7 +528,7 @@ class CashRegisterController extends Controller
 				$printer->text("------------------------\n");
 				$printer->feed();
 
-				$header = new \App\Model\Printer\RegisterDetails("Date", "Employee", "Amount");
+				$header = new \App\Model\Printer\RegisterDetails("Date", "Sale Id", "Amount");
 				$printer->setJustification(Printer::JUSTIFY_LEFT);
 				$printer->setEmphasis(true);
 				$printer->text($header);
@@ -498,7 +540,7 @@ class CashRegisterController extends Controller
 					{
 						$printer->text(new RegisterDetails(
 							date("Y-m-d" , strtotime($aTransaction->created_at)),
-							$closedBy,
+                            $aTransaction->sale_id,
 							number_format($aTransaction->total_sale,2),
 							date("h:i:s", strtotime($aTransaction->created_at))
 						));
@@ -508,30 +550,65 @@ class CashRegisterController extends Controller
 				$printer->feed();
 			}
 
-			
-			$printer->setJustification(Printer::JUSTIFY_CENTER);
-			$printer->text("Charge Account\n");
-			$printer->text("------------------------\n");
-			$printer->feed();
+			$printer->cut();
 
-			$header = new \App\Model\Printer\RegisterDetails("Date", "Customer", "Amount");
-			$printer->setJustification(Printer::JUSTIFY_LEFT);
-			$printer->setEmphasis(true);
-			$printer->text($header);
-			$printer->setEmphasis(false);
-			$printer->feed();
-			foreach($salesChargeAccountTransactionList as $asalesChargeAccountTransaction ) {
-					$due = $asalesChargeAccountTransaction->due;
-					$customerName = $asalesChargeAccountTransaction->Customer->first_name . ' ' . $asalesChargeAccountTransaction->Customer->last_name;
-					$printer->text(new RegisterDetails(
-						date( "Y-m-d", strtotime($asalesChargeAccountTransaction->created_at) ),
-						$customerName,
-						number_format($due,2),
-						date( "h:i:s" ,strtotime($asalesChargeAccountTransaction->created_at) )
-					));
-					$printer->feed();
-			}
-			$printer->feed();
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
+            $printer->text("Suspended Sale Details\n");
+            $printer->text("------------------------\n");
+            $printer->feed();
+
+            foreach( $paymentTypeMapping as $paymentTypeDB=>$paymentTypeShow  )
+            {
+                $printer->setJustification(Printer::JUSTIFY_CENTER);
+                $printer->text("{$paymentTypeShow}\n");
+                $printer->text("------------------------\n");
+                $printer->feed();
+
+                $header = new \App\Model\Printer\RegisterDetails("Date", "Sale Id", "Amount");
+                $printer->setJustification(Printer::JUSTIFY_LEFT);
+                $printer->setEmphasis(true);
+                $printer->text($header);
+                $printer->setEmphasis(false);
+                $printer->feed();
+                foreach($suspendedTransactionArr as $aTransaction ) {
+
+                    if($aTransaction->payment_type==$paymentTypeDB)
+                    {
+                        $printer->text(new RegisterDetails(
+                            date("Y-m-d" , strtotime($aTransaction->created_at)),
+                            $aTransaction->sale_id,
+                            number_format($aTransaction->total_sale,2),
+                            date("h:i:s", strtotime($aTransaction->created_at))
+                        ));
+                        $printer->feed();
+                    }
+                }
+                $printer->feed();
+            }
+
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
+            $printer->text("Charge Account\n");
+            $printer->text("------------------------\n");
+            $printer->feed();
+
+            $header = new \App\Model\Printer\RegisterDetails("Date", "Customer", "Amount");
+            $printer->setJustification(Printer::JUSTIFY_LEFT);
+            $printer->setEmphasis(true);
+            $printer->text($header);
+            $printer->setEmphasis(false);
+            $printer->feed();
+            foreach($salesChargeAccountTransactionList as $asalesChargeAccountTransaction ) {
+                $due = $asalesChargeAccountTransaction->due;
+                $customerName = $asalesChargeAccountTransaction->Customer->first_name . ' ' . $asalesChargeAccountTransaction->Customer->last_name;
+                $printer->text(new RegisterDetails(
+                    date( "Y-m-d", strtotime($asalesChargeAccountTransaction->created_at) ),
+                    $customerName,
+                    number_format($due,2),
+                    date( "h:i:s" ,strtotime($asalesChargeAccountTransaction->created_at) )
+                ));
+                $printer->feed();
+            }
+            $printer->feed();
 			
         } Catch (\Exception $e) {
 			//dd($e);
@@ -590,8 +667,9 @@ class CashRegisterController extends Controller
 		$expectedClosingSales = $cashRegister->opening_balance + ($cash_sales - $changedDue) +  ($total_additions - $total_subtractions);
         $cash_sales = $cash_sales - $changedDue;
 
-        $paymentAmountSql = "select payment_type, sum(paid_amount) as total_paid_amount from payment_logs where id in ( select payment_log_id from payment_log_sale where sale_id in ( select id from sales where cash_register_id=? and deleted_at is null ) )  group by payment_type";
-        $paymentAmountTotalList = DB::select( $paymentAmountSql, [$cashRegisterId] );
+
+        $paymentAmountTotalList = $this->generatePaymentAmount($cashRegisterId,[SaleStatus::$SUCCESS]);
+        $paymentAmountSuspendedList = $this->generatePaymentAmount($cashRegisterId,[SaleStatus::$LAYAWAY,SaleStatus::$ESTIMATE]);
 		
 		$totalCharAccountAmount = DB::table('sales')
 					->where('due', '>', '0')
@@ -599,25 +677,6 @@ class CashRegisterController extends Controller
 					->where('sale_type', \App\Enumaration\SaleTypes::$SALE)
 					->where('cash_register_id', $cashRegisterId)
 					->sum('due');
-        
-        $checkTotal = 0;
-        $creditCardAmountTotal = 0;
-        $debitCardAmountTotal = 0;
-        $giftCardAmountTotal = 0;
-        $loyalityAmountTotal = 0;
-        foreach( $paymentAmountTotalList as $aPaymentTotal )
-        {
-            if($aPaymentTotal->payment_type==PaymentTypes::$TypeList['Check'])
-                $checkTotal = $aPaymentTotal->total_paid_amount;
-            else if($aPaymentTotal->payment_type==PaymentTypes::$TypeList['Credit Card'])
-                $creditCardAmountTotal = $aPaymentTotal->total_paid_amount;
-            else if($aPaymentTotal->payment_type==PaymentTypes::$TypeList['Debit Card'])
-                $debitCardAmountTotal = $aPaymentTotal->total_paid_amount;
-            else if($aPaymentTotal->payment_type==PaymentTypes::$TypeList['Gift Card'])
-                $giftCardAmountTotal = $aPaymentTotal->total_paid_amount;
-            else if($aPaymentTotal->payment_type==PaymentTypes::$TypeList['Loyalty Card'])
-                $loyalityAmountTotal = $aPaymentTotal->total_paid_amount;
-        }
 
         try {
             $counter_id = Cookie::get('counter_id',null);
@@ -653,15 +712,43 @@ class CashRegisterController extends Controller
             $printer->text( new FooterItem('Opening Sales:', '$'.number_format( $cashRegister->opening_balance, 2) ));
             //$printer->text( new FooterItem('Closing Sales:', '$'.number_format( $cashRegister->closing_balance, 2) ));
             $printer->text( new FooterItem('Closing Sales:', '$'.number_format( $expectedClosingSales, 2) ));
-			
+
+            $printer->feed();
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
+            $printer->text("Regular Sale Details\n");
+            $printer->text("-------------------------------------------\n");
+            $printer->feed();
+
             $printer->text( new FooterItem('Cash Sales:', '$'.number_format( $cash_sales, 2) ));
             //$printer->text( new FooterItem('Difference:', '$'.number_format( $difference, 2) ));
-            $printer->text( new FooterItem('Credit Card Sales:', '$'.number_format( $creditCardAmountTotal, 2) ));
-            $printer->text( new FooterItem('Debit Card Sales:', '$'.number_format( $debitCardAmountTotal, 2) ));
-            $printer->text( new FooterItem('Check Sales:', '$'.number_format( $checkTotal, 2) ));
-            $printer->text( new FooterItem('Gift Card Sales:', '$'.number_format( $giftCardAmountTotal, 2) ));
-            $printer->text( new FooterItem('Loyalty Card Sales:', '$'.number_format( $loyalityAmountTotal, 2) ));
+            $printer->text( new FooterItem('Credit Card Sales:', '$'.number_format( $paymentAmountTotalList["creditCardTotal"], 2) ));
+            $printer->text( new FooterItem('Debit Card Sales:', '$'.number_format( $paymentAmountTotalList["debitCardTotal"], 2) ));
+            $printer->text( new FooterItem('Check Sales:', '$'.number_format( $paymentAmountTotalList["checkTotal"], 2) ));
+            $printer->text( new FooterItem('Gift Card Sales:', '$'.number_format( $paymentAmountTotalList["giftCardTotal"], 2) ));
+            $printer->text( new FooterItem('Loyalty Card Sales:', '$'.number_format( $paymentAmountTotalList["loyalityTotal"], 2) ));
+
+            $printer->feed();
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
+            $printer->text("Suspended Sale Details\n");
+            $printer->text("-------------------------------------------\n");
+            $printer->feed();
+
+            $printer->text( new FooterItem('Cash Sales:', '$'.number_format( $paymentAmountSuspendedList["cashTotal"], 2) ));
+            //$printer->text( new FooterItem('Difference:', '$'.number_format( $difference, 2) ));
+            $printer->text( new FooterItem('Credit Card Sales:', '$'.number_format( $paymentAmountSuspendedList["creditCardTotal"], 2) ));
+            $printer->text( new FooterItem('Debit Card Sales:', '$'.number_format( $paymentAmountSuspendedList["debitCardTotal"], 2) ));
+            $printer->text( new FooterItem('Check Sales:', '$'.number_format( $paymentAmountSuspendedList["checkTotal"], 2) ));
+            $printer->text( new FooterItem('Gift Card Sales:', '$'.number_format( $paymentAmountSuspendedList["giftCardTotal"], 2) ));
+            $printer->text( new FooterItem('Loyalty Card Sales:', '$'.number_format( $paymentAmountSuspendedList["loyalityTotal"], 2) ));
+
+            $printer->feed();
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
+            $printer->text("Other Details\n");
+            $printer->text("-------------------------------------------\n");
+            $printer->feed();
+
 //            $printer->text( new FooterItem('Changed Amount:', '$'.number_format( $changedDue, 2) ));
+
             $printer->text( new FooterItem('Refunded Amount:  ', '$'.number_format( $refunded_sales_amount, 2) ));
 
             $printer->text( new FooterItem('Cash Additions:', '$'.number_format( $total_additions, 2) ));

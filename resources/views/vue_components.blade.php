@@ -8,7 +8,7 @@
                    <transition name="fade">
                     <div v-show="shown">
                      <ul style="list-style-type: none;">
-						<label v-if="currentParent!==0" style=" cursor: pointer;" @click="SetParent(previousParent)">Go Back</label><br>
+						<button class="btn btn-default" v-if="currentParent!==0" style=" cursor: pointer;" @click="SetParent(previousParent)"><  Go Back</button><br><br>
 
 						<li  class="folder" v-for="(aChild, index) in children" v-if="aChild.type=='category' && index>=start_index && index<=end_index" @click="SetParent(aChild.id)">
 								<i class="fa fa-folder"></i> @{{ aChild.category_name }}
@@ -34,7 +34,7 @@
                     previousParent: 0,
                     current_page: -1,
                     total_page: -1,
-                    per_page_item: 10,
+                    per_page_item: 26,
                     start_index: 0,
                     end_index: 0,
                 }

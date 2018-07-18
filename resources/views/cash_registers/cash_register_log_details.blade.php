@@ -25,6 +25,10 @@
                                 <li class="list-group-item">Shift End: <strong class="pull-right">{{ $register->closing_time }}</strong></li>
                                 <li class="list-group-item">Open Amount: <strong class="pull-right">${{ number_format( $register->opening_balance, 2) }}</strong></li>
                                 <li class="list-group-item">Close Amount: <strong class="pull-right">${{ number_format( $register->closing_balance, 2) }}</strong></li>
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">
+                                        Regular Sale Cash Details						</h3>
+                                </div>
                                 <li class="list-group-item">Cash Sales: <strong class="pull-right">${{ number_format($sales, 2) }}</strong></li>
                                 <li class="list-group-item">Check Sales: <strong class="pull-right">${{ number_format($paymentInfo["checkTotal"], 2) }}</strong></li>
                                 <li class="list-group-item">Credit Card Sales: <strong class="pull-right">${{ number_format($paymentInfo["creditCardTotal"], 2) }}</strong></li>
@@ -32,11 +36,28 @@
                                 <li class="list-group-item">Gift Card Sales: <strong class="pull-right">${{ number_format($paymentInfo["giftCardTotal"], 2) }}</strong></li>
                                 <li class="list-group-item">Loyalty Card Sales: <strong class="pull-right">${{ number_format($paymentInfo["loyalityTotal"], 2) }}</strong></li>
                                 {{--<li class="list-group-item">Change Due: <strong class="pull-right">${{ number_format($changedDue, 2) }}</strong></li>--}}
+
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">
+                                        Suspended Sale Cash Details						</h3>
+                                </div>
+                                <li class="list-group-item">Cash Sales: <strong class="pull-right">${{ number_format($paymentSuspended["cashTotal"], 2) }}</strong></li>
+                                <li class="list-group-item">Check Sales: <strong class="pull-right">${{ number_format($paymentSuspended["checkTotal"], 2) }}</strong></li>
+                                <li class="list-group-item">Credit Card Sales: <strong class="pull-right">${{ number_format($paymentSuspended["creditCardTotal"], 2) }}</strong></li>
+                                <li class="list-group-item">Debit Card Sales: <strong class="pull-right">${{ number_format($paymentSuspended["debitCardTotal"], 2) }}</strong></li>
+                                <li class="list-group-item">Gift Card Sales: <strong class="pull-right">${{ number_format($paymentSuspended["giftCardTotal"], 2) }}</strong></li>
+                                <li class="list-group-item">Loyalty Card Sales: <strong class="pull-right">${{ number_format($paymentSuspended["loyalityTotal"], 2) }}</strong></li>
+                                {{--<li class="list-group-item">Change Due: <strong class="pull-right">${{ number_format($changedDue, 2) }}</strong></li>--}}
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">
+                                        Other Details						</h3>
+                                </div>
                                 <li class="list-group-item">Refunded Sale Amount: <strong class="pull-right">${{ number_format($refundedAmount, 2) }}</strong></li>
                                 <li class="list-group-item">Cash additions: <strong class="pull-right">${{ number_format($additions, 2) }}</strong></li>
                                 <li class="list-group-item">Cash subtractions: <strong class="pull-right">${{ number_format($subtractions, 2) }}</strong></li>
                                 {{--<li class="list-group-item">Difference: <strong class="pull-right">{{ $difference >= 0 ? "$".number_format($difference,2) : "-$".number_format((-1) * $difference,2) }}</strong></li>--}}
                                 <li class="list-group-item">Notes: <strong class="pull-right"></strong></li>
+
                             </ul>
                         </div>
 
@@ -44,7 +65,7 @@
                             <div class="panel panel-piluku">
                                 <div class="panel-heading">
                                     <h3 class="panel-title">
-                                        Cash Additions and Subtractions						</h3>
+                                        Cash Additions and Subtractions ( Regular Sales )						</h3>
                                 </div>
                                 <div class="panel-body nopadding table_holder  table-responsive">
                                     <table class="table  table-hover table-reports table-bordered">
@@ -65,7 +86,59 @@
                                                 <td>$   {{ number_format($aTransaction['amount'],2) }}</td>
                                                 <td>
                                                     @if(isset($aTransaction['sale_id']))
-                                                        For sale: {{$aTransaction['sale_id']}}
+                                                        For sale: <a href="{{route('sale_receipt',["sale_id"=>$aTransaction['sale_id']])}}">{{$aTransaction['sale_id']}}</a>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @if($aTransaction['payment_type']==\App\Enumaration\CashRegisterTransactionType::$ADD_BALANCE)
+                                                        Cash added
+                                                    @elseif($aTransaction['payment_type']==\App\Enumaration\CashRegisterTransactionType::$SUBTRACT_BALANCE)
+                                                        Cash subtracted
+                                                    @elseif($aTransaction['payment_type']==\App\Enumaration\CashRegisterTransactionType::$CASH_SALES)
+                                                        Cash Sale
+                                                    @elseif($aTransaction['payment_type']==\App\Enumaration\CashRegisterTransactionType::$CHECK_SALES)
+                                                        Check Sale
+                                                    @elseif($aTransaction['payment_type']==\App\Enumaration\CashRegisterTransactionType::$DEBIT_CARD_SALES)
+                                                        Debit Card Sale
+                                                    @elseif($aTransaction['payment_type']==\App\Enumaration\CashRegisterTransactionType::$CREDIT_CARD_SALES)
+                                                        Credit Card Sale
+                                                    @elseif($aTransaction['payment_type']==\App\Enumaration\CashRegisterTransactionType::$GIFT_CARD_SALES)
+                                                        Gift Card Sale
+                                                    @elseif($aTransaction['payment_type']==\App\Enumaration\CashRegisterTransactionType::$LOYALTY_CARD_SALES)
+                                                        Loyalty Card Sale
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="panel panel-piluku">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">
+                                        Cash Additions and Subtractions ( Suspended Sales )						</h3>
+                                </div>
+                                <div class="panel-body nopadding table_holder  table-responsive">
+                                    <table class="table  table-hover table-reports table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            {{--<th>Employee</th>--}}
+                                            <th>Amount</th>
+                                            <th>Notes</th>
+                                            <th>Type</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        @foreach($suspendedTransactions as $aTransaction )
+                                            <tr>
+                                                <td>{{ $aTransaction['created_at'] }}</td>
+                                                {{--<td>{{ $closed_by }}</td>--}}
+                                                <td>$   {{ number_format($aTransaction['amount'],2) }}</td>
+                                                <td>
+                                                    @if(isset($aTransaction['sale_id']))
+                                                        For sale: <a href="{{route('sale_receipt',["sale_id"=>$aTransaction['sale_id']])}}">{{$aTransaction['sale_id']}}</a>
                                                     @endif
                                                 </td>
                                                 <td>

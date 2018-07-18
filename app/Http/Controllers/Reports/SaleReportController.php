@@ -63,7 +63,7 @@ class SaleReportController extends Controller
         $sale_type = $request->sale_type;
 
         $bindings = array($startDate, $endDate);
-        $sql = "Select id, CAST(sales.created_at as DATE) as item_name,
+            $sql = "Select id, CAST(sales.created_at as DATE) as item_name,
                 sum(sub_total_amount) as subtotal,
                 sum(total_amount) as total,
                 sum(tax_amount) as tax,
