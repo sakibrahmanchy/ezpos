@@ -150,7 +150,7 @@
 
   }
 
-    function deleteCategory(category){
+   function deleteCategory(category){
         categoryId = category.id;
         $.ajax({
             method: "POST",

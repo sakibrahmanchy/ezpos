@@ -17,7 +17,8 @@ class PaymentTypes
         "Debit Card" => 5,
         "Credit Card" => 6,
         "Gift Card" => 7,
-        "Loyalty Card" => 8
+        "Loyalty Card" => 8,
+        "Due" => 9
     );
 
 }

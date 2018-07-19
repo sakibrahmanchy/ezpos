@@ -9,6 +9,7 @@ use App\Enumaration\LotyaltyTransactionType;
 use App\Enumaration\PaymentTransactionTypes;
 use App\Enumaration\PaymentTypes;
 use App\Enumaration\SaleStatus;
+use App\Enumaration\SaleTypes;
 use App\Library\SettingsSingleton;
 use App\Model\Item;
 use App\Model\PaymentLog;
@@ -39,6 +40,10 @@ class Sale extends Model
     }
 
     public function PaymentLogs(){
+        return $this->belongsToMany('App\Model\PaymentLog')->where('payment_type','<>',PaymentTypes::$TypeList['Due']);
+    }
+
+    public function PaymentLogsWithDue(){
         return $this->belongsToMany('App\Model\PaymentLog');
     }
 
@@ -201,8 +206,30 @@ class Sale extends Model
         $sale->total_sales_discount = $saleInfo['total_sales_discount'];
         $sale->save();
 
+        //Inserting due as a transaction
+        self::insertDueAsPaymentInSale($sale);
+
         return $sale;
 
+    }
+
+    public static function insertDuePaymentInPaymentLog($sale) {
+        $paymentLogObject = new \App\Model\PaymentLog();
+        $comments =   "Due for sale: ".$sale->id;
+        $paymentLogObject->addNewPaymentLog( PaymentTypes::$TypeList["Due"], $sale->due,$sale,$sale->customer_id, $comments);
+    }
+
+    public static function insertDueAsPaymentInSale($sale) {
+        if($sale->due < 0) {
+            if(!self::checkIfDueAlreadyExistForSale($sale->id)) {
+                self::insertDuePaymentInPaymentLog($sale);
+            } else {
+                PaymentLog::where("sale_id",$sale->id)
+                    ->where("payment_type",PaymentTypes::$TypeList["Due"])
+                    ->delete();
+                self::insertDuePaymentInPaymentLog($sale);
+            }
+        }
     }
 
     public function insertItemsInSale($productInfos,$sale,$saleStatus) {
@@ -374,6 +401,8 @@ class Sale extends Model
         $sale->total_sales_discount = $saleInfo["total_sales_discount"];
 
         $sale->save();
+
+        self::insertDueAsPaymentInSale($sale);
 
         $sale_id = $sale->id;
 
@@ -553,5 +582,22 @@ class Sale extends Model
         $inventoryLog->reason = InventoryReasons::$SALEORRETURN." (<a href=". route('sale_receipt',["sale_id"=>$sale_id]) .">EZPOS ".$sale_id."</a>)";
         $inventoryLog->user_id = Auth::user()->id;
         $inventoryLog->save();
+    }
+
+    public static function checkIfDueAlreadyExistForSale($sale_id) {
+        if(\App\Model\PaymentLog::where("sale_id",$sale_id)->where("payment_type",\App\Enumaration\PaymentTypes::$TypeList["Due"])->count()>0)
+            return true;
+        return false;
+    }
+
+    public static function getListSalesFromPaymentLogWithMultipleDue() {
+        return DB::select('select sale_id from 
+                            (
+                              select sale_id, count(*) as total_count from `payment_logs` 
+                              where `payment_type` = 9 
+                              group by `sale_id`
+                            ) as count_info 
+                            where count_info.total_count > 1'
+                           );
     }
 }

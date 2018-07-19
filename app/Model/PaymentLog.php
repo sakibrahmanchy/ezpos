@@ -6,6 +6,7 @@ use App\Enumaration\PaymentTransactionTypes;
 use App\Enumaration\PaymentTypes;
 use App\Http\Controllers\CashRegisterController;
 use Illuminate\Database\Eloquent\Model;
+use function PHPSTORM_META\elementType;
 
 class PaymentLog extends Model
 {
@@ -28,7 +29,15 @@ class PaymentLog extends Model
         }
         
 		$cash_register = new CashRegister();
-        $paymentLog->cash_register_id = $cash_register->getCurrentActiveRegister()->id;
+        if(!is_null($sale)){
+            if(!is_null($sale->cash_register_id))
+                $paymentLog->cash_register_id = $sale->cash_register_id;
+            else
+                $paymentLog->cash_register_id = 0;
+        }
+        else
+            $paymentLog->cash_register_id = $cash_register->getCurrentActiveRegister()->id;
+
         $paymentLog->comments = $comments;
 
         $paymentLog->save();
@@ -45,7 +54,7 @@ class PaymentLog extends Model
 
         }else{
 
-            if($customer_id!=null){
+            if($customer_id!=null || $customer_id != 0){
                 $transactionData = array(
                     "customer_id" => $customer_id,
                     "sale_id" => null,

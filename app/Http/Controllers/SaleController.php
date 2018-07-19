@@ -952,6 +952,9 @@ class SaleController extends Controller
             ->get()->toArray();
 
         $sale_payments = Sale::with('PaymentLogs')->where('id',$sale_id)->first()->PaymentLogs;
+        foreach($sale_payments as $aPayment) {
+            $aPayment->payment_type = array_search($aPayment->payment_type, \App\Enumaration\PaymentTypes::$TypeList);
+        }
 
         $current_date = new \DateTime('today');
         // Check price rules on specific items
@@ -1070,8 +1073,6 @@ class SaleController extends Controller
         }else{
             return redirect()->route("sale_pre_edit",["sale_id"=>$sale_id])->with('error',"No cash register is active");
         }
-
-
     }
 
 }

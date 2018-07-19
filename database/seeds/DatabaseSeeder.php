@@ -18,5 +18,6 @@ class DatabaseSeeder extends Seeder
         $this->call(CounterTableSeeder::class);
         $this->call(SaleCorrectionSeeder::class);
         $this->call(PaymentLogTableSeeder::class);
+        $this->call(DueSeeder::class);
     }
 }
