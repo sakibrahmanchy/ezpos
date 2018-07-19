@@ -19,4 +19,5 @@ class CashRegisterTransactionType
     public static $CREDIT_CARD_SALES = 6;
     public static $GIFT_CARD_SALES = 7;
     public static $LOYALTY_CARD_SALES = 8;
+    public static $DUE = 9;
 }

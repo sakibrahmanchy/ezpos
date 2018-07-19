@@ -3,8 +3,11 @@
 namespace App\Model;
 
 use App\Enumaration\CashRegisterTransactionType;
+use App\Enumaration\PaymentTypes;
+use App\Enumaration\SaleTypes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 
 class CashRegister extends Model
@@ -112,13 +115,6 @@ class CashRegister extends Model
 
             $cash_register->current_balance += $amount;
             if($cash_register->save()){
-//                $cashRegisterTransaction = new CashRegisterTransaction();
-//                $cashRegisterTransaction->create([
-//                    "cash_register_id"=>$cash_register->id,
-//                    "amount"=>$amount,
-//                    "payment_type"=>CashRegisterTransactionType::$ADD_BALANCE,
-//                    "comments" => $comment
-//                ]);
                 $paymentLog = new PaymentLog;
                 $paymentLog->addNewPaymentLog(CashRegisterTransactionType::$ADD_BALANCE,$amount,null,null,$comment);
                 return true;
@@ -133,13 +129,6 @@ class CashRegister extends Model
 
             $cash_register->current_balance -= $amount;
             if($cash_register->save()){
-//                $cashRegisterTransaction = new CashRegisterTransaction();
-//                $cashRegisterTransaction->create([
-//                    "cash_register_id"=>$cash_register->id,
-//                    "amount"=>$amount,
-//                    "payment_type"=>CashRegisterTransactionType::$SUBTRACT_BALANCE,
-//                    "comments" => $comment
-//                ]);
                 $paymentLog = new PaymentLog;
                 $paymentLog->addNewPaymentLog(CashRegisterTransactionType::$SUBTRACT_BALANCE,$amount,null,null,$comment);
                 return true;
@@ -148,11 +137,16 @@ class CashRegister extends Model
         return false;
     }
 
-    public function getTotalSaleInCurrentRegister($transactionType){
+    public function getTotalSaleInCurrentRegister($transactionType,$sale_status = array()){
         $cash_register = $this->getCurrentActiveRegister();
         if(!is_null($cash_register)){
-            $total_sales_in_register = PaymentLog::where("cash_register_id",$cash_register->id)
-                ->where("payment_type",$transactionType)->sum('paid_amount');
+            $total_sales_in_register = PaymentLog::where("payment_logs.cash_register_id",$cash_register->id)
+                ->join('sales','sales.id','=','payment_logs.sale_id')
+                ->whereNull('sales.refund_register_id')
+                ->where('sale_type',SaleTypes::$SALE)
+                ->whereIn("sales.sale_status",$sale_status)
+                ->where("payment_type",$transactionType)
+                ->sum('paid_amount');
             return $total_sales_in_register;
         }
         return 0;
@@ -168,5 +162,189 @@ class CashRegister extends Model
         $refundedSalesAmount = Sale::withTrashed()->where("refund_register_id",$register_id)->sum('total_amount');
         return $refundedSalesAmount;
     }
+
+    public static function generateTransactionData($saleList, $cashRegister, $saleStatus) {
+        $allTransactionArr = [];
+
+        foreach( $saleList as $aSale )
+        {
+            $cashAmount = 0;
+            $chequeAmount = 0;
+            $creditCardAmount = 0;
+            $debitCardAmount = 0;
+            $giftCardAmount = 0;
+            $loyalityAmount = 0;
+            $changedDue = 0;
+
+            if($saleStatus==$aSale->sale_status) {
+
+                foreach( $aSale->PaymentLogs as $aPaymentLog )
+                {
+                    if( $aPaymentLog->payment_type==PaymentTypes::$TypeList["Cash"] )
+                        $cashAmount += floatval($aPaymentLog->paid_amount);
+                    else if($aPaymentLog->payment_type==PaymentTypes::$TypeList["Check"])
+                        $chequeAmount += floatval($aPaymentLog->paid_amount);
+                    else if($aPaymentLog->payment_type==PaymentTypes::$TypeList["Credit Card"])
+                        $creditCardAmount += floatval($aPaymentLog->paid_amount);
+                    else if($aPaymentLog->payment_type==PaymentTypes::$TypeList["Debit Card"])
+                        $debitCardAmount += floatval($aPaymentLog->paid_amount);
+                    else if($aPaymentLog->payment_type==PaymentTypes::$TypeList["Gift Card"])
+                        $giftCardAmount += floatval($aPaymentLog->paid_amount);
+                    else if($aPaymentLog->payment_type==PaymentTypes::$TypeList["Loyalty Card"])
+                        $loyalityAmount += floatval($aPaymentLog->paid_amount);
+                    else if($aPaymentLog->payment_type==PaymentTypes::$TypeList["Due"])
+                        $changedDue += floatval($aPaymentLog->paid_amount);
+                }
+
+                if( $cashAmount > 0 )
+                {
+                    $cashAmount  += $changedDue ;
+                    $allTransactionArr[] = [
+                        'sale_id' => $aSale->id,
+                        'created_at' => $aSale->created_at,
+                        'payment_type' => \App\Enumaration\CashRegisterTransactionType::$CASH_SALES,
+                        'amount' => $cashAmount
+                    ];
+                }
+                if( $chequeAmount > 0 )
+                {
+                    $allTransactionArr[] = [
+                        'sale_id' => $aSale->id,
+                        'created_at' => $aSale->created_at,
+                        'payment_type' => \App\Enumaration\CashRegisterTransactionType::$CHECK_SALES,
+                        'amount' => $chequeAmount
+                    ];
+                }
+                if( $creditCardAmount > 0 )
+                {
+                    $allTransactionArr[] = [
+                        'sale_id' => $aSale->id,
+                        'created_at' => $aSale->created_at,
+                        'payment_type' => \App\Enumaration\CashRegisterTransactionType::$CREDIT_CARD_SALES,
+                        'amount' => $creditCardAmount
+                    ];
+                }
+                if( $debitCardAmount > 0 )
+                {
+                    $allTransactionArr[] = [
+                        'sale_id' => $aSale->id,
+                        'created_at' => $aSale->created_at,
+                        'payment_type' => \App\Enumaration\CashRegisterTransactionType::$DEBIT_CARD_SALES,
+                        'amount' => $debitCardAmount
+                    ];
+                }
+                if( $giftCardAmount > 0 )
+                {
+                    $allTransactionArr[] = [
+                        'sale_id' => $aSale->id,
+                        'created_at' => $aSale->created_at,
+                        'payment_type' => \App\Enumaration\CashRegisterTransactionType::$GIFT_CARD_SALES,
+                        'amount' => $giftCardAmount
+                    ];
+                }
+                if( $loyalityAmount > 0 )
+                {
+                    $allTransactionArr[] = [
+                        'sale_id' => $aSale->id,
+                        'created_at' => $aSale->created_at,
+                        'payment_type' => \App\Enumaration\CashRegisterTransactionType::$LOYALTY_CARD_SALES,
+                        'amount' => $loyalityAmount
+                    ];
+                }
+            }
+        }
+
+
+
+        foreach( $cashRegister->PaymentLogs as $aCashRegisterTransaction )
+        {
+            $addedAmount = 0;
+            $subtractedAmount = 0;
+
+            if($aCashRegisterTransaction->payment_type ==\App\Enumaration\CashRegisterTransactionType::$ADD_BALANCE)
+            {
+                $addedAmount += floatval(($aCashRegisterTransaction->paid_amount));
+                $allTransactionArr[] = [
+                    'created_at' => $aCashRegisterTransaction->created_at,
+                    'payment_type' => \App\Enumaration\CashRegisterTransactionType::$ADD_BALANCE,
+                    'amount' => $addedAmount
+                ];
+            }
+            if($aCashRegisterTransaction->payment_type ==\App\Enumaration\CashRegisterTransactionType::$SUBTRACT_BALANCE)
+            {
+                $subtractedAmount += floatval(($aCashRegisterTransaction->paid_amount));
+                $allTransactionArr[] = [
+                    'created_at' => $aCashRegisterTransaction->created_at,
+                    'payment_type' => \App\Enumaration\CashRegisterTransactionType::$SUBTRACT_BALANCE,
+                    'amount' => $subtractedAmount
+                ];
+            }
+        }
+
+        usort($allTransactionArr,
+            function ( $a, $b ) {
+                return strtotime($a["created_at"]) >= strtotime($b["created_at"]);
+            }
+        );
+
+        return $allTransactionArr;
+
+    }
+
+    public static function getPaymentAmountTotalList($cashRegisterId, $sale_status = array()) {
+        return PaymentLog::join('sales','sales.id','=','payment_logs.sale_id')
+            ->where('payment_logs.cash_register_id','=',$cashRegisterId)
+            ->whereIn('sales.sale_status',$sale_status)
+            ->where('sale_type',SaleTypes::$SALE)
+            ->whereNull('refund_register_id')
+            ->groupBy('payment_logs.payment_type')
+            ->select(DB::raw('payment_type, sum(paid_amount) as total_paid_amount'))
+            ->get();
+
+    }
+
+    public static function generatePaymentAmount($cashRegisterId, $sale_status = array()) {
+
+        $paymentAmountTotalList = CashRegister::getPaymentAmountTotalList($cashRegisterId,$sale_status);
+
+        $cashTotal = 0;
+        $checkTotal = 0;
+        $creditCardAmountTotal = 0;
+        $debitCardAmountTotal = 0;
+        $giftCardAmountTotal = 0;
+        $loyalityAmountTotal = 0;
+        $changedDue = 0;
+
+        foreach( $paymentAmountTotalList as $aPaymentTotal )
+        {
+            if($aPaymentTotal->payment_type==PaymentTypes::$TypeList['Cash'])
+                $cashTotal = floatval($aPaymentTotal->total_paid_amount);
+            if($aPaymentTotal->payment_type==PaymentTypes::$TypeList['Check'])
+                $checkTotal = floatval($aPaymentTotal->total_paid_amount);
+            else if($aPaymentTotal->payment_type==PaymentTypes::$TypeList['Credit Card'])
+                $creditCardAmountTotal = floatval($aPaymentTotal->total_paid_amount);
+            else if($aPaymentTotal->payment_type==PaymentTypes::$TypeList['Debit Card'])
+                $debitCardAmountTotal = floatval($aPaymentTotal->total_paid_amount);
+            else if($aPaymentTotal->payment_type==PaymentTypes::$TypeList['Gift Card'])
+                $giftCardAmountTotal = floatval($aPaymentTotal->total_paid_amount);
+            else if($aPaymentTotal->payment_type==PaymentTypes::$TypeList['Loyalty Card'])
+                $loyalityAmountTotal = floatval($aPaymentTotal->total_paid_amount);
+            else if($aPaymentTotal->payment_type==PaymentTypes::$TypeList['Due'])
+                $changedDue = floatval($aPaymentTotal->total_paid_amount);
+        }
+
+        $paymentInfo = array(
+            "cashTotal" => $cashTotal + $changedDue,
+            "checkTotal" => $checkTotal,
+            "creditCardTotal" => $creditCardAmountTotal,
+            "debitCardTotal" => $debitCardAmountTotal,
+            "giftCardTotal" => $giftCardAmountTotal,
+            "loyalityTotal" => $loyalityAmountTotal,
+            "changedDue" => $changedDue
+        );
+
+        return $paymentInfo;
+    }
+
 
 }

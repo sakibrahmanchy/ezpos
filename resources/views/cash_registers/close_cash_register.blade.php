@@ -52,16 +52,38 @@
 
                         <ul class="list-group close-amount">
                             <li class="list-group-item">Open Amount:  <span class="pull-right">${{ number_format($openingBalance,2) }}</span></li>
-                            <li class="list-group-item">Cash Sales:  <span class="pull-right">${{ number_format($sales, 2) }}</span></li>
-                            <li class="list-group-item">Check Sales:  <span class="pull-right">${{ number_format($check_sales, 2) }}</span></li>
-                            <li class="list-group-item">Credit Card Sales:  <span class="pull-right">${{ number_format($credit_card_sales, 2) }}</span></li>
-                            <li class="list-group-item">Debit Card Sales:  <span class="pull-right">${{ number_format($debit_card_sales, 2) }}</span></li>
-                            <li class="list-group-item">Gift Card Sales:  <span class="pull-right">${{ number_format($gift_card_sales, 2) }}</span></li>
-                            <li class="list-group-item">Loyalty Card Sales:  <span class="pull-right">${{ number_format($loyalty_card_sales, 2) }}</span></li>
+                            <div class="panel-heading">
+                                <h3 class="panel-title">
+                                    Regular Sale Cash Details						</h3>
+                            </div>
+
+                            <li class="list-group-item">Cash Sales:  <span class="pull-right">${{ number_format($salePaymentInfo["cashTotal"], 2) }}</span></li>
+                            <li class="list-group-item">Check Sales:  <span class="pull-right">${{ number_format($salePaymentInfo["checkTotal"], 2) }}</span></li>
+                            <li class="list-group-item">Credit Card Sales:  <span class="pull-right">${{ number_format($salePaymentInfo["creditCardTotal"], 2) }}</span></li>
+                            <li class="list-group-item">Debit Card Sales:  <span class="pull-right">${{ number_format($salePaymentInfo["debitCardTotal"], 2) }}</span></li>
+                            <li class="list-group-item">Gift Card Sales:  <span class="pull-right">${{ number_format($salePaymentInfo["giftCardTotal"], 2) }}</span></li>
+                            <li class="list-group-item">Loyalty Card Sales:  <span class="pull-right">${{ number_format($salePaymentInfo["loyalityTotal"], 2) }}</span></li>
+
+                            <div class="panel-heading">
+                                <h3 class="panel-title">
+                                    Suspended Sale Cash Details						</h3>
+                            </div>
+
+                            <li class="list-group-item">Cash Sales:  <span class="pull-right">${{ number_format($suspendedSalePaymentInfo["cashTotal"], 2) }}</span></li>
+                            <li class="list-group-item">Check Sales:  <span class="pull-right">${{ number_format($suspendedSalePaymentInfo["checkTotal"], 2) }}</span></li>
+                            <li class="list-group-item">Credit Card Sales:  <span class="pull-right">${{ number_format($suspendedSalePaymentInfo["creditCardTotal"], 2) }}</span></li>
+                            <li class="list-group-item">Debit Card Sales:  <span class="pull-right">${{ number_format($suspendedSalePaymentInfo["debitCardTotal"], 2) }}</span></li>
+                            <li class="list-group-item">Gift Card Sales:  <span class="pull-right">${{ number_format($suspendedSalePaymentInfo["giftCardTotal"], 2) }}</span></li>
+                            <li class="list-group-item">Loyalty Card Sales:  <span class="pull-right">${{ number_format($suspendedSalePaymentInfo["loyalityTotal"], 2) }}</span></li>
+
+                            <div class="panel-heading">
+                                <h3 class="panel-title">
+                                    Other Details						</h3>
+                            </div>
 
                             <li class="list-group-item">Cash additions   <span class="pull-right">${{ number_format($additions, 2) }} </span></li>
                             <li class="list-group-item">Cash subtractions   <span class="pull-right">${{ number_format($subtractions,2)  }} </span></li>
-                            {{--<li class="list-group-item">Change Due  <span class="pull-right">${{ number_format($change_due,2)  }} </span></li>--}}
+
                             <li class="list-group-item">Refunded Amount   <span class="pull-right">${{ number_format($refunded_amount,2)  }} </span></li>
 
                             <li class="list-group-item active">You should have  in the register. <span class="pull-right total-amount">{{ number_format($closing_balance, 2) }}</span></li>
