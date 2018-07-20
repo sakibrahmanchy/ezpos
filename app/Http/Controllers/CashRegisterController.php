@@ -456,10 +456,10 @@ class CashRegisterController extends Controller
             ->whereIn( 'sale_status', [\App\Enumaration\SaleStatus::$LAYAWAY, SaleStatus::$ESTIMATE] )
             ->sum(DB::raw('total_amount+due'));
 									
-		$totalChargeCustomerSale = DB::table('sales')->where('cash_register_id', $cashRegisterId)	
+		/*$totalChargeCustomerSale = DB::table('sales')->where('cash_register_id', $cashRegisterId)
 									->where( 'sale_type', \App\Enumaration\SaleTypes::$SALE )
 									->where( 'sale_status', \App\Enumaration\SaleStatus::$SUCCESS )
-									->sum('total_amount');
+									->sum('total_amount');*/
 		$totalReturnSale = DB::table('sales')->where('cash_register_id', $cashRegisterId)	
 									->where( 'sale_type', \App\Enumaration\SaleTypes::$RETURN )
 									->where( 'sale_status', \App\Enumaration\SaleStatus::$SUCCESS )

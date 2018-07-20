@@ -58,13 +58,14 @@ class SettingsController extends Controller
             CurrencyDenomination::create($array);
         }
 
+        $redirectUrl = route('change_settings');
 
         ConfigUpdater::updateDotEnv('lifetime',$settingsChange['session_lifetime']);
 //        \Illuminate\Support\Facades\Artisan::call('cache:clear');
 //        \Illuminate\Support\Facades\Artisan::call('config:clear');
-//        \Illuminate\Support\Facades\Artisan::call('config:cache');
+        \Illuminate\Support\Facades\Artisan::call('config:cache');
 
-        return redirect()->route('change_settings');
+        return redirect($redirectUrl);
 
     }
 
