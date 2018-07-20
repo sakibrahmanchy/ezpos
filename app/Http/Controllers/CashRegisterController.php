@@ -451,7 +451,7 @@ class CashRegisterController extends Controller
         $cash_sales = PaymentLog::where("cash_register_id",$cashRegister->id)->where('payment_type',CashRegisterTransactionType::$CASH_SALES)->sum('paid_amount');
 		
 		
-        $difference =  ($cashRegister->closing_balance - $cashRegister->opening_balance) - ( $cash_sales + $total_additions - $total_subtractions);
+        //$difference =  ($cashRegister->closing_balance - $cashRegister->opening_balance) - ( $cash_sales + $total_additions - $total_subtractions);
 
 		//total sale
 		$totalSale = DB::table('sales')->where('cash_register_id', $cashRegisterId)	
@@ -459,10 +459,10 @@ class CashRegisterController extends Controller
 									->where( 'sale_status', \App\Enumaration\SaleStatus::$SUCCESS )
 									->sum('total_amount');
 									
-		$totalChargeCustomerSale = DB::table('sales')->where('cash_register_id', $cashRegisterId)	
+		/*$totalChargeCustomerSale = DB::table('sales')->where('cash_register_id', $cashRegisterId)
 									->where( 'sale_type', \App\Enumaration\SaleTypes::$SALE )
 									->where( 'sale_status', \App\Enumaration\SaleStatus::$SUCCESS )
-									->sum('total_amount');
+									->sum('total_amount');*/
 		$totalReturnSale = DB::table('sales')->where('cash_register_id', $cashRegisterId)	
 									->where( 'sale_type', \App\Enumaration\SaleTypes::$RETURN )
 									->where( 'sale_status', \App\Enumaration\SaleStatus::$SUCCESS )
