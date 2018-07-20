@@ -80,6 +80,9 @@ class ItemController extends Controller
         if ($request->item_status != "0")
             $where .= "item_status = ".$request->item_status;
 
+        if($request->length == -1)
+            $where .= "1";
+
 
         $allItems = <<<EOT
 (

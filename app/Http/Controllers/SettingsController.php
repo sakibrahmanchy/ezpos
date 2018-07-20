@@ -65,7 +65,6 @@ class SettingsController extends Controller
         \Illuminate\Support\Facades\Artisan::call('config:cache');
 
         return redirect($redirectUrl);
-
     }
 
 }
