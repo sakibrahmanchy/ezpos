@@ -37,7 +37,6 @@ class SettingsController extends Controller
         $file = $request->file('image');
 
         if ($file) {
-
             $image = Image::make($file)->stream();
             Storage::disk('images')->put("logo" . '.png', $image);
         }
@@ -60,9 +59,9 @@ class SettingsController extends Controller
 
         $redirectUrl = route('change_settings');
 
-        ConfigUpdater::updateDotEnv('lifetime',$settingsChange['session_lifetime']);
-//        \Illuminate\Support\Facades\Artisan::call('cache:clear');
-//        \Illuminate\Support\Facades\Artisan::call('config:clear');
+        ConfigUpdater::updateDotEnv('session','lifetime',$settingsChange['session_lifetime']);
+        \Illuminate\Support\Facades\Artisan::call('cache:clear');
+        \Illuminate\Support\Facades\Artisan::call('config:clear');
         \Illuminate\Support\Facades\Artisan::call('config:cache');
 
         return redirect($redirectUrl);

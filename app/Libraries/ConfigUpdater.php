@@ -1,13 +1,13 @@
 <?php
 namespace App\Libraries;
 class ConfigUpdater{
-    public static function updateDotEnv($key, $newValue, $delim='')
+    public static function updateDotEnv($file, $key, $newValue, $delim='')
     {
 
         $path = base_path('.env');
         // get old value from current env
 
-        $oldValue = config('session.'.$key);
+        $oldValue = config($file.'.'.$key);
         // was there any change?
         if ($oldValue === $newValue) {
             return;

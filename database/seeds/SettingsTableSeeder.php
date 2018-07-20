@@ -44,7 +44,7 @@ class SettingsTableSeeder extends Seeder
 				$setting->value = $value;
 				$setting->save();
 
-                \App\Libraries\ConfigUpdater::updateDotEnv('lifetime',$settingsArr['session_lifetime']);
+                \App\Libraries\ConfigUpdater::updateDotEnv('session','lifetime',$settingsArr['session_lifetime']);
                 \Illuminate\Support\Facades\Artisan::call('cache:clear');
                 \Illuminate\Support\Facades\Artisan::call('config:clear');
                 \Illuminate\Support\Facades\Artisan::call('config:cache');

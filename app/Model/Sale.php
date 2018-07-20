@@ -234,13 +234,13 @@ class Sale extends Model
 
     public function insertItemsInSale($productInfos,$sale,$saleStatus) {
 
-        foreach($productInfos as $aProductInfo){
+        foreach($productInfos as $aProductInfo) {
 
             $item_id = $aProductInfo['item_id'];
             $item_quantity = $aProductInfo['quantity'];
             $item_type = $aProductInfo["item_type"];
 
-            if($item_id==0){
+            if($item_id==0) {
 
                 $keyId = "discount-01!XcQZc003ab";
 
@@ -257,9 +257,9 @@ class Sale extends Model
 
                 $sale->Items()->attach([$itemId=>$aProductInfo]);
 
-            }else{
+            } else {
 
-                if($saleStatus!=SaleStatus::$ESTIMATE){
+                if($saleStatus!=SaleStatus::$ESTIMATE) {
 
                     if($item_type=="item"){
 
@@ -300,7 +300,6 @@ class Sale extends Model
                 }
 
             }
-
         }
     }
 
@@ -415,7 +414,7 @@ class Sale extends Model
                 $keyId = "discount-01!XcQZc003ab";
                 $item = Item::where("product_id",$keyId)->first();
 
-                if(is_null($item)){
+                if(is_null($item)) {
 
                     $item = new Item();
                     $item->product_id=$keyId;
@@ -428,7 +427,7 @@ class Sale extends Model
                     $item->save();
                     $itemId = $item->id;
 
-                }else
+                } else
                     $itemId = $item->id;
 
                 $aProductInfo['item_id'] = $itemId;
@@ -461,7 +460,7 @@ class Sale extends Model
                             $inventoryLog->save();
                         }
 
-                    }else if($item_type=="item-kit"){
+                    } else if($item_type=="item-kit"){
                         $itemKit = ItemKit::where("id",$item_id)->first();
                         $itemKitProduct = ItemKit::where("id",$itemKit->id)->get();
                         foreach($itemKitProduct as $anItem){
@@ -490,18 +489,10 @@ class Sale extends Model
                                     $inventoryLog->save();
                                 }
                             }
-
-
                         }
-
                     }
-
-
                 }
-
-
             }
-
         }
 
         $sale->items()->sync($productInfos);
@@ -522,12 +513,16 @@ class Sale extends Model
             $sale->paymentLogs()->sync($payments);
         }
 
+        self::deleteItemsFromPaymentLogWhichAreNoLongerRequired($sale_id);
+
         if( $saleInfo['customer_id'] != 0){
             //Check if customer has a loyalty card or not
             $this->addCustomerLoyaltyBalance($sale->customer_id, $sale_id, $sale->total_amount);
         }
 
-		
+
+
+
         foreach ($deletedTransactions as $aDeletedTransaction) {
             $cashRegisterTransaction = new CashRegisterTransaction();
             $cashRegisterTransaction->deleleCashRegisterTransactionByPaymentLogId($aDeletedTransaction);
@@ -600,4 +595,27 @@ class Sale extends Model
                             where count_info.total_count > 1'
                            );
     }
+
+    public static function _eloquentToArray($eloquentArray, $column_name) {
+        $arrayToPush = array();
+        foreach ($eloquentArray as $anArrayElement) {
+            array_push($arrayToPush,$anArrayElement->{$column_name});
+        }
+        return $arrayToPush;
+    }
+
+    public static function deleteItemsFromPaymentLogWhichAreNoLongerRequired($sale_id) {
+
+        $paymentLogsRequiredForThisSale = self::_eloquentToArray(DB::table("payment_log_sale")->where('sale_id',$sale_id)->select('payment_log_id')->get(),
+            "payment_log_id");
+
+
+        $allPaymentLogsForThisSale = self::_eloquentToArray(PaymentLog::where("sale_id",$sale_id)->select("id")->get(), "id");
+
+        $paymentLogWhichAreNoLongerRequired = array_diff($allPaymentLogsForThisSale,$paymentLogsRequiredForThisSale);
+
+        PaymentLog::whereIn("id",$paymentLogWhichAreNoLongerRequired)->delete();
+    }
+
+
 }

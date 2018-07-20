@@ -41,5 +41,10 @@ class PaymentLogTableSeeder extends Seeder
                 $aPaymentLog->save();
             }
         }
+
+        $sales = \App\Model\Sale::all();
+        foreach ($sales as $aSale) {
+            \App\Model\Sale::deleteItemsFromPaymentLogWhichAreNoLongerRequired($aSale->id);
+        }
     }
 }

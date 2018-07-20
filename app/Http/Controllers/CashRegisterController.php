@@ -441,7 +441,6 @@ class CashRegisterController extends Controller
         $cashRegister = CashRegister::where("id",$cashRegisterId)->with('OpenedByUser','ClosedByUser','CashRegisterTransactions')->first();
 
         $openedBy = $cashRegister->OpenedByUser->name;
-        $closedBy = $cashRegister->closedByUser->name;
         $total_additions = PaymentLog::where('cash_register_id',$cashRegisterId)->where('payment_type',CashRegisterTransactionType::$ADD_BALANCE)->sum('paid_amount');
         $total_subtractions = PaymentLog::where('cash_register_id',$cashRegisterId)->where('payment_type',CashRegisterTransactionType::$SUBTRACT_BALANCE)->sum('paid_amount');
 
@@ -466,20 +465,13 @@ class CashRegisterController extends Controller
 									->sum('total_amount');
 		if($totalReturnSale<0)
 			$totalReturnSale = -$totalReturnSale;
-		
-		$changedDue = DB::table('sales')->where('cash_register_id', $cashRegisterId)
-									->where( 'sale_type', \App\Enumaration\SaleTypes::$SALE )
-									->where( 'sale_status', \App\Enumaration\SaleStatus::$SUCCESS )
-									->where( 'due', '<', 0 )
-									->sum('due');
-
 
         $paymentAmountTotalList = CashRegister::generatePaymentAmount($cashRegisterId,[SaleStatus::$SUCCESS]);
         $paymentAmountSuspendedList = CashRegister::generatePaymentAmount($cashRegisterId,[SaleStatus::$LAYAWAY,SaleStatus::$ESTIMATE]);
-
-        $cash_sales = $paymentAmountTotalList["cashTotal"] - $changedDue;
-        $expectedClosingSales = $cashRegister->opening_balance + ($cash_sales + $changedDue) +  ($total_additions - $total_subtractions) +
-            $paymentAmountSuspendedList["cashTotal"];
+        $cash_sales = $paymentAmountTotalList["cashTotal"] +  $paymentAmountTotalList["changedDue"];
+        $suspended_sales = $paymentAmountSuspendedList["cashTotal"] + $paymentAmountSuspendedList["changedDue"];
+        $expectedClosingSales = $cashRegister->opening_balance + $cash_sales +  ($total_additions - $total_subtractions) +
+            $suspended_sales;
 
 		$totalCharAccountAmountDue = DB::table('sales')
 					->where('due', '>', '0')
@@ -523,7 +515,6 @@ class CashRegisterController extends Controller
             $printer->setJustification(Printer::JUSTIFY_LEFT);
             $printer->text( new FooterItem('Register Log Id:', $cashRegister->id));
             $printer->text( new FooterItem('Open Employee:', $openedBy));
-            $printer->text( new FooterItem('Close Employee:', $closedBy));
             $printer->text( new FooterItem('Shift Start:', date('Y-m-d h:i:s a',strtotime($cashRegister->opening_time)) ));
             $printer->text( new FooterItem('Shift End:', date('Y-m-d h:i:s a',strtotime($cashRegister->closing_time)) ));
             $printer->text( new FooterItem('Opening Sales:', '$'.number_format( $cashRegister->opening_balance, 2) ));
