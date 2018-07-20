@@ -606,7 +606,7 @@ class Sale extends Model
 
     public static function deleteItemsFromPaymentLogWhichAreNoLongerRequired($sale_id) {
 
-        $paymentLogsRequiredForThisSale = self::_eloquentToArray(DB::table("payment_log_sale")->where('sale_id',$sale_id)->select('payment_log_id')->get(),
+        /*$paymentLogsRequiredForThisSale = self::_eloquentToArray(DB::table("payment_log_sale")->where('sale_id',$sale_id)->select('payment_log_id')->get(),
             "payment_log_id");
 
 
@@ -614,7 +614,12 @@ class Sale extends Model
 
         $paymentLogWhichAreNoLongerRequired = array_diff($allPaymentLogsForThisSale,$paymentLogsRequiredForThisSale);
 
-        PaymentLog::whereIn("id",$paymentLogWhichAreNoLongerRequired)->delete();
+        PaymentLog::whereIn("id",$paymentLogWhichAreNoLongerRequired)->delete();*/
+
+
+
+        $query = "Delete from payment_logs where sale_id=? and id not in(select payment_log_id from payment_log_sale where sale_id=?) and payment_type!=?";
+        DB::delete($query, [$sale_id, $sale_id, PaymentTypes::$TypeList['Due']]);
     }
 
 
