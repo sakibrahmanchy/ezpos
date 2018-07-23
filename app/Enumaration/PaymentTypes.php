@@ -18,7 +18,8 @@ class PaymentTypes
         "Credit Card" => 6,
         "Gift Card" => 7,
         "Loyalty Card" => 8,
-        "Due" => 9
+        "Due" => 9,
+        "Refund" => 10
     );
 
 }

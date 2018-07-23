@@ -20,4 +20,5 @@ class CashRegisterTransactionType
     public static $GIFT_CARD_SALES = 7;
     public static $LOYALTY_CARD_SALES = 8;
     public static $DUE = 9;
+    public static $SALE_REFUND = 10;
 }

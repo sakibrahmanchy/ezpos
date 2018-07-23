@@ -428,6 +428,7 @@ mark{background:#0000cc;color:white;}
     text-align: center;
     color:black;
     float:left;
+    display: table;
 }
 
 .folder:hover {
@@ -454,6 +455,7 @@ mark{background:#0000cc;color:white;}
     text-align: center;
     color:white;
     float:left;
+    display: table;
 }
 
 .product-icon:hover {
@@ -466,4 +468,9 @@ mark{background:#0000cc;color:white;}
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
     opacity: 0;
+}
+
+.vertical-align{
+    display: table-cell;
+    vertical-align: middle;
 }

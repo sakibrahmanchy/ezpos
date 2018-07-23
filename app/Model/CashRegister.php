@@ -144,7 +144,7 @@ class CashRegister extends Model
                 ->join('sales','sales.id','=','payment_logs.sale_id')
                 ->whereNull('sales.refund_register_id')
                 ->where('sale_type',SaleTypes::$SALE)
-                ->whereIn("sales.sale_status",$sale_status)
+                ->whereIn("payment_logs.sale_status",$sale_status)
                 ->where("payment_type",$transactionType)
                 ->sum('paid_amount');
             return $total_sales_in_register;
@@ -176,24 +176,25 @@ class CashRegister extends Model
             $loyalityAmount = 0;
             $changedDue = 0;
 
-            if($saleStatus==$aSale->sale_status) {
 
-                foreach( $aSale->PaymentLogs as $aPaymentLog )
+                foreach( $aSale->PaymentLogs as $aPaymentLog)
                 {
-                    if( $aPaymentLog->payment_type==PaymentTypes::$TypeList["Cash"] )
-                        $cashAmount += floatval($aPaymentLog->paid_amount);
-                    else if($aPaymentLog->payment_type==PaymentTypes::$TypeList["Check"])
-                        $chequeAmount += floatval($aPaymentLog->paid_amount);
-                    else if($aPaymentLog->payment_type==PaymentTypes::$TypeList["Credit Card"])
-                        $creditCardAmount += floatval($aPaymentLog->paid_amount);
-                    else if($aPaymentLog->payment_type==PaymentTypes::$TypeList["Debit Card"])
-                        $debitCardAmount += floatval($aPaymentLog->paid_amount);
-                    else if($aPaymentLog->payment_type==PaymentTypes::$TypeList["Gift Card"])
-                        $giftCardAmount += floatval($aPaymentLog->paid_amount);
-                    else if($aPaymentLog->payment_type==PaymentTypes::$TypeList["Loyalty Card"])
-                        $loyalityAmount += floatval($aPaymentLog->paid_amount);
-                    else if($aPaymentLog->payment_type==PaymentTypes::$TypeList["Due"])
-                        $changedDue += floatval($aPaymentLog->paid_amount);
+                    if($aPaymentLog->sale_status == $saleStatus) {
+                        if( $aPaymentLog->payment_type==PaymentTypes::$TypeList["Cash"] )
+                            $cashAmount += floatval($aPaymentLog->paid_amount);
+                        else if($aPaymentLog->payment_type==PaymentTypes::$TypeList["Check"])
+                            $chequeAmount += floatval($aPaymentLog->paid_amount);
+                        else if($aPaymentLog->payment_type==PaymentTypes::$TypeList["Credit Card"])
+                            $creditCardAmount += floatval($aPaymentLog->paid_amount);
+                        else if($aPaymentLog->payment_type==PaymentTypes::$TypeList["Debit Card"])
+                            $debitCardAmount += floatval($aPaymentLog->paid_amount);
+                        else if($aPaymentLog->payment_type==PaymentTypes::$TypeList["Gift Card"])
+                            $giftCardAmount += floatval($aPaymentLog->paid_amount);
+                        else if($aPaymentLog->payment_type==PaymentTypes::$TypeList["Loyalty Card"])
+                            $loyalityAmount += floatval($aPaymentLog->paid_amount);
+                        else if($aPaymentLog->payment_type==PaymentTypes::$TypeList["Due"])
+                            $changedDue += floatval($aPaymentLog->paid_amount);
+                    }
                 }
 
                 if( $cashAmount > 0 )
@@ -252,7 +253,6 @@ class CashRegister extends Model
                     ];
                 }
             }
-        }
 
 
 
@@ -294,7 +294,7 @@ class CashRegister extends Model
     public static function getPaymentAmountTotalList($cashRegisterId, $sale_status = array()) {
         return PaymentLog::join('sales','sales.id','=','payment_logs.sale_id')
             ->where('payment_logs.cash_register_id','=',$cashRegisterId)
-            ->whereIn('sales.sale_status',$sale_status)
+            ->whereIn('payment_logs.sale_status',$sale_status)
             ->where('sale_type',SaleTypes::$SALE)
             ->whereNull('refund_register_id')
             ->groupBy('payment_logs.payment_type')

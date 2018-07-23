@@ -40,6 +40,18 @@ class PaymentLogTableSeeder extends Seeder
                 $aPaymentLog->payment_type = \App\Enumaration\PaymentTypes::$TypeList[$aPaymentLog->payment_type];
                 $aPaymentLog->save();
             }
+            if($aPaymentLog->sale_status==0) {
+                if(!is_null($paymentLogSale)) {
+                    $paymentLogSaleId = $paymentLogSale->sale_id;
+                    $sale = \App\Model\Sale::where("id", $paymentLogSaleId)
+                        ->first();
+                    if (!is_null($sale)) {
+                        $aPaymentLog->sale_status = $sale->sale_status;
+                        $aPaymentLog->save();
+                    }
+                }
+            }
+
         }
 
         $sales = \App\Model\Sale::all();

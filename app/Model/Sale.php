@@ -206,6 +206,8 @@ class Sale extends Model
         $sale->total_sales_discount = $saleInfo['total_sales_discount'];
         $sale->save();
 
+        SaleStatusLog::changeSaleStatus($sale->id,null,$saleStatus);
+
         //Inserting due as a transaction
         self::insertDueAsPaymentInSale($sale);
 
@@ -377,12 +379,13 @@ class Sale extends Model
 
 
 
-    public function editSale($saleInfo, $productInfos,$paymentInfos, $deletedTransactions, $saleStatus, $sale_id){
+    public function editSale($saleInfo, $productInfos,$paymentInfos, $deletedTransactions, $saleStatus, $sale_id) {
 
         if($saleStatus!=1)
             session()->put('success','Sale has been successfully suspended');
 
         $sale = Sale::where('id',$sale_id)->first();
+        $previousStatus = $sale->sale_status;
 
         $sale->employee_id = Auth::user()->id;
         $sale->customer_id = $saleInfo['customer_id'];
@@ -400,6 +403,8 @@ class Sale extends Model
         $sale->total_sales_discount = $saleInfo["total_sales_discount"];
 
         $sale->save();
+
+        SaleStatusLog::changeSaleStatus($sale->id,$previousStatus,$saleStatus);
 
         self::insertDueAsPaymentInSale($sale);
 

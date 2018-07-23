@@ -14,5 +14,5 @@ class SaleStatus
     public static $SUCCESS = 1;
     public static $LAYAWAY = 2;
     public static $ESTIMATE = 3;
-
+    public static $REFUNDED = 4;
 }

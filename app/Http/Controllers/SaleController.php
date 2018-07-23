@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enumaration\CashRegisterTransactionType;
 use App\Enumaration\DateTypes;
 use App\Enumaration\SaleStatus;
 use App\Enumaration\UserTypes;
@@ -15,8 +16,10 @@ use App\Model\Employee;
 use App\Model\Item;
 use App\Model\ItemKit;
 use App\Model\Manufacturer;
+use App\Model\PaymentLog;
 use App\Model\Printer\FooterItem;
 use App\Model\Sale;
+use App\Model\SaleStatusLog;
 use App\Model\Supplier;
 use App\Model\User;
 use Faker\Provider\Barcode;
@@ -1058,10 +1061,18 @@ class SaleController extends Controller
         $currentCashRegister = $cashRegister->getCurrentActiveRegister();
         if(!is_null($currentCashRegister)) {
             $sale = Sale::where("id",$sale_id)->first();
+
+            $paymentLog = new PaymentLog();
+            $paymentLog->addNewPaymentLog(CashRegisterTransactionType::$SALE_REFUND, $sale->total_amount,$sale,$sale->cusotmer_id,null);
+
+            $previous_status = $sale->sale_status;
             $sale->refund_status = true;
             $sale->refund_register_id = $currentCashRegister->id;
             $sale->save();
             $sale->delete();
+
+            SaleStatusLog::changeSaleStatus($sale_id,$previous_status, SaleStatus::$REFUNDED);
+
 
             $sale_items = DB::table('item_sale')->where("sale_id",$sale_id)->get();
             foreach($sale_items as $anItem) {

@@ -159,7 +159,7 @@
 										<li data-value="2"><a @click="convertToReturn()" href="#">Return</a></li>{{--
 										<li data-value="3"><a href="#">Store Account Payment</a></li>--}}
 									</ul>
-									<button class="btn btn-primary" @click="shown = !shown" ><i class="fa fa-th" style="margin-right: 5px"></i>  Show Grid</button>
+									<button class="btn btn-success" @click="shown = !shown" ><i class="fa fa-th" style="margin-right: 5px"></i>  Show Grid</button>
 								</div>
 							</div>
 

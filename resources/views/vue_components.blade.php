@@ -11,9 +11,12 @@
 						<button class="btn btn-default" v-if="currentParent!==0" style=" cursor: pointer;" @click="SetParent(previousParent)"><  Go Back</button><br><br>
 
 						<li  class="folder" v-for="(aChild, index) in children" v-if="aChild.type=='category' && index>=start_index && index<=end_index" @click="SetParent(aChild.id)">
-								<i class="fa fa-folder"></i> @{{ aChild.category_name }}
+								<div class="vertical-align">
+								    <i class="fa fa-folder">
+                                    </i> @{{ aChild.category_name }}
+                                </div>
 						</li>
-						<li class="product-icon " v-for="(aChild, index) in children" v-if="aChild.type=='product' && index>=start_index && index<=end_index" @click="ChooseProduct(aChild)">@{{aChild.item_name}}($ @{{ aChild.unit_price }})</li>
+						<li class="product-icon " v-for="(aChild, index) in children" v-if="aChild.type=='product' && index>=start_index && index<=end_index" @click="ChooseProduct(aChild)"><div class="vertical-align">@{{aChild.item_name}}($ @{{ aChild.unit_price }})</div></li>
                      </ul>
 						<div style="clear: both;"></div>
                      <ul class="pagination" style="margin-top:0px" v-if="total_page>0" style="margin-left: 40px">
