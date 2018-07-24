@@ -166,16 +166,16 @@ class CashRegister extends Model
     public static function generateTransactionData($paymentLogList, $cashRegister, $saleStatus) {
         $allTransactionArr = [];;
 
+        $cashAmount = 0;
+        $chequeAmount = 0;
+        $creditCardAmount = 0;
+        $debitCardAmount = 0;
+        $giftCardAmount = 0;
+        $loyalityAmount = 0;
+        $changedDue = 0;
+
         foreach($paymentLogList as $aPaymentLog)
         {
-            $cashAmount = 0;
-            $chequeAmount = 0;
-            $creditCardAmount = 0;
-            $debitCardAmount = 0;
-            $giftCardAmount = 0;
-            $loyalityAmount = 0;
-            $changedDue = 0;
-
             if($aPaymentLog->sale_status == $saleStatus) {
                 if( $aPaymentLog->payment_type==PaymentTypes::$TypeList["Cash"] )
                     $cashAmount += floatval($aPaymentLog->paid_amount);
