@@ -123,11 +123,10 @@
 @section('additionalJS')
     <script type="text/javascript">
 
-        $(function(){
+        $(function() {
 
             $(".tabButtons").on('click',function(){
                 $("#item_status").val($(this).attr('data-val'));
-                console.log($("#item_status").val());
                 table.draw();
             });
 
@@ -385,7 +384,34 @@
                 });
             });
 
-        })
+
+            $('#tableAll thead th').each( function () {
+                var title = $(this).text();
+                //console.log(title);
+                if(title !== "Actions" && title !== "") {
+                    $(this).html( '<input class="form-control" type="text" placeholder="Search '+title+'" />' );
+                }
+
+            } );
+
+
+            // Apply the search
+            table.columns().every( function () {
+                var that = this;
+
+                $( 'input', this.footer() ).on( 'keyup change', function () {
+                    if ( that.search() !== this.value ) {
+                        console.log('change detected');
+                        that
+                        .search( this.value )
+                        .draw();
+                    }
+                } );
+            } );
+
+        });
+
+
     </script>
 @stop
 
