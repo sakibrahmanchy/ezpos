@@ -62,7 +62,20 @@ class CategoryController extends Controller
 
         $id = $request->category_id;
         $category = Category::where("id", $id)->first();
-        return response()->json(["success" => true, "message" => "Category id fetch success", "data"=>$category->parent],200);
+        if(!is_null($category))
+            $data = $category->parent;
+        else
+            $data = 0;
+        return response()->json(["success" => true, "message" => "Category id fetch success", "data"=>$data],200);
+    }
+
+    public function getCategoryData(Request $request) {
+        if(!isset($request->category_id))
+            return response()->json(["success" => false, "message" => "Category id is required", "data"=>null],200);
+
+        $id = $request->category_id;
+        $category = Category::where("id", $id)->first();
+        return response()->json(["success" => true, "message" => "Category id fetch success", "data"=>$category],200);
     }
 
     public function FetchProductsInCategory(Request $request) {

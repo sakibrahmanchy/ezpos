@@ -232,6 +232,7 @@ Route::group(['middleware' => ['admin']], function () {
     route::get('category/find','CategoryController@FindCategoriesByLevel')->name('categories_by_level')->middleware('auth');
     route::get('category/parent/find','CategoryController@FindCategoryParent')->name('category_parent')->middleware('auth');
     route::get('category/products/find','CategoryController@FetchProductsInCategory')->name('products_by_categories')->middleware('auth');
+    route::get('category/get_data','CategoryController@getCategoryData')->name('get_category_data')->middleware('auth');
     /*route::get('tag/names','TagController@GetTags')->name('tag_names')->middleware('auth');
     route::get('tag/list','TagController@GetTagList')->name('tag_list')->middleware('auth');
     route::post('tag/new','TagController@AddTag')->name('new_tag')->middleware('auth');

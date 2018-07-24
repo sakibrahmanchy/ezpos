@@ -8,13 +8,17 @@
                    <transition name="fade">
                     <div v-show="shown">
                      <ul style="list-style-type: none;">
-						<button class="btn btn-default" v-if="currentParent!==0" style=" cursor: pointer;" @click="SetParent(previousParent)"><  Go Back</button><br><br>
+                        <button  v-if="currentParent!==0"  class="btn btn-labeled btn-default" style=" cursor: pointer; margin-bottom: 10px" @click="SetParent(previousParent)">
+                            <span class="btn-label"><i class="glyphicon glyphicon-chevron-left"></i></span>Go Back
+                        </button> <span style="font-size: 20px; margin-left: 10px;" if="currentCategory.id!=0">@{{ currentCategory.category_name }}</span><br>
+
+						<!--<button class="btn btn-default" v-if="currentParent!==0" style=" cursor: pointer;" @click="SetParent(previousParent)"><  Go Back</button><br><br>-->
 
 						<li  class="folder" v-for="(aChild, index) in children" v-if="aChild.type=='category' && index>=start_index && index<=end_index" @click="SetParent(aChild.id)">
-								<div class="vertical-align">
-								    <i class="fa fa-folder">
-                                    </i> @{{ aChild.category_name }}
-                                </div>
+                            <div class="vertical-align">
+                                <i class="fa fa-folder">
+                                </i> @{{ aChild.category_name }}
+                            </div>
 						</li>
 						<li class="product-icon " v-for="(aChild, index) in children" v-if="aChild.type=='product' && index>=start_index && index<=end_index" @click="ChooseProduct(aChild)">
 							<div class="vertical-align">
@@ -25,11 +29,15 @@
 							</li>
                      </ul>
 						<div style="clear: both;"></div>
-                     <ul class="pagination" style="margin-top:0px" v-if="total_page>0" style="margin-left: 40px">
-                         <li class="page-item"><a class="page-link" @click="ShowPageItem(current_page-1)" href="#"><</a></li>
-                        <li class="page-item"  v-for="index in total_page" @click="ShowPageItem(index)" v-bind:class="{active:index==current_page}"><a class="page-link" href="#">@{{index}}</a></li>
-                        <li class="page-item"><a @click="ShowPageItem(current_page+1)" class="page-link" href="#">></a></li>
+                     <div class="row">
+                     <div class="col-md-2 col-md-offset-5"  >
+                        <ul class="pagination" style="margin-top:0px;" v-if="total_page>0" style="margin-left: 40px">
+                            <li class="page-item"><a class="page-link" @click="ShowPageItem(current_page-1)" href="#"><</a></li>
+                        <!--<li class="page-item"  v-for="index in total_page" @click="ShowPageItem(index)" v-bind:class="{active:index==current_page}"><a class="page-link" href="#">@{{index}}</a></li>-->
+                            <li class="page-item"   ><a @click="ShowPageItem(current_page+1)" class="page-link" href="#">></a></li>
                      </ul>
+                     </div>
+                     </div>
 
                 </div>
                 </transition>`,
@@ -46,6 +54,10 @@
                     per_page_item: 26,
                     start_index: 0,
                     end_index: 0,
+                    currentCategory: {
+                        id: 0,
+                        category_name: ''
+                    }
                 }
             },
             mounted: function () {
@@ -60,47 +72,63 @@
                     },
                     FetchProducts: function(category_id){
                         var that = this;
-                        //this.children = [];
-                        axios.get("{{route('products_by_categories')}}"+"?category_id="+category_id,)
-                            .then(function (response) {
-                                response.data.data.forEach(function(product) {
+                        this.GetCategoryData(this.currentParent).then((data) => {
+                            if(data!==null) {
+                                that.currentCategory.id = data.id;
+                                that.currentCategory.category_name = data.category_name;
+                                console.log(that.currentCategory);
+                            }else{
+                                that.currentCategory.id = 0;
+                                that.currentCategory.category_name = '';
+                                console.log(that.currentCategory);
+                            }
+                        }).then((result) => {
 
-                                    let productDetails = {
-                                        type: 'product',
-                                        item_id : product.item_id,
-                                        item_name : product.item_name,
-                                        company_name : product.company_name,
-                                        item_quantity : product.item_quantity,
-                                        unit_price : product.selling_price,
-                                        cost_price: product.cost_price,
-                                        items_sold : 1,
-                                        price_rule_id: product.price_rule_id
-                                    };
-                                    if(product.discountApplicable)
-                                    {
-                                        productDetails.discount_applicable = true;
-                                        if(this.allDiscountAmountPercentage==0)
-                                            productDetails.item_discount_percentage = product.discountPercentage;
+                            axios.get("{{route('products_by_categories')}}"+"?category_id="+category_id,)
+                                .then(function (response) {
+                                    response.data.data.forEach(function(product) {
+
+                                        let productDetails = {
+                                            type: 'product',
+                                            item_id : product.item_id,
+                                            item_name : product.item_name,
+                                            company_name : product.company_name,
+                                            item_quantity : product.item_quantity,
+                                            unit_price : product.selling_price,
+                                            cost_price: product.cost_price,
+                                            items_sold : 1,
+                                            price_rule_id: product.price_rule_id
+                                        };
+                                        if(product.discountApplicable)
+                                        {
+                                            productDetails.discount_applicable = true;
+                                            if(this.allDiscountAmountPercentage==0)
+                                                productDetails.item_discount_percentage = product.discountPercentage;
+                                            else
+                                                productDetails.item_discount_percentage = this.allDiscountAmountPercentage;
+                                        }
                                         else
-                                            productDetails.item_discount_percentage = this.allDiscountAmountPercentage;
-                                    }
-                                    else
-                                    {
-                                        productDetails.discountApplicable = false;
-                                        productDetails.item_discount_percentage = 0;
-                                    }
-                                    that.children.push(productDetails);
+                                        {
+                                            productDetails.discountApplicable = false;
+                                            productDetails.item_discount_percentage = 0;
+                                        }
+                                        that.children.push(productDetails);
+                                    });
+                                    that.total_page = Math.ceil(  that.children.length/that.per_page_item );
+                                    that.ShowPageItem(1);
+                                })
+                                .catch(function (error) {
+                                    console.log(error);
                                 });
-                                that.total_page = Math.ceil(  that.children.length/that.per_page_item );
-                                that.ShowPageItem(1);
-                            })
-                            .catch(function (error) {
-                                console.log(error);
-                            });
+                        });
+                        //this.children = [];
+
                     },
                     FetchParent: function(category_id) {
                         return axios.get("{{route('category_parent')}}"+"?category_id="+category_id,)
                             .then(function (response) {
+                                if(response.data.data!==0)
+                                    this.currentCategory.Id = response.data.data;
                                 return response.data.data;
 
                             })
@@ -147,6 +175,16 @@
                         this.current_page = index;
                         this.start_index = (this.current_page-1) * this.per_page_item;
                         this.end_index = this.current_page * this.per_page_item - 1;
+                    },
+                    GetCategoryData: function(category_id) {
+                        return axios.get("{{route('get_category_data')}}"+"?category_id="+category_id,)
+                            .then(function (response) {
+                                return response.data.data;
+
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            });
                     }
                 }
         });

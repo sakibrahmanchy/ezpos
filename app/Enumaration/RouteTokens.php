@@ -95,6 +95,7 @@ class RouteTokens
         "categories_by_level" => "sale_add_update",
         "category_parent" =>"sale_add_update",
         "products_by_categories" => "sale_add_update",
+        "get_category_data" => "sale_add_update",
         "sale_delete"=>"sale_add_update",
 
         "report_category_graphical"=>"report_categories",
