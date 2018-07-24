@@ -388,8 +388,17 @@
             $('#tableAll thead th').each( function () {
                 var title = $(this).text();
                 //console.log(title);
-                if(title !== "Actions" && title !== "") {
+                var differentCases = {
+                    '': '',
+                    'Actions': '',
+                    {{--'Item Status': '<select class="form-control"><option value="{{ \App\Enumaration\ItemStatus::$ACTIVE }}" selected>Active</option><option value="{{ \App\Enumaration\ItemStatus::$INACTIVE }}">Inactive</option></select>',--}}
+
+                };
+
+                if(differentCases[title] === undefined) {
                     $(this).html( '<input class="form-control" type="text" placeholder="Search '+title+'" />' );
+                } else {
+                    $(this).html( differentCases[title] );
                 }
 
             } );
@@ -399,9 +408,8 @@
             table.columns().every( function () {
                 var that = this;
 
-                $( 'input', this.footer() ).on( 'keyup change', function () {
+                $( 'input', this.header() ).on( 'keyup change', function () {
                     if ( that.search() !== this.value ) {
-                        console.log('change detected');
                         that
                         .search( this.value )
                         .draw();
