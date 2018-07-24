@@ -66,7 +66,7 @@ class Sale extends Model
 
 		$cashRegister = new CashRegister();
         $activeRegister = $cashRegister->getCurrentActiveRegister();
-		
+
         $sale = $this->insertSaleInfo($saleInfo,$saleStatus, $activeRegister->id);
         $sale_id = $sale->id;
 
@@ -121,6 +121,11 @@ class Sale extends Model
 		$customerTrandactionInfo = CustomerTransaction::where('sale_id', $sale_id )
 							->where('transaction_type' , \App\Enumaration\CustomerTransactionType::SALE)
 							->first();
+
+		if(is_null($cash_register_id)) {
+		    $cash_register = new CashRegister();
+		    $cash_register_id = $cash_register->getCurrentActiveRegister()->id;
+        }
 		if($customerTrandactionInfo)
 		{
 			if(!$customer_id)

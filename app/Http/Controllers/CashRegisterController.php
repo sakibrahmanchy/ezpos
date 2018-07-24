@@ -210,7 +210,7 @@ class CashRegisterController extends Controller
 					->where('payment_logs.sale_status',\App\Enumaration\SaleStatus::$LAYAWAY )
 					->where('sale_type', \App\Enumaration\SaleTypes::$SALE)
 					->where('payment_logs.cash_register_id', $cashRegisterId)
-                    ->select(DB::raw('sale_id, sum(paid_amount) as paid_amount, first_name, last_name, payment_logs.created_at'))
+                    ->select(DB::raw('sale_id, paid_amount as paid_amount, first_name, last_name, payment_logs.created_at'))
 					->get();
 
 		//dd($salesChargeAccountTransactionList);
@@ -504,7 +504,7 @@ class CashRegisterController extends Controller
             ->where('sale_type', \App\Enumaration\SaleTypes::$SALE)
             ->where('payment_logs.cash_register_id', $cashRegisterId)
             ->groupBy('sale_id')
-            ->select(DB::raw('sale_id, sum(paid_amount) as paid_amount'))->get();
+            ->sum('paid_amount');
 
 
         try {
