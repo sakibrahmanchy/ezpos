@@ -30,14 +30,25 @@ class PaymentLog extends Model
         }
         
 		$cash_register = new CashRegister();
-        if(!is_null($sale)){
-            if(!is_null($sale->cash_register_id))
+
+        if(!is_null($cash_register->getCurrentActiveRegister())) {
+            if($sale->cash_register_id != $cash_register->getCurrentActiveRegister()->id) {
+                $paymentLog->cash_register_id = $cash_register->getCurrentActiveRegister()->id;
+            }
+            else{
+                if(!is_null($sale) && !is_null($sale->cash_register_id)) {
+                    $paymentLog->cash_register_id = $sale->cash_register_id;
+                }
+                else
+                    $paymentLog->cash_register_id = 0;
+            }
+        } else {
+            if(!is_null($sale) && !is_null($sale->cash_register_id)) {
                 $paymentLog->cash_register_id = $sale->cash_register_id;
+            }
             else
                 $paymentLog->cash_register_id = 0;
         }
-        else
-            $paymentLog->cash_register_id = $cash_register->getCurrentActiveRegister()->id;
 
         $paymentLog->comments = $comments;
 
