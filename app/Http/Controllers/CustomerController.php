@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Enumaration\SaleStatus;
+use App\Enumaration\SaleTypes;
 use App\Model\Customer;
 use App\Model\Item;
 use App\Model\LoyaltyTransaction;
@@ -240,7 +242,22 @@ class CustomerController extends Controller
     }
 
     public function getCustomerProfile($customer_id){
+        //DB::connection()->enableQueryLog();
         $customerInfo = Customer::with('transactions','transactionSum')->where("id",$customer_id)->first();
+        //$queries = DB::getQueryLog();
+        //dd($queries);
+        $dueList = Sale::join('customer_transactions','sales.id','=','customer_transactions.sale_id')
+            ->where("sale_type",SaleTypes::$SALE)
+            ->where("sales.customer_id",$customer_id)
+            ->where("sales.due",'>',0)
+            ->select(DB::raw('*,customer_transactions.id as transaction_id'))
+            ->get();
+
+        $customerAdvancePayment = DB::table('customer_transactions')
+                                ->where('customer_id',$customer_id)
+                                ->whereNull('sale_id')
+                                ->where('paid_amount','>',0)
+                                ->sum('paid_amount');
 
 		/*if($customerInfo->transactions->count()>0)
 		{
@@ -250,8 +267,7 @@ class CustomerController extends Controller
 		}*/
         $totalSale = Sale::where('customer_id',$customer_id)->count();
         return view('customers.customer_profile',["customer"=>$customerInfo,
-                                                  "saleTotal"=>$totalSale
-												  ]);
+                                                  "saleTotal"=>$totalSale, "dueList" => $dueList, "advance"=>$customerAdvancePayment]);
     }
 
 
