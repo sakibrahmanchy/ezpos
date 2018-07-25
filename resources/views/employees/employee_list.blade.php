@@ -63,6 +63,7 @@
                                 <ul class="dropdown-menu">
                                 @if(UserHasPermission("employees_add_update"))
                                     <li><a href="{{route('employee_edit',['employee_id'=>$employee->employee_id])}}">Edit Employee</a></li>
+                                        <li><a href="{{route('clone_employee',['employee_id'=>$employee->employee_id])}}">Clone Employee</a></li>
                                 @endif
                                 </ul>
                             </div></td>

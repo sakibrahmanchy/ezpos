@@ -44,13 +44,13 @@
 
                                     <div class="form-group">
                                         <label for="product_id" class=" col-sm-3 col-md-3 col-lg-2 control-label ">Product Id:</label>			<div class="col-sm-9 col-md-9 col-lg-10">
-                                            <input type="text" name="product_id" value="{{ old('product_id') }}" class="form-control" id="product_id">
+                                            <input type="text" name="product_id" value="{{ $previous_item_info->product_id+1 }}" class="form-control" id="product_id">
                                         </div>
                                     </div>
 
                                     <div class="form-group">
                                         <label for="item_name" class="col-sm-3 col-md-3 col-lg-2 control-label required">Item Name:</label>			<div class="col-sm-9 col-md-9 col-lg-10">
-                                            <input  type="text" name="item_name" value="{{ old('item_name') }}" class="form-control" id="item_name" >
+                                            <input  type="text" name="item_name" value="{{  $previous_item_info->item_name }}" class="form-control" id="item_name" >
                                             <span class="text-danger">{{ $errors->first('item_name') }}</span>
                                         </div>
                                     </div>
@@ -79,7 +79,7 @@
                                             <select  name = "item_category" class="form-control" value = "{{ old('item_category') }}">
                                                 <option></option><option value="-1" selected>none</option>
                                                 @foreach ($categoryList as $aList)
-                                                    <option value = "{{$aList->id}}">
+                                                    <option @if($aList->id == $previous_item_info->category_id) {{ "selected" }}  @endif value = "{{$aList->id}}">
                                                         {{$aList->category_name}}
                                                     </option>
                                                 @endforeach
@@ -103,7 +103,7 @@
 
                                     <div class="form-group">
                                         <label for="size" class="col-sm-3 col-md-3 col-lg-2 control-label">Size:</label>			<div class="col-sm-9 col-md-9 col-lg-10">
-                                            <input type="text" name="size" value="{{ old('size') }}" class="form-control" id="size">
+                                            <input type="text" name="size" value="{{  $previous_item_info->size }}" class="form-control" id="size">
                                         </div>
                                     </div>
 
@@ -113,7 +113,7 @@
                                             <select  name = "item_supplier" {{ old('item_supplier') }} class="form-control">
                                                 <option></option><option value ="-1" selected>none</option>
                                                 @foreach ($supplierList as $aList)
-                                                    <option value = "{{$aList->id}}">
+                                                    <option @if($aList->id == $previous_item_info->supplier_id) {{ "selected" }}  @endif value = "{{$aList->id}}">
                                                         {{$aList->company_name}}
                                                     </option>
                                                 @endforeach
@@ -130,7 +130,7 @@
                                             <select  name = "item_manufacturer" {{ old('item_manufacturer') }} class="form-control">
                                                 <option></option><option>none</option>
                                                 @foreach ($manufacturerList as $aList)
-                                                    <option value = "{{$aList->id}}">
+                                                    <option @if($aList->id == $previous_item_info->manufacturer_id) {{ "selected" }}  @endif value = "{{$aList->id}}">
                                                         {{$aList->manufacturer_name}}
                                                     </option>
                                                 @endforeach
@@ -144,41 +144,41 @@
 
                                     <div class="form-group reorder-input ">
                                         <label for="reorder_level" class="col-sm-3 col-md-3 col-lg-2 control-label wide">Reorder Level:</label>					<div class="col-sm-9 col-md-9 col-lg-10">
-                                            <input type="text" name="reorder_level" value="{{ old('reorder_level') }}" id="reorder_level" class="form-control form-inps">
+                                            <input type="text" name="reorder_level" value="{{ $previous_item_info->reorder_level }}" id="reorder_level" class="form-control form-inps">
                                             <span class="text-danger">{{ $errors->first('reorder_level') }}</span>
                                         </div>
                                     </div>
 
                                     <div class="form-group reorder-input ">
                                         <label for="replenish_level" class="col-sm-3 col-md-3 col-lg-2 control-label wide">Replenish Level:</label>					<div class="col-sm-9 col-md-9 col-lg-10">
-                                            <input type="text" name="replenish_level" value="{{ old('replenish_level') }}" id="replenish_level" class="form-control form-inps">
+                                            <input type="text" name="replenish_level" value="{{ $previous_item_info->replenish_level }}" id="replenish_level" class="form-control form-inps">
                                             <span class="text-danger">{{ $errors->first('replenish_level') }}</span>
                                         </div>
                                     </div>
 
                                     <div class="form-group">
                                         <label for="size" class="col-sm-3 col-md-3 col-lg-2 control-label wide">Days to expiration:</label>					<div class="col-sm-9 col-md-9 col-lg-10">
-                                            <input type="text" name="expire_days" value="{{ old('expire_days') }}" id="expire_days" class="form-control form-inps">
+                                            <input type="text" name="expire_days" value="{{ $previous_item_info->expire_days }}" id="expire_days" class="form-control form-inps">
                                             <span class="text-danger">{{ $errors->first('expire_days') }}</span>
                                         </div>
                                     </div>
 
                                     <div class="form-group">
                                         <label for="description" class="col-sm-3 col-md-3 col-lg-2 control-label wide">Description:</label>					<div class="col-sm-9 col-md-9 col-lg-10">
-                                            <textarea name="description" value = "{{ old('description') }}" cols="17" rows="5" id="description" class="form-control  text-area"></textarea>
+                                            <textarea name="description" value = "{{ $previous_item_info->description }}" cols="17" rows="5" id="description" class="form-control  text-area"></textarea>
                                         </div>
                                     </div>
 
                                     <div class="form-group">
                                         <label for="tax_included" class="col-sm-3 col-md-3 col-lg-2 control-label wide">Prices include Tax:</label>					<div class="col-sm-9 col-md-9 col-lg-10">
-                                            <input type="checkbox" value = "{{old('tax_included')}}" name="tax_included" value="1" id="tax_included" class="delete-checkbox">
+                                            <input type="checkbox" value = "{{ $previous_item_info->tax_included }}" name="tax_included" value="1" id="tax_included" class="delete-checkbox">
                                             <label for="tax_included"><span></span></label>
                                         </div>
                                     </div>
 
                                     <div class="form-group">
                                         <label for="is_service" class="col-sm-3 col-md-3 col-lg-2 control-label wide">Is Service Item (Does not have quantity)?:</label>					<div class="col-sm-9 col-md-9 col-lg-10">
-                                            <input type="checkbox" value = "{{old('is_service')}}" name="is_service" value="1" id="is_service" class="delete-checkbox">
+                                            <input type="checkbox" value = "{{old('is_service')}}" name="is_service" id="is_service" class="delete-checkbox">
                                             <label for="is_service"><span></span></label>
                                         </div>
                                     </div>
@@ -187,6 +187,30 @@
                                         <div class="col-sm-9 col-md-9 col-lg-10"><div class="col-sm-9 col-md-9 col-lg-10">
                                                 <div class = "dropzone" id ="uploadForm"></div>
                                                 <div class  ="alert alert-info text-center">Drag and drop or click in the upload area to select image</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div  class="form-group">
+                                        <label class="col-sm-3 col-md-3 col-lg-2 control-label wide"> </label>
+                                        <div class="col-sm-9 col-md-9 col-lg-10">
+                                            <div class="col-sm-9 col-md-9 col-lg-10">
+                                                @foreach($images as $anImage)
+                                                    @if(!is_null($anImage->item_id))
+                                                        <div class="{{$previous_item_info->id}}ol-sm-6 col-md-4">
+                                                            <div class="thumbnail">
+
+                                                                <img src = "{{$anImage->directory}}/{{$anImage->new_name}}"  >
+
+                                                                <div class="caption">
+                                                                    <h6>{{$anImage->actual_name}}</h6>
+                                                                    <p><a href="{{route('item_image_delete',['item_id'=>$anImage->item_id,'image_id'=>$anImage->file_id])}}" class="btn btn-default" role="button">Delete </a></p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @endif
+                                                @endforeach
+
                                             </div>
                                         </div>
                                     </div>
@@ -200,7 +224,7 @@
                                             <label for="cost_price" class="col-sm-3 col-md-3 col-lg-2 control-label required wide">Cost Price (Without Tax):</label>						<div class="col-sm-9 col-md-9 col-lg-10">
                                                 <div class="input-group">
                                                     <span class="input-group-addon bg"><span class="">$</span></span>
-                                                    <input  type="text" name="cost_price" value = "{{old('cost_price')}}" size="8" id="cost_price" class="form-control form-inps">
+                                                    <input  type="text" name="cost_price" value = "{{$previous_item_info->cost_price}}" size="8" id="cost_price" class="form-control form-inps">
                                                     <span class="text-danger">{{ $errors->first('cost_price') }}</span>
                                                 </div>
                                             </div>
@@ -211,7 +235,7 @@
                                             <label for="unit_price" class="col-sm-3 col-md-3 col-lg-2 control-label required wide">Selling Price:</label>					<div class="col-sm-9 col-md-9 col-lg-10">
                                                 <div class="input-group">
                                                     <span class="input-group-addon bg"><span class="">$</span></span>
-                                                    <input  type="text" name="unit_price" value = "{{old('unit_price')}}" size="8" id="unit_price" class="form-control form-inps">
+                                                    <input  type="text" name="unit_price" value = "{{$previous_item_info->cost_price}}" size="8" id="unit_price" class="form-control form-inps">
                                                     <span class="text-danger">{{ $errors->first('unit_price') }}</span>
                                                 </div>
                                             </div>
@@ -219,14 +243,14 @@
 
 
                                         <label class="col-sm-3 col-md-3 col-lg-2 control-label wide">Current Quantity:</label>								<div class="col-sm-9 col-md-9 col-lg-10">
-                                            <h5 data-start-quantity="0" class="cur_quantity" id="cur_quantity_location_1">0</h5>
+                                            <h5 data-start-quantity="0" class="cur_quantity" id="cur_quantity_location_1">{{ $previous_item_info->item_quantity }}</h5>
                                         </div>
                                     </div>
 
 
                                     <div class="form-group quantity-input ">
                                         <label class="col-sm-3 col-md-3 col-lg-2 control-label wide">Inventory to add/subtract:</label>							<div class="col-sm-9 col-md-9 col-lg-10">
-                                            <input type="text" value = "{{old('quantity_add_minus')}}" name="quantity_add_minus" value="" id="quantity_add_minus_location_1" data-location-id="1" class="form-control form-inps quantity_add_minus">
+                                            <input type="text" value="" name="quantity_add_minus"  id="quantity_add_minus_location_1" data-location-id="1" class="form-control form-inps quantity_add_minus">
                                         </div>
                                     </div>
 

@@ -213,10 +213,24 @@
                             var url = '{{ route("item_edit", ":item_id") }}';
                             url = url.replace(':item_id', data.item_id);
 
-                            var dataToReturn = "";
+                            var cloneUrl =  '{{ route("clone_item", ":item_id") }}';
+                            cloneUrl = cloneUrl.replace(':item_id', data.item_id);
+
+                            var dataToAppend = '';
                             @if(UserHasPermission('item_add_update'))
-                                dataToReturn += `<a href=`+url+`>Edit</a>`;
+                                dataToAppend += ` <li><a href=`+url+`>Edit</a></li>`;
+                            dataToAppend += ` <li><a href=`+cloneUrl+`>Clone Item</a></li>`;
                             @endif
+
+                            var dataToReturn = `
+                            <div class="dropdown">
+                                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><i class="pe-7s-pen"></i>
+                                    <span class="caret"></span></button>
+                                <ul class="dropdown-menu">
+                                    `+dataToAppend+`
+                                </ul>
+                            </div>
+                            `;
                                 return dataToReturn;
                         },
                         defaultContent: ""

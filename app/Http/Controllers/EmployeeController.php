@@ -107,6 +107,26 @@ class EmployeeController extends Controller
 
     }
 
+    public function cloneEmployee(Request $request) {
+
+        $previousEmployeeId = $request->item_id;
+        $previousEmployeeInfo = Employee::where("id",$previousEmployeeId)->with('user','counters')->first();
+
+        //$modules = PermissionName::GetAllPermissions();
+        $counters = Counter::all();
+
+        $employeeUserId = $previousEmployeeInfo->user->id;
+        $employeeCounterList = array();
+        foreach($previousEmployeeInfo->counters as $aCounter) {
+            array_push($employeeCounterList,$aCounter->id);
+        }
+
+        $employeePermissions = UserPermission::GetUserPermissions($employeeUserId);
+
+        return view('employees.clone_employee', ['counters'=>$counters,'modules' => $employeePermissions,
+                                                 "previous_employee_info" => $previousEmployeeInfo,"counter_list"=>$employeeCounterList]);
+    }
+
     public function GetEmployeeList()
     {
         $employees = DB::table('employees')

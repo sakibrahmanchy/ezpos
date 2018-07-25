@@ -65,7 +65,7 @@
                                                     <input type="file" onchange = "loadTempImage(this)" name="image" id="image" class="filestyle" tabindex="-1" style="position: absolute; clip: rect(0px 0px 0px 0px);"><div class="bootstrap-filestyle input-group"><input type="text" class="form-control " disabled=""> <span class="group-span-filestyle input-group-btn" tabindex="0"><label for="image" class="btn btn-file-upload "><span class="pe-7s-folder"></span> <span class="buttonText">Choose file</span></label></span></div>&nbsp;
                                                 </li>
                                                 <li>
-                                                    <div id="avatar"><img src="{{asset('img\avatar.png')}}" class="img-polaroid" id="image_empty" alt=""></div>
+                                                    <div id="avatar"><img height="200px" width="200px" src="{{asset('img\avatar.png')}}" class="img-polaroid" id="image_empty" alt=""></div>
                                                 </li>
                                             </ul>
                                         </div>
