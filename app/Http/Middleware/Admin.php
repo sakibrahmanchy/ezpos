@@ -51,7 +51,7 @@ class Admin
             }
 
             if($route_name=='change_settings'||$route_name=='save_settings'){
-                if($user->user_type==UserTypes::$SUPER_ADMIN){
+                if($user->user_type==UserTypes::$SUPER_ADMIN || UserHasPermission("update_settings_table_data")){
                     return $next($request);
                 }else{
                     return redirect()->route('error-401');
