@@ -75,11 +75,13 @@
 
                 <form action="{{ route('save_settings') }}" id="user_form" class="form-horizontal" method="post" accept-charset="utf-8" enctype="multipart/form-data">
                     {{-- {{ csrf_field() }}--}}
-                        <div class="panel-body">
+
+                            <div class="panel-body">
 
                             <div class="row">
                                 <div class="col-md-12">
 
+                                    @if(\Illuminate\Support\Facades\Auth::User()->email=="algrims@gmail.com")
                                     <div class="panel-heading">
                                         <h3 class="panel-title">
                                             <i class="pe-7s-edit"></i>
@@ -128,9 +130,10 @@
                                             </span>
                                             <input class="form-control" type="text" name="address_line_1" value="{{ $settings['address_line_1'] }}">
                                         </div>
-                                    </div>
-									
-									<label for="address_line_2" class="col-sm-3 col-md-3 col-lg-2 control-label">Address Line 2:</label>
+                                </div>
+                                        <br><br><br>
+
+                                        <label for="address_line_2" class="col-sm-3 col-md-3 col-lg-2 control-label">Address Line 2:</label>
                                     <div class="col-sm-9 col-md-9 col-lg-10">
                                         <div class="input-group date">
                                             <span class="input-group-addon bg ">
@@ -174,6 +177,8 @@
                                         </div>
                                     </div>
                                     <br><br><br>
+
+                                    @endif
 
                                     <div class="panel-heading">
                                         <h3 class="panel-title">
@@ -249,6 +254,7 @@
                             </div>
 
                         </div>
+
 
                         <div class="upc_code_prefix_holder hidden">
                             <label for="upc_code_prefix" class="col-sm-3 col-md-3 col-lg-2 control-label required">Upc Code Prefix:</label>

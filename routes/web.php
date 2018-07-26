@@ -61,6 +61,7 @@ Route::group(['middleware' => ['admin']], function () {
     Route::post('customers/delete','CustomerController@DeleteCustomers')->name('customers_delete')->middleware('auth');
 
     route::get('/item/new','ItemController@GetItemForm' )->name('new_item')->middleware('auth');
+    route::get('/item/clone/{item_id}','ItemController@cloneItem' )->name('clone_item')->middleware('auth');
     route::post('/item/new','ItemController@AddItem')->name('new_item')->middleware('auth');
     route::get('item/list','ItemController@GetItemListAjax')->name('item_list')->middleware('auth');
     route::get('item/list/ajax','ItemController@GetItemListAjax')->name('item_list_ajax')->middleware('auth');
@@ -218,6 +219,7 @@ Route::group(['middleware' => ['admin']], function () {
     route::post('/report/transaction/details/ajax','Reports\TransactionReportController@detailedReportsAjax')->name('report_transaction_details_ajax');
 
     route::get('/employee/new','EmployeeController@GetEmployeeForm' )->name('new_employee')->middleware('auth');
+    route::get('/employee/clone/{item_id}','EmployeeController@cloneEmployee' )->name('clone_employee')->middleware('auth');
     route::post('/employee/new','EmployeeController@AddEmployee')->name('new_employee')->middleware('auth');
     route::get('employee/list','EmployeeController@GetEmployeeList')->name('employee_list')->middleware('auth');
     route::get('employee/edit/{employee_id}','EmployeeController@EditEmployeeGet')->name('employee_edit')->middleware('auth');

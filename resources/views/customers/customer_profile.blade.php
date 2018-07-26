@@ -159,62 +159,122 @@
                                 </div>
                             </div>
                         @endif
-                        <div class="box box-info">
-                            <div class="box-header with-border" style="background: #00c0ef; color:white;">
-                                <h3 class="box-title" >Latest Sales</h3>
+                        <div class="nav-tabs-custom">
+                            <div class="nav-tabs-custom">
+                                {{--<h3 class="box-title" >Latest Sales</h3>--}}
+                                <ul class="nav nav-tabs pull-right">
+                                    <li ><a href="#latest_transactions" data-toggle="tab" aria-expanded="false">Latest Transactions</a></li>
+                                    <li class="active" style="color:white"><a href="#due_details" data-toggle="tab" aria-expanded="true">Due Details</a></li>
+                                </ul>
 
-                                <div class="box-tools pull-right">
-                                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                                <div class="tab-content">
+                                    <div class="tab-pane" id="latest_transactions">
+                                        <div class="box-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered table-striped table-reports tablesorter stacktable small-only">
+                                                    <thead>
+                                                    <tr>
+                                                        <th align="left" class="header">Transaction Id</th>
+                                                        <th align="left" class="header">Date</th>
+                                                        <th align="left" class="header">Description</th>
+                                                        <th>Sale Amount</th>
+                                                        <th align="right" class="header">Amount Paid</th>
+                                                        <!--<th allign="right" class="header">Due</th>-->
+                                                    </tr>
+                                                    </thead>
+                                                    @php $due = 0; @endphp
+                                                    <tbody id="data-table">
+                                                    @foreach($customer->transactions as $aTransaction)
+                                                        @php $due += ( $aTransaction->sale_amount - $aTransaction->paid_amount ); @endphp
+                                                        <tr>
+                                                            <td>##{{$aTransaction->id}}</td>
+                                                            <td>{{$aTransaction->created_at}}</td>
+                                                            <td>
+                                                                @if(is_null($aTransaction->sale_id))
+                                                                    Due/Advance Amount Paid
+                                                                @else
+                                                                    Paid for: <a href="{{ route('sale_receipt',["sale_id"=>$aTransaction->sale_id]) }}"> Sale {{ $aTransaction->sale_id }}</a>
+                                                                @endif
+                                                            </td>
+                                                            <td><strong style="font-size: 18px;">${{ $aTransaction->sale_amount }}</strong></td>
+                                                            <td><strong style="font-size: 18px;">${{ $aTransaction->paid_amount }}</strong></td>
+                                                        <!--<td><strong style="font-size: 18px;">${{  $due }}</strong></td>-->
+                                                        </tr>
+                                                    @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <!-- /.table-responsive -->
+                                        </div>
+                                        <!-- /.box-body -->
+                                        <div class="box-footer clearfix">
+
+                                            <a href="{{ route('report_transaction_details',["customer_id"=>$customer->id]) }}" class="btn btn-sm btn-default btn-flat pull-right">View All Transactions</a>
+                                        </div>
+                                        <!-- /.box-footer -->
+                                    </div>
+                                    <div class="tab-pane active" id="due_details">
+                                        <div class="box-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered table-striped table-reports tablesorter stacktable small-only">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>Select</th>
+                                                        <th align="left" class="header">Sale Id</th>
+                                                        <th align="left" class="header">Date</th>
+                                                        <th align="left" class="header">Description</th>
+                                                        <th>Sale Amount</th>
+                                                        <th align="right" class="header">Amount Paid</th>
+                                                        <th align="right" class="header">Amount Due</th>
+                                                        <!--<th allign="right" class="header">Due</th>-->
+                                                    </tr>
+                                                    </thead>
+                                                    @php $due = 0; @endphp
+                                                    <tbody id="data-table">
+                                                    @foreach($dueList as $aTransaction)
+                                                        @php $due += ( $aTransaction->due ); @endphp
+
+                                                        <tr>
+                                                            <td> <input class="checkboxes" type="checkbox" name="vehicle" value="{{ $aTransaction->transaction_id }}"></td>
+                                                            <td>##{{$aTransaction->sale_id}}</td>
+                                                            <td>{{$aTransaction->created_at}}</td>
+                                                            <td>
+                                                                Due for sale  <a href="{{ route('sale_receipt',['sale_id'=>$aTransaction->sale_id]) }}">{{ $aTransaction->sale_id }}</a>
+                                                            </td>
+                                                            <td><strong style="font-size: 18px;">${{ $aTransaction->total_amount }}</strong></td>
+                                                            <td><strong style="font-size: 18px;">${{ $aTransaction->paid_amount }}</strong></td>
+                                                            <td><strong style="font-size: 18px;">${{ $aTransaction->due }}</strong></td>
+                                                        </tr>
+                                                    @endforeach
+                                                    <tr class="warning">
+                                                        <td colspan="6" ><strong class="pull-right" style="font-size: 18px;">Total Due</strong></td>
+                                                        <td><strong  style="font-size: 18px;">${{  number_format($due, 2) }}</strong></td>
+                                                    </tr>
+                                                    <tr class="success">
+                                                        <td colspan="6"><strong  class="pull-right" style="font-size: 18px;">Customer Advance Payment</strong></td>
+                                                        <td><strong  style="font-size: 18px;">${{  number_format($advance, 2) }}</strong></td>
+                                                    </tr>
+                                                    <tr class="danger">
+                                                        <td colspan="6"><strong  class="pull-right" style="font-size: 18px;">Current Due</strong></td>
+                                                        <td><strong  style="font-size: 18px;">${{  number_format($due - $advance,2) }}</strong></td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+
+                                            </div>
+                                            <!-- /.table-responsive -->
+                                        </div>
+                                        <!-- /.box-body -->
+                                        <div class="box-footer clearfix">
+
+                                            <a href="javascript:void(0)" onclick="generateInvoice()" class="btn btn-sm btn-default btn-flat pull-right">Generate Invoice</a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+
+
                             <!-- /.box-header -->
-
-
-                            <div class="box-body">
-                                <div class="table-responsive">
-                                    <table class="table table-bordered table-striped table-reports tablesorter stacktable small-only">
-                                        <thead>
-                                        <tr>
-                                            <th align="left" class="header">Transaction Id</th>
-                                            <th align="left" class="header">Date</th>
-                                            <th align="left" class="header">Description</th>
-                                            <th>Sale Amount</th>
-                                            <th align="right" class="header">Amount Paid</th>
-                                            <!--<th allign="right" class="header">Due</th>-->
-                                        </tr>
-                                        </thead>
-                                        @php $due = 0; @endphp
-                                        <tbody id="data-table">
-                                        @foreach($customer->transactions as $aTransaction)
-                                            @php $due += ( $aTransaction->sale_amount - $aTransaction->paid_amount ); @endphp
-                                            <tr>
-                                                <td>##{{$aTransaction->id}}</td>
-                                                <td>{{$aTransaction->created_at}}</td>
-                                                <td>
-                                                    @if(is_null($aTransaction->sale_id))
-                                                        Due Amount Paid.
-                                                    @else
-                                                        Paid for: <a href="{{ route('sale_receipt',["sale_id"=>$aTransaction->sale_id]) }}"> Sale {{ $aTransaction->sale_id }}</a>
-                                                    @endif
-                                                </td>
-                                                <td><strong style="font-size: 18px;">${{ $aTransaction->sale_amount }}</strong></td>
-                                                <td><strong style="font-size: 18px;">${{ $aTransaction->paid_amount }}</strong></td>
-                                                <!--<td><strong style="font-size: 18px;">${{  $due }}</strong></td>-->
-                                            </tr>
-                                        @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <!-- /.table-responsive -->
-                            </div>
-                            <!-- /.box-body -->
-                            <div class="box-footer clearfix">
-
-                                <a href="{{ route('report_transaction_details',["customer_id"=>$customer->id]) }}" class="btn btn-sm btn-default btn-flat pull-right">View All Transactions</a>
-                            </div>
-                            <!-- /.box-footer -->
                         </div>
 
 
@@ -235,9 +295,19 @@
 
 @section('additionalJS')
     <script>
+
         $(document).ready(function(){
             countAnimate();
+
         });
+
+        function generateInvoice() {
+            let selected = [];
+            $('input:checked').each(function(sale_id) {
+                selected.push(sale_id);
+            });
+            console.log(selected);
+        }
 
 
         function numberWithCommas(x) {

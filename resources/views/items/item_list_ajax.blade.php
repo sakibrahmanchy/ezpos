@@ -213,10 +213,24 @@
                             var url = '{{ route("item_edit", ":item_id") }}';
                             url = url.replace(':item_id', data.item_id);
 
-                            var dataToReturn = "";
+                            var cloneUrl =  '{{ route("clone_item", ":item_id") }}';
+                            cloneUrl = cloneUrl.replace(':item_id', data.item_id);
+
+                            var dataToAppend = '';
                             @if(UserHasPermission('item_add_update'))
-                                dataToReturn += `<a href=`+url+`>Edit</a>`;
+                                dataToAppend += ` <li><a href=`+url+`>Edit</a></li>`;
+                            dataToAppend += ` <li><a href=`+cloneUrl+`>Clone Item</a></li>`;
                             @endif
+
+                            var dataToReturn = `
+                            <div class="dropdown">
+                                <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"><i class="pe-7s-pen"></i>
+                                    <span class="caret"></span></button>
+                                <ul class="dropdown-menu">
+                                    `+dataToAppend+`
+                                </ul>
+                            </div>
+                            `;
                                 return dataToReturn;
                         },
                         defaultContent: ""
@@ -388,8 +402,17 @@
             $('#tableAll thead th').each( function () {
                 var title = $(this).text();
                 //console.log(title);
-                if(title !== "Actions" && title !== "") {
+                var differentCases = {
+                    '': '',
+                    'Actions': '',
+                    {{--'Item Status': '<select class="form-control"><option value="{{ \App\Enumaration\ItemStatus::$ACTIVE }}" selected>Active</option><option value="{{ \App\Enumaration\ItemStatus::$INACTIVE }}">Inactive</option></select>',--}}
+
+                };
+
+                if(differentCases[title] === undefined) {
                     $(this).html( '<input class="form-control" type="text" placeholder="Search '+title+'" />' );
+                } else {
+                    $(this).html( differentCases[title] );
                 }
 
             } );
@@ -402,7 +425,6 @@
                 $( 'input', this.header() ).on( 'keyup change', function () {
 
                     if ( that.search() !== this.value ) {
-                        console.log('change detected');
                         that
                         .search( this.value )
                         .draw();

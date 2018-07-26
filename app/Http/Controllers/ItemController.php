@@ -32,7 +32,7 @@ use PHPExcel_IOFactory;
 
 class ItemController extends Controller
 {
-    public function GetItemForm()
+    public function GetItemForm(Request $request)
     {
         //Load all permissions from database
         $categoryList = Category::orderBy('category_name')->get();
@@ -41,7 +41,8 @@ class ItemController extends Controller
 
         $manufacturerList = Manufacturer::all();
 
-        return view('items.new_item',['categoryList'=>$categoryList,'supplierList'=>$supplierList,'manufacturerList'=>$manufacturerList]);
+        return view('items.new_item',['categoryList'=>$categoryList,'supplierList'=>$supplierList,
+                                      'manufacturerList'=>$manufacturerList]);
     }
 
     public function AddItem(Request $request)
@@ -63,8 +64,30 @@ class ItemController extends Controller
         $item = new Item();
         $item->InsertItem($request);
 
+
+
         return redirect()->route('item_list');
 
+    }
+
+    public function cloneItem(Request $request) {
+        if(!isset($request->item_id))
+            return redirect()->route('item_list')->with(["error"=>"Item id is required to clone."]);
+
+        $categoryList = Category::orderBy('category_name')->get();
+
+        $supplierList = Supplier::all();
+
+        $manufacturerList = Manufacturer::all();
+
+        $previousItemId = $request->item_id;
+        $previousItemInfo = Item::where("id",$previousItemId)->first();
+
+        $item = new Item();
+        $images = $item->getItemImages($previousItemId);
+
+        return view('items.clone_item',['previous_item_info'=>$previousItemInfo,'categoryList'=>$categoryList,'supplierList'=>$supplierList,
+                                        'manufacturerList'=>$manufacturerList, "images" => $images]);
     }
 
 

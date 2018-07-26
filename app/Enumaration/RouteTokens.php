@@ -34,6 +34,7 @@ class RouteTokens
         "items_delete"=>"item_delete",
         "all_items_data" => "item_search",
         "item_list_ajax" => "item_search",
+        "clone_item" => "item_add_update",
 
         "item_import_excel"=>"item_add_update",
         "insert_item_file"=>"item_add_update",
@@ -175,6 +176,7 @@ class RouteTokens
         "new_employee"=>"employees_add_update",
         "employee_list" => "employees_search",
         "employee_edit"=>"employees_add_update",
+        "clone_employee"=>"employees_add_update",
         "employee_delete"=>"employees_delete",
         "employees_delete"=>"employees_delete",
 

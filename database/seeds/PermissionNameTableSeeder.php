@@ -302,6 +302,15 @@ class PermissionNameTableSeeder extends Seeder
                 ),
                 "description"=>"Add, Update, Delete Price Levels"
             ),
+            "Admin Permissions" => array(
+                "permissions"=> array(
+                    array(
+                        "permission_name"=>"Update Settings Table Data",
+                        "permission_token"=>"update_settings_table_data"
+                    ),
+                ),
+                "description"=>"Special Permissions For Admin Employees"
+            )
         );
 
 

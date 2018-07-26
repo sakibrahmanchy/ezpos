@@ -212,27 +212,27 @@
 
                             <div  class="form-group">
                                 <label class="col-sm-3 col-md-3 col-lg-2 control-label wide"> </label>
-                                        <div class="col-sm-9 col-md-9 col-lg-10">
-                                        <div class="col-sm-9 col-md-9 col-lg-10">
-                                            @foreach($images as $anImage)
-                                            @if(!is_null($anImage->item_id))
-                                            <div class="{{$item->item_id}}ol-sm-6 col-md-4">
-                                            <div class="thumbnail">
+                                    <div class="col-sm-9 col-md-9 col-lg-10">
+                                    <div class="col-sm-9 col-md-9 col-lg-10">
+                                        @foreach($images as $anImage)
+                                        @if(!is_null($anImage->item_id))
+                                        <div class="{{$item->item_id}}ol-sm-6 col-md-4">
+                                        <div class="thumbnail">
 
-                                                 <img src = "{{$anImage->directory}}/{{$anImage->new_name}}"  >
+                                             <img src = "{{$anImage->directory}}/{{$anImage->new_name}}"  >
 
-                                                    <div class="caption">
-                                                    <h6>{{$anImage->actual_name}}</h6>
-                                                    <p><a href="{{route('item_image_delete',['item_id'=>$anImage->item_id,'image_id'=>$anImage->file_id])}}" class="btn btn-default" role="button">Delete </a></p>
-                                                </div>
+                                                <div class="caption">
+                                                <h6>{{$anImage->actual_name}}</h6>
+                                                <p><a href="{{route('item_image_delete',['item_id'=>$anImage->item_id,'image_id'=>$anImage->file_id])}}" class="btn btn-default" role="button">Delete </a></p>
                                             </div>
-                                           </div>
-                                                @endif
-                                                @endforeach
-
-                                          </div>
+                                        </div>
                                        </div>
-                               </div>
+                                            @endif
+                                            @endforeach
+
+                                      </div>
+                                   </div>
+                           </div>
 
                                     {{--<div class = "form-group">
                                     <div class="col-sm-3 col-md-3 col-lg-2 control-label wide">
