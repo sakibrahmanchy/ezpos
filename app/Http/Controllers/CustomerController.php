@@ -241,15 +241,29 @@ class CustomerController extends Controller
             return response()->json(["success"=>false,"message"=>"Invalid loyalty card number."],200);
     }
 
+    public function getTotalCustomerTransactionRowsBySaleId($sale_id){
+        return CustomerTransaction::where("sale_id")->count();
+    }
+
+    public function removeDuplicatesFromCustomerTransaction($sale_id) {
+        $total_rows = $this->getTotalCustomerTransactionRowsBySaleId($sale_id);
+        $query = "Delete from `customer_transactions` where sale_id = ? order by created_at,updated_at limit 1,?";
+        DB::delete($query, [$sale_id, $total_rows]);
+    }
+
     public function getCustomerProfile($customer_id){
         //DB::connection()->enableQueryLog();
         $customerInfo = Customer::with('transactions','transactionSum')->where("id",$customer_id)->first();
         //$queries = DB::getQueryLog();
         //dd($queries);
-        $dueList = Sale::join('customer_transactions','sales.id','=','customer_transactions.sale_id')
+//        foreach($customerInfo->transactions as $aTransaction) {
+//            $this->removeDuplicatesFromCustomerTransaction($aTransaction->sale_id);
+//        }
+
+        $dueList = CustomerTransaction::join('sales','sales.id','=','customer_transactions.sale_id')
             ->where("sale_type",SaleTypes::$SALE)
             ->where("sales.customer_id",$customer_id)
-            ->where("sales.due",'>',0)
+                ->where("sales.due",'>',0)
             ->select(DB::raw('*,customer_transactions.id as transaction_id'))
             ->get();
 
