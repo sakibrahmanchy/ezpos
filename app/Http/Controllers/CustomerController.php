@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enumaration\SaleStatus;
 use App\Enumaration\SaleTypes;
 use App\Model\Customer;
+use App\Model\Invoice;
 use App\Model\Item;
 use App\Model\LoyaltyTransaction;
 use App\Model\PaymentLog;
@@ -267,11 +268,11 @@ class CustomerController extends Controller
             ->select(DB::raw('*,customer_transactions.id as transaction_id'))
             ->get();
 
-        $customerAdvancePayment = DB::table('customer_transactions')
-                                ->where('customer_id',$customer_id)
-                                ->whereNull('sale_id')
-                                ->where('paid_amount','>',0)
-                                ->sum('paid_amount');
+//        $customerAdvancePayment = DB::table('customer_transactions')
+//                                ->where('customer_id',$customer_id)
+//                                ->whereNull('sale_id')
+//                                ->where('paid_amount','>',0)
+//                                ->sum('paid_amount');
 
 		/*if($customerInfo->transactions->count()>0)
 		{
@@ -281,7 +282,34 @@ class CustomerController extends Controller
 		}*/
         $totalSale = Sale::where('customer_id',$customer_id)->count();
         return view('customers.customer_profile',["customer"=>$customerInfo,
-                                                  "saleTotal"=>$totalSale, "dueList" => $dueList, "advance"=>$customerAdvancePayment]);
+                                                  "saleTotal"=>$totalSale, "dueList" => $dueList]);
+    }
+
+    public function generateCustomerDueInvoice(Request $request) {
+
+
+        $transactionList = $request->transaction_list;
+        $last_date_of_payment = $request->last_date_of_payment;
+        $customer_id = $request->customer_id;
+        $total_amount_of_charge = CustomerTransaction::whereIn('id',$transactionList)->sum(DB::raw('sale_amount - paid_amount'));
+        $invoice = Invoice::create([
+            'customer_id' => $customer_id,
+            'last_date_of_payment' => $last_date_of_payment,
+            'total_amount_of_charge' => $total_amount_of_charge
+        ]);
+        $invoice->Transactions()->attach($transactionList);
+        return response()->json(["success"=>true,"invoice_id"=>$invoice->id],200);
+    }
+
+    public function getCustomerDueInvoice($invoice_id) {
+        $invoice = Invoice::where("id",$invoice_id)->with('Transactions','Customer')->first();
+//        $customerAdvancePayment = DB::table('customer_transactions')
+//            ->where('customer_id',$invoice->Customer->id)
+//            ->whereNull('sale_id')
+//            ->where('paid_amount','>',0)
+//            ->sum('paid_amount');
+
+        return view('customers.invoice_receipt',["invoice"=>$invoice]);
     }
 
 

@@ -17,6 +17,8 @@ class RouteTokens
         "customer_list"=>"customer_search",
         "customer_edit"=>"customer_add_update",
         "customer_profile"=>"customer_add_update",
+        "customer_invoice" => "customer_add_update",
+        "customer_invoice_generate"=>"customer_add_update",
         "customer_balance_add"=>"customer_add_update",
         "customer_transactions"=>"customer_add_update",
         "customer_assign_price_level_get"=>"customer_add_update",
@@ -24,6 +26,9 @@ class RouteTokens
         "customer_remove_price_level"=>"customer_add_update",
         "customer_delete"=>"customer_delete",
         "customers_delete"=>"customer_delete",
+
+        "customer_invoice_email"=>"customer_add_update",
+        "customer_invoice_pdf"=>"customer_add_update",
 
         "new_item"=>"item_add_update",
         "item_list"=>"item_search",

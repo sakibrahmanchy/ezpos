@@ -7,7 +7,11 @@
 @stop
 
 @section('content')
-
+        <style>
+            .rightgap {
+                margin-right: 5px;
+            }
+        </style>
         <div class="row">
             <div class="col-md-3">
 
@@ -233,7 +237,6 @@
                                                     <tbody id="data-table">
                                                     @foreach($dueList as $aTransaction)
                                                         @php $due += ( $aTransaction->due ); @endphp
-
                                                         <tr>
                                                             <td> <input class="checkboxes" type="checkbox" name="vehicle" value="{{ $aTransaction->transaction_id }}"></td>
                                                             <td>##{{$aTransaction->sale_id}}</td>
@@ -250,24 +253,25 @@
                                                         <td colspan="6" ><strong class="pull-right" style="font-size: 18px;">Total Due</strong></td>
                                                         <td><strong  style="font-size: 18px;">${{  number_format($due, 2) }}</strong></td>
                                                     </tr>
-                                                    <tr class="success">
-                                                        <td colspan="6"><strong  class="pull-right" style="font-size: 18px;">Customer Advance Payment</strong></td>
-                                                        <td><strong  style="font-size: 18px;">${{  number_format($advance, 2) }}</strong></td>
-                                                    </tr>
-                                                    <tr class="danger">
-                                                        <td colspan="6"><strong  class="pull-right" style="font-size: 18px;">Current Due</strong></td>
-                                                        <td><strong  style="font-size: 18px;">${{  number_format($due - $advance,2) }}</strong></td>
-                                                    </tr>
+                                                    {{--<tr class="success">--}}
+                                                        {{--<td colspan="6"><strong  class="pull-right" style="font-size: 18px;">Customer Advance Payment</strong></td>--}}
+                                                        {{--<td><strong  style="font-size: 18px;">${{  number_format($advance, 2) }}</strong></td>--}}
+                                                    {{--</tr>--}}
+                                                    {{--<tr class="danger">--}}
+                                                        {{--<td colspan="6"><strong  class="pull-right" style="font-size: 18px;">Current Due</strong></td>--}}
+                                                        {{--<td><strong  style="font-size: 18px;">${{  number_format($due - $advance,2) }}</strong></td>--}}
+                                                    {{--</tr>--}}
                                                     </tbody>
                                                 </table>
-
                                             </div>
                                             <!-- /.table-responsive -->
                                         </div>
                                         <!-- /.box-body -->
                                         <div class="box-footer clearfix">
-
                                             <a href="javascript:void(0)" onclick="generateInvoice()" class="btn btn-sm btn-default btn-flat pull-right">Generate Invoice</a>
+                                            <input type="text" name="hire_date" value="" id="last_date_of_payment" class="datepicker pull-right rightgap">
+                                            <span class="pull-right rightgap"><b>Last date of payment</b></span><br><br>
+                                            <span class="pull-right rightgap"><b class="invoice-error text-danger"></b></span>
                                         </div>
                                     </div>
                                 </div>
@@ -302,11 +306,46 @@
         });
 
         function generateInvoice() {
-            let selected = [];
-            $('input:checked').each(function(sale_id) {
-                selected.push(sale_id);
-            });
-            console.log(selected);
+
+
+
+            if($("#last_date_of_payment").val()=="") {
+                $('.invoice-error').text("Select Last date of payment");
+            } else {
+               let dateToday = new Date();
+               let lastDayOfPayment = $("#last_date_of_payment").val();
+               if(new Date(lastDayOfPayment)<=dateToday) {
+                   $('.invoice-error').text("Please select a later date");
+               } else {
+                   $('.invoice-error').text("");
+
+                   let selected = [];
+                   $('input:checked').each(function() {
+                      selected.push($(this).val());
+                   });
+                   if(selected.length == 0) {
+                       $('.invoice-error').text("Please select one or more due invoices to generate");
+                   }else {
+                       $.ajax({
+                           url: "{{route('customer_invoice_generate')}}",
+                           type: "post",
+                           data: {
+                               last_date_of_payment: lastDayOfPayment,
+                               transaction_list: selected,
+                               customer_id: "{{ $customer->id }}"
+                           },
+                           success: function(response){
+                                if(response.success) {
+                                    var url = '{{ route("customer_invoice", ":invoice_id") }}';
+                                    url = url.replace(':invoice_id', response.invoice_id);
+                                    window.location.href=url;
+                                }
+                           }
+                       });
+                   }
+               }
+            }
+
         }
 
 

@@ -50,6 +50,8 @@ Route::group(['middleware' => ['admin']], function () {
     route::post('/customer/new','CustomerController@AddCustomer')->name('new_customer')->middleware('auth');
     route::get('customer/list','CustomerController@GetCustomerList')->name('customer_list')->middleware('auth');
     Route::get('customer/profile/{customer_id}','CustomerController@getCustomerProfile')->name('customer_profile')->middleware('auth');
+    Route::get('customer/invoice/{invoice_id}','CustomerController@getCustomerDueInvoice')->name('customer_invoice')->middleware('auth');
+    Route::post('customer/invoice_generate','CustomerController@generateCustomerDueInvoice')->name('customer_invoice_generate')->middleware('auth');
     Route::get('customer/balance/add','CustomerController@customerAddBalanceGet')->name('customer_balance_add')->middleware('auth');
     Route::post('customer/balance/add','CustomerController@customerAddBalancePost')->name('customer_balance_add')->middleware('auth');
     Route::get('customer/assign/price_level/{customer_id}','CustomerController@customerAssignPriceLevelGet')->name('customer_assign_price_level_get')->middleware('auth');
@@ -59,6 +61,10 @@ Route::group(['middleware' => ['admin']], function () {
     route::post('customer/edit/{customer_id}','CustomerController@EditCustomerPost')->name('customer_edit')->middleware('auth');
     route::get('customer/delete/{customer_id}','CustomerController@DeleteCustomerGet')->name('customer_delete')->middleware('auth');
     Route::post('customers/delete','CustomerController@DeleteCustomers')->name('customers_delete')->middleware('auth');
+
+    Route::get('customer/invoice/{invoice_id}/email','InvoiceController@emailInvoice')->name('customer_invoice_email')->middleware('auth');
+    Route::get('customer/invoice/{invoice_id}/pdf','InvoiceController@DownloadInvoiceReceipt')->name('customer_invoice_pdf')->middleware('auth');
+
 
     route::get('/item/new','ItemController@GetItemForm' )->name('new_item')->middleware('auth');
     route::get('/item/clone/{item_id}','ItemController@cloneItem' )->name('clone_item')->middleware('auth');
