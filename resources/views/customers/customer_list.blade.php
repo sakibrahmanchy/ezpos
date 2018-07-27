@@ -40,7 +40,7 @@
         <div class = "row">
             <div class="col-md-12 table-responsive">
 
-                <table class="table table-hover " >
+                <table class="table table-hover " id="tableAll">
                     <thead>
                     <tr >
                         <th></th>
@@ -229,12 +229,47 @@
                 });
             });
 
+            $('#tableAll thead th').each( function () {
+                var title = $(this).text();
+                //console.log(title);
+                var differentCases = {
+                    '': '',
+                    'Actions': '',
+                    {{--'Item Status': '<select class="form-control"><option value="{{ \App\Enumaration\ItemStatus::$ACTIVE }}" selected>Active</option><option value="{{ \App\Enumaration\ItemStatus::$INACTIVE }}">Inactive</option></select>',--}}
+
+                };
+
+                if(differentCases[title] === undefined) {
+                    $(this).html( '<input class="form-control" type="text" placeholder="Search '+title+'" />' );
+                } else {
+                    $(this).html( differentCases[title] );
+                }
+
+            } );
+
+
+            // Apply the search
+            table.columns().every( function () {
+                var that = this;
+                console.log(this);
+                $( 'input', this.header() ).on( 'keyup change', function () {
+
+                    if ( that.search() !== this.value ) {
+                        that
+                            .search( this.value )
+                            .draw();
+                    }
+                } );
+            } );
 
         });
 
         $('input.global_filter').on( 'keyup click', function () {
             filterGlobal();
         } )
+
+
+
 
     </script>
 @stop

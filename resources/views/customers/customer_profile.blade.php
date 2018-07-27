@@ -315,7 +315,7 @@
                let dateToday = new Date();
                let lastDayOfPayment = $("#last_date_of_payment").val();
                if(new Date(lastDayOfPayment)<=dateToday) {
-                   $('.invoice-error').text("Please select a later date");
+                   $('.invoice-error').text("Please select a later date from today");
                } else {
                    $('.invoice-error').text("");
 

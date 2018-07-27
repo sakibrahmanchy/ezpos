@@ -3,13 +3,13 @@
 
 @section('pageTitle','Invoice Receipt')
 
-@section('breadcrumbs')
-    {!! Breadcrumbs::render('sale_receipt',$invoice->id) !!}
-    <span><label class="label label-primary pull-right counter-name"><b>{{ \Illuminate\Support\Facades\Cookie::get('counter_name') }}</b></label></span>
-    <br><br>
-    <a href="javascript:void(0)"  onclick="changeCounter()" class="pull-right">Change Location</a>
-    <br>
-@stop
+{{--@section('breadcrumbs')--}}
+    {{--{!! Breadcrumbs::render('sale_receipt',$invoice->id) !!}--}}
+    {{--<span><label class="label label-primary pull-right counter-name"><b>{{ \Illuminate\Support\Facades\Cookie::get('counter_name') }}</b></label></span>--}}
+    {{--<br><br>--}}
+    {{--<a href="javascript:void(0)"  onclick="changeCounter()" class="pull-right">Change Location</a>--}}
+    {{--<br>--}}
+{{--@stop--}}
 
 @section('content')
 		<style>
@@ -32,8 +32,8 @@
                             {{--@if(!$sale->refund_status)--}}
                                 {{--<a  href="{{route('sale_edit',['sale_id'=>$invoice->id])}}" class="btn btn-primary">Edit Sale</a>--}}
                             {{--@endif--}}
-                            <a  href="javascript:void(0)" onclick="selectPrinterCounter()" class="btn btn-primary">Print In Specific Printer</a>
-                            <a  href="{{route('print_sale',['invoice_id'=>$invoice->id, "print_type"=>1])}}" class="btn btn-primary">Print</a>
+                            {{--<a  href="javascript:void(0)" onclick="selectPrinterCounter()" class="btn btn-primary">Print In Specific Printer</a>--}}
+                            {{--<a  href="javascript:void(0)" onclick="PrintElem()"  class="btn btn-primary">Print</a>--}}
                             <a  href="{{route('customer_invoice_pdf',['invoice_id'=>$invoice->id])}}" class="btn btn-primary">Download as PDF</a>
                             <a  href="{{route('customer_invoice_email',['invoice_id'=>$invoice->id])}}" class="btn btn-primary">Email to customer</a>
                         </div>
@@ -62,7 +62,7 @@
                         </div>
 
                         <!--  sales-->
-                        <div class="col-md-4 col-sm-4 col-xs-12 text-right" style="float:right" >
+                        <div class="col-md-4 col-sm-4 col-xs-12 text-right" style="float:right" id="report_invoice">
                             <ul class="list-unstyled invoice-detail" style="margin-bottom:2px;">
                                 <li class="big-screen-title">
                                     Invoice Receipt						 <br>
@@ -335,6 +335,18 @@
 
     function selectPrinterCounter() {
         $("#choose_printer_counter_modal").modal();
+    }
+
+    function PrintElem()
+    {
+        var mywindow = window.open('', 'PRINT');
+        mywindow.document.write(document.getElementById("receipt_wrapper_inner").innerHTML);
+        mywindow.document.close(); // necessary for IE >= 10
+        mywindow.focus(); // necessary for IE >= 10*/
+        mywindow.print();
+        mywindow.close();
+
+        return true;
     }
 
     function selectCounter(){
