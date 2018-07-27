@@ -44,7 +44,7 @@
 
                                     <div class="form-group">
                                         <label for="product_id" class=" col-sm-3 col-md-3 col-lg-2 control-label ">Product Id:</label>			<div class="col-sm-9 col-md-9 col-lg-10">
-                                            <input type="text" name="product_id" value="{{ $previous_item_info->product_id+1 }}" class="form-control" id="product_id">
+                                            <input type="text" name="product_id" value="" class="form-control" id="product_id">
                                         </div>
                                     </div>
 

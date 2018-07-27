@@ -20,4 +20,11 @@ function UserHasAccessToModule($module){
     return false;
 }
 
+function UserHasAccessToCounter($counter) {
+    $userCounterList = \Illuminate\Support\Facades\App::make("user_counter_list");
+    if(in_array($counter,$userCounterList))
+        return true;
+    return false;
+}
+
 ?>

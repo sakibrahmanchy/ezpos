@@ -203,7 +203,7 @@ class PermissionNameTableSeeder extends Seeder
                     ),
                     array(
                         "permission_name"=>"Edit Sale",
-                        "permission_token"=>"sale_add_update",
+                        "permission_token"=>"sale_edit",
                     ),
                     array(
                         "permission_name"=>"Delete Sale",
@@ -220,6 +220,10 @@ class PermissionNameTableSeeder extends Seeder
                     array(
                         "permission_name"=>"Sale Reciept",
                         "permission_token"=>"sale_receipt",
+                    ),
+                    array(
+                        "permission_name"=>"Sale Refund",
+                        "permission_token"=>"sale_refund",
                     ),
                 ),
                 "description"=>" Process sales and returns"

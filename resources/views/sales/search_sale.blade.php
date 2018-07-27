@@ -172,7 +172,9 @@
                 <tr>
                     <td><a href="{{route('sale_receipt',['sale_id'=>$anItem->sale_id])}}">
                             <span class="glyphicon glyphicon-print"></span></a>
-                        <a href="{{route('sale_pre_edit',['id'=>$anItem->sale_id])}}"><span class="glyphicon glyphicon-edit"></span></a>
+                        @if(UserHasPermission('sale_refund'))
+                             <a href="{{route('sale_pre_edit',['id'=>$anItem->sale_id])}}"><span class="glyphicon glyphicon-edit"></span></a>
+                        @endif
                         EZPOS {{$anItem->sale_id}}</td>
                     <td> {{$anItem->sale_create_date}}</td>
                     <td> {{$anItem->name}}</td>

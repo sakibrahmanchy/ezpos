@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Excel;
 use App\Model\ImporterWizard\Importer;
@@ -47,8 +48,7 @@ class ItemController extends Controller
 
     public function AddItem(Request $request)
     {
-
-        $this->validate($request, [
+        $validator = Validator::make($request->all(), [
             'isbn' => 'unique:items|nullable',
             'item_name' => 'required',
             'item_category' => 'required',
@@ -61,10 +61,14 @@ class ItemController extends Controller
             'product_id' => 'nullable|unique:items'
         ]);
 
+        if ($validator->fails()) {
+            return redirect(URL::previous())
+                ->withErrors($validator)
+                ->withInput();
+        }
+
         $item = new Item();
         $item->InsertItem($request);
-
-
 
         return redirect()->route('item_list');
 
@@ -89,6 +93,7 @@ class ItemController extends Controller
         return view('items.clone_item',['previous_item_info'=>$previousItemInfo,'categoryList'=>$categoryList,'supplierList'=>$supplierList,
                                         'manufacturerList'=>$manufacturerList, "images" => $images]);
     }
+
 
 
     public function GetItemListAjax() {

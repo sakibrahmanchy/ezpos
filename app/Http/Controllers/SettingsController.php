@@ -21,17 +21,31 @@ class SettingsController extends Controller
 
 
     public function SaveSettings(Request $request){
-        $this->validate($request,[
-            "company_name"=>"required",
+
+
+        $requestArray = [
             'upc_code_prefix' => 'required_with:scan_price_from_barcode,on',
             "tax_rate" => "required",
             "customer_loyalty_percentage" => "required"
-        ]);
+        ];
+
+        if(UserHasPermission("update_settings_table_data")) {
+            $request["company_name"] = $request->company_name;
+        }
+
+        $this->validate($request,$requestArray);
+
+
 
         $settingsChange =$request->except(['_token','image','denomination_name','denomination_value']);
 
         foreach($settingsChange as $key=>$value){
-            SettingsSingleton::set($key,$value);
+            if($key=="company_name"){
+                if(isset($request->company_name))
+                    SettingsSingleton::set($key,$value);
+            }
+            else
+                SettingsSingleton::set($key,$value);
         }
 
         $file = $request->file('image');

@@ -205,9 +205,10 @@
                                         @foreach($counters as $aCounter)
                                             <option value="{{ $aCounter->id }}">{{ $aCounter->name }}</option>
                                         @endforeach
-                                    </select>
-                                    <span class="text-danger">{{ $errors->first('repeat_password') }}</span>
+                                    </select><br>
+                                    <input  type="checkbox" id="checkbox" >&nbsp; Select All
                                 </div>
+
                             </div>
 
                             <p class="text-center">Check the boxes below to grant access to modules</p>
@@ -230,6 +231,7 @@
                                         </li>
                                     @endforeach
                                 </ul>
+
 
                             </div>
 
@@ -260,7 +262,19 @@
         });
         $("#counter_permissions").select2();
 
+        $("#checkbox").click(function(){
+            if($("#checkbox").is(':checked') ){
+                $("#counter_permissions > option").prop("selected","selected");
+                $("#counter_permissions").trigger("change");
+            }else{
+                $("#counter_permissions > option").removeAttr("selected");
+                $("#counter_permissions").trigger("change");
+            }
+        });
+
     });
+
+
 
     function groupSelect(checkBox){
         selectClass = ".permissions_"+checkBox.id;
@@ -282,6 +296,8 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
+
+
 
 </script>
 

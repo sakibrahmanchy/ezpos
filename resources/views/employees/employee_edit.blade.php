@@ -212,7 +212,7 @@
                                             <option {{ in_array($aCounter->id,$counter_list) ? "selected " : "" }} value="{{ $aCounter->id }}">{{ $aCounter->name }}</option>
                                         @endforeach
                                     </select>
-
+                                    <input  type="checkbox" id="checkbox" >&nbsp; Select All
                                 </div>
                             </div>
 
@@ -274,7 +274,15 @@
                 format: 'yyyy/mm/dd'
             });
             $("#counter_permissions").select2();
-
+            $("#checkbox").click(function(){
+                if($("#checkbox").is(':checked') ){
+                    $("#counter_permissions > option").prop("selected","selected");
+                    $("#counter_permissions").trigger("change");
+                }else{
+                    $("#counter_permissions > option").removeAttr("selected");
+                    $("#counter_permissions").trigger("change");
+                }
+            });
         });
 
         function groupSelect(checkBox){

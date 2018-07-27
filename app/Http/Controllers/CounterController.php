@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Model\Counter;
 
+use App\Model\Employee;
 use App\Model\Sale;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use \App\Enumaration\PrinterConnectionType;
@@ -46,7 +48,17 @@ class CounterController extends Controller
 
     public function GetCounterListAjax(){
 
-        $counters = Counter::all();
+        $user = Auth::user();
+
+        if($user->id!=1) {
+            $employee = Employee::where('user_id',$user->id)->first();
+            $counters = Counter::join('counter_employee','counters.id','=','counter_employee.counter_id')
+                       ->select(DB::raw('counters.*'))
+            ->where('employee_id',$employee->id)->get();
+        } else {
+            $counters = Counter::all();
+        }
+
 
         return response()->json(["counters" => $counters],200);
     }
@@ -136,6 +148,7 @@ class CounterController extends Controller
     public function SetCounter($counter_id, Request $request){
 
         $counter = Counter::where("id",$counter_id)->first();
+
 
         return redirect()->back()->withCookie(cookie('counter_name', $counter->name, 45000))
                                                         ->withCookie(cookie('counter_id', $counter->id, 45000));

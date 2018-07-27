@@ -6,14 +6,12 @@
         {
             template: `
                    <transition name="fade">
+                   <div class="row" style="margin-left: -25px">
                     <div v-show="shown">
                      <ul style="list-style-type: none;">
                         <button  v-if="currentParent!==0"  class="btn btn-labeled btn-default" style=" cursor: pointer; margin-bottom: 10px" @click="SetParent(previousParent)">
                             <span class="btn-label"><i class="glyphicon glyphicon-chevron-left"></i></span>Go Back
-                        </button> <span style="font-size: 20px; margin-left: 10px;" if="currentCategory.id!=0">@{{ currentCategory.category_name }}</span><br>
-
-						<!--<button class="btn btn-default" v-if="currentParent!==0" style=" cursor: pointer;" @click="SetParent(previousParent)"><  Go Back</button><br><br>-->
-
+                        </button> <span  if="currentCategory.id!=0" style="font-size: 20px; margin-left: 10px;" >@{{ currentCategory.category_name }}</span><br>
 						<li  class="folder" v-for="(aChild, index) in children" v-if="aChild.type=='category' && index>=start_index && index<=end_index" @click="SetParent(aChild.id)">
                             <div class="vertical-align">
                                 <i class="fa fa-folder">
@@ -22,25 +20,33 @@
 						</li>
 						<li class="product-icon " v-for="(aChild, index) in children" v-if="aChild.type=='product' && index>=start_index && index<=end_index" @click="ChooseProduct(aChild)">
 							<div class="vertical-align">
-								@{{aChild.item_name}}
+							    <div v-if="aChild.item_name.length>22">
+                                    @{{ aChild.item_name.substr(0,22)}}...
+                                </div>
+                                <div v-else>
+                                   @{{ aChild.item_name }}
+                                </div>
+
 								<br />
 								\$@{{ aChild.unit_price }}
 							</div>
 							</li>
                      </ul>
 						<div style="clear: both;"></div>
-                     <div class="row">
-                     <div class="col-md-2 col-md-offset-5"  >
-                        <ul class="pagination" style="margin-top:0px;" v-if="total_page>0" style="margin-left: 40px">
-                            <li class="page-item"><a class="page-link" @click="ShowPageItem(current_page-1)" href="#"><</a></li>
-                        <!--<li class="page-item"  v-for="index in total_page" @click="ShowPageItem(index)" v-bind:class="{active:index==current_page}"><a class="page-link" href="#">@{{index}}</a></li>-->
-                            <li class="page-item"   ><a @click="ShowPageItem(current_page+1)" class="page-link" href="#">></a></li>
+                      <br>
+                      <ul>
+                       <button class="btn btn-labeled btn-default"  @click="ShowPageItem(current_page-1)" style=" cursor: pointer; margin-bottom: 10px" >
+                            <span class="btn-label"><i class="glyphicon glyphicon-chevron-left"></i></span>Previous
+                        </button>
+                        <span v-if="total_page>0" style="margin-left: 420px">Showing page @{{ current_page }} of @{{ total_page }} page(s)</span>
+                        <button @click="ShowPageItem(current_page+1)" class="btn btn-labeled btn-default" style=" cursor: pointer; margin-bottom: 10px; float:right; margin-right: 80px;" >
+                            <span class="btn-label"><i class="glyphicon glyphicon-chevron-right"></i></span>Next&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        </button>
                      </ul>
-                     </div>
-                     </div>
-
                 </div>
-                </transition>`,
+                </div>
+                </transition>
+                <h1 v-show="!shown" >Loading....</h1>`,
             props: ['shown'],
             data: function(){
                 return {
@@ -127,8 +133,7 @@
                     FetchParent: function(category_id) {
                         return axios.get("{{route('category_parent')}}"+"?category_id="+category_id,)
                             .then(function (response) {
-                                if(response.data.data!==0)
-                                    this.currentCategory.Id = response.data.data;
+
                                 return response.data.data;
 
                             })
@@ -137,6 +142,7 @@
                             });
                     },
                     SetParent: function(categoryLevel) {
+                        console.log(categoryLevel);
                         var that = this;
                         this.children = [];
                         this.currentParent = categoryLevel;
@@ -475,7 +481,6 @@
 
     function changeCounter(){
 
-        
         $.ajax({
             url: "{{route('counter_list_ajax')}}",
             type:"get",

@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\ImageManagerStatic as Image;
 use Illuminate\Contracts\Support\Collection;
@@ -50,13 +51,13 @@ class EmployeeController extends Controller
         if ($validator->fails()) {
 
 
-            return redirect()->route('new_employee')
+            return redirect(URL::previous())
                 ->withErrors($validator)
                 ->withInput($request->input());
         }
 
 
-        $userCredentials['name'] = $request->first_name;
+        $userCredentials['name'] = $request->username;
         $userCredentials['email'] = $request->email;
         $userCredentials['password'] = bcrypt($request->password);
         $userCredentials['user_type'] = UserTypes::$EMPLOYEE;
