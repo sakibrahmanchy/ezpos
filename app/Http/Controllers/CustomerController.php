@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enumaration\PaymentTypes;
 use App\Enumaration\SaleStatus;
 use App\Enumaration\SaleTypes;
 use App\Model\Customer;
@@ -16,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\In;
 use Intervention\Image\ImageManagerStatic as Image;
 
 class CustomerController extends Controller
@@ -264,9 +266,10 @@ class CustomerController extends Controller
         $dueList = CustomerTransaction::join('sales','sales.id','=','customer_transactions.sale_id')
             ->where("sale_type",SaleTypes::$SALE)
             ->where("sales.customer_id",$customer_id)
-                ->where("sales.due",'>',0)
+            ->where("sales.due",'>',0)
             ->select(DB::raw('*,customer_transactions.id as transaction_id'))
             ->get();
+
 
 //        $customerAdvancePayment = DB::table('customer_transactions')
 //                                ->where('customer_id',$customer_id)
@@ -285,8 +288,82 @@ class CustomerController extends Controller
                                                   "saleTotal"=>$totalSale, "dueList" => $dueList]);
     }
 
-    public function generateCustomerDueInvoice(Request $request) {
+    public function getCustomerDueDetailsAjax(Request $request) {
+        $customer_id = $request->customer_id;
+        $startDate = $request->start_date_formatted;
+        $endDate =  $request->end_date_formatted;
+        $endDate = date('Y-m-d', strtotime('+1 day', strtotime($endDate)));
 
+        $customerInfo = Customer::with('transactions','transactionSum')->where("id",$customer_id)->first();
+
+        $dueList = CustomerTransaction::join('sales','sales.id','=','customer_transactions.sale_id')
+            ->where("sale_type",SaleTypes::$SALE)
+            ->where("sales.customer_id",$customer_id)
+            ->where("sales.due",'>',0)
+            ->whereDate('sales.created_at', '>=', $startDate)
+            ->whereDate('sales.created_at', '<=', $endDate)
+            ->select(DB::raw('*,customer_transactions.id as transaction_id'))
+            ->get();
+
+        //dd($dueList);
+
+        $view = view('customers.customer_due_details_table',["customer"=>$customerInfo, "dueList" => $dueList]);
+
+        $contents = (string) $view->render();
+
+        return response()->json(["contents"=>$contents],200);
+    }
+
+    public function clearDuePaymentsSelected(Request $request) {
+        $transactionList = $request->transaction_list;
+        $payment_type = $request->payment_type;
+        $customer_id = $request->customer_id;
+
+        $sale_ids = Sale::_eloquentToArray(CustomerTransaction::whereIn("id",$transactionList)->select('sale_id')->get(),"sale_id");
+
+        foreach ($sale_ids as $aSaleId) {
+            $sale = Sale::where("id",$aSaleId)->first();
+            $saleDue = $sale->due;
+            $paymentLog = new PaymentLog();
+            $paymentLog->addNewPaymentLog(PaymentTypes::$TypeList[$payment_type],$saleDue,$sale,$customer_id, "Due paid for sale ".$sale->id);
+
+
+            $customerTransactionInfo = CustomerTransaction::where("sale_id",$aSaleId)
+                                       ->where("customer_id",$customer_id)
+                                       ->first();
+            if(!is_null($customerTransactionInfo)) {
+                $customerTransactionInfo->update([
+                    'paid_amount' => $sale->total_amount,
+                    'sale_amount' => $sale->total_amount,
+                    'customer_id' => $customer_id
+                ]);
+            } else {
+
+                $customerTransactionObj = new CustomerTransaction();
+                $customerTransactionObj->transaction_type = \App\Enumaration\CustomerTransactionType::SALE;
+                $customerTransactionObj->sale_id = $sale->id;
+                $customerTransactionObj->sale_amount = $sale->total_amount;
+                $customerTransactionObj->paid_amount = $sale->total_amount;
+                $customerTransactionObj->customer_id = $customer_id;
+                $customerTransactionObj->cash_register_id = 0;
+                $customerTransactionObj->save();
+
+
+                if($saleDue<0)
+                    $saleDue = 0;
+
+                $updateCustomerBalanceQuery = "update customers set account_balance=account_balance+? where id=?";
+                DB::update( $updateCustomerBalanceQuery, [ $saleDue, $customer_id] );
+            }
+
+            $sale->sale_status = SaleStatus::$SUCCESS;
+            $sale->due = 0;
+            $sale->save();
+        }
+
+    }
+
+    public function generateCustomerDueInvoice(Request $request) {
 
         $transactionList = $request->transaction_list;
         $last_date_of_payment = $request->last_date_of_payment;
@@ -303,15 +380,16 @@ class CustomerController extends Controller
 
     public function getCustomerDueInvoice($invoice_id) {
         $invoice = Invoice::where("id",$invoice_id)->with('Transactions','Customer')->first();
-//        $customerAdvancePayment = DB::table('customer_transactions')
-//            ->where('customer_id',$invoice->Customer->id)
-//            ->whereNull('sale_id')
-//            ->where('paid_amount','>',0)
-//            ->sum('paid_amount');
-
         return view('customers.invoice_receipt',["invoice"=>$invoice]);
     }
 
+
+
+    public function getGeneratedInvoices($customer_id) {
+        $invoices = Invoice::where("customer_id",$customer_id)->get();
+
+        return view("customers.invoices_list",["invoices"=>$invoices]);
+    }
 
     public function customerAddBalanceGet(Request $request) {
 

@@ -26,8 +26,8 @@ class Customer extends Model
             ->selectRaw('sum(sale_amount) as total_receivable, sum(sale_amount-amount_paid) as totalDue, sum(amount_paid) as totalPaid, customer_id' )
             ->groupBy('customer_id');*/
 		return $this->hasMany('App\Model\CustomerTransaction')
-            ->whereRaw('sale_amount > paid_amount')
-            ->selectRaw('sum(sale_amount) as total_receivable, sum(sale_amount-paid_amount) as totalDue, sum(paid_amount) as totalPaid, customer_id' );
+            ->whereRaw('sale_amount >= paid_amount')
+                        ->selectRaw('sum(sale_amount) as total_receivable, sum(sale_amount-paid_amount) as totalDue, sum(paid_amount) as totalPaid, customer_id' );
 
     }
 
