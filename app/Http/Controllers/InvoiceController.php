@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Enumaration\SaleTypes;
 use App\Model\Customer;
+use App\Model\CustomerTransaction;
 use App\Model\Invoice;
 use PDF;
 use Illuminate\Http\Request;
@@ -48,6 +50,17 @@ class InvoiceController extends Controller
         $pdf = PDF::loadView('customers.invoice_receipt_pdf', ["invoice" => $invoice, "customer" => $customer]);
         return $pdf->download('ezpos-sale-receipt.pdf');
 
+    }
 
+    public function getTotalDueForSelectedSales(Request $request) {
+        $listOfSaleIds = $request->transaction_list;
+
+        $totalDue =  CustomerTransaction::join('sales','sales.id','=','customer_transactions.sale_id')
+            ->where("sale_type",SaleTypes::$SALE)
+            ->whereIn('customer_transactions.id',$listOfSaleIds)
+            ->where("sales.due",'>',0)
+            ->sum('due');
+
+        return response()->json($totalDue);
     }
 }

@@ -88,8 +88,8 @@
                 <td>
                     Due for sale  <a href="{{ route('sale_receipt',['sale_id'=>$aTransaction->sale_id]) }}">{{ $aTransaction->sale_id }}</a>
                 </td>
-                <td><strong style="font-size: 18px;">${{ $aTransaction->sale_amount }}</strong></td>
-                <td><strong style="font-size: 18px;">${{ $aTransaction->paid_amount }}</strong></td>
+                {{--<td><strong style="font-size: 18px;">${{ $aTransaction->sale_amount }}</strong></td>--}}
+                {{--<td><strong style="font-size: 18px;">${{ $aTransaction->paid_amount }}</strong></td>--}}
                 <td><strong style="font-size: 18px;">${{ $aTransaction->sale_amount - $aTransaction->paid_amount }}</strong></td>
             </tr>
         @endforeach

@@ -257,7 +257,7 @@
                                             <!-- /.box-body -->
                                             <div class="box-footer clearfix">
                                                 @if(count($dueList) != 0)
-                                                    <a href="javascript:void(0)" id="clearPayment" onclick="clearPayments()" class="hidden btn btn-sm btn-success btn-flat">Clear Payments</a>
+                                                    <a href="javascript:void(0)" id="clearPayment" onclick="clearPayments()" class="hidden btn btn-sm btn-success btn-flat">Mark as paid</a>
                                                     <a href="javascript:void(0)" onclick="generateInvoice()" class="btn btn-sm btn-default btn-flat pull-right">Generate Invoice</a>
                                                     <input type="text" name="hire_date" value="" id="last_date_of_payment" class="datepicker pull-right rightgap">
                                                     <span class="pull-right rightgap"><b>Last date of payment</b></span><br><br>
@@ -285,11 +285,12 @@
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h4 class="modal-title" id="chooseCounter">Choose a payment type</h4>
+                            <h4 class="modal-title" id="chooseCounter">Mark as paid</h4>
                         </div>
                         <div class="modal-body">
-                                <div style="padding:20px">
-
+                                <p  class="label label-info" style="font-size: 20px" id="total_due"></p><br><br>
+                                <div>
+                                    <p>&nbsp;&nbsp;&nbsp;<b>Choose a payment type</b></p>
                                     <a tabindex="-1" href="#" class="btn btn-pay select-payment" data-payment="Cash">
                                         Cash				</a>
                                     <a tabindex="-1" href="#" class="btn btn-pay select-payment" data-payment="Check">
@@ -363,8 +364,24 @@
                 if(selected.length == 0) {
                     $('.invoice-error').text("Please select one or more due invoices to clear payment");
                 } else {
-                    $("#choose_payment_modal").modal();
+                    getTotalDueForSelefctedSales(selected);
+
                 }
+            }
+
+            function getTotalDueForSelefctedSales(selectedIds) {
+                $.ajax({
+                    url: "{{route('customer_due_selected_total')}}",
+                    type: "post",
+                    data: {
+                        transaction_list: selectedIds,
+                    },
+                    success: function(response){
+                        $("#total_due").html('Total amount to pay: $'+response);
+                        $("#choose_payment_modal").modal();
+
+                    }
+                });
             }
 
 

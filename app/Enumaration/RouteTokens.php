@@ -28,6 +28,7 @@ class RouteTokens
         "customer_invoice" => "customer_add_update",
         "customer_invoice_generate"=>"customer_add_update",
         "customer_invoices_list"=>"customer_add_update",
+        "customer_due_selected_total"=>"customer_add_update",
         "customer_invoice_email"=>"customer_add_update",
         "customer_invoice_pdf"=>"customer_add_update",
         "customer_due_details_ajax" => "customer_add_update",
