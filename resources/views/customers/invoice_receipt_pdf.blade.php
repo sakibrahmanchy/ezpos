@@ -71,8 +71,8 @@
         <th align="left" class="header">Sale Id</th>
         <th align="left" class="header">Date</th>
         <th align="left" class="header">Description</th>
-        <th>Sale Amount</th>
-        <th align="right" class="header">Amount Paid</th>
+        {{--<th>Sale Amount</th>--}}
+        {{--<th align="right" class="header">Amount Paid</th>--}}
         <th align="right" class="header">Amount Due</th>
 
     </tr>
