@@ -263,7 +263,7 @@
                                                     <span class="pull-right rightgap"><b>Last date of payment</b></span><br><br>
                                                     <span class="pull-right rightgap"><b class="invoice-error text-danger"></b></span>
                                                 @endif
-                                                <a href="javascript:void(0)" class="pull-right btn btn-info" >View Generated Invoices</a>
+                                                <a href="{{ route('customer_invoices_list',["customer_id" => $customer->id]) }}" class="pull-right btn btn-info" >View Generated Invoices</a>
                                             </div>
                                         </div>
                                     </div>
@@ -413,8 +413,6 @@
 
                     }
                 });
-
-
             }
 
 

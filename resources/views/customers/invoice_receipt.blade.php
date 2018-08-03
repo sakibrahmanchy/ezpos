@@ -11,6 +11,15 @@
     {{--<br>--}}
 {{--@stop--}}
 
+@php
+
+    $idList  = array();
+    foreach ($invoice->transactions as $aTransaction) {
+        array_push($idList, $aTransaction->id);
+    }
+
+@endphp
+
 @section('content')
 		<style>
 			*{
@@ -272,7 +281,11 @@
                             <div id="barcode" class="invoice-policy">
                                <?php echo DNS1D::getBarcodeHTML($invoice->id , "C39",1,50);	?>					</div>
                                 <p >{{ $settings['company_name'] }} Invoice {{ $invoice->id }}</p>
+
                             <div id="announcement" class="invoice-policy">
+                                @if($due>0)
+                                    <a href="javascript:void(0)" id="clearPayment" onclick="clearPayments()" class=" btn btn-sm btn-success btn-flat pull-right">Mark as paid</a>
+                                @endif
                             </div>
                         </div>
 
@@ -283,12 +296,68 @@
                             </div>
                         </div>
                     </div>
-                    {{--<center>THANK YOU!</center>--}}
+
+                    <div class="modal fade" id="choose_payment_modal" role="dialog">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title" id="chooseCounter">Mark as paid</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p  class="label label-info" style="font-size: 20px" id="total_due"></p><br><br>
+                                    <div>
+                                        <p>&nbsp;&nbsp;&nbsp;<b>Choose a payment type</b></p>
+                                        <a tabindex="-1" href="#" class="btn btn-pay select-payment" data-payment="Cash">
+                                            Cash				</a>
+                                        <a tabindex="-1" href="#" class="btn btn-pay select-payment" data-payment="Check">
+                                            Check				</a>
+                                        <a tabindex="-1" href="#" class="btn btn-pay select-payment" data-payment="Debit Card">
+                                            Debit Card				</a>
+                                        <a tabindex="-1" href="#" class="btn btn-pay select-payment" data-payment="Credit Card">
+                                            Credit Card				</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <center>
+                        @if($due>0)
+                            <label class="" style="font-size: 30px; color: white; background: #f39c12; padding: 10px;"> UNPAID</label>
+                        @else
+                            <label class="" style="font-size: 30px; color: white; background: #00a65a; padding: 10px;"> PAID</label>
+                        @endif
+                    </center>
                 </div>
                 <!--container-->
             </div>
         </div>
         <br><br>
+
+
+        <div class="modal fade" id="choose_payment_modal" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="chooseCounter">Mark as paid</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p  class="label label-info" style="font-size: 20px" id="total_due"></p><br><br>
+                        <div>
+                            <p>&nbsp;&nbsp;&nbsp;<b>Choose a payment type</b></p>
+                            <a tabindex="-1" href="#" class="btn btn-pay select-payment" data-payment="Cash">
+                                Cash				</a>
+                            <a tabindex="-1" href="#" class="btn btn-pay select-payment" data-payment="Check">
+                                Check				</a>
+                            <a tabindex="-1" href="#" class="btn btn-pay select-payment" data-payment="Debit Card">
+                                Debit Card				</a>
+                            <a tabindex="-1" href="#" class="btn btn-pay select-payment" data-payment="Credit Card">
+                                Credit Card				</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         {{--<div class="modal fade" id="choose_counter_modal" role="dialog">--}}
             {{--<div class="modal-dialog" role="document">--}}
@@ -322,6 +391,7 @@
             {{--</div>--}}
         {{--</div>--}}
 
+
 @endsection
 
 
@@ -329,7 +399,11 @@
 @section('additionalJS')
 <script>
 
+    var selected = <?php echo json_encode($idList) ?>;
 
+    $(document).ready(function ( ){
+        $('.select-payment').on('click',selectPayment);
+    });
 
     function PrintElem()
     {
@@ -343,7 +417,53 @@
         return true;
     }
 
+    function clearPayments() {
+            console.log(selected);
+            getTotalDueForSelefctedSales(selected);
+    }
 
+    function getTotalDueForSelefctedSales(selectedIds) {
+        $.ajax({
+            url: "{{route('customer_due_selected_total')}}",
+            type: "post",
+            data: {
+                transaction_list: selectedIds,
+            },
+            success: function(response){
+                $("#total_due").html('Total amount to pay: $'+response);
+                $("#choose_payment_modal").modal();
+
+            }
+        });
+    }
+
+
+
+    function selectPayment(e)
+    {
+        e.preventDefault();
+
+        $('#payment_types').attr("data-value",($(this).attr('data-payment')));
+        $('.select-payment').removeClass('active');
+        $(this).addClass('active');
+
+        let payment_type = $(this).attr('data-payment');
+
+
+        $.ajax({
+            url: "{{route('clear_due_payments_selected')}}",
+            type: "post",
+            data: {
+                payment_type: payment_type,
+                transaction_list: selected,
+                customer_id: "{{ $invoice->Customer->id }}"
+            },
+            success: function(response){
+                location.reload();
+
+            }
+        });
+    }
 
 </script>
 

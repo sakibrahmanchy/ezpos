@@ -54,6 +54,7 @@ Route::group(['middleware' => ['admin']], function () {
     Route::post('customer/due/details/ajax','CustomerController@getCustomerDueDetailsAjax')->name('customer_due_details_ajax')->middleware('auth');
     Route::post('customer/due/selected/total','InvoiceController@getTotalDueForSelectedSales')->name('customer_due_selected_total')->middleware('auth');
     Route::post('customer/due/clear','CustomerController@clearDuePaymentsSelected')->name('clear_due_payments_selected')->middleware('auth');
+    Route::post('customer/invoice/clear','CustomerController@clearCustomerInvoice')->name('clear_customer_invoice')->middleware('auth');
     Route::post('customer/invoice_generate','CustomerController@generateCustomerDueInvoice')->name('customer_invoice_generate')->middleware('auth');
     Route::get('customer/invoice/list/{customer_id}','CustomerController@getGeneratedInvoices')->name('customer_invoices_list')->middleware('auth');
     Route::get('customer/balance/add','CustomerController@customerAddBalanceGet')->name('customer_balance_add')->middleware('auth');
