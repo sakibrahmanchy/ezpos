@@ -17,7 +17,7 @@
         			@endif
                 	{{ $breadcrumb->title }}
                 </li>
-            @endif
+				@endif
         @endforeach
     </ol>
 @endif
