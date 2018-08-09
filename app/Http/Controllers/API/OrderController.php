@@ -24,11 +24,11 @@ class OrderController extends Controller
     public function processOrder(Request $request) {
         $processedOrder = new ProcessOrder($request);
 
-        $customer_id = $processedOrder->processCustomerAndGetId();
-        $paymentInfo = $processedOrder->processPaymentInfo();
-
-        dd($paymentInfo);
-        dd($customer_id);
+//        $customer_id = $processedOrder->processCustomerAndGetId();
+//        $paymentInfo = $processedOrder->processPaymentInfo();
+//
+//        dd($paymentInfo);
+//        dd($customer_id);
     }
 
     public function processCustomerAndGetId($allData) {

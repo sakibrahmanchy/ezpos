@@ -9,6 +9,7 @@ namespace App\Model\Api;
 
 use App\Enumaration\PaymentTypes;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class ProcessOrder extends Model
 {
@@ -66,39 +67,75 @@ class ProcessOrder extends Model
         );
     }
 
-    public function processItems($items) {
+    public function processItems() {
         $processedItems = array();
 
         foreach( $this->data->items as $anItem ) {
-            $item_id =  $anItem->id;
-
-            $currentProcessedItem['item_id'] = $item_id;
-            $currentProcessedItem['unit_price'] = $anItem->perUnitPrice;
-            $currentProcessedItem['cost_price'] = $anItem->stock_price;
-            $currentProcessedItem['total_price'] = $anItem->totalPrice;
-            $currentProcessedItem['quantity'] = $anItem->quantity;
-            $currentProcessedItem['9'] = $this->getItemDiscountAmountByItemId($item_id);
-            $currentProcessedItem['price_rule_id'] = $this->getPriceRuleIdByItemId($item_id);
-            $currentProcessedItem['item_type'] = $this->getItemTypeByItemId($item_id);
-            $currentProcessedItem['item_discount_percentage'] = $anItem->quantity;
-            $currentProcessedItem['sale_discount_amount'] = $anItem->quantity;
-            $currentProcessedItem['item_profit'] = $anItem->quantity;
-            $currentProcessedItem['tax_amount'] = $anItem->quantity;
-            $currentProcessedItem['tax_rate'] = $anItem->quantity;
-            $currentProcessedItem['is_price_taken_from_barcode'] = false;
+            $currentProcessedItem = array(
+                'item_id' => $anItem->id,
+                'unit_price' => $anItem->perUnitPrice,
+                'cost_price' => $anItem->stock_price,
+                'total_price' => $anItem->totalPrice,
+                'quantity' => $anItem->quantity,
+                'discount_amount' => $this->getItemDiscountAmountByItemId($anItem),
+                'price_rule_id' => $this->getPriceRuleIdByItemId($anItem->id),
+                'item_type' => $this->getItemTypeByItemId($anItem),
+                'item_discount_percentage' => $this->getItemDiscountPercentageByItemId($anItem),
+                'sale_discount_amount' =>  $this->getSaleDiscountAmountByItemId($anItem),
+                'item_profit' => $this->getItemProfitByItemId($anItem),
+                'tax_amount' => $this->getTaxAmountByItemId($anItem->total_amount),
+                'tax_rate' => $this->getTaxRate(),
+                'is_price_taken_from_barcode' => false
+            );
+            array_push($processedItems, $currentProcessedItem);
         }
+
+        return $processedItems;
     }
 
-    private function getItemDiscountAmountByItemId($item_id) {
-        return 0.00;
+    private function getItemDiscountAmountByItemId($item) {
+        return ($item->perUnitPrice * $item->quantity) - $item->totalPrice;
     }
 
     private function getPriceRuleIdByItemId($item_id) {
+
+        $itemSearch = DB::table('item_price_rule')
+                    ->join('price_rules','item_price_rule.price_rule_id','=','price_rules.id')
+                    ->where("item_id",$item_id)
+                    ->whereDate("start_date",'<=',date('Y-m-d'))
+                    ->whereDate("end_date",'>=',date('Y-m-d'));
+
+        if($itemSearch->exists())
+            return $itemSearch->orderBy('price_rules.created_at','desc')->first()->price_rule_id;
         return 0;
     }
 
     private function getItemTypeByItemId($item_id) {
         return "item ";
+    }
+
+    private function getItemDiscountPercentageByItemId($item_id) {
+
+    }
+
+    private function getSaleDiscountAmountByItemId($item_id) {
+
+    }
+
+    private function getItemProfitByItemId($item_id) {
+
+    }
+
+    private function getTaxAmountByItemId($itemTotalAmount) {
+
+    }
+
+    private function getTaxRate() {
+        if($this->tax_id==0)
+            return 0.00;
+
+        $tax = DB::connection('mysql_pos')->table('taxes')->where('id', $this->tax_id)->first();
+        return is_null($tax) ? 0.0 : $tax->amount;
     }
 
 }
