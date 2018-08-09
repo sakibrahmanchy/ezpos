@@ -455,6 +455,10 @@
 
         });
 
+        table.on('draw',function(){
+            console.log('asa Drawed');
+        });
+
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
 
             activeTab = $("ul#tabs li.active").attr("id");

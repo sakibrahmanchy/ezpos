@@ -33,14 +33,17 @@ class UserController extends Controller
         return response()->json($this->content, $status);
     }
 
-    public function loginByPin(){
+    public function loginByPin(Request $request){
 
-       $user = User::where("pin",request('pin'))->first();
+       $user = User::where("pin",$request->pin)->first();
+
+       $success = false;
         if(!is_null($user)) {
             if(Auth::loginUsingId($user->id)){
                 $user = Auth::user();
                 $this->content['token'] =  $user->createToken('EZPOS Mobile App')->accessToken;
                 $status = 200;
+                $success = true;
             }
             else{
                 $this->content['error'] = "Unauthorized";
@@ -52,7 +55,19 @@ class UserController extends Controller
             $status = 401;
         }
 
-        return response()->json($this->content, $status);
+        if($success)
+            return response()->json([
+                            'success'=>$success,
+                            'token'=>$this->content['token'],
+                            'user_id'=>$user->id,
+                            'role'=>$user->user_type
+                        ], $status);
+        else
+            return response()->json([
+                'success'=>$success,
+                'error' => $this->content['error']
+
+            ], $status);
     }
 
 }

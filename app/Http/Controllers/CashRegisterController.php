@@ -37,6 +37,7 @@ class CashRegisterController extends Controller
     }
 
     public function openNewCashRegister(Request $request){
+
         $this->validate($request,[
             "opening_balance"=>'required|numeric'
         ]);
@@ -115,7 +116,6 @@ class CashRegisterController extends Controller
         $openingBalance = $cashRegister->getActiveRegisterOpeningBalance();
         $total_additions = $cashRegister->getTotalAddedAmountInActiveRegister();
         $total_subtractions = $cashRegister->getTotalSubtractedAmountInActiveRegister();
-
 
         $salePaymentInfo = CashRegister::generatePaymentAmount($cashRegister->getCurrentActiveRegister()->id, [SaleStatus::$SUCCESS]);
         $suspendedSalePaymentInfo = CashRegister::generatePaymentAmount($cashRegister->getCurrentActiveRegister()->id,

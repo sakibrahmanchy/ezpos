@@ -180,7 +180,6 @@
                                                         <tr>
                                                             <th align="left" class="header">Transaction Id</th>
                                                             <th align="left" class="header">Date</th>
-                                                            <th align="left" class="header">Description</th>
                                                             <th>Sale Amount</th>
                                                             <th align="right" class="header">Amount Paid</th>
                                                             <!--<th allign="right" class="header">Due</th>-->
@@ -191,18 +190,11 @@
                                                         @foreach($customer->transactions as $aTransaction)
                                                             @php $due += ( $aTransaction->sale_amount - $aTransaction->paid_amount ); @endphp
                                                             <tr>
-                                                                <td>##{{$aTransaction->id}}</td>
+                                                                <td><a href="{{ route('sale_receipt',["sale_id"=>$aTransaction->sale_id]) }}"> {{ $aTransaction->sale_id }}</a></td>
                                                                 <td>{{$aTransaction->created_at}}</td>
-                                                                <td>
-                                                                    @if(is_null($aTransaction->sale_id))
-                                                                        Due/Advance Amount Paid
-                                                                    @else
-                                                                        Paid for: <a href="{{ route('sale_receipt',["sale_id"=>$aTransaction->sale_id]) }}"> Sale {{ $aTransaction->sale_id }}</a>
-                                                                    @endif
-                                                                </td>
-                                                                <td><strong style="font-size: 18px;">${{ $aTransaction->sale_amount }}</strong></td>
-                                                                <td><strong style="font-size: 18px;">${{ $aTransaction->paid_amount }}</strong></td>
-                                                            <!--<td><strong style="font-size: 18px;">${{  $due }}</strong></td>-->
+                                                                <td><strong style="font-size: 18px;">${{ number_format($aTransaction->sale_amount, 2) }}</strong></td>
+                                                                <td><strong style="font-size: 18px;">${{ number_format($aTransaction->paid_amount, 2) }}</strong></td>
+
                                                             </tr>
                                                         @endforeach
                                                         </tbody>
@@ -225,7 +217,7 @@
                                                         <div class="form-inline">
                                                             <div class="form-group" style="float:right">
                                                                 <div class="input-group date" data-provide="datepicker" data-date-format="yyyy-mm-dd">
-                                                                    <input id="end_date_formatted" name="end_date_formatted" type="text" class="form-control" value="{{ date('Y-m-d') }}">
+                                                                    <input id="end_date_formatted" name="end_date_formatted" type="text" class="form-control" value="{{ date('Y/m/d') }}">
                                                                     <div class="input-group-addon">
                                                                         <span class="glyphicon glyphicon-calendar"></span>
                                                                     </div>
@@ -234,7 +226,7 @@
 
                                                             <div class="form-group" style="float:right">
                                                                 <div class="input-group date" data-provide="datepicker" data-date-format="yyyy-mm-dd">
-                                                                    <input id="start_date_formatted" name="start_date_formatted" type="text" class="form-control" value="">
+                                                                    <input id="start_date_formatted" name="start_date_formatted" type="text" class="form-control" value="{{ date('Y/m/d') }}">
                                                                     <div class="input-group-addon">
                                                                         <span class="glyphicon glyphicon-calendar"></span>
                                                                     </div>
@@ -258,9 +250,11 @@
                                             <div class="box-footer clearfix">
                                                 @if(count($dueList) != 0)
                                                     <a href="javascript:void(0)" id="clearPayment" onclick="clearPayments()" class="hidden btn btn-sm btn-success btn-flat">Mark as paid</a>
+                                                    <a href="javascript:void(0)" id="selectAll" onclick="" class="hidden btn btn-sm btn-default btn-flat">Select All</a>
+                                                    <a href="javascript:void(0)" id="clearAll" onclick="" class="hidden btn btn-sm btn-default btn-flat">Clear All</a>
                                                     <a href="javascript:void(0)" onclick="generateInvoice()" class="btn btn-sm btn-default btn-flat pull-right">Generate Invoice</a>
                                                     <input type="text" name="hire_date" value="" id="last_date_of_payment" class="datepicker pull-right rightgap">
-                                                    <span class="pull-right rightgap"><b>Last date of payment</b></span><br><br>
+                                                    <span class="pull-right rightgap"><b>Due date</b></span><br><br>
                                                     <span class="pull-right rightgap"><b class="invoice-error text-danger"></b></span>
                                                 @endif
                                                 <a href="{{ route('customer_invoices_list',["customer_id" => $customer->id]) }}" class="pull-right btn btn-info" >View Generated Invoices</a>
@@ -312,21 +306,13 @@
         <script>
 
             let selected = [];
+            var table;
             $(document).ready(function(){
                 countAnimate();
+                initTable();
+                initSelectBoxes();
                 $('.select-payment').on('click',selectPayment);
 
-                $(".checkboxes").click(function(){
-                    selected = [];
-                    $('input:checked').each(function() {
-                        selected.push($(this).val());
-                    });
-                    if(selected.length > 0 ) {
-                        $("#clearPayment").removeClass('hidden');
-                    } else {
-                        $("#clearPayment").addClass('hidden');
-                    }
-                })
 
                 $(' #start_date_formatted, #end_date_formatted').change(function() {
                     $('.data').addClass('hide');
@@ -350,16 +336,21 @@
 
                         $('.se-pre-con').addClass('hide');
                         $('.data').removeClass('hide');
+                        initTable();
+                        initSelectBoxes();
                     });
                 });
-
             });
 
             function clearPayments() {
                 selected = [];
-                $('input:checked').each(function() {
-                    selected.push($(this).val());
+//                $('input:checked').each(function() {
+//                    selected.push($(this).val());
+//                });
+                selected = $.map(table.rows('.selected').nodes(), function (item) {
+                    return $(item).attr("data-id");
                 });
+
                 $('.invoice-error').text("");
                 if(selected.length == 0) {
                     $('.invoice-error').text("Please select one or more due invoices to clear payment");
@@ -377,6 +368,7 @@
                         transaction_list: selectedIds,
                     },
                     success: function(response){
+                        console.log(response);
                         $("#total_due").html('Total amount to pay: $'+response);
                         $("#choose_payment_modal").modal();
 
@@ -396,8 +388,8 @@
 
                 let payment_type = $(this).attr('data-payment');
                 selected = [];
-                $('input:checked').each(function() {
-                    selected.push($(this).val());
+                selected = $.map(table.rows('.selected').nodes(), function (item) {
+                    return $(item).attr("data-id");
                 });
 
                 $.ajax({
@@ -428,9 +420,8 @@
                    } else {
                        $('.invoice-error').text("");
 
-                       selected = [];
-                       $('input:checked').each(function() {
-                          selected.push($(this).val());
+                       selected = $.map(table.rows('.selected').nodes(), function (item) {
+                           return $(item).attr("data-id");
                        });
                        if(selected.length == 0) {
                            $('.invoice-error').text("Please select one or more due invoices to generate");
@@ -483,5 +474,100 @@
                     });
                 });
             }
+
+
+            function initTable() {
+
+                table = $('#invoiceTable').DataTable({
+
+                    pageLength:10,
+                    columnDefs: [{
+                        orderable: false,
+                        className: 'select-checkbox',
+                        targets:   0
+                    }],
+                    select: {
+                        style:    'multi',
+                        selector: 'td:not(:last-child)'
+                    },
+                    dom:"Bt<'row'<'col-sm-12'tr>>" +
+                    "<'row'<'col-sm-4'l><'col-sm-8'p>>",
+                    buttons: [
+                        {
+                            extend: 'pdf',
+                            footer: true,
+                            exportOptions: {
+                                columns: [2,3,4,5,6,7]
+                            }
+                        },
+                        {
+                            extend: 'csv',
+                            exportOptions: {
+                                columns: [2,3,4,5,6,7]
+                            }
+
+                        },
+                        {
+                            extend: 'excel',
+                            exportOptions: {
+                                columns: [2,3,4,5,6,7]
+                            }
+                        },
+                        {
+                            extend: 'print',
+                            exportOptions: {
+                                columns: [2,3,4,5,6,7]
+                            }
+                        },
+                        {
+                            extend: 'colvis',
+                            footer: false
+                        }
+                    ],
+
+                });
+                $("#invoiceTable").after($('.due').html());
+            }
+
+            function initSelectBoxes() {
+                table.on( 'select', function ( e, dt, type, indexes ) {
+                    if ( type === 'row' ) {
+                        $('#selectButtonHolder').removeClass('hidden');
+                        selected = $.map(table.rows('.selected').nodes(), function (item) {
+                            return $(item).attr("data-id");
+                        });
+                        $('input:checked').each(function() {
+                            selected.push($(this).val());
+                        });
+                        if(selected.length > 0 ) {
+                            $("#clearPayment").removeClass('hidden');
+                            $("#selectAll").removeClass('hidden');
+                            $("#clearAll").removeClass('hidden');
+                        } else {
+                            $("#clearPayment").addClass('hidden');
+                            $("#selectAll").addClass('hidden');
+                            $("#selectAll").addClass('hidden');
+                        }
+                    }
+                });
+
+                table.on( 'deselect', function ( e, dt, type, indexes ) {
+                    var count_rows =  table.rows('.selected').data().length;
+                    if(count_rows==0){
+                        $('#selectButtonHolder').addClass('hidden');
+                    }
+                } );
+
+                $('#selectAllButton').click( function () {
+
+                    table.rows({ page: 'current' }).select();
+
+                });
+
+                $('#clearAll').click( function () {
+                    table.rows({ page: 'current' }).deselect();
+                } );
+            }
+
         </script>
     @stop

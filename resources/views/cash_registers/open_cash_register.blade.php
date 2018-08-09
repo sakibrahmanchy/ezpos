@@ -18,6 +18,8 @@
                     Please enter an opening amount to get in the sales register
                 </div>
                 <form action="{{route('open_cash_register')}}" id="opening_balance_form" method="post" accept-charset="utf-8" novalidate="novalidate">
+                    {{ csrf_field()  }}
+
                     <div class="panel-body">
 
                         <div class="col-md-6">

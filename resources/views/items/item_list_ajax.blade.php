@@ -127,7 +127,7 @@
 
             $(".tabButtons").on('click',function(){
                 $("#item_status").val($(this).attr('data-val'));
-                table.draw();
+                 table.draw();
             });
 
             var table = $('#tableAll').DataTable( {
@@ -178,6 +178,12 @@
                     {
                         extend: 'colvis',
                         footer: false
+                    },
+                    {
+                        text: 'My button',
+                        action: function ( e, dt, node, config ) {
+                            alert( 'Button activated' );
+                        }
                     }
                 ],
                 "ajax": {
@@ -338,6 +344,10 @@
                         },
                     },
                 ]
+            });
+
+            table.on('draw',function(){
+                console.log('asa Drawed');
             });
 
             $('#global_filter').keyup(function() {

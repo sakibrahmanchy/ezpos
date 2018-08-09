@@ -116,7 +116,6 @@
                         <tr>
                             <th align="left" class="header">Sale Id</th>
                             <th align="left" class="header">Date</th>
-                            <th align="left" class="header">Description</th>
                             <th>Sale Amount</th>
                             <th align="right" class="header">Amount Paid</th>
                             <th align="right" class="header">Amount Due</th>
@@ -128,18 +127,15 @@
                         @foreach($invoice->transactions as $aTransaction)
                             @php $due += (  $aTransaction->sale_amount -  $aTransaction->paid_amount  ); @endphp
                             <tr>
-                                <td>##{{$aTransaction->sale_id}}</td>
+                                <td><a href="{{ route('sale_receipt',['sale_id'=>$aTransaction->sale_id]) }}">{{ $aTransaction->sale_id }}</a></td>
                                 <td>{{$aTransaction->created_at}}</td>
-                                <td>
-                                    Due for sale  <a href="{{ route('sale_receipt',['sale_id'=>$aTransaction->sale_id]) }}">{{ $aTransaction->sale_id }}</a>
-                                </td>
-                                <td><strong style="font-size: 18px;">${{ $aTransaction->sale_amount }}</strong></td>
-                                <td><strong style="font-size: 18px;">${{ $aTransaction->paid_amount }}</strong></td>
-                                <td><strong style="font-size: 18px;">${{ $aTransaction->sale_amount - $aTransaction->paid_amount }}</strong></td>
+                                <td><strong style="font-size: 18px;">${{ number_format($aTransaction->sale_amount,2) }}</strong></td>
+                                <td><strong style="font-size: 18px;">${{ number_format($aTransaction->paid_amount, 2) }}</strong></td>
+                                <td><strong style="font-size: 18px;">${{ number_format($aTransaction->sale_amount - $aTransaction->paid_amount,2) }}</strong></td>
                             </tr>
                         @endforeach
                         <tr class="warning">
-                            <td colspan="5" ><strong class="pull-right" style="font-size: 18px;">Total Due</strong></td>
+                            <td colspan="4" ><strong class="pull-right" style="font-size: 18px;">Total Due</strong></td>
                             <td><strong  style="font-size: 18px;">${{  number_format($due, 2) }}</strong></td>
                         </tr>
                         {{--<tr class="success">--}}

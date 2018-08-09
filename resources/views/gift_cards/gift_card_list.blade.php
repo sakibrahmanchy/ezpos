@@ -115,7 +115,7 @@
 
 @section('additionalJS')
     <script>
-
+        var table;
         function filterGlobal () {
             $('.table').DataTable().search(
                     $('#global_filter').val(),
@@ -174,7 +174,6 @@
                     }
                 ],
             });
-
             table.on( 'select', function ( e, dt, type, indexes ) {
                 if ( type === 'row' ) {
                     $('#selectButtonHolder').removeClass('hidden');

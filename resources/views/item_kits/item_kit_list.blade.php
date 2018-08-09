@@ -184,6 +184,8 @@
             ],
         });
 
+
+
         table.on( 'select', function ( e, dt, type, indexes ) {
             if ( type === 'row' ) {
                 $('#selectButtonHolder').removeClass('hidden');
@@ -264,7 +266,6 @@
         // Apply the search
         table.columns().every( function () {
             var that = this;
-            console.log(this);
             $( 'input', this.header() ).on( 'keyup change', function () {
 
                 if ( that.search() !== this.value ) {
