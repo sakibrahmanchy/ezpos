@@ -53,8 +53,8 @@ Route::group(['middleware' => ['admin']], function () {
     Route::get('customer/invoice/{invoice_id}','CustomerController@getCustomerDueInvoice')->name('customer_invoice')->middleware('auth');
     Route::post('customer/due/details/ajax','CustomerController@getCustomerDueDetailsAjax')->name('customer_due_details_ajax')->middleware('auth');
     Route::post('customer/due/selected/total','InvoiceController@getTotalDueForSelectedSales')->name('customer_due_selected_total')->middleware('auth');
-    Route::post('customer/due/clear','CustomerController@clearDuePaymentsSelected')->name('clear_due_payments_selected')->middleware('auth');
-    Route::post('customer/invoice/clear','CustomerController@clearCustomerInvoice')->name('clear_customer_invoice')->middleware('auth');
+    Route::post('customer/due/clear','CustomerController@clearDuePaymentsSelected')->name('clear_due_payments_selected')->middleware('auth','cash_register');
+    Route::post('customer/invoice/clear','CustomerController@clearCustomerInvoice')->name('clear_customer_invoice')->middleware('auth','cash_register');
     Route::post('customer/invoice_generate','CustomerController@generateCustomerDueInvoice')->name('customer_invoice_generate')->middleware('auth');
     Route::get('customer/invoice/list/{customer_id}','CustomerController@getGeneratedInvoices')->name('customer_invoices_list')->middleware('auth');
     Route::get('customer/balance/add','CustomerController@customerAddBalanceGet')->name('customer_balance_add')->middleware('auth');
@@ -123,8 +123,8 @@ Route::group(['middleware' => ['admin']], function () {
     Route::get('supplier/excel/import','SupplierController@importExcelGet')->name('supplier_import_excel')->middleware('auth');
     Route::post('supplier/excel/import', 'SupplierController@importExcel')->name('supplier_import_excel')->middleware('auth');
 
-    route::get('/sale/new','SaleController@GetSaleForm' )->name('new_sale')->middleware('auth');
-    route::post('/sale/new','SaleController@AddSale')->name('new_sale')->middleware('auth');
+    route::get('/sale/new','SaleController@GetSaleForm' )->name('new_sale')->middleware('auth','cash_register');
+    route::post('/sale/new','SaleController@AddSale')->name('new_sale')->middleware('auth','cash_register');
     route::post('/sale/suspend','SaleController@SuspendSale')->name('suspend_sale')->middleware('auth');
     route::get('sale/suspended','SaleController@GetSuspendedSale')->name('suspended_sale_list')->middleware('auth');
     route::get('/sale/receipt/{sale_id}','SaleController@GetSaleReceipt')->name('sale_receipt')->middleware('auth');
@@ -281,11 +281,11 @@ Route::group(['middleware' => ['admin']], function () {
 
     route::get("/cash_register/open","CashRegisterController@openNewCashRegisterGet")->name('open_cash_register')->middleware('auth');
     route::post('/cash_register/open','CashRegisterController@openNewCashRegister')->name('open_cash_register')->middleware('auth');
-    route::get('/cash_register/add','CashRegisterController@addCashToRegister')->name('add_cash_to_register')->middleware('auth');
-    route::post('/cash_register/add','CashRegisterController@addCashToRegisterPost')->name('add_cash_to_register')->middleware('auth');
-    route::get('/cash_register/subtract','CashRegisterController@subtractCashFromRegister')->name('subtract_cash_from_register')->middleware('auth');
-    route::post('/cash_register/subtract','CashRegisterController@subtractCashFromRegisterPost')->name('subtract_cash_from_register')->middleware('auth');
-    route::get('/cash_register/close','CashRegisterController@closeCurrentCashRegister')->name('close_cash_register')->middleware('auth');
+    route::get('/cash_register/add','CashRegisterController@addCashToRegister')->name('add_cash_to_register')->middleware('auth','cash_register');
+    route::post('/cash_register/add','CashRegisterController@addCashToRegisterPost')->name('add_cash_to_register')->middleware('auth','cash_register');
+    route::get('/cash_register/subtract','CashRegisterController@subtractCashFromRegister')->name('subtract_cash_from_register')->middleware('auth','cash_register');
+    route::post('/cash_register/subtract','CashRegisterController@subtractCashFromRegisterPost')->name('subtract_cash_from_register')->middleware('auth','cash_register');;
+    route::get('/cash_register/close','CashRegisterController@closeCurrentCashRegister')->name('close_cash_register')->middleware('auth','cash_register');
     route::post('/cash_register/close','CashRegisterController@closeCashRegisterPost')->name('close_cash_register')->middleware('auth');
     route::get('/cash_register/log_details/{register_id}','CashRegisterController@cashRegisterLogDetails')->name('cash_register_log_details')->middleware('auth');
     route::get('/cash_register_logs/print/summary/{register_id}','CashRegisterController@printRegisterLogSummary')->name('print_register_log_summary');

@@ -1,4 +1,4 @@
-@extends('layouts.master')
+    @extends('layouts.master')
 
 @section('pageTitle','Close Cash Register')
 
@@ -95,7 +95,7 @@
 
                             <form action="{{ route('close_cash_register') }}" id="closing_amount_form" class="form-horizontal" method="post" accept-charset="utf-8" novalidate="novalidate">
 
-
+                                {{ csrf_field()  }}
                                 <div class="form-group controll-croups1">
                                     <label for="closing_amount" class="control-label">Closing amount:</label>											<input type="text" name="closing_amount" value="{{ number_format($closing_balance, 2)  }}" id="closing_amount" class="form-control valid">
                                 </div>

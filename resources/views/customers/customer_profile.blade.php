@@ -298,6 +298,20 @@
                     </div>
                 </div>
             </div>
+            @php
+                $customer_profile_url = route('customer_profile',["customer_id"=>$customer->id])
+            @endphp
+            <div class="hidden">
+                <form  id="selectedTransactionsSubmitForm" action="{{ route('clear_due_payments_selected') }}" method="post">
+                    {{ csrf_field() }}
+                    <input name = "pre_intended_url" value="{{ $customer_profile_url }}">
+                    <input name = "customer_id" id="customer_id">
+                    <input name = "payment_type" id="payment_type">
+                </form>
+            </div>
+
+
+
     @endsection
 
 
@@ -355,12 +369,12 @@
                 if(selected.length == 0) {
                     $('.invoice-error').text("Please select one or more due invoices to clear payment");
                 } else {
-                    getTotalDueForSelefctedSales(selected);
+                    getTotalDueForSelectedSales(selected);
 
                 }
             }
 
-            function getTotalDueForSelefctedSales(selectedIds) {
+            function getTotalDueForSelectedSales(selectedIds) {
                 $.ajax({
                     url: "{{route('customer_due_selected_total')}}",
                     type: "post",
@@ -392,19 +406,27 @@
                     return $(item).attr("data-id");
                 });
 
-                $.ajax({
-                    url: "{{route('clear_due_payments_selected')}}",
-                    type: "post",
-                    data: {
-                        payment_type: payment_type,
-                        transaction_list: selected,
-                        customer_id: "{{ $customer->id }}"
-                    },
-                    success: function(response){
-                        location.reload();
-
-                    }
+                selected.forEach(function(id) {
+                   $("#selectedTransactionsSubmitForm").append('<input name = "transaction_list[]" value="'+id+'">')
                 });
+
+                $("#customer_id").val(customer_id);
+                $("#payment_type").val(payment_type);
+               // console.log($("#selectedTransactionsSubmitForm"));
+                $("#selectedTransactionsSubmitForm").submit();
+                {{--$.ajax({--}}
+                    {{--url: "{{route('clear_due_payments_selected')}}",--}}
+                    {{--type: "post",--}}
+                    {{--data: {--}}
+                        {{--payment_type: payment_type,--}}
+                        {{--transaction_list: selected,--}}
+                        {{--customer_id: "{{ $customer->id }}"--}}
+                    {{--},--}}
+                    {{--success: function(response){--}}
+                        {{--location.reload();--}}
+
+                    {{--}--}}
+                {{--});--}}
             }
 
 
@@ -558,7 +580,7 @@
                     }
                 } );
 
-                $('#selectAllButton').click( function () {
+                $('#selectAll').click( function () {
 
                     table.rows({ page: 'current' }).select();
 

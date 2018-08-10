@@ -54,7 +54,7 @@ return [
             'engine' => null,
         ],
 
-        'mysql_pos' => [
+        'mysql_restaurant' => [
             'driver' => 'mysql',
             'host' => env('RESTAURANT_DB_HOST', '127.0.0.1'),
             'port' => env('RESTAURANT_DB_PORT', '3306'),

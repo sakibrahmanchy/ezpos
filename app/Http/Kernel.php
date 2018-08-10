@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\CashRegisterMiddleWare;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -60,5 +61,6 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'admin' => \App\Http\Middleware\Admin::class,
         'permission' => \App\Http\Middleware\Permission::class,
+        'cash_register' => \App\Http\Middleware\CashRegisterMiddleWare::class
     ];
 }

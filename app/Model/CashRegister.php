@@ -5,6 +5,7 @@ namespace App\Model;
 use App\Enumaration\CashRegisterTransactionType;
 use App\Enumaration\PaymentTypes;
 use App\Enumaration\SaleTypes;
+use FontLib\Header;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -61,9 +62,11 @@ class CashRegister extends Model
 
 
     public function getCurrentActiveRegister(){
-        return $this->orderBy('opening_time', 'desc')
-                ->where('closing_balance',null)
-                ->where( 'user_id',Auth::id() )->first();
+        $activeRegister =  $this->orderBy('opening_time', 'desc')
+            ->where('closing_balance',null)
+            ->where( 'user_id',Auth::id() )->first();
+
+        return $activeRegister;
     }
 
     public function getTotalAddedAmountInActiveRegister(){

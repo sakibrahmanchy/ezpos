@@ -386,6 +386,18 @@
                 {{--</div>--}}
             {{--</div>--}}
         {{--</div>--}}
+        @php
+            $customer_profile_url = route('customer_invoice',["customer_id"=>$invoice->id])
+        @endphp
+        <div class="hidden">
+            <form  id="selectedTransactionsSubmitForm" action="{{ route('clear_due_payments_selected') }}" method="post">
+                {{ csrf_field() }}
+                <input name = "pre_intended_url" value="{{ $customer_profile_url }}">
+                <input name = "customer_id" id="customer_id">
+                <input name = "payment_type" id="payment_type">
+            </form>
+        </div>
+
 
 
 @endsection
@@ -446,19 +458,14 @@
         let payment_type = $(this).attr('data-payment');
 
 
-        $.ajax({
-            url: "{{route('clear_due_payments_selected')}}",
-            type: "post",
-            data: {
-                payment_type: payment_type,
-                transaction_list: selected,
-                customer_id: "{{ $invoice->Customer->id }}"
-            },
-            success: function(response){
-                location.reload();
-
-            }
+        selected.forEach(function(id) {
+            $("#selectedTransactionsSubmitForm").append('<input name = "transaction_list[]" value="'+id+'">')
         });
+
+        $("#customer_id").val(customer_id);
+        $("#payment_type").val(payment_type);
+        // console.log($("#selectedTransactionsSubmitForm"));
+        $("#selectedTransactionsSubmitForm").submit();
     }
 
 </script>

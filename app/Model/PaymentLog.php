@@ -10,7 +10,14 @@ use function PHPSTORM_META\elementType;
 
 class PaymentLog extends Model
 {
-    //
+    private $cashRegister;
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+    }
+
 
     public function Sales(){
         return $this->belongsToMany('App\Model\Sale');

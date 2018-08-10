@@ -29,7 +29,8 @@ use Mike42\Escpos\Printer;
 
 class CashRegisterController extends Controller
 {
-    public function openNewCashRegisterGet(){
+
+    public function openNewCashRegisterGet(Request $request){
         $denominations = CurrencyDenomination::all();
         $cashRegister = new CashRegister();
         $previousClosingBalance = $cashRegister->getPreviousClosingBalance();
@@ -72,7 +73,9 @@ class CashRegisterController extends Controller
             }
         }
 
-        return redirect()->route('new_sale');
+
+        return redirect()->intended();
+        //return redirect()->route('new_sale');
     }
 
     public function addCashToRegister(){
@@ -113,6 +116,7 @@ class CashRegisterController extends Controller
     {
         $cashRegister = new CashRegister();
 
+
         $openingBalance = $cashRegister->getActiveRegisterOpeningBalance();
         $total_additions = $cashRegister->getTotalAddedAmountInActiveRegister();
         $total_subtractions = $cashRegister->getTotalSubtractedAmountInActiveRegister();
@@ -124,9 +128,12 @@ class CashRegisterController extends Controller
         $cash_sales = $salePaymentInfo["cashTotal"];
 
 
+
+
         $refunded_sales_amount = $cashRegister->getRefundedSalesAmountInCashRegister($cashRegister->getCurrentActiveRegister()->id  );
         $denominations = CurrencyDenomination::all();
-        $closing_balance = $openingBalance + $salePaymentInfo["cashTotal"]  + $total_additions + $total_subtractions + $suspendedSalePaymentInfo["cashTotal"] - $refunded_sales_amount;
+        $closing_balance = $openingBalance + $salePaymentInfo["cashTotal"]  + $total_additions + $total_subtractions +
+            $suspendedSalePaymentInfo["cashTotal"] - $refunded_sales_amount;
 
         return view('cash_registers.close_cash_register',["denominations"=>$denominations,"openingBalance"=>$openingBalance,
             "additions"=>$total_additions,"subtractions"=>$total_subtractions,"sales"=>$cash_sales,"change_due"=>$salePaymentInfo["changedDue"],

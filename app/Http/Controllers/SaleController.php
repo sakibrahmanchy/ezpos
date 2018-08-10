@@ -42,7 +42,6 @@ class SaleController extends Controller
 
     public function GetSaleForm()
     {
-
         $cashRegister = new CashRegister();
         $activeCashRegister = $cashRegister->getCurrentActiveRegister();
         if(!is_null($activeCashRegister)){
@@ -73,7 +72,6 @@ class SaleController extends Controller
 
     public function AddSale(Request $request)
     {
-
         $saleInfo = $request->sale_info;
         $productInfos = $request->product_infos;
         $paymentInfos = $request->payment_infos;

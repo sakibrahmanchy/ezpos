@@ -22,6 +22,7 @@ use Intervention\Image\ImageManagerStatic as Image;
 
 class CustomerController extends Controller
 {
+
     public function GetCustomerForm()
     {
         return view('customers.new_customer');
@@ -315,6 +316,7 @@ class CustomerController extends Controller
     }
 
     public function clearDuePaymentsSelected(Request $request) {
+
         $transactionList = $request->transaction_list;
         $payment_type = $request->payment_type;
         $customer_id = $request->customer_id;
@@ -348,7 +350,6 @@ class CustomerController extends Controller
                 $customerTransactionObj->cash_register_id = 0;
                 $customerTransactionObj->save();
 
-
                 if($saleDue<0)
                     $saleDue = 0;
 
@@ -360,6 +361,8 @@ class CustomerController extends Controller
             $sale->due = 0;
             $sale->save();
         }
+
+        return redirect()->back();
 
     }
 

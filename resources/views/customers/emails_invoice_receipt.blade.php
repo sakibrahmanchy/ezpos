@@ -311,18 +311,12 @@
                                 <td  style="padding: 30px; font-family: sans-serif; font-size: 16px; line-height: 22px; color: #444444;">
                                     <h1 style="text-align: center">Invoice Receipt</h1>
                                     <br><br>
-                                    Hello <strong>{{ $customer->first_name }} {{ $customer->last_name }}</strong>,<br>
-                                    <br>
-                                        Thanks for being our valuable customer. Our systems say that you have some unpaid sales bill
-                                        which are valued to {{ $invoice->total_amount_of_charge }}. You must pay the dues before
-                                        $ {{ $invoice->last_date_of_payment }} as per as company policy.
-
-                                        Please check the attachments for detailed reports.
-
-
-                                    <br><br>
-                                    Regards<br>
-                                    Your Trusted
+                                    Dear Valued Customer,
+                                     
+                                    Kindly find attached copy of your charge account statement.  Thanks in advance for your prompt remittance.
+                                     
+                                    Cordially,
+                                    Accounts Receivables
                                     <br>{{$settings['company_name']}}<br>
 
                                 </td>
