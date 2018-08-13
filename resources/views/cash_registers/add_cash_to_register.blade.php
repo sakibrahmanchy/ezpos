@@ -17,7 +17,7 @@
                 <div class="panel-heading">
                     Use the form below to add cash to register			</div>
                 <div class="panel-body">
-                    <h3>You have already added ${{$added_amount}} to the register</h3><form action="{{route('add_cash_to_register')}}" id="register_add_subtract_form" class="form-horizontal" method="post" accept-charset="utf-8" novalidate="novalidate">
+                    <h3>You have already added ${{number_format($added_amount , 2)}} to the register</h3><form action="{{route('add_cash_to_register')}}" id="register_add_subtract_form" class="form-horizontal" method="post" accept-charset="utf-8" novalidate="novalidate">
 
                         <div class="form-group">
                             <label for="amount" class="col-sm-3 col-md-3 col-lg-2 control-label wide">Additional amount to add to register:</label>				    <div class="col-sm-9 col-md-9 col-lg-10">

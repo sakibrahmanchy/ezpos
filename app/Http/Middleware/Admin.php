@@ -29,6 +29,7 @@ class Admin
     {
 
         $user = Auth::user();
+
         if(!is_null($user)) {
 
             $permissions = self::getUserPermissionsFromDB($user->id);
@@ -64,6 +65,7 @@ class Admin
     }
 
     public static function getUserPermissionsFromDB($user_id) {
+
         return DB::table('user_permissions')
             ->join('permission_names','user_permissions.permission_id','=','permission_names.id')
             ->where('user_id',$user_id)

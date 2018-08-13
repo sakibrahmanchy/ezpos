@@ -26,6 +26,10 @@ Route::get('/error-401',function(){
 Route::get('/login/pin', ['as' => 'pin_log_in', 'uses' => 'UserController@pinLogin']);
 Route::post('/login/pin', ['as' => 'pin_log_in_post', 'uses' => 'UserController@pinLoginPost']);
 
+route::get('counter/list/ajax','CounterController@GetCounterListAjax')->name('counter_list_ajax')->middleware('auth');
+route::get('counter/ajax/set/{counter_id}','CounterController@SetCounterAjax')->name('counter_set_ajax')->middleware('auth');
+route::get('counter/set/{counter_id}','CounterController@SetCounter')->name('counter_set')->middleware('auth');
+
 Route::group(['middleware' => ['admin']], function () {
 
     Route::get('/home','HomeController@getDashBoard')->name('dashboard')->middleware('auth');
@@ -57,6 +61,7 @@ Route::group(['middleware' => ['admin']], function () {
     Route::post('customer/invoice/clear','CustomerController@clearCustomerInvoice')->name('clear_customer_invoice')->middleware('auth','cash_register');
     Route::post('customer/invoice_generate','CustomerController@generateCustomerDueInvoice')->name('customer_invoice_generate')->middleware('auth');
     Route::get('customer/invoice/list/{customer_id}','CustomerController@getGeneratedInvoices')->name('customer_invoices_list')->middleware('auth');
+    Route::get('customer/invoice/cleared/list/{customer_id}','CustomerController@getClearedInvoices')->name('customer_invoices_cleared_list')->middleware('auth');
     Route::get('customer/balance/add','CustomerController@customerAddBalanceGet')->name('customer_balance_add')->middleware('auth');
     Route::post('customer/balance/add','CustomerController@customerAddBalancePost')->name('customer_balance_add')->middleware('auth');
     Route::get('customer/assign/price_level/{customer_id}','CustomerController@customerAssignPriceLevelGet')->name('customer_assign_price_level_get')->middleware('auth');
@@ -270,14 +275,13 @@ Route::group(['middleware' => ['admin']], function () {
     route::get('/counter/new','CounterController@GetCounterForm' )->name('new_counter')->middleware('auth');
     route::post('/counter/new','CounterController@AddCounter')->name('new_counter')->middleware('auth');
     route::get('counter/list','CounterController@GetCounterList')->name('counter_list')->middleware('auth');
-    route::get('counter/list/ajax','CounterController@GetCounterListAjax')->name('counter_list_ajax')->middleware('auth');
     route::get('counter/edit/{counter_id}','CounterController@EditCounterGet')->name('counter_edit')->middleware('auth');
     route::post('counter/edit/{counter_id}','CounterController@EditCounterPost')->name('counter_edit')->middleware('auth');
     route::get('counter/delete/{counter_id}','CounterController@DeleteCounterGet')->name('counter_delete')->middleware('auth');
     route::post('counter/set/default','CounterController@SetDefaultCounter')->name('counter_set_default')->middleware('auth');
     route::post('counters/delete','CounterController@DeleteCounters')->name('counters_delete')->middleware('auth');
-    route::get('counter/set/{counter_id}','CounterController@SetCounter')->name('counter_set')->middleware('auth');
-	route::get('counter/ajax/set/{counter_id}','CounterController@SetCounterAjax')->name('counter_set_ajax')->middleware('auth');
+
+
 
     route::get("/cash_register/open","CashRegisterController@openNewCashRegisterGet")->name('open_cash_register')->middleware('auth');
     route::post('/cash_register/open','CashRegisterController@openNewCashRegister')->name('open_cash_register')->middleware('auth');

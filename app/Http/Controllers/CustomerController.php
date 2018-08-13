@@ -383,15 +383,23 @@ class CustomerController extends Controller
 
     public function getCustomerDueInvoice($invoice_id) {
         $invoice = Invoice::where("id",$invoice_id)->with('Transactions','Customer')->first();
+
         return view('customers.invoice_receipt',["invoice"=>$invoice]);
     }
-
-
 
     public function getGeneratedInvoices($customer_id) {
         $invoices = Invoice::where("customer_id",$customer_id)->get();
 
         return view("customers.invoices_list",["invoices"=>$invoices]);
+    }
+
+    public function getClearedInvoices($customer_id) {
+        $invoices = Invoice::join('customer_transaction_invoice','customer_transaction_invoice.invoice_id','=','invoices.id')
+                    ->join('customer_transactions','customer_transactions.id','=','customer_transaction_invoice.customer_transaction_id')
+                    ->where(DB::raw('(customer_transactions.sale_amount - customer_transactions.paid_amount)'),0)
+                    ->where('customer_transactions.customer_id',$customer_id)->get();
+
+        return view("customers.invoices_cleared_list",["invoices"=>$invoices]);
     }
 
     public function customerAddBalanceGet(Request $request) {

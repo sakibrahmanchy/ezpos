@@ -196,7 +196,7 @@
             <tbody>
             @foreach($sale->paymentlogs as $aPayment)
                 <tr>
-                    <th>{{$aPayment->payment_type}}</th>
+                    <th>{{ array_search($aPayment->payment_type, \App\Enumaration\PaymentTypes::$TypeList) }}</th>
                     <td>
                         @if($aPayment->paid_amount>0)
                             ${{$aPayment->paid_amount}}

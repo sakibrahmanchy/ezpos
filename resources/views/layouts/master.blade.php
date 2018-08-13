@@ -347,6 +347,7 @@ else
 <!-- Vue Components ---->
 <script src="{{ asset('js/vue_components.js') }}"></script>
 
+
 <script type="text/javascript">
 
     $(document).ready(function(){

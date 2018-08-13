@@ -36,6 +36,8 @@ class Permission
             array_push($permissionList, $permission_token);
         }
 
+
+
 //        dd($request->route()->getName());
 
         if($user->user_type==UserTypes::$EMPLOYEE||$user->user_type==UserTypes::$SUPER_ADMIN)

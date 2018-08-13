@@ -214,9 +214,9 @@
 <table cellpadding="0" cellspacing="0" border="0" height="100%" width="100%" bgcolor="#f4f4f4" id="bodyTable" style="border-collapse: collapse;table-layout: fixed;margin:0 auto;"><tr><td>
 
             <!-- Hidden Preheader Text : BEGIN -->
-            <div style="display:none; visibility:hidden; opacity:0; color:transparent; height:0; width:0;line-height:0; overflow:hidden;mso-hide: all;">
-                Visually hidden preheader text.
-            </div>
+            {{--<div style="display:none; visibility:hidden; opacity:0; color:transparent; height:0; width:0;line-height:0; overflow:hidden;mso-hide: all;">--}}
+                {{--Visually hidden preheader text.--}}
+            {{--</div>--}}
             <!-- Hidden Preheader Text : END -->
 
             <!-- Logo Left, Nav Right, 100% Nav Bar : BEGIN -->
@@ -297,7 +297,7 @@
                 <!-- Single Fluid Image, No Crop : BEGIN -->
                 <tr>
                     <td >
-                        <img class="center" src="{{$message->embed(asset('img/logo.png'))}}" alt="alt text" height="100" width="100" border="0" >
+                        <img class="center" src="{{$message->embed(asset('img/logo.png'))}}" alt="{{ $settings['company_name'] }}" onerror="this.style.display='none'" height="100" width="100" border="0" >
                         {{--<img class="center" src="{{asset('img/logo.png')}}" alt="alt text" height="100" width="100" border="0"  >--}}
                     </td>
                 </tr>
@@ -311,14 +311,8 @@
                                 <td  style="padding: 30px; font-family: sans-serif; font-size: 16px; line-height: 22px; color: #444444;">
                                     <h1 style="text-align: center">Invoice Receipt</h1>
                                     <br><br>
-                                    Dear Valued Customer,
-                                     
-                                    Kindly find attached copy of your charge account statement.  Thanks in advance for your prompt remittance.
-                                     
-                                    Cordially,
-                                    Accounts Receivables
+                                Dear Valued Customer,<br><br>Kindly find attached copy of your charge account statement. Thanks in advance for your prompt remittance. <br><br>Cordially,<br>Accounts Receivables
                                     <br>{{$settings['company_name']}}<br>
-
                                 </td>
                             </tr>
                         </table>

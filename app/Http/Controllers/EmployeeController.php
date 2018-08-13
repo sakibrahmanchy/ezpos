@@ -142,7 +142,8 @@ class EmployeeController extends Controller
 
         $employeeInfo = Employee::where("id",$employeeId)->with('user','counters')->first();
 
-        $employeeId = $employeeInfo->id;
+
+        $employeeId = $employeeInfo->user->id;
         // var_dump($employeeInfo);
         $counters = Counter::all();
         $employeeUserId = $employeeInfo->user->id;
@@ -150,6 +151,8 @@ class EmployeeController extends Controller
         foreach($employeeInfo->counters as $aCounter) {
             array_push($employeeCounterList,$aCounter->id);
         }
+
+
 
         $employeePermissions = UserPermission::GetUserPermissions($employeeUserId);
 

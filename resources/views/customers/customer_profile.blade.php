@@ -257,7 +257,8 @@
                                                     <span class="pull-right rightgap"><b>Due date</b></span><br><br>
                                                     <span class="pull-right rightgap"><b class="invoice-error text-danger"></b></span>
                                                 @endif
-                                                <a href="{{ route('customer_invoices_list',["customer_id" => $customer->id]) }}" class="pull-right btn btn-info" >View Generated Invoices</a>
+                                                    <a href="{{ route('customer_invoices_cleared_list',["customer_id" => $customer->id]) }}" style="margin-left: 10px;" class="pull-right btn btn-info" >View Cleared Invoices</a>
+                                                <a href="{{ route('customer_invoices_list',["customer_id" => $customer->id]) }}" class="pull-right btn btn-info" >View <Due>    </Due> Invoices</a>
                                             </div>
                                         </div>
                                     </div>

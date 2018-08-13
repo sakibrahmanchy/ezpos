@@ -602,7 +602,7 @@ class SaleController extends Controller
                 $printer->feed();
                 $printer->setEmphasis(false);
                 foreach ($sale->paymentlogs as $aPayment) {
-                    $payment = new FooterItem($aPayment->payment_type." Tendered", number_format($aPayment->paid_amount, 2));
+                    $payment = new FooterItem($aPayment->payment_type." Tendered", number_format(array_search($aPayment->payment_type, \App\Enumaration\PaymentTypes::$TypeList) , 2));
                     $printer->text($payment);
                 }
             }

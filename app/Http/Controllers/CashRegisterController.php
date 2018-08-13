@@ -31,10 +31,15 @@ class CashRegisterController extends Controller
 {
 
     public function openNewCashRegisterGet(Request $request){
-        $denominations = CurrencyDenomination::all();
-        $cashRegister = new CashRegister();
-        $previousClosingBalance = $cashRegister->getPreviousClosingBalance();
-        return view('cash_registers.open_cash_register',["denominations"=>$denominations,"previous_closing_balance"=>$previousClosingBalance]);
+
+        if(UserHasPermission("sale_add_update")) {
+            $denominations = CurrencyDenomination::all();
+            $cashRegister = new CashRegister();
+            $previousClosingBalance = $cashRegister->getPreviousClosingBalance();
+            return view('cash_registers.open_cash_register',["denominations"=>$denominations,"previous_closing_balance"=>$previousClosingBalance]);
+        }
+        else
+            return redirect()->route('error_401');
     }
 
     public function openNewCashRegister(Request $request){
@@ -115,8 +120,6 @@ class CashRegisterController extends Controller
     public function closeCurrentCashRegister()
     {
         $cashRegister = new CashRegister();
-
-
         $openingBalance = $cashRegister->getActiveRegisterOpeningBalance();
         $total_additions = $cashRegister->getTotalAddedAmountInActiveRegister();
         $total_subtractions = $cashRegister->getTotalSubtractedAmountInActiveRegister();

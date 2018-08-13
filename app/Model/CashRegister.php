@@ -173,16 +173,18 @@ class CashRegister extends Model
     public static function generateTransactionData($paymentLogList, $cashRegister, $saleStatus) {
         $allTransactionArr = [];;
 
-        $cashAmount = 0;
-        $chequeAmount = 0;
-        $creditCardAmount = 0;
-        $debitCardAmount = 0;
-        $giftCardAmount = 0;
-        $loyalityAmount = 0;
-        $changedDue = 0;
+
 
         foreach($paymentLogList as $aPaymentLog)
         {
+            $cashAmount = 0;
+            $chequeAmount = 0;
+            $creditCardAmount = 0;
+            $debitCardAmount = 0;
+            $giftCardAmount = 0;
+            $loyalityAmount = 0;
+            $changedDue = 0;
+            
             if($aPaymentLog->sale_status == $saleStatus) {
                 if( $aPaymentLog->payment_type==PaymentTypes::$TypeList["Cash"] )
                     $cashAmount += floatval($aPaymentLog->paid_amount);
@@ -298,7 +300,7 @@ class CashRegister extends Model
             ->where('payment_logs.cash_register_id','=',$cashRegisterId)
             ->whereIn('payment_logs.sale_status',$sale_status)
             ->where('sale_type',SaleTypes::$SALE)
-            ->whereNull('refund_register_id')
+//            ->whereNull('refund_register_id')
             ->groupBy('payment_logs.payment_type')
             ->select(DB::raw('payment_type, sum(paid_amount) as total_paid_amount'))
             ->get();

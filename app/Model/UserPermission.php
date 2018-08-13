@@ -16,7 +16,7 @@ class UserPermission extends Model
         return $this->belongsToMany('App\Model\User')->withTimestamps();
     }
 
-    public static function GetUserPermissions($userId)
+    public static function  GetUserPermissions($userId)
     {
         $permissionsCategories = PermissionCategory::all();
 
@@ -35,7 +35,8 @@ class UserPermission extends Model
                 $permission['permission_category_id'] = $aPermission->permission_category_id;
                 $permission['permission_token'] = $aPermission->permission_token;
 
-                $usersAccess = UserPermission::where("user_id", '=', $userId)->where("permission_id", '=', $aPermission->id)->first();
+                $usersAccess = UserPermission::where("user_id", '=', $userId)
+                    ->where("permission_id", '=', $aPermission->id)->first();
 
                 if (!isset($usersAccess->status)) {
                     $permission['userAccess'] = "0";
