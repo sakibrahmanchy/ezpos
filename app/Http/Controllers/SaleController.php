@@ -1084,4 +1084,12 @@ class SaleController extends Controller
         }
     }
 
+    public function getDeletedSales($cashRegister_id) {
+
+
+
+
+
+    }
+
 }

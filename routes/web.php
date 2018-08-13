@@ -29,6 +29,7 @@ Route::post('/login/pin', ['as' => 'pin_log_in_post', 'uses' => 'UserController@
 route::get('counter/list/ajax','CounterController@GetCounterListAjax')->name('counter_list_ajax')->middleware('auth');
 route::get('counter/ajax/set/{counter_id}','CounterController@SetCounterAjax')->name('counter_set_ajax')->middleware('auth');
 route::get('counter/set/{counter_id}','CounterController@SetCounter')->name('counter_set')->middleware('auth');
+route::get('sale/refunded/list/{register_id}','SaleController@getDeletedSales')->name('refunded_sale_list')->middleware('auth');
 
 Route::group(['middleware' => ['admin']], function () {
 

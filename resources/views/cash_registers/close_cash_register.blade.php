@@ -84,15 +84,40 @@
                             <li class="list-group-item">Cash additions   <span class="pull-right">${{ number_format($additions, 2) }} </span></li>
                             <li class="list-group-item">Cash subtractions   <span class="pull-right">${{ number_format($subtractions,2)  }} </span></li>
 
-                            <li class="list-group-item">Refunded Amount   <span class="pull-right">${{ number_format($refunded_amount,2)  }} </span></li>
+                            <li class="list-group-item">Deleted Sale Amount   <span class="pull-right">${{ number_format($refunded_amount,2)  }} </span></li>
+                            <div class="panel-heading">
+                                <h3 class="panel-title">
+                                   Deleted Sales						</h3>
+                            </div>
+                            <div class="nopadding table_holder  table-responsive">
+                                <table class="table  table-hover table-reports table-bordered">
+                                    <thead>
+                                    <tr>
+                                        <th>Id</th>
+                                        {{--<th>Employee</th>--}}
+                                        <th>Date Created</th>
+                                        <th>Date Deleted</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach($deleted_sales as $aDeletedSale )
+                                        <tr>
+                                            <td><a href="{{ route('sale_receipt',["sale_id"=>$aDeletedSale->id]) }}">{{ $aDeletedSale->id }}</a></td>
+                                            {{--<td>{{ $closed_by }}</td>--}}
+                                            <td>{{ $aDeletedSale->created_at }}</td>
+                                            <td>{{ $aDeletedSale->deleted_at }}</td>
+                                            <td>$ {{ number_format($aDeletedSale->total_amount, 2) }}</td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
 
                             <li class="list-group-item active">You should have  in the register. <span class="pull-right total-amount">{{ number_format($closing_balance, 2) }}</span></li>
                         </ul>
 
-
-
                         <div class="col-md-12">
-
                             <form action="{{ route('close_cash_register') }}" id="closing_amount_form" class="form-horizontal" method="post" accept-charset="utf-8" novalidate="novalidate">
 
                                 {{ csrf_field()  }}
@@ -112,7 +137,8 @@
                                     <input type="submit" id="close_submit" class="btn btn-primary" value="Submit">
                                 </div>
 
-                            </form></div>
+                            </form>
+                        </div>
                     </div>
 
 

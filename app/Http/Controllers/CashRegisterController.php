@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Enumaration\PaymentTypes;
 use App\Enumaration\SaleStatus;
 use App\Enumaration\SaleTypes;
+use App\Http\Middleware\CashRegisterMiddleWare;
 use App\Library\SettingsSingleton;
 use App\Model\CashRegisterTransaction;
 use App\Enumaration\CashRegisterTransactionType;
@@ -130,7 +131,7 @@ class CashRegisterController extends Controller
 
         $cash_sales = $salePaymentInfo["cashTotal"];
 
-
+        $deleted_sales = Sale::getDeletedSales($cashRegister->getCurrentActiveRegister()->id);
 
 
         $refunded_sales_amount = $cashRegister->getRefundedSalesAmountInCashRegister($cashRegister->getCurrentActiveRegister()->id  );
@@ -140,7 +141,7 @@ class CashRegisterController extends Controller
 
         return view('cash_registers.close_cash_register',["denominations"=>$denominations,"openingBalance"=>$openingBalance,
             "additions"=>$total_additions,"subtractions"=>$total_subtractions,"sales"=>$cash_sales,"change_due"=>$salePaymentInfo["changedDue"],
-            "refunded_amount"=>$refunded_sales_amount],compact('salePaymentInfo','suspendedSalePaymentInfo','closing_balance'));
+            "refunded_amount"=>$refunded_sales_amount],compact('salePaymentInfo','suspendedSalePaymentInfo','closing_balance','deleted_sales'));
 
     }
 
@@ -175,7 +176,7 @@ class CashRegisterController extends Controller
         $suspendedTransactionsLayAway = CashRegister::generateTransactionData($saleList,$cashRegister,SaleStatus::$LAYAWAY);
         $suspendedTransactionsEstimate = CashRegister::generateTransactionData($saleList,$cashRegister,SaleStatus::$ESTIMATE);
         $suspendedSalesTransactionsMerged = array_merge($suspendedTransactionsLayAway,$suspendedTransactionsEstimate);
-
+        $deletedSales = Sale::getDeletedSales($cashRegisterId);
 
         $paymentInfo = CashRegister::generatePaymentAmount($cashRegisterId,[SaleStatus::$SUCCESS]);
         $paymentInfoSuspended = CashRegister::generatePaymentAmount($cashRegisterId, [SaleStatus::$LAYAWAY, SaleStatus::$ESTIMATE]);
@@ -194,7 +195,8 @@ class CashRegisterController extends Controller
         return view('cash_registers.cash_register_log_details',["register"=>$cashRegister,
                 "transactions"=>$allTransactionArr,"suspendedTransactions"=>$suspendedSalesTransactionsMerged,
             "opened_by"=>$openedBy,"closed_by"=>$closedBy, "additions"=>$total_additions,"subtractions"=>$total_subtractions,"sales"=>$cash_sales,
-            "paymentInfo"=>$paymentInfo, "paymentSuspended" => $paymentInfoSuspended,  "refundedAmount"=>$refunded_sales_amount, "closing_balance"=>$expectedClosingSales]);
+            "paymentInfo"=>$paymentInfo, "paymentSuspended" => $paymentInfoSuspended,  "refundedAmount"=>$refunded_sales_amount, "closing_balance"=>$expectedClosingSales,
+            "deleted_sales"=>$deletedSales]);
     }
 
 
@@ -432,6 +434,30 @@ class CashRegisterController extends Controller
                     $customerName,
                     number_format($due,2),
                     date( "h:i:s" ,strtotime($asalesChargeAccountTransaction->created_at) )
+                ));
+                $printer->feed();
+            }
+            $printer->feed();
+
+
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
+            $printer->text("Deleted Sales\n");
+            $printer->text("------------------------\n");
+            $printer->feed();
+
+            $header = new \App\Model\Printer\RegisterDetails("Id",  "Deleted At", "Amount");
+            $printer->setJustification(Printer::JUSTIFY_LEFT);
+            $printer->setEmphasis(true);
+            $printer->text($header);
+            $printer->setEmphasis(false);
+            $printer->feed();
+
+            $deletedSales = Sale::getDeletedSales($cashRegisterId);
+            foreach($deletedSales as $aDeletedSale ) {
+                $printer->text(new RegisterDetails(
+                    $aDeletedSale->id,
+                    date( "h:i:s" ,strtotime($aDeletedSale->deleted_at) ),
+                    number_format($aDeletedSale->total_amount,2)
                 ));
                 $printer->feed();
             }

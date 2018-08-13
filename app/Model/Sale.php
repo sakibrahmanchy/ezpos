@@ -632,5 +632,13 @@ class Sale extends Model
         DB::delete($query, [$sale_id, $sale_id, PaymentTypes::$TypeList['Due']]);
     }
 
+    public static function getDeletedSales($cashRegisterId) {
+        $deletedSales = Sale::withTrashed()->whereNotNull("refund_register_id");
+
+        if($cashRegisterId != 0)
+            $deletedSales = $deletedSales->where("refund_register_id",$cashRegisterId);
+
+        return $deletedSales->get();
+    }
 
 }
