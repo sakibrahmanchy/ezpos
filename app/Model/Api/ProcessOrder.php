@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\DB;
 class ProcessOrder extends Model
 {
     private $data;
+    private $averageTaxRate;
+    private $averageTaxAmount;
 
     /**
      * ProcessOrder constructor.
@@ -23,7 +25,8 @@ class ProcessOrder extends Model
     public function __construct($data)
     {
         $this->data = $data;
-        dd($this->getTaxRate());
+        $this->averageTaxRate = $this->getTaxRate();
+        $this->averageTaxAmount = $this->getTaxAmount();
     }
 
     /**
@@ -84,8 +87,8 @@ class ProcessOrder extends Model
                 'item_discount_percentage' => $this->getItemDiscountPercentageByItemId($anItem),
                 'sale_discount_amount' =>  $this->getSaleDiscountAmountByItemId($anItem),
                 'item_profit' => $this->getItemProfitByItemId($anItem),
-                'tax_amount' => $this->getTaxAmountByItemId($anItem->total_amount),
-                'tax_rate' => $this->getTaxRate(),
+                'tax_amount' => $this->averageTaxAmount,
+                'tax_rate' => $this->averageTaxRate,
                 'is_price_taken_from_barcode' => false
             );
             array_push($processedItems, $currentProcessedItem);
@@ -127,8 +130,26 @@ class ProcessOrder extends Model
 
     }
 
-    private function getTaxAmountByItemId($itemTotalAmount) {
-        $tax_rate = $this->getTaxRate();
+    private function getTaxAmount() {
+        $this->tax_id = 2;
+        if($this->tax_id==0)
+            return 0.00;
+
+        $tax = DB::connection('mysql_restaurant')->table('taxes')->where('id', $this->tax_id)->first();
+
+        if(!is_null($tax)) {
+            if($tax->type == "Percent")
+            {
+
+                $taxAmountTotal = ($this->data->sub_total * $tax->amount) / 100;
+                return $taxAmountTotal / $this->getTotalNumberOfItems();
+            }
+            else{
+                $averageTaxAmountPerItem = ($tax->amount) / $this->getTotalNumberOfItems();
+                return $averageTaxAmountPerItem;
+            }
+        }
+        return 0.0;
     }
 
     private function getTaxRate() {
@@ -137,13 +158,14 @@ class ProcessOrder extends Model
             return 0.00;
 
         $tax = DB::connection('mysql_restaurant')->table('taxes')->where('id', $this->tax_id)->first();
+
         if(!is_null($tax)) {
             if($tax->type == "Percent")
                 return $tax->amount;
             else{
                 $averageTaxAmountPerItem = ($tax->amount) / $this->getTotalNumberOfItems();
 
-                return ($averageTaxAmountPerItem / $this->data->total) * 100;
+                return ($averageTaxAmountPerItem / ($this->data->total+ $tax->amount)) * 100;
             }
         }
         return 0.0;
