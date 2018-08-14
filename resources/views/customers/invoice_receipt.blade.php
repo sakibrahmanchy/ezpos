@@ -274,13 +274,15 @@
                                 {{--Change return policy			            </div>--}}
                             {{--<div id="receipt_type_label" style="display: none;" class="receipt_type_label invoice-policy">--}}
                                 {{--Merchant Copy						</div>--}}
-                            <div id="barcode" class="invoice-policy">
+
 
                                 {{--<p >{{ $settings['company_name'] }} Invoice {{ $invoice->id }}</p>--}}
 
                             <div id="announcement" class="invoice-policy">
                                 @if($due>0)
                                     <a href="javascript:void(0)" id="clearPayment" onclick="clearPayments()" class=" btn btn-sm btn-success btn-flat pull-right">Mark as paid</a>
+                                @else
+                                    <a href="javascript:void(0)" id="clearPayment" onclick= class=" btn btn-sm btn-warning btn-flat pull-right">Undo Payment</a>
                                 @endif
                             </div>
                         </div>

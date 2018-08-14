@@ -121,10 +121,11 @@ class InvoiceController extends Controller
                     CustomerTransaction::where("id",$aTransaction->id)
                     ->first()->delete();
             }
-
-
-
         }
         return redirect()->back();
+    }
+
+    public function undoInvoiceClear($invoice_id) {
+
     }
 }

@@ -581,6 +581,7 @@ class SaleController extends Controller
 
             if($settings["tax_rate"]>0)
                 $tax = new FooterItem('VAT (' . number_format($settings['tax_rate'], 2) . '%)', number_format($sale->tax_amount, 2) );
+
             $total = new FooterItem('Total', number_format($sale->total_amount, 2) );
             if($sale->due>=0)
                 $due = new FooterItem('Due', number_format($sale->due, 2) );
@@ -602,7 +603,7 @@ class SaleController extends Controller
                 $printer->feed();
                 $printer->setEmphasis(false);
                 foreach ($sale->paymentlogs as $aPayment) {
-                    $payment = new FooterItem($aPayment->payment_type." Tendered", number_format(array_search($aPayment->payment_type, \App\Enumaration\PaymentTypes::$TypeList) , 2));
+                    $payment = new FooterItem(array_search($aPayment->payment_type, \App\Enumaration\PaymentTypes::$TypeList)." Tendered", number_format($aPayment->paid_amount , 2));
                     $printer->text($payment);
                 }
             }
@@ -664,14 +665,6 @@ class SaleController extends Controller
 
     }
 
-
-	public function PrintRegisterCloseReport(Request $request)
-	{
-		$counter_id = Cookie::get('counter_id',null);
-		$counter = Counter::where("id",$counter_id)->first();
-		$ip_address = $counter->printer_ip;
-		$port = $counter->printer_port;
-	}
 
     public function popOpenCashDrawer(){
 
