@@ -188,6 +188,7 @@ class CustomerController extends Controller
 
     public function DeleteCustomers(Request $request){
 
+
         $customer_list = $request->id_list;
         if(DB::table('customers')->whereIn('id',$customer_list)->delete())
             return response()->json(["success"=>true],200);
@@ -321,45 +322,51 @@ class CustomerController extends Controller
         $payment_type = $request->payment_type;
         $customer_id = $request->customer_id;
 
-        $sale_ids = Sale::_eloquentToArray(CustomerTransaction::whereIn("id",$transactionList)->select('sale_id')->get(),"sale_id");
+        foreach ($transactionList as $aTransactionId) {
+            $aTransaction = CustomerTransaction::where("id",$aTransactionId)->first();
+            $sale = Sale::where("id",$aTransaction->sale_id)->first();
 
-        foreach ($sale_ids as $aSaleId) {
-            $sale = Sale::where("id",$aSaleId)->first();
-            $saleDue = $sale->due;
-            $paymentLog = new PaymentLog();
-            $paymentLog->addNewPaymentLog(PaymentTypes::$TypeList[$payment_type],$saleDue,$sale,$customer_id, "Due paid for sale ".$sale->id);
+            if(!is_null($sale)) {
+                $saleDue = $sale->due;
+                $customer_id = $sale->customer_id;
+                $paymentLog = new PaymentLog();
+                $paymentLog->addNewPaymentLog(PaymentTypes::$TypeList[$payment_type],$saleDue,$sale,$customer_id, "Due paid for sale ".$sale->id);
+
+                $customerTransactionInfo = CustomerTransaction::where("id",$aTransaction->id)
+                    ->first();
+
+                if(!is_null($customerTransactionInfo)) {
+                    $customerTransactionInfo->update([
+                        'paid_amount' => $sale->total_amount,
+                        'sale_amount' => $sale->total_amount,
+                        'customer_id' => $customer_id
+                    ]);
+                } else {
+
+                    $customerTransactionObj = new CustomerTransaction();
+                    $customerTransactionObj->transaction_type = \App\Enumaration\CustomerTransactionType::SALE;
+                    $customerTransactionObj->sale_id = $sale->id;
+                    $customerTransactionObj->sale_amount = $sale->total_amount;
+                    $customerTransactionObj->paid_amount = $sale->total_amount;
+                    $customerTransactionObj->customer_id = $customer_id;
+                    $customerTransactionObj->cash_register_id = 0;
+                    $customerTransactionObj->save();
 
 
-            $customerTransactionInfo = CustomerTransaction::where("sale_id",$aSaleId)
-                                       ->where("customer_id",$customer_id)
-                                       ->first();
-            if(!is_null($customerTransactionInfo)) {
-                $customerTransactionInfo->update([
-                    'paid_amount' => $sale->total_amount,
-                    'sale_amount' => $sale->total_amount,
-                    'customer_id' => $customer_id
-                ]);
+                    if($saleDue<0)
+                        $saleDue = 0;
+
+                    $updateCustomerBalanceQuery = "update customers set account_balance=account_balance+? where id=?";
+                    DB::update( $updateCustomerBalanceQuery, [ $saleDue, $customer_id] );
+                }
+
+                $sale->sale_status = SaleStatus::$SUCCESS;
+                $sale->due = 0;
+                $sale->save();
             } else {
-
-                $customerTransactionObj = new CustomerTransaction();
-                $customerTransactionObj->transaction_type = \App\Enumaration\CustomerTransactionType::SALE;
-                $customerTransactionObj->sale_id = $sale->id;
-                $customerTransactionObj->sale_amount = $sale->total_amount;
-                $customerTransactionObj->paid_amount = $sale->total_amount;
-                $customerTransactionObj->customer_id = $customer_id;
-                $customerTransactionObj->cash_register_id = 0;
-                $customerTransactionObj->save();
-
-                if($saleDue<0)
-                    $saleDue = 0;
-
-                $updateCustomerBalanceQuery = "update customers set account_balance=account_balance+? where id=?";
-                DB::update( $updateCustomerBalanceQuery, [ $saleDue, $customer_id] );
+                CustomerTransaction::where("id",$aTransaction->id)
+                    ->first()->delete();
             }
-
-            $sale->sale_status = SaleStatus::$SUCCESS;
-            $sale->due = 0;
-            $sale->save();
         }
 
         return redirect()->back();

@@ -112,11 +112,7 @@
 
 <div >
     <div>
-        <div>
-            Change return policy			            </div>
-        <div>
-            <?php echo DNS1D::getBarcodeHTML($invoice->id , "C39",1,50);	?>					</div>
-        <p >{{ $settings['company_name'] }} {{ $invoice->id }}</p>
+
         <div >
         </div>
     </div>

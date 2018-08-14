@@ -29,4 +29,7 @@ Route::group(['namespace' => 'Api'], function () {
 
 
     Route::post('/order/process', 'OrderController@processOrder')->middleware('auth:api');
+
+
+    Route::get('/items/autocomplete', 'ItemController@GetItemsAutocomplete')->middleware('auth:api');
 });

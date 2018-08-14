@@ -49,7 +49,7 @@
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
-					<h4 class="modal-title">Lookup Receipt</h4>
+					<h4 class="modal-title">Look up Receipt</h4>
 				</div>
 				<div class="modal-body">
 					<input type = "text" class="form-control" name = "receipt-id" id = "receipt-id" placeholder="Sale Id">
@@ -254,7 +254,7 @@
 												</li>
 
 												<li>
-													<a href="#look-up-receipt" class="look-up-receipt" data-toggle="modal"><i class="ion-document"></i> Lookup Receipt</a>						</li>
+													<a href="#look-up-receipt" class="look-up-receipt" data-toggle="modal"><i class="ion-document"></i> Look up Receipt</a>						</li>
 
 												<li><a href="{{route('sale_last_receipt')}}"  target="_blank" class="look-up-receipt" title="Lookup Receipt"><i class="ion-document"></i> Show last sale receipt</a></li>
 												<li><a href="{{route('pop_open_cash_drawer')}}"  class="look-up-receipt" title="Lookup Receipt"><i class="ion-document"></i> Pop Open Cash Drawer</a></li>
@@ -650,7 +650,9 @@
 
                                         if (salesDiscountAmount > 0)
                                         {
-                                            q
+                                            var preSubtotal = Number(subTotalAmount) + Number(salesDiscountAmount);
+                                            var itemPortionOfSaleDiscount = ((currentTotal/preSubtotal) *  salesDiscountAmount);
+                                            discountAmount += itemPortionOfSaleDiscount;
                                         }
                                         var itemProfit = ((currentUnitPrice * currentQuantity) - discountAmount) - (currentCostPrice*currentQuantity);
 
