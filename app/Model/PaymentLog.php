@@ -25,7 +25,7 @@ class PaymentLog extends Model
 
     public function addNewPaymentLog($payment_type, $paid_amount,
 
-        $sale = null, $customer_id , $comments) {
+        $sale = null, $customer_id , $comments, $invoice_id=0) {
 
         $paymentLog = new PaymentLog();
 
@@ -59,6 +59,7 @@ class PaymentLog extends Model
 
         $paymentLog->comments = $comments;
 
+        $paymentLog->invoice_id = $invoice_id;
         $paymentLog->save();
 
         if(!is_null($sale)){

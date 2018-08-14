@@ -282,7 +282,7 @@
                                 @if($due>0)
                                     <a href="javascript:void(0)" id="clearPayment" onclick="clearPayments()" class=" btn btn-sm btn-success btn-flat pull-right">Mark as paid</a>
                                 @else
-                                    <a href="javascript:void(0)" id="clearPayment" onclick= class=" btn btn-sm btn-warning btn-flat pull-right">Undo Payment</a>
+                                    <a href="{{ route('undo_clear_customer_invoice',["invoice_id"=>$invoice->id]) }}" id="clearPayment"  class=" btn btn-sm btn-warning btn-flat pull-right">Undo Payment</a>
                                 @endif
                             </div>
                         </div>
