@@ -650,9 +650,7 @@
 
                                         if (salesDiscountAmount > 0)
                                         {
-                                            var preSubtotal = Number(subTotalAmount) + Number(salesDiscountAmount);
-                                            var itemPortionOfSaleDiscount = ((currentTotal/preSubtotal) *  salesDiscountAmount);
-                                            discountAmount += itemPortionOfSaleDiscount;
+                                            q
                                         }
                                         var itemProfit = ((currentUnitPrice * currentQuantity) - discountAmount) - (currentCostPrice*currentQuantity);
 

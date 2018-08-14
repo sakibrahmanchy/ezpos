@@ -135,7 +135,7 @@
                             </tr>
                         @endforeach
                         <tr class="warning">
-                            <td colspan="4" ><strong class="pull-right" style="font-size: 18px;">Total Due</strong></td>
+                            <td colspan="4" ><strong class="pull-right" style="font-size: 18px;margin-right: 115px">Total Due</strong></td>
                             <td><strong  style="font-size: 18px;">${{  number_format($due, 2) }}</strong></td>
                         </tr>
                         {{--<tr class="success">--}}
@@ -270,13 +270,13 @@
                     {{--<!-- invoice footer-->--}}
                     <div class="row">
                         <div class="col-md-12 col-sm-12 col-xs-12">
-                            <div class="invoice-policy">
-                                Change return policy			            </div>
-                            <div id="receipt_type_label" style="display: none;" class="receipt_type_label invoice-policy">
-                                Merchant Copy						</div>
+                            {{--<div class="invoice-policy">--}}
+                                {{--Change return policy			            </div>--}}
+                            {{--<div id="receipt_type_label" style="display: none;" class="receipt_type_label invoice-policy">--}}
+                                {{--Merchant Copy						</div>--}}
                             <div id="barcode" class="invoice-policy">
-                               <?php echo DNS1D::getBarcodeHTML($invoice->id , "C39",1,50);	?>					</div>
-                                <p >{{ $settings['company_name'] }} Invoice {{ $invoice->id }}</p>
+
+                                {{--<p >{{ $settings['company_name'] }} Invoice {{ $invoice->id }}</p>--}}
 
                             <div id="announcement" class="invoice-policy">
                                 @if($due>0)

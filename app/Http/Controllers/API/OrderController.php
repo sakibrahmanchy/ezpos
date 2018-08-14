@@ -24,6 +24,8 @@ class OrderController extends Controller
     public function processOrder(Request $request) {
         $processedOrder = new ProcessOrder($request);
 
+        $processedItems = $processedOrder->processItems();
+        dd($processedItems);
 //        $customer_id = $processedOrder->processCustomerAndGetId();
 //        $paymentInfo = $processedOrder->processPaymentInfo();
 //

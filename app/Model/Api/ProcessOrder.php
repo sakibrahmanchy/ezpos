@@ -75,6 +75,8 @@ class ProcessOrder extends Model
         $processedItems = array();
 
         foreach( $this->data->items as $anItem ) {
+            $anItem = (object) $anItem;
+
             $currentProcessedItem = array(
                 'item_id' => $anItem->id,
                 'unit_price' => $anItem->perUnitPrice,
@@ -131,7 +133,7 @@ class ProcessOrder extends Model
     }
 
     private function getTaxAmount() {
-        $this->tax_id = 2;
+
         if($this->tax_id==0)
             return 0.00;
 
@@ -153,7 +155,7 @@ class ProcessOrder extends Model
     }
 
     private function getTaxRate() {
-        $this->tax_id = 1;
+
         if($this->tax_id==0)
             return 0.00;
 
