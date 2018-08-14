@@ -390,7 +390,7 @@
             $customer_profile_url = route('customer_invoice',["customer_id"=>$invoice->id])
         @endphp
         <div class="hidden">
-            <form  id="selectedTransactionsSubmitForm" action="{{ route('clear_due_payments_selected') }}" method="post">
+            <form  id="selectedTransactionsSubmitForm" action="{{ route('clear_customer_invoice',["invoice_id"=>$invoice->id]) }}" method="post">
                 {{ csrf_field() }}
                 <input name = "pre_intended_url" value="{{ $customer_profile_url }}">
                 <input name = "customer_id" id="customer_id">

@@ -34,6 +34,7 @@ class RouteTokens
         "customer_invoice_pdf"=>"customer_add_update",
         "customer_due_details_ajax" => "customer_add_update",
         "clear_due_payments_selected"=>"customer_add_update",
+        "clear_customer_invoice"=>"customer_add_update",
 
         "new_item"=>"item_add_update",
         "item_list"=>"item_search",
