@@ -33,6 +33,12 @@ route::get('sale/refunded/list/{register_id}','SaleController@getDeletedSales')-
 
 Route::group(['middleware' => ['admin']], function () {
 
+
+    route::get('sale/clear',function() {
+        return view('sales.clear_sales_data');
+    })->name('clear_sales_data');
+    route::post('sale/clear','SaleController@clearSalesData')->name('clear_sales_data');
+
     Route::get('/home','HomeController@getDashBoard')->name('dashboard')->middleware('auth');
 
     route::get('/user/profile/edit/{user_id}','UserController@UpdateUserProfileGet')->name('user_profile_edit')->middleware('auth');

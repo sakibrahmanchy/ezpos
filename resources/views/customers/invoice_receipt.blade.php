@@ -122,22 +122,35 @@
                             <!--<th allign="right" class="header">Due</th>-->
                         </tr>
                         </thead>
-                        @php $due = 0; @endphp
+                        @php $due = 0; $payment = 0; @endphp
                         <tbody id="data-table">
                         @foreach($invoice->transactions as $aTransaction)
-                            @php $due += (  $aTransaction->sale_amount -  $aTransaction->paid_amount  ); @endphp
+                            @php
+                                $due += (  $aTransaction->sale_amount  );
+                                $payment += ( $aTransaction->paid_amount );
+                            @endphp
                             <tr>
                                 <td><a href="{{ route('sale_receipt',['sale_id'=>$aTransaction->sale_id]) }}">{{ $aTransaction->sale_id }}</a></td>
                                 <td>{{$aTransaction->created_at}}</td>
                                 <!--<td><strong style="font-size: 18px;">${{ number_format($aTransaction->sale_amount,2) }}</strong></td>
                                 <td><strong style="font-size: 18px;">${{ number_format($aTransaction->paid_amount, 2) }}</strong></td>-->
-                                <td><strong style="font-size: 18px;">${{ number_format($aTransaction->sale_amount - $aTransaction->paid_amount,2) }}</strong></td>
+                                <td><strong style="font-size: 18px;">${{ number_format($aTransaction->sale_amount ,2) }}</strong></td>
                             </tr>
                         @endforeach
                         <tr class="warning">
                             <td colspan="2" ><strong class="pull-right" style="font-size: 18px;margin-right: 115px">Total Due</strong></td>
                             <td><strong  style="font-size: 18px;">${{  number_format($due, 2) }}</strong></td>
                         </tr>
+                            @if($payment > 0)
+                                <tr class="success">
+                                    <td colspan="2" ><strong class="pull-right" style="font-size: 18px;margin-right: 115px">Paid Amount</strong></td>
+                                    <td><strong  style="font-size: 18px;">${{  number_format($payment, 2) }}</strong></td>
+                                </tr>
+                                <tr {{ ($due-$payment>0)  ?     'class="success"' : 'class="warning"'}}>
+                                    <td colspan="2" ><strong class="pull-right" style="font-size: 18px;margin-right: 115px">Remaining Due</strong></td>
+                                    <td><strong  style="font-size: 18px;">${{  number_format($due - $payment, 2) }}</strong></td>
+                                </tr>
+                            @endif
                         {{--<tr class="success">--}}
                             {{--<td colspan="5"><strong  class="pull-right" style="font-size: 18px;">Customer Advance Payment</strong></td>--}}
                             {{--<td><strong  style="font-size: 18px;">${{  number_format($advance, 2) }}</strong></td>--}}
@@ -279,7 +292,7 @@
                                 {{--<p >{{ $settings['company_name'] }} Invoice {{ $invoice->id }}</p>--}}
 
                             <div id="announcement" class="invoice-policy">
-                                @if($due>0)
+                                @if($due > $payment)
                                     <a href="javascript:void(0)" id="clearPayment" onclick="clearPayments()" class=" btn btn-sm btn-success btn-flat pull-right">Mark as paid</a>
                                 @else
                                     <a href="{{ route('undo_clear_customer_invoice',["invoice_id"=>$invoice->id]) }}" id="clearPayment"  class=" btn btn-sm btn-warning btn-flat pull-right">Undo Payment</a>
@@ -320,7 +333,7 @@
                     </div>
 
                     <center>
-                        @if($due>0)
+                        @if($due>$payment)
                             <label class="" style="font-size: 30px; color: white; background: #f39c12; padding: 10px;"> UNPAID</label>
                         @else
                             <label class="" style="font-size: 30px; color: white; background: #00a65a; padding: 10px;"> PAID</label>

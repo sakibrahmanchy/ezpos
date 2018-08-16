@@ -79,21 +79,34 @@
     </thead>
 
     <tbody>
-        @php $due = 0; @endphp
+    @php $due = 0; $payment = 0; @endphp
         @foreach($invoice->transactions as $aTransaction)
-            @php $due += (  $aTransaction->sale_amount -  $aTransaction->paid_amount  ); @endphp
+            @php
+                $due += (  $aTransaction->sale_amount  );
+                $payment += ( $aTransaction->paid_amount );
+            @endphp
             <tr>
                 <td>{{$aTransaction->sale_id}}</td>
                 <td>{{$aTransaction->created_at}}</td>
                 {{--<td><strong style="font-size: 18px;">${{ $aTransaction->sale_amount }}</strong></td>--}}
                 {{--<td><strong style="font-size: 18px;">${{ $aTransaction->paid_amount }}</strong></td>--}}
-                <td><strong style="font-size: 18px;">${{ number_format($aTransaction->sale_amount - $aTransaction->paid_amount,2) }}</strong></td>
+                <td><strong style="font-size: 18px;">${{ number_format($aTransaction->sale_amount ,2) }}</strong></td>
             </tr>
         @endforeach
         <tr class="warning">
             <td colspan="2" ><strong class="pull-right" style="font-size: 18px;">Total Due</strong></td>
             <td><strong  style="font-size: 18px;">${{  number_format($due, 2) }}</strong></td>
         </tr>
+        @if($payment > 0)
+            <tr class="success">
+                <td colspan="2" ><strong class="pull-right" style="font-size: 18px;margin-right: 115px">Paid Amount</strong></td>
+                <td><strong  style="font-size: 18px;">${{  number_format($payment, 2) }}</strong></td>
+            </tr>
+            <tr {{ ($due-$payment>0)  ?     'class="success"' : 'class="warning"'}}>
+                <td colspan="2" ><strong class="pull-right" style="font-size: 18px;margin-right: 115px">Remaining Due</strong></td>
+                <td><strong  style="font-size: 18px;">${{  number_format($due - $payment, 2) }}</strong></td>
+            </tr>
+        @endif
     </tbody>
 </table>
 

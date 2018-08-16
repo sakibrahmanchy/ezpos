@@ -16,24 +16,6 @@
         <div class="panel-body hidden-print">
             <form id = "salesReportGenerator" name="salesReportGenerator" action="{{route('search_sale')}}" method="get" class="form-horizontal form-horizontal-mobiles">
                 <input type="hidden" name="isPosted" value="0">
-                <div class="form-group">
-                    <label for="simple_radio" class="col-sm-3 col-md-3 col-lg-2 control-label">Fixed range:</label>						<div id="report_date_range_simple" class="controls col-sm-9 col-md-2 col-lg-2">
-                        <input type="radio" name="report_type" id="simple_radio" value="simple" checked>
-                        <label for="simple_radio"><span></span></label>
-
-                        <select name="report_date_range_simple" id="report_date_range_simple" class="form-control">
-                            <option class="dates" value="{{$dateTypes->today}}" selected>Today</option>
-                            <option class="dates"  value="{{$dateTypes->yesterday}}">Yesterday</option>
-                            <option class="dates"  value="{{$dateTypes->this_week}}">This Week</option>
-                            <option class="dates"   value="{{$dateTypes->last_week}}">Last Week</option>
-                            <option class="dates"  value="{{$dateTypes->this_month}}">This Month</option>
-                            <option class="dates"  value="{{$dateTypes->last_month}}">Last Month</option>
-                            <option class="dates"  value="{{$dateTypes->this_year}}">This Year</option>
-                            <option class="dates"  value="{{$dateTypes->last_year}}">Last Year</option>
-                            <option class="dates"  value="{{$dateTypes->all_time}}">All Time</option>
-                        </select>
-                    </div>
-                </div>
 
                 <div id="report_date_range_complex">
                     <div class="form-group">

@@ -296,17 +296,24 @@ EOT;
                 $priceNeededToBeScanned = false;
                 if(strlen($search_param)==12) {
                     if($scan_price_from_barcode=="true"){
-                        $upc_code_prefix = $scan_price_from_barcode = SettingsSingleton::getByKey('upc_code_prefix');
+                        $upc_code_prefix_string = $scan_price_from_barcode = SettingsSingleton::getByKey('upc_code_prefix');
+                        $upc_code_prefix = explode(",",$upc_code_prefix_string);
 
-                        if(substr($search_param,0,strlen($upc_code_prefix)) ===  $upc_code_prefix){
-                            $item_new_price_from_barcode = (int) substr($search_param,6,12);
-                            $item_new_price_from_barcode =  ((int)($item_new_price_from_barcode / 10))/100;
-                            $search_param = substr($search_param,0,6);
-                            $priceNeededToBeScanned = true;
+                        foreach($upc_code_prefix as $currentPrefix) {
+                            $stringToSearch = substr($search_param,0,strlen($currentPrefix));
+                            if($stringToSearch === $currentPrefix){
+                                $item_new_price_from_barcode = (int) substr($search_param,6,12);
+                                $item_new_price_from_barcode =  ((int)($item_new_price_from_barcode / 10))/100;
+                                $search_param = substr($search_param,0,6);
+                                $priceNeededToBeScanned = true;
+                                break;
+                            }
                         }
+
                     }
                 }
                 if($priceNeededToBeScanned) {
+
                     $items =  DB::table('items')
                         ->leftJoin('items_images', 'items.id', '=', 'items_images.item_id')
                         ->leftJoin('files', 'files.id', '=', 'items_images.file_id')

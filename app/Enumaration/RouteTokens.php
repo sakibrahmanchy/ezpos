@@ -109,6 +109,7 @@ class RouteTokens
         "products_by_categories" => "sale_add_update",
         "get_category_data" => "sale_add_update",
         "sale_delete"=>"sale_add_update",
+        "clear_sales_data"=>"sale_add_update",
 
         "report_category_graphical"=>"report_categories",
         "report_category_ajax"=>"report_categories",

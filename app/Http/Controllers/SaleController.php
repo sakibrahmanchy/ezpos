@@ -9,12 +9,16 @@ use App\Enumaration\UserTypes;
 use app\Http\Controllers\Reports\ReportTotal;
 use App\Library\SettingsSingleton;
 use App\Model\CashRegister;
+use App\Model\CashRegisterTransaction;
 use App\Model\Category;
 use App\Model\Counter;
 use App\Model\Customer;
+use App\Model\CustomerTransaction;
 use App\Model\Employee;
+use App\Model\Invoice;
 use App\Model\Item;
 use App\Model\ItemKit;
+use App\Model\LoyaltyTransaction;
 use App\Model\Manufacturer;
 use App\Model\PaymentLog;
 use App\Model\Printer\FooterItem;
@@ -1064,7 +1068,6 @@ class SaleController extends Controller
 
             SaleStatusLog::changeSaleStatus($sale_id,$previous_status, SaleStatus::$REFUNDED);
 
-
             $sale_items = DB::table('item_sale')->where("sale_id",$sale_id)->get();
             foreach($sale_items as $anItem) {
                 $item = Item::where("id",$anItem->item_id)->first();
@@ -1077,12 +1080,60 @@ class SaleController extends Controller
         }
     }
 
-    public function getDeletedSales($cashRegister_id) {
+    public function clearSalesData(Request $request) {
+        $start_date = $request->start_date_formatted;
+        $end_date = $request->end_date_formatted;
+        if(!$start_date&&!$end_date){
+            return redirect()->back()->with('error','Specify at least one field');
+        }
+        else {
+            if($start_date && !$end_date) {
+                CashRegister::whereDate('created_at','>',$start_date)->delete();
+                CashRegisterTransaction::whereDate('created_at','>',$start_date)->delete();
+                Invoice::whereDate('created_at','>',$start_date)->delete();
+                LoyaltyTransaction::whereDate('created_at','>',$start_date)->delete();
 
+                $saleIds= Sale::_eloquentToArray(Sale::whereDate('created_at','>',$start_date)
+                    ->select('id')->get(),"id");
+                DB::table('customer_transaction_invoice')->whereIn('sale_id',$saleIds)->delete();
 
+                PaymentLog::whereIn("sale_id",$saleIds)->delete();
+                DB::table('payment_log_sale')->whereIn("sale_id",$saleIds)->delete();
+                DB::table('item_sale')->whereIn("sale_id",$saleIds)->delete();
+                Sale::whereIn("id",$saleIds)->delete();
+            } else if($end_date && !$start_date) {
 
+                CashRegister::whereDate('created_at','<',$start_date)->delete();
+                CashRegisterTransaction::whereDate('created_at','<',$start_date)->delete();
+                Invoice::whereDate('created_at','<',$start_date)->delete();
+                LoyaltyTransaction::whereDate('created_at','<',$start_date)->delete();
 
+                $saleIds= Sale::_eloquentToArray(Sale::whereDate('created_at','<',$start_date)
+                    ->select('id')->get(),"id");
+                DB::table('customer_transaction_invoice')->whereIn('sale_id',$saleIds)->delete();
 
+                PaymentLog::whereIn("sale_id",$saleIds)->delete();
+                DB::table('payment_log_sale')->whereIn("sale_id",$saleIds)->delete();
+                DB::table('item_sale')->whereIn("sale_id",$saleIds)->delete();
+                Sale::whereIn("id",$saleIds)->delete();
+            }else{
+                CashRegister::whereDate('created_at','>',$start_date)->whereDate('created_at','<',$start_date)->delete();
+                CashRegisterTransaction::whereDate('created_at','>',$start_date)->whereDate('created_at','<',$start_date)->delete();
+                Invoice::whereDate('created_at','>',$start_date)->whereDate('created_at','<',$start_date)->delete();
+                LoyaltyTransaction::whereDate('created_at','>',$start_date)->whereDate('created_at','<',$start_date)->delete();
+
+                $saleIds= Sale::_eloquentToArray(Sale::whereDate('created_at','>',$start_date)
+                    ->whereDate('created_at','<',$start_date)
+                    ->select('id')->get(),"id");
+                DB::table('customer_transaction_invoice')->whereIn('sale_id',$saleIds)->delete();
+
+                PaymentLog::whereIn("sale_id",$saleIds)->delete();
+                DB::table('payment_log_sale')->whereIn("sale_id",$saleIds)->delete();
+                DB::table('item_sale')->whereIn("sale_id",$saleIds)->delete();
+                Sale::whereIn("id",$saleIds)->delete();
+            }
+           return redirect()->back()->with('success','Successfully deleted');
+        }
     }
 
 }

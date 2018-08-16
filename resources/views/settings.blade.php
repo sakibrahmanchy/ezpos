@@ -257,7 +257,7 @@
 
 
                         <div class="upc_code_prefix_holder hidden">
-                            <label for="upc_code_prefix" class="col-sm-3 col-md-3 col-lg-2 control-label required">Upc Code Prefix:</label>
+                            <label for="upc_code_prefix" class="col-sm-3 col-md-3 col-lg-2 control-label required">Upc Code Prefix (Separate by only comma):</label>
                             <div class="col-sm-9 col-md-9 col-lg-10">
                                 <div class="input-group date">
                                                 <span class="input-group-addon bg">

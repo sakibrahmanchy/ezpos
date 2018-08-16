@@ -532,7 +532,7 @@
                         if(due>0) this.CompleteSales();
                         this.SubmitSales(3);
                     },
-                    CompleteSales: function(){
+                    CompleteSales: function() {
 						if( this.amountTendered>0 )
 						{
 							if( this.activePaymentType == 'Cash' || this.activePaymentType == 'Check' || this.activePaymentType == 'Debit Card' || this.activePaymentType == 'Credit Card' )
