@@ -85,7 +85,6 @@ class SaleController extends Controller
         echo $sale_id;
     }
 
-
     public function SuspendSale(Request $request)
     {
 
@@ -95,12 +94,6 @@ class SaleController extends Controller
 
         $sale = new Sale();
         $sale->InsertSale($saleInfo, $productInfos, $paymentInfos, $saleInfo['status']);
-
-    }
-
-    public function GetSuspendedSale()
-    {
-
 
     }
 
@@ -149,7 +142,6 @@ class SaleController extends Controller
 
         return redirect()->route('sale_receipt', ['sale_id' => $sale_id]);
     }
-
 
     public function DownloadSaleReceipt(Request $request, $sale_id)
     {
@@ -669,7 +661,6 @@ class SaleController extends Controller
 
     }
 
-
     public function popOpenCashDrawer(){
 
         $counter_id = Cookie::get('counter_id',null);
@@ -807,8 +798,6 @@ class SaleController extends Controller
             }
         }
     }
-
-
 
     public function PreEditSaleGet($sale_id){
         $sale = Sale::with('Customer','Employee')->where("id",$sale_id)->first();
