@@ -46,7 +46,7 @@ class ItemController extends Controller
     }
 
     public function scanItemByBarcode($barcode_number) {
-        return $this->scanItemByBarcode($barcode_number);
+        return $this->searchForBarcodeItem($barcode_number);
     }
 
     public function getItemPrice($itemId){

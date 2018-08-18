@@ -270,6 +270,7 @@ class CustomerController extends Controller
             ->where("sales.customer_id",$customer_id)
             ->where("sales.due",'>',0)
             ->select(DB::raw('*,customer_transactions.id as transaction_id'))
+            ->whereNull('sales.deleted_at')
             ->get();
 
 
