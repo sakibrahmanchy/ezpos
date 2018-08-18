@@ -3,13 +3,13 @@
 
 @section('pageTitle','Invoice Receipt')
 
-{{--@section('breadcrumbs')--}}
+@section('breadcrumbs')
     {{--{!! Breadcrumbs::render('sale_receipt',$invoice->id) !!}--}}
-    {{--<span><label class="label label-primary pull-right counter-name"><b>{{ \Illuminate\Support\Facades\Cookie::get('counter_name') }}</b></label></span>--}}
-    {{--<br><br>--}}
-    {{--<a href="javascript:void(0)"  onclick="changeCounter()" class="pull-right">Change Location</a>--}}
-    {{--<br>--}}
-{{--@stop--}}
+    <span><label class="label label-primary pull-right counter-name"><b>{{ \Illuminate\Support\Facades\Cookie::get('counter_name') }}</b></label></span>
+    <br><br>
+    <a href="javascript:void(0)"  onclick="changeCounter()" class="pull-right">Change Location</a>
+    <br>
+@stop
 
 @php
 
@@ -43,6 +43,7 @@
                             {{--@endif--}}
                             {{--<a  href="javascript:void(0)" onclick="selectPrinterCounter()" class="btn btn-primary">Print In Specific Printer</a>--}}
                             {{--<a  href="javascript:void(0)" onclick="PrintElem()"  class="btn btn-primary">Print</a>--}}
+                            <a  href="{{route('print_invoice',['invoice_id'=>$invoice->id, "print_type"=>1])}}" class="btn btn-primary">Print</a>
                             <a  href="{{route('customer_invoice_pdf',['invoice_id'=>$invoice->id])}}" class="btn btn-primary">Download as PDF</a>
                             <a  href="{{route('customer_invoice_email',['invoice_id'=>$invoice->id])}}" class="btn btn-primary">Email to customer</a>
                         </div>
@@ -453,6 +454,7 @@
                 transaction_list: selectedIds,
             },
             success: function(response){
+
                 $("#total_due").html('Total amount to pay: $'+response);
                 $("#choose_payment_modal").modal();
 

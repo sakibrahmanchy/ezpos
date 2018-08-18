@@ -5,13 +5,21 @@ namespace App\Http\Controllers;
 use App\Enumaration\PaymentTypes;
 use App\Enumaration\SaleStatus;
 use App\Enumaration\SaleTypes;
+use App\Library\SettingsSingleton;
+use App\Model\Counter;
 use App\Model\Customer;
 use App\Model\CustomerTransaction;
 use App\Model\Invoice;
 use App\Model\PaymentLog;
+use App\Model\Printer\FooterItem;
 use App\Model\Sale;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rules\In;
+use Mike42\Escpos\PrintConnectors\NetworkPrintConnector;
+use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
+use Mike42\Escpos\Printer;
 use PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -67,6 +75,8 @@ class InvoiceController extends Controller
             ->whereIn('customer_transactions.id',$listOfSaleIds)
             ->where(DB::raw("sale_amount-paid_amount"),'>',0)
             ->sum(DB::raw("sale_amount-paid_amount"));
+
+        $totalDue = number_format($totalDue, 2);
 
         return response()->json($totalDue);
     }
@@ -142,5 +152,152 @@ class InvoiceController extends Controller
         }
 
         return redirect()->back();
+    }
+
+
+    public function printInvoiceReceipt($invoice_id) {
+        $invoice = Invoice::where("id",$invoice_id)->with('transactions','customer')->first();
+//        $customer = Customer::where('id',$invoice->customer->id)->first();\
+        $due = 0; $payment = 0;
+
+        try {
+            $settings = SettingsSingleton::get();
+
+            $counter_id = 0;
+//            if($request->has('counter_id'))
+//                $counter_id = intval($request->counter_id);
+            if($counter_id == 0)
+                $counter_id = Cookie::get('counter_id',null);
+
+
+            $counter = Counter::where("id",$counter_id)->first();
+
+            if($counter->printer_connection_type && $counter->printer_connection_type==\App\Enumaration\PrinterConnectionType::USB_CONNECTION) {
+                $connector = new WindowsPrintConnector($counter->name);
+            }
+            else {
+                $ip_address = $counter->printer_ip;
+                $port = $counter->printer_port;
+
+                $connector = new NetworkPrintConnector($ip_address, $port);
+            }
+
+            $printer = new Printer($connector);
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
+            $printer->text("Invoice Receipt\n");
+            $printer->selectPrintMode();
+            $printer->text( $invoice->created_at. "\n");
+            $printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);
+            $printer->text($settings['company_name']. "\n");
+            $printer->selectPrintMode(Printer::MODE_DOUBLE_HEIGHT);
+            $printer->text("Invoice No." . $invoice->id . "\n");
+
+            $printer->selectPrintMode();
+            if($settings['address_line_1']!=""||$settings['address_line_1']!=null)
+                $printer->text(wordwrap($settings['address_line_1'] . "\n",43,"\n",false));
+            if($settings['address_line_2']!=""||$settings['address_line_2']!=null)
+                $printer->text(wordwrap($settings['address_line_2'] . "\n",43,"\n",false));
+
+            if($settings['email_address']!=""||$settings['email_address']!=null)
+                $printer->text(wordwrap($settings['email_address'] . "\n",43,"\n",false));
+
+            if($settings['phone']!=""||$settings['phone']!=null) {
+                $printer->text('Phone: '.$settings['phone'] . "\n");
+                $printer->selectPrintMode();
+            }
+            if($settings['website']!=""||$settings['website']!=null) {
+                $printer->text('Website: '.$settings['website'] . "\n");
+                $printer->selectPrintMode();
+            }
+            $printer->text("Cashier: " . Auth::user()->name . "\n");
+            if( isset($sale->customer->id) )
+            {
+                $customerNameText = "Customer Name: " . $invoice->customer->first_name . " " . $invoice->customer->last_name;
+                $printer->text(wordwrap( $customerNameText . "\n",43,"\n",false));
+                if($invoice->customer->loyalty_card_number && strlen($invoice->customer->loyalty_card_number)>0)
+                {
+                    $loyalityCarNumber = $invoice->customer->loyalty_card_number;
+                    $loyalityCarNumberMasked = str_repeat('X', strlen($loyalityCarNumber) - 4) . substr($loyalityCarNumber, -4);
+                    $printer->text('Loyality Card No: ' . $loyalityCarNumberMasked . "\n");
+                }
+            }
+            $printer->selectPrintMode();
+
+            $printer->text("------------------------------------------\n");
+            $header = new \App\Model\Printer\Invoice("Sale Id", "Created at", "Amount Due");
+            $printer->setJustification(Printer::JUSTIFY_LEFT);
+            $printer->setEmphasis(true);
+            $printer->text($header);
+
+            $items = array();
+            foreach($invoice->transactions as $aTransaction)
+            {
+                $due += (  $aTransaction->sale_amount  );
+                $payment += ( $aTransaction->paid_amount );
+
+                $toPrint = new \App\Model\Printer\Invoice(
+                    $aTransaction->sale_id,
+                    $aTransaction->created_at,
+                    number_format($aTransaction->sale_amount ,2)
+                );
+
+                array_push($items, $toPrint);
+            }
+
+
+            $printer->setJustification(Printer::JUSTIFY_LEFT);
+            $printer->setEmphasis(false);
+            foreach ($items as $item) {
+                $printer->text($item);
+            }
+
+            $printer->text("-------------------------------------------\n");
+
+
+            $totalDue = new FooterItem('Total Due', number_format($due, 2));
+
+            $printer->setEmphasis(true);
+            $printer->text($totalDue);
+
+            $printer->feed();
+
+            if($payment > 0) {
+                $paymentText = new FooterItem('Paid Amount', number_format($payment, 2));
+                $remainingText = new FooterItem('Remaining Due', number_format($due - $payment, 2));
+                $printer->text($paymentText);
+                $printer->feed();
+                $printer->text($remainingText);
+                $printer->feed();
+            }
+
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
+            if($due > $payment)
+            {
+                $printer->text("Unpaid\n");
+                $printer->selectPrintMode();
+            } else{
+                $printer->text("Paid\n");
+                $printer->selectPrintMode();
+            }
+
+
+            /*dd($items);*/
+            /* $printer -> feed();*/
+            return redirect()->route('customer_invoice', ['invoice_id' => $invoice_id]);
+
+        } Catch (\Exception $e) {
+            /*if($e->getCode() == 0 ) {
+                return redirect()->route('print_sale',['sale_id'=>$sale->id, "print_type"=>$request->print_type,'driver'=>1]);
+            }*/
+            //dd($e);
+            return redirect()->back()->with(["error" => $e->getMessage()]);
+        } finally {
+            if (isset($printer)) {
+                $printer->cut();
+                $printer->pulse();
+                $printer->close();
+            }
+        }
+
     }
 }

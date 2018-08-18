@@ -82,6 +82,7 @@ Route::group(['middleware' => ['admin']], function () {
 
     Route::get('customer/invoice/{invoice_id}/email','InvoiceController@emailInvoice')->name('customer_invoice_email')->middleware('auth');
     Route::get('customer/invoice/{invoice_id}/pdf','InvoiceController@DownloadInvoiceReceipt')->name('customer_invoice_pdf')->middleware('auth');
+    Route::get('customer/invoice/{invoice_id}/print','InvoiceController@printInvoiceReceipt')->name('print_invoice')->middleware('auth');
 
 
     route::get('/item/new','ItemController@GetItemForm' )->name('new_item')->middleware('auth');
