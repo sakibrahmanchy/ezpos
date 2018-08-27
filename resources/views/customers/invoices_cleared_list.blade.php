@@ -27,11 +27,11 @@
                         <tbody id="data-table">
                         @foreach($invoices as $anInvoice)
                             <tr>
-                                <td> ##{{ $anInvoice->id }}</td>
+                                <td> ##{{ $anInvoice->invoice_id }}</td>
                                 <td>{{$anInvoice->created_at}}</td>
                                 <td>{{$anInvoice->last_date_of_payment}}</td>
                                 <td><strong style="font-size: 18px;">${{ $anInvoice->total_amount_of_charge }}</strong></td>
-                                <td><strong style="font-size: 18px;"><a href="{{ route('customer_invoice',["invoice_id"=>$anInvoice->id]) }}"><button class="btn btn-info">Show receipt</button></a></strong></td>
+                                <td><strong style="font-size: 18px;"><a href="{{ route('customer_invoice',["invoice_id"=>$anInvoice->invoice_id]) }}"><button class="btn btn-info">Show receipt</button></a></strong></td>
                             </tr>
                         @endforeach
                         </tbody>
