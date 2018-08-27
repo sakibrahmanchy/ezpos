@@ -33,4 +33,17 @@ function CheckNull($data) {
     return false;
 }
 
+function getPercentage($amount, $percentage) {
+    return ($amount * ($percentage / 100));
+}
+
+function percentageLess($amount, $percentage) {
+    return $amount - getPercentage($amount,$percentage);
+}
+
+function percentageMore($amount, $percentage) {
+    return $amount + getPercentage($amount,$percentage);
+}
+
+
 ?>

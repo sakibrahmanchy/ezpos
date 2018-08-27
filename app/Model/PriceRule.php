@@ -171,13 +171,17 @@ class PriceRule extends Model
         else
             $priceRule->spend_amount = 0;
 
-        if(!is_null($request->percent_off))
+        if(!is_null($request->percent_off)){
             $priceRule->percent_off =  $request->percent_off;
+            $priceRule->fixed_of =  0.0 ;
+        }
         else
             $priceRule->spend_amount =  0;
 
-        if(!is_null($request->fixed_of))
+        if(!is_null($request->fixed_of)) {
             $priceRule->fixed_of =  $request->fixed_of ;
+            $priceRule->percent_off =  0.0;
+        }
         else
             $priceRule->fixed_of =  0;
 

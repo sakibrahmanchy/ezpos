@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Enumaration\UserTypes;
 use App\Http\Controllers\Controller;
 use App\Model\CashRegister;
+use App\Model\Counter;
 use App\Model\Employee;
 use App\Model\User;
 use Carbon\Carbon;
@@ -33,26 +34,53 @@ class CashRegisterController extends Controller
 
         $opening_balance = $request->opening_balance;
         $counter_id = $request->counter_id;
-        $current_balance = $opening_balance;
         $opened_by = Auth::user()->id;
         //date_default_timezone_set(date_default_timezone_get());
-        if(!CashRegister::isThereAnyOtherRegistersThatAreOpenedByTheUser($opened_by)) {
-            $opening_time =   date('Y-m-d h:i:s', time());
-            $cashRegisterOpenInfo = array(
-                "opening_balance" => $opening_balance,
-                "counter_id" => $counter_id,
-                "user_id" => Auth::id(),
-                "opening_time" => $opening_time,
-                "current_balance"=>$current_balance,
-                "opened_by"  => $opened_by
-            );
-            $cashRegisterId = DB::table('cash_registers')->insertGetId($cashRegisterOpenInfo);
-            return response()->json(['success'=>true, 'message' => "Cash Register Opened", 'cash_register_id'=>$cashRegisterId]);
+        if(CashRegister::isThereAnyOtherRegistersThatAreOpenedByTheUser($opened_by)) {
+
+            if(Counter::where("id",$counter_id)->exists()) {
+                $cashRegisterId = $this->createNewCashRegister($counter_id,$opening_balance, $opened_by);
+                return response()->json([
+                    'success'=>true,
+                    'message' => "Cash Register Opened",
+                    "data" =>['cash_register_id'=>$cashRegisterId]],200);
+            }
+            else{
+                return response()->json([
+                    'success'=>false,
+                    'message' => "Invalid counter id"],422);
+            }
         }
-        return response()->json(['success'=>false, 'message' => "This user has already opened a cash register which needs to be closed."],403);
+        return response()->json([
+            'success'=>false,
+            'message' => "This user has already opened a cash register which needs to be closed."],403);
 
     }
 
+
+    public function getActiveCashRegister()
+    {
+        dd(Auth::user());
+       $cashRegister = new CashRegister();
+       $activeRegister = $cashRegister->getCurrentActiveRegister();
+        return response()->json([
+            'success'=>true,
+            'message' => "User currently has an active cash register",
+            "data" =>["cash_register_id" => $activeRegister->id]],200);
+    }
+
+    public function createNewCashRegister($counter_id, $opening_balance, $opened_by) {
+        $opening_time =   date('Y-m-d h:i:s', time());
+        $cashRegisterOpenInfo = array(
+            "opening_balance" => $opening_balance,
+            "counter_id" => $counter_id,
+            "user_id" => Auth::id(),
+            "opening_time" => $opening_time,
+            "current_balance"=>$opening_balance,
+            "opened_by"  => $opened_by
+        );
+        return DB::table('cash_registers')->insertGetId($cashRegisterOpenInfo);
+    }
 
 
 

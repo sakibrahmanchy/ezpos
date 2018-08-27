@@ -91,10 +91,14 @@
                                 <td>{{ $aSale->id }}</td>
                                 <td>{{ $aSale->item_name }}</td>
                                 <td>
-                                        {{$aSale->category->category_name}}
+                                        @if(isset($aSale->category))
+                                            {{$aSale->category->category_name}}
+                                        @endif
                                 </td>
                                 <td>
+                                    @if(isset($aSale->supplier))
                                         {{$aSale->supplier->company_name}}
+                                    @endif
                                 </td>
                                 <td>{{$aSale->product_id}}</td>
                                 <td>{{$aSale->description}}</td>

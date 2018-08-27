@@ -200,7 +200,6 @@ EOT;
                          ->orWhereRaw('items.item_quantity <= items.item_reorder_level');
             })->where('product_type',0)->with('supplier','category')->get();
 
-
             return view('reports.inventory.low_inventory',['suppliers'=>$suppliers,'categories'=>$categories,"items"=>$items]);
     }
 

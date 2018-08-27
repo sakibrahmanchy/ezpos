@@ -8,6 +8,8 @@
 namespace App\Model\Api;
 
 use App\Enumaration\PaymentTypes;
+use App\Enumaration\SaleStatus;
+use App\Enumaration\SaleTypes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -16,7 +18,7 @@ class ProcessOrder extends Model
     private $data;
     private $averageTaxRate;
     private $averageTaxAmount;
-
+    private $profit;
     /**
      * ProcessOrder constructor.
      *
@@ -64,17 +66,17 @@ class ProcessOrder extends Model
     }
 
     public function processPaymentInfo() {
-//        dd($this->data->all());
-        return array(
-            "payment_type" => PaymentTypes::$TypeList[$this->data->payment_method],
+        return array(array(
+            "payment_type" => $this->data->payment_method,
             "paid_amount" => $this->data->paid
-        );
+        ));
     }
 
     public function processItems() {
         $processedItems = array();
 
         foreach( $this->data->items as $anItem ) {
+
             $anItem = (object) $anItem;
 
             $currentProcessedItem = array(
@@ -99,6 +101,25 @@ class ProcessOrder extends Model
         return $processedItems;
     }
 
+    public function processSaleInfo()
+    {
+        return array(
+            "customer_id" => $this->processCustomerAndGetId(),
+            "subtotal" => $this->data->sub_total,
+            "tax" => $this->getTaxAmount(),
+            "total" => $this->data->total,
+            "discount" => $this->data->discount,
+            "due" => $this->data->due,
+            "profit" => $this->profit,
+            "items_sold" => $this->getTotalNumberOfItems(),
+            "sale_type" => SaleTypes::$SALE,
+            "counter_id" => $this->data->counter_id,
+            "comment" => "",
+            "cash_register_id" => $this->data->cash_register_id,
+            "total_sales_discount" => $this->data->discount
+        );
+    }
+
     private function getItemDiscountAmountByItemId($item) {
         return ($item->perUnitPrice * $item->quantity) - $item->totalPrice;
     }
@@ -117,19 +138,30 @@ class ProcessOrder extends Model
     }
 
     private function getItemTypeByItemId($item_id) {
-        return "item ";
+        return "item";
     }
 
     private function getItemDiscountPercentageByItemId($item_id) {
 
+
+        $itemDiscountPercentage = 0.0;
+        return $itemDiscountPercentage;
     }
 
     private function getSaleDiscountAmountByItemId($item_id) {
-
+        $saleDiscountPercentage = 0.0;
+        return $saleDiscountPercentage;
     }
 
     private function getItemProfitByItemId($item_id) {
 
+        /**
+         * Get profit for selected item
+         */
+
+        $itemProfit = 0.0;
+        $this->profit += $itemProfit;
+        return $itemProfit;
     }
 
     private function getTaxAmount() {
@@ -181,7 +213,5 @@ class ProcessOrder extends Model
         }
         return $totalQuantity;
     }
-
-
 
 }

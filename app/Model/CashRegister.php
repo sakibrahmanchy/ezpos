@@ -82,7 +82,7 @@ class CashRegister extends Model
     }
 
     public static function isThereAnyOtherRegistersThatAreOpenedByTheUser($user_id) {
-        return is_null(CashRegister::where('user_id',$user_id)->whereNotNull('created_at')->first());
+        return is_null(CashRegister::where('user_id',$user_id)->whereNotNull('opened_by')->first());
     }
 
     public function getActiveRegisterOpeningBalance(){

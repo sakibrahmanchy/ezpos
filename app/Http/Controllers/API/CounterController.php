@@ -20,5 +20,4 @@ class CounterController extends Controller {
 
         return response()->json(['success'=>false, 'data'=>null],500);
     }
-
 }

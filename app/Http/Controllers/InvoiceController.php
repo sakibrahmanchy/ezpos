@@ -244,7 +244,6 @@ class InvoiceController extends Controller
                 array_push($items, $toPrint);
             }
 
-
             $printer->setJustification(Printer::JUSTIFY_LEFT);
             $printer->setEmphasis(false);
             foreach ($items as $item) {
@@ -252,8 +251,6 @@ class InvoiceController extends Controller
             }
 
             $printer->text("-------------------------------------------\n");
-
-
             $totalDue = new FooterItem('Total Due', number_format($due, 2));
 
             $printer->setEmphasis(true);
@@ -280,9 +277,6 @@ class InvoiceController extends Controller
                 $printer->selectPrintMode();
             }
 
-
-            /*dd($items);*/
-            /* $printer -> feed();*/
             return redirect()->route('customer_invoice', ['invoice_id' => $invoice_id]);
 
         } Catch (\Exception $e) {

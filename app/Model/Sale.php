@@ -64,8 +64,12 @@ class Sale extends Model
         if($saleStatus!=1)
             session()->put('success','Sale has been successfully suspended');
 
-		$cashRegister = new CashRegister();
-        $activeRegister = $cashRegister->getCurrentActiveRegister();
+		if(isset($saleInfo["cash_register_id"])) {
+            $activeRegister = CashRegister::where("id",$saleInfo["cash_register_id"])->first();
+        } else {
+            $cashRegister = new CashRegister();
+            $activeRegister = $cashRegister->getCurrentActiveRegister();
+        }
 
         $sale = $this->insertSaleInfo($saleInfo,$saleStatus, $activeRegister->id);
         $sale_id = $sale->id;
@@ -176,16 +180,17 @@ class Sale extends Model
     /**
      * @return bigInteger value related to current counter
      */
-    public function generateSalesID() {
+    public function generateSalesID($counterId = null) {
         //Previous algo, not currently active
 //        $timestamp = date("Ymdhs",time());
 //        $randomNumber = $this->generateRandomNumber(3);
 //        $counterCode = Counter::where("id",$counterId)->first()->counter_code;
-
-        $counterId = Cookie::get("counter_id");
-        $counter = Counter::where("id",$counterId)->first();
-        if(is_null($counter))
-            return redirect()->route('new_sale')->with('Error', 'No counters Selected');
+        if(is_null($counterId)) {
+            $counterId = Cookie::get("counter_id");
+            $counter = Counter::where("id",$counterId)->first();
+            if(is_null($counter))
+                return redirect()->route('new_sale')->with('Error', 'No counters Selected');
+        }
 
         return $this->getMaxSaleIdByCounter($counterId);
     }
@@ -193,7 +198,7 @@ class Sale extends Model
     public function insertSaleInfo($saleInfo,$saleStatus, $registerId){
 
         $sale = new Sale();
-        $sale->id = $this->generateSalesID();
+        $sale->id = $this->generateSalesID(isset($saleInfo['counter_id']) ? $saleInfo['counter_id'] : null);
         $sale->employee_id = Auth::user()->id;
         $sale->customer_id = $saleInfo['customer_id'];
         $sale->sub_total_amount = $saleInfo['subtotal'];
@@ -205,7 +210,18 @@ class Sale extends Model
         $sale->profit = $saleInfo['profit'];
         $sale->items_sold = $saleInfo['items_sold'];
         $sale->sale_type = $saleInfo['sale_type'];
-        $sale->counter_id = Cookie::get("counter_id");
+        if(isset($saleInfo['counter_id'])) {
+            $sale->counter_id = $saleInfo['counter_id'];
+        }
+        else {
+            if (Cookie::get('counter_id') !== false) {
+                $sale->counter_id = Cookie::get("counter_id");
+            }
+            else
+                $sale->counter_id = 0;
+
+        }
+
         $sale->comment = $saleInfo["comment"];
         $sale->cash_register_id = $registerId;
         $sale->total_sales_discount = $saleInfo['total_sales_discount'];
