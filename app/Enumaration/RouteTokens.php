@@ -224,7 +224,19 @@ class RouteTokens
         "counter_set_default"=>"counters_add_update",
         "test_print"=>"counters_add_update",
 
+        "floor_plan" => "floor_plan_add_update",
+        "new_floor_plan" => "floor_plan_add_update",
+        "post_new_floor_plan" => "floor_plan_add_update",
+        "edit_floor_plan" => "floor_plan_add_update",
+        "post_edit_floor_plan" => "floor_plan_add_update",
+        "create_product_image" => "floor_plan_add_update",
 
+        "media_view" => "floor_plan_add_update",
+        "show_add_media" => "floor_plan_add_update",
+        "post_add_media" => "floor_plan_add_update",
+        "get_media_image" => "floor_plan_add_update",
+        "delete_media_image" => "floor_plan_add_update",
+        "get_sitting_logo" => "floor_plan_add_update",
     );
 
 

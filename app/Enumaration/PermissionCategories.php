@@ -22,5 +22,6 @@ class PermissionCategories
     public static $GIFT_CARDS = 9;
     public static $COUNTERS = 10;
     public static $PRICE_LEVELS = 11;
+    public static $FLOOR_PLANS = 12;
 
 }

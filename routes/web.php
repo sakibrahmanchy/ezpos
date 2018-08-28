@@ -31,6 +31,7 @@ route::get('counter/ajax/set/{counter_id}','CounterController@SetCounterAjax')->
 route::get('counter/set/{counter_id}','CounterController@SetCounter')->name('counter_set')->middleware('auth');
 route::get('sale/refunded/list/{register_id}','SaleController@getDeletedSales')->name('refunded_sale_list')->middleware('auth');
 
+
 Route::group(['middleware' => ['admin']], function () {
 
 
@@ -310,6 +311,27 @@ Route::group(['middleware' => ['admin']], function () {
     route::get('file/delete/{file_id}','FileController@DeleteFile')->name('delete_file')->middleware('auth');
 
     route::post('loyalty_card/use','CustomerController@UseLoyaltyCard')->name('loyalty_card_use')->middleware('auth');
+
+    //Floor Plan
+
+    Route::get('floor_plan', ['as' => 'floor_plan', 'uses' => 'FloorPlanController@index', 'middleware' => 'admin']);
+    Route::get('floor_plan/new', ['as' => 'new_floor_plan', 'uses' => 'FloorPlanController@showNewPlan', 'middleware' => 'admin']);
+    Route::post('floor_plan/new', ['as' => 'post_new_floor_plan', 'uses' => 'FloorPlanController@postNewPlan', 'middleware' => 'admin']);
+    Route::get('floor_plan/edit', ['as' => 'edit_floor_plan', 'uses' => 'FloorPlanController@showEditPlan', 'middleware' => 'admin']);
+    Route::post('floor_plan/edit', ['as' => 'post_edit_floor_plan', 'uses' => 'FloorPlanController@postEditPlan', 'middleware' => 'admin']);
+    Route::post('/product/image/create', ['as' => 'create_product_image', 'uses' => 'ProductController@createImage']);
+
+    //Media Gallery
+    Route::get('/media', ['as' => 'media_view', 'uses' => 'MediaController@index', 'middleware' => 'admin']);
+    Route::get('/media/add', ['as' => 'show_add_media', 'uses' => 'MediaController@showAddImage', 'middleware' => 'admin']);
+    Route::post('/media/add', ['as' => 'post_add_media', 'uses' => 'MediaController@postAddImage', 'middleware' => 'admin']);
+    Route::get('/media/image/{media}', ['as' => 'get_media_image', 'uses' => 'MediaController@getImage', 'middleware' => 'admin']);
+    Route::post('/media/delete', ['as' => 'delete_media_image', 'uses' => 'MediaController@deleteImage', 'middleware' => 'admin']);
+    Route::get('/sitting/logo/{sitting}', ['as' => 'get_sitting_logo', 'uses' => 'FloorPlanController@getLogo']);
+
+
+
+
 
 
 });

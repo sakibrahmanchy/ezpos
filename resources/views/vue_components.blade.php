@@ -1,3 +1,12 @@
+
+<style>
+    #item-names{
+        margin-left: 0px;
+        margin-top: 2px;
+        margin-bottom: 2px;
+    }
+</style>
+
 <script>
 
     /**************************** File Explorer Starts **********************/
@@ -204,7 +213,7 @@
 
     Vue.component('auto-complete', {
         template: `<span>
-                            <input type="text" ref="inlineTextBox"  class="form-control" id ="item-names" v-model="item_names" @keyup.down="onArrowDown" @keyup.up="onArrowUp" @keyup.enter="onEnter">
+                            <input type="text" ref="inlineTextBox"  class="form-control" id ="item-names" v-model="item_names" @keyup.down="onArrowDown" @keyup.up="onArrowUp" @keyup.enter="onEnter" style="">
                             <ul ref="autoSuggestion" id="autocomplete-results"
                                 v-show="isOpen"
                                 class="autocomplete-results"

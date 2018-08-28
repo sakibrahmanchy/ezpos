@@ -44,7 +44,8 @@ class OrderController extends Controller
         $paymentInfo = $processedOrder->processPaymentInfo();
         $saleInfo = $processedOrder->processSaleInfo();
         $sale = new Sale();
-        dd($sale->InsertSale($saleInfo,$processedItems,$paymentInfo,SaleStatus::$SUCCESS));
+        $receipt_id  = $sale->InsertSale($saleInfo,$processedItems,$paymentInfo,SaleStatus::$SUCCESS);
+        dd($receipt_id);
 
 //        $saleInfo = $processedOrder->processSaleInfo();
 //

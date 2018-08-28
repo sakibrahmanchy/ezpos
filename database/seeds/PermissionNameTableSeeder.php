@@ -314,6 +314,15 @@ class PermissionNameTableSeeder extends Seeder
                     ),
                 ),
                 "description"=>"Special Permissions For Admin Employees"
+            ),
+            "Floor Plans" => array(
+                "permissions"=> array(
+                    array(
+                        "permission_name"=>"Add, Update",
+                        "permission_token"=>"floor_plan_add_update"
+                    ),
+                ),
+                "description"=>"Special Permissions For Admin Employees"
             )
         );
 

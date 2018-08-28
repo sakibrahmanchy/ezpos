@@ -249,6 +249,13 @@ else
                         </a>
                     </li>
                 @endif
+                @if(UserHasAccessToModule(\App\Enumaration\PermissionCategories::$FLOOR_PLANS))
+                    <li class = {{ Request::is('floor_plan/*') ? 'active' : '' }}>
+                        <a href="{{route('floor_plan')}}">
+                            <i class="fa fa-th"></i><span> Floor Plans&nbsp;</span>
+                        </a>
+                    </li>
+                @endif
                 <li class = {{ Request::is('settings/*') ? 'active' : '' }}>
                     <a href="{{route('change_settings')}}">
                         <i class="fa fa-cog fa-spin fa-fw margin-bottom"></i><span> Settings&nbsp;</span>

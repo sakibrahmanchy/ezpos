@@ -541,3 +541,17 @@ Breadcrumbs::register('counter_edit', function($breadcrumbs, $counter_id)
 });
 
 
+// Floor Plan
+Breadcrumbs::register('floor_plan', function($breadcrumbs) {
+    $breadcrumbs->push('Floor Plan', route('floor_plan'), ['icon' => 'table']);
+});
+
+Breadcrumbs::register('new_floor_plan', function($breadcrumbs) {
+    $breadcrumbs->parent('floor_plan');
+    $breadcrumbs->push('Create', route('new_floor_plan'));
+});
+
+Breadcrumbs::register('edit_floor_plan', function($breadcrumbs) {
+    $breadcrumbs->parent('floor_plan');
+    $breadcrumbs->push('Edit', route('edit_floor_plan'));
+});

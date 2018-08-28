@@ -65,7 +65,7 @@ class SaleController extends Controller
                 }
             }
 
-				return view('sales.new_sale_vue', ['customerList' => $customerList]);
+				return view('sales.new_design.new_sale_vue', ['customerList' => $customerList]);
     //			else
     //				return view('sales.new_sale', ['customerList' => $customerList]);
         }else{

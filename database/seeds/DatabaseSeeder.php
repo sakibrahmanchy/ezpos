@@ -19,5 +19,6 @@ class DatabaseSeeder extends Seeder
         $this->call(SaleCorrectionSeeder::class);
         $this->call(PaymentLogTableSeeder::class);
         $this->call(DueSeeder::class);
+        $this->call(FloorPlanSeeder::class);
     }
 }

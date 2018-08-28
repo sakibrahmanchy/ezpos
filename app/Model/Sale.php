@@ -71,21 +71,25 @@ class Sale extends Model
             $activeRegister = $cashRegister->getCurrentActiveRegister();
         }
 
-        $sale = $this->insertSaleInfo($saleInfo,$saleStatus, $activeRegister->id);
-        $sale_id = $sale->id;
+        \Illuminate\Support\Facades\DB::transaction(function() use ($saleInfo, $saleStatus, $activeRegister, $productInfos, $paymentInfos)
+        {
+            $sale = $this->insertSaleInfo($saleInfo,$saleStatus, $activeRegister->id);
+            $sale_id = $sale->id;
 
-        $this->insertItemsInSale($productInfos,$sale,$saleStatus);
+            $this->insertItemsInSale($productInfos,$sale,$saleStatus);
 
-		if(!is_null($paymentInfos))
-            $this->insertSalePaymentInfos($paymentInfos,$sale);
+            if(!is_null($paymentInfos))
+                $this->insertSalePaymentInfos($paymentInfos,$sale);
 
-        if( $saleInfo['customer_id'] != 0){
-            //Check if customer has a loyalty card or not
-            $this->addCustomerLoyaltyBalance($sale->customer_id, $sale_id, $sale->total_amount);
-			$this->InsertIntoCustomerAccount($sale->customer_id, $sale_id, $sale->total_amount, $sale->due, $sale->cash_register_id,$sale->status );
-        }
+            if( $saleInfo['customer_id'] != 0){
+                //Check if customer has a loyalty card or not
+                $this->addCustomerLoyaltyBalance($sale->customer_id, $sale_id, $sale->total_amount);
+                $this->InsertIntoCustomerAccount($sale->customer_id, $sale_id, $sale->total_amount, $sale->due, $sale->cash_register_id,$sale->status );
+            }
 
-        return $sale_id;
+            return $sale_id;
+        });
+
     }
 	
 	
