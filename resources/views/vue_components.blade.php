@@ -15,8 +15,8 @@
         {
             template: `
                    <transition name="fade">
-                   <div class="row" style="margin-left: -25px">
-                    <div v-show="shown">
+                   <div >
+                    <div class="row" v-show="shown">
                      <ul style="list-style-type: none;">
                         <button  v-if="currentParent!==0"  class="btn btn-labeled btn-default" style=" cursor: pointer; margin-bottom: 10px" @click="SetParent(previousParent)">
                             <span class="btn-label"><i class="glyphicon glyphicon-chevron-left"></i></span>Go Back
@@ -27,7 +27,7 @@
                                 </i> @{{ aChild.category_name }}
                             </div>
 						</li>
-						<li class="product-icon " v-for="(aChild, index) in children" v-if="aChild.type=='product' && index>=start_index && index<=end_index" @click="ChooseProduct(aChild)">
+						<li class="product-icon"   v-for="(aChild, index) in children" v-if="aChild.type=='product' && index>=start_index && index<=end_index" @click="ChooseProduct(aChild)"  v-bind:style="{ backgroundImage: 'url(' + aChild.image + ')' }">
 							<div class="vertical-align">
 							    <div v-if="aChild.item_name.length>22">
                                     @{{ aChild.item_name.substr(0,22)}}...
@@ -41,17 +41,14 @@
 							</div>
 							</li>
                      </ul>
-						<div style="clear: both;"></div>
-                      <br>
-                      <ul>
-                       <button class="btn btn-labeled btn-default"  @click="ShowPageItem(current_page-1)" style=" cursor: pointer; margin-bottom: 10px" >
-                            <span class="btn-label"><i class="glyphicon glyphicon-chevron-left"></i></span>Previous
-                        </button>
-                        <span v-if="total_page>0" style="margin-left: 420px">Showing page @{{ current_page }} of @{{ total_page }} page(s)</span>
-                        <button @click="ShowPageItem(current_page+1)" class="btn btn-labeled btn-default" style=" cursor: pointer; margin-bottom: 10px; float:right; margin-right: 80px;" >
-                            <span class="btn-label"><i class="glyphicon glyphicon-chevron-right"></i></span>Next&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        </button>
-                     </ul>
+						  <div style="clear: both;"></div>
+                                 <ul class="pagination" style="margin-top:0px" v-if="total_page>0" style="margin-left: 40px">
+                                     <li class="page-item"><a class="page-link" @click="ShowPageItem(current_page-1)" href="#">Previous</a></li>
+                                    <li class="page-item"  v-for="index in total_page" @click="ShowPageItem(index)" v-bind:class="{active:index==current_page}"><a class="page-link" href="#">@{{index}}</a></li>
+                                    <li class="page-item"><a @click="ShowPageItem(current_page+1)" class="page-link" href="#">Next</a></li>
+                                 </ul>
+
+                            </div>
                 </div>
                 </div>
                 </transition>
@@ -66,7 +63,7 @@
                     previousParent: 0,
                     current_page: -1,
                     total_page: -1,
-                    per_page_item: 26,
+                    per_page_item: 20,
                     start_index: 0,
                     end_index: 0,
                     currentCategory: {
@@ -112,7 +109,8 @@
                                             unit_price : product.selling_price,
                                             cost_price: product.cost_price,
                                             items_sold : 1,
-                                            price_rule_id: product.price_rule_id
+                                            price_rule_id: product.price_rule_id,
+                                            image: product.directory+"/"+product.new_name
                                         };
                                         if(product.discountApplicable)
                                         {

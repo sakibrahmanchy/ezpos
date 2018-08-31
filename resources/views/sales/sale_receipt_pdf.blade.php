@@ -38,6 +38,14 @@
         <li><?php echo $settings['phone'] ?></li>
 		@endif
     </ul>
+    @php
+        if($sale->employee_id==1) {
+            $name = "Algrims";
+        } else {
+            $user = \App\Model\User::where('id',$sale->employee_id)->first();
+             $name = $user->name;
+        }
+    @endphp
     <ul  style="margin-bottom:2px;float:right;">
         <li>
             Sales Receipt						 <br>
@@ -45,7 +53,7 @@
         </li>
         <li><span>Sale ID:</span>{{ $settings['company_name'] }} {{$sale->id}}</li>
         <li><span>Counter Name:</span><b>{{ $sale->counter->name }}</b></li>
-        <li><span>Employee:</span>{{\App\Model\Employee::where("id",$sale->employee_id)->first()->first_name }}</li>
+        <li><span>Employee:</span>{{$name}}</li>
         @if(isset($sale->customer->id))
             <li><span>Customer:</span>{{$sale->customer->first_name}} {{$sale->customer->last_name}}</li>
 			@if($sale->Customer->loyalty_card_number && strlen($sale->Customer->loyalty_card_number)>0)

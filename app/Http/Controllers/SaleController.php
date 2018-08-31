@@ -82,6 +82,7 @@ class SaleController extends Controller
 
         $sale = new Sale();
         $sale_id = $sale->InsertSale($saleInfo, $productInfos, $paymentInfos, $saleInfo['status']);
+
         echo $sale_id;
     }
 

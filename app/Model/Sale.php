@@ -71,9 +71,9 @@ class Sale extends Model
             $activeRegister = $cashRegister->getCurrentActiveRegister();
         }
 
-        \Illuminate\Support\Facades\DB::transaction(function() use ($saleInfo, $saleStatus, $activeRegister, $productInfos, $paymentInfos)
-        {
+
             $sale = $this->insertSaleInfo($saleInfo,$saleStatus, $activeRegister->id);
+
             $sale_id = $sale->id;
 
             $this->insertItemsInSale($productInfos,$sale,$saleStatus);
@@ -88,7 +88,7 @@ class Sale extends Model
             }
 
             return $sale_id;
-        });
+
 
     }
 	

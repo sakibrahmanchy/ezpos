@@ -10,6 +10,7 @@ namespace App\Model\Api;
 use App\Enumaration\PaymentTypes;
 use App\Enumaration\SaleStatus;
 use App\Enumaration\SaleTypes;
+use App\Model\Invoice;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 

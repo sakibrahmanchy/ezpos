@@ -67,7 +67,14 @@
 								@endif
                             </ul>
                         </div>
-
+                        @php
+                            if($sale->employee_id==1) {
+                                $name = "Algrims";
+                            } else {
+                                $user = \App\Model\User::where('id',$sale->employee_id)->first();
+                                 $name = $user->name;
+                            }
+                        @endphp
                         <!--  sales-->
                         <div class="col-md-4 col-sm-4 col-xs-12 text-right" style="float:right" >
                             <ul class="list-unstyled invoice-detail" style="margin-bottom:2px;">
@@ -77,7 +84,7 @@
                                 </li>
                                 <li><span>Sale ID: </span>{{$settings['company_name']}} No. {{$sale->id}}</li>
                                 <li><span>Counter Name: </span><b>{{ $sale->counter->name }}</b></li>
-                                <li><span>Employee:</span>{{\App\Model\Employee::where("id",$sale->employee_id)->first()->first_name }}</li>
+                                <li><span>Employee:</span> {{ $name  }}</li>
                                 @if(isset($sale->customer->id))
                                     <li><span>Customer:</span>{{$sale->customer->first_name}} {{$sale->customer->last_name}}</li>
 									@if($sale->Customer->loyalty_card_number && strlen($sale->Customer->loyalty_card_number)>0)

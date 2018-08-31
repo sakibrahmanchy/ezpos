@@ -17,6 +17,7 @@ window.Vue = require('vue');
 
 Vue.component('example', require('./components/Example.vue'));
 Vue.component('file-explorer', require('./components/FileExplorer.vue'));
+Vue.component('new_sale', require('./components/NewSale.vue'));
 
 const app = new Vue({
     el: '#app'

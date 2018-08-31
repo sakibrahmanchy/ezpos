@@ -489,5 +489,6 @@ else
 
 </script>
 @yield('additionalJS')
+
 </body>
 </html>
