@@ -280,9 +280,10 @@
                      </div>
                  <div >
 
-         <div class="col-xs-5 card">
+         <div class="col-xs-6" style="padding-left:0px;">
+            <div class="card">
            <div class = "search section">
-               <div class="input-group col-md-12"    >
+               <div class="input-group col-md-12">
                    <a href="{{route('new_item')}}" target="_blank" class="input-group-addon" id="sizing-addon2" style="background-color:#337ab7;color:white;border:solid #337ab7 1px;border-radius: 3px; font-size: 20px; padding-left: 20px; padding-right: 20px"><strong>+</strong></a>
                                     <auto-complete @set-autocomplete-result="setAutoCompleteResult" :auto-select="auto_select"></auto-complete>
 
@@ -405,14 +406,14 @@
 
                             <div class="">
                             </div>
-
+                            </div>
                         </div>
-                        <div class ="col-xs-6 pull-right">
-                            <div class="row">
-                                <div v-if="activeTab==1" class="col-md-12 card" >
+                        <div class ="col-xs-6 pull-right" style="padding-right: 0px;">
+                            <div class="card">
+                                <div v-if="activeTab==1" class="col-md-12" >
                                     <file_explorer @choose-item="ChooseItem" :shown="true"></file_explorer>
                                 </div>
-                                 <div v-if="activeTab==2" class="col-md-12 card" >
+                                 <div v-if="activeTab==2" class="col-md-12" >
                                         <div class="col-md-4">
                                             <div class="options">
                                                 <div class="vertical-align">
@@ -519,7 +520,7 @@
                                             </div>
                                         </div>
                                 </div>
-                                <div v-if="activeTab==3" class="col-md-12 card" >
+                                <div v-if="activeTab==3" class="col-md-12" >
                                     <div class="col-md-9">
                                        <div class="col-md-5">
                                         Balancer Due:   <p style="font-size: 25px"><currency-input currency-symbol="$" :value="GetTotalSale"></currency-input></p><br><br>
@@ -616,6 +617,7 @@
                                     </div>
 
                                 </div>
+                                <div style="display: block; clear: both;"></div>
                             </div>
 					</div>
 			</div>`,
