@@ -638,7 +638,7 @@
 					loyalty_card_number: "",
 					sale_type: 1,
 					flatDiscountApplied: false,
-                    activeTab: 2,
+                    activeTab: 1,
                     padList: [9,8,7,"$50",6,5,4,"$20",3,2,1,"$10","C","0",".","<"],
                     reinitiateCount: false,
                     decimalTaken: false,
