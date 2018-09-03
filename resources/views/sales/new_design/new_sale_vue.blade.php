@@ -220,27 +220,24 @@
             font-size: 45px;
             color: white;
         }
-        /*!* width *!*/
-        /*div::-webkit-scrollbar {*/
-        /*width: 20px;*/
-        /*}*/
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
 
-        /*!* Track *!*/
-        /*div::-webkit-scrollbar-track {*/
-        /*box-shadow: inset 0 0 5px grey;*/
-        /*border-radius: 10px;*/
-        /*}*/
+        /* Track */
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
 
-        /*!* Handle *!*/
-        /*div:-webkit-scrollbar-thumb {*/
-        /*background: red;*/
-        /*border-radius: 10px;*/
-        /*}*/
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+        }
 
-        /*!* Handle on hover *!*/
-        /*div::-webkit-scrollbar-thumb:hover {*/
-        /*background: #b30000;*/
-        /*}*/
+        /* Handle on hover */
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
 
     </style>
 
@@ -295,7 +292,7 @@
 
      <div class="col-xs-6" style="padding-left:0px;">
         <div class="card">
-       <div class = "search section">
+        <div class = "search section">
            <div class="input-group col-md-12">
                <a href="{{route('new_item')}}" target="_blank" class="input-group-addon" id="sizing-addon2" style="background-color:#337ab7;color:white;border:solid #337ab7 1px;border-radius: 3px; font-size: 20px; padding-left: 20px; padding-right: 20px"><strong>+</strong></a>
                                     <auto-complete @set-autocomplete-result="setAutoCompleteResult" :auto-select="auto_select"></auto-complete>
@@ -328,7 +325,7 @@
             <br>
 
             <div class="table-responsive">
-                <div class="product-holder">
+                <div class="product-holder" style="height:300px; overflow-y:scroll;">
                     <table class="table table-hover  table-responsive" style="border-color:#c0c0c0;	border-collapse: collapse;">
                     <thead style="background: #f5f5f5; border: solid 1px #c0c0c0; ">
                     <tr>
@@ -340,7 +337,7 @@
                         <th></th>
                     </tr>
                     </thead>
-                    <tbody  v-if="itemList.length>0" style="height: 300px; overflow:auto;">
+                    <tbody  v-if="itemList.length>0" >
                         <template  v-for="(anItem,index) in itemList" class = "product-descriptions">
                             <tr class="product-specific-description">
                                 <td  style="width: 152px"   class="col-sm-8 col-md-6">
@@ -400,9 +397,11 @@
                                         <div class="col-md-5">
                                             Subtotal:  <currency-input currency-symbol="$" :value="GetSubtotal"></currency-input><br><br>
                                             Discount (%): <input id ="allDiscountAmount" type ="number" v-model="allDiscountAmountPercentage" style="max-width:45px;"><br><br>
-                                            Tax({{ $tax_rate }}%):   <currency-input currency-symbol="$" :value="GetTax"></currency-input> </div>
+                                            <strong>Discount entire sale</strong><span style="float: right"><strong id=""><input id ="saleFlatDiscountAmount" style="max-width:45px;float: right" v-model="saleFlatDiscountAmount"></strong></span>
+                                          </div>
                                         <div class="col-md-4">
-                                              <p style="font-size: 18px;">Total: <currency-input currency-symbol="$" :value="GetTotalSale"></currency-input><br><br><p>
+                                                Tax({{ $tax_rate }}%):   <currency-input currency-symbol="$" :value="GetTax"></currency-input><br><br>
+                                              <p style="font-size: 18px;">Total: <currency-input currency-symbol="$" :value="GetTotalSale"></currency-input><br></p>
                                                <p style="font-size: 20px; color:red">Due: <currency-input currency-symbol="$" :value="GetDue"></currency-input></p> </div>
                                         <div class="col-md-3">
                                             <center @click="activeTab=3" href="javascript:void(0)">
@@ -1140,7 +1139,7 @@
                         });
                     },
                     allDiscountAmountPercentage: function (newVal, oldValue){
-                        if(newVal==oldValue || newVal==0)
+                        if(newVal==oldValue || newVal==0 || newVal > 99 || oldValue >99)
                             return;
                         this.itemList.forEach(function(anItem){
                             anItem.item_discount_percentage = newVal;
@@ -1206,7 +1205,8 @@
                     GetChangeDue()
                     {
                         let changedDue = this.GetTotalSale-this.amountTendered;
-                        return changedDue.toFixed(2);
+                        changedDue = changedDue.toFixed(2);
+                        return changedDue;
                     }
 
                 },

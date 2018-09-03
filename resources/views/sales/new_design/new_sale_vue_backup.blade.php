@@ -220,27 +220,24 @@
             font-size: 45px;
             color: white;
         }
-        /*!* width *!*/
-        /*div::-webkit-scrollbar {*/
-        /*width: 20px;*/
-        /*}*/
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
 
-        /*!* Track *!*/
-        /*div::-webkit-scrollbar-track {*/
-        /*box-shadow: inset 0 0 5px grey;*/
-        /*border-radius: 10px;*/
-        /*}*/
+        /* Track */
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
 
-        /*!* Handle *!*/
-        /*div:-webkit-scrollbar-thumb {*/
-        /*background: red;*/
-        /*border-radius: 10px;*/
-        /*}*/
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+        }
 
-        /*!* Handle on hover *!*/
-        /*div::-webkit-scrollbar-thumb:hover {*/
-        /*background: #b30000;*/
-        /*}*/
+        /* Handle on hover */
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
 
     </style>
 
@@ -272,19 +269,32 @@
 					<div class="sales-header">
                       <div class="col-md-12" style="padding: 10px; background: rgb(51, 122, 183); color:white; border-top-left-radius: 5px; border-top-right-radius: 5px">
                                {{--<div class="sale-buttons input-group" style = "border-bottom:solid #ddd 1px; padding:10px;max-width: 100%;display: inline-block;">--}}
-                    <div style="float: right">
-                        <button v-if="activeTab != 1" type="button" class="btn btn-default"  @click="activeTab=1">Item Grid</button>
-                        <button  type="button" class="btn btn-default"  @click="activeTab=2">Options   <i v-if="activeTab!=2" class="fa fa-chevron-down"></i></button>
-                        <button  type="button" class="btn btn-warning"  @click="activeTab=2">Cancel Sale</button>
-                    </div>
-                 </div>
-             <div >
+                    <div class="pull-right col-md-12">
+                        <button  v-if="activeTab != 1" type="button" class="pull-right btn btn-default"  @click="activeTab=1">Item Grid</button>
 
-     <div class="col-xs-6" style="padding-left:0px;">
-        <div class="card">
-       <div class = "search section">
-           <div class="input-group col-md-12">
-               <a href="{{route('new_item')}}" target="_blank" class="input-group-addon" id="sizing-addon2" style="background-color:#337ab7;color:white;border:solid #337ab7 1px;border-radius: 3px; font-size: 20px; padding-left: 20px; padding-right: 20px"><strong>+</strong></a>
+                        <button  type="button" class="btn btn-default pull-right"  @click="activeTab=2">Options   <i v-if="activeTab!=2" class="fa fa-chevron-down"></i></button>
+                        <div class="pull-right padding-left-md" style='padding-right: 10px'>
+                            <button  type="button" class="btn btn-warning"  @click="activeTab=2" >Cancel Sale</button>
+                        </div>
+                        <div class="col-md-2 pull-right">
+                            <select class="form-control">
+                                <option value ="0" selected>Select Customer for sale</option>
+                                @foreach($customerList as $aCustomer)
+                    <option value = "{{$aCustomer->id}}">{{$aCustomer->first_name}} {{$aCustomer->last_name}}</option>
+                                @endforeach
+                    </select>
+                </div>
+            </div>
+            <div style="clear:both">
+            </div>
+         </div>
+     <div >
+
+<div class="col-xs-6" style="padding-left:0px;">
+<div class="card">
+<div class = "search section">
+   <div class="input-group col-md-12">
+       <a href="{{route('new_item')}}" target="_blank" class="input-group-addon" id="sizing-addon2" style="background-color:#337ab7;color:white;border:solid #337ab7 1px;border-radius: 3px; font-size: 20px; padding-left: 20px; padding-right: 20px"><strong>+</strong></a>
                                     <auto-complete @set-autocomplete-result="setAutoCompleteResult" :auto-select="auto_select"></auto-complete>
 
                                     <div class="input-group-btn bs-dropdown-to-select-group">
@@ -315,7 +325,7 @@
             <br>
 
             <div class="table-responsive">
-                <div class="product-holder">
+                <div class="product-holder" style="height:300px; overflow-y:scroll;">
                     <table class="table table-hover  table-responsive" style="border-color:#c0c0c0;	border-collapse: collapse;">
                     <thead style="background: #f5f5f5; border: solid 1px #c0c0c0; ">
                     <tr>
@@ -327,7 +337,7 @@
                         <th></th>
                     </tr>
                     </thead>
-                    <tbody  v-if="itemList.length>0" style="height: 300px; overflow:auto;">
+                    <tbody  v-if="itemList.length>0" >
                         <template  v-for="(anItem,index) in itemList" class = "product-descriptions">
                             <tr class="product-specific-description">
                                 <td  style="width: 152px"   class="col-sm-8 col-md-6">
@@ -387,9 +397,11 @@
                                         <div class="col-md-5">
                                             Subtotal:  <currency-input currency-symbol="$" :value="GetSubtotal"></currency-input><br><br>
                                             Discount (%): <input id ="allDiscountAmount" type ="number" v-model="allDiscountAmountPercentage" style="max-width:45px;"><br><br>
-                                            Tax({{ $tax_rate }}%):   <currency-input currency-symbol="$" :value="GetTax"></currency-input> </div>
+                                            <strong>Discount entire sale</strong><span style="float: right"><strong id=""><input id ="saleFlatDiscountAmount" style="max-width:45px;float: right" v-model="saleFlatDiscountAmount"></strong></span>
+                                          </div>
                                         <div class="col-md-4">
-                                              <p style="font-size: 18px;">Total: <currency-input currency-symbol="$" :value="GetTotalSale"></currency-input><br><br><p>
+                                                Tax({{ $tax_rate }}%):   <currency-input currency-symbol="$" :value="GetTax"></currency-input><br><br>
+                                              <p style="font-size: 18px;">Total: <currency-input currency-symbol="$" :value="GetTotalSale"></currency-input><br></p>
                                                <p style="font-size: 20px; color:red">Due: <currency-input currency-symbol="$" :value="GetDue"></currency-input></p> </div>
                                         <div class="col-md-3">
                                             <center @click="activeTab=3" href="javascript:void(0)">
@@ -529,7 +541,7 @@
                                                Tendered: <p style="font-size: 25px"><currency-input currency-symbol="$" :value="amountTendered"></currency-input></p><br><br>
                                         </div>
                                         <div class="col-md-2">
-                                             Change: <p style="font-size: 25px"><currency-input currency-symbol="$" :value="GetDue-amountTendered"></currency-input></p><br><br>
+                                             Change: <p style="font-size: 25px"><currency-input currency-symbol="$" :value="GetChangeDue"></currency-input></p><br><br>
                                         </div>
 
                                         <div class="col-md-10">
@@ -721,24 +733,30 @@
                                 return;
 
                             var that = this
-
+                            scanRequired = selectedItem.useScanPrice === undefined ? false : true;
                             this.GetItemPrice(selectedItem.item_id)
                                 .then(function (response) {
                                     let sale_type =  $("#sale-type").attr("data-selected-type");
                                     console.log(sale_type);
                                     let items_sold = ( sale_type == "sale") ? 1 : -1;
 
+                                    if(!scanRequired) new_price = response.data.price;
+                                    else new_price = selectedItem.new_price;
+
                                     var itemDetails = {
                                         item_id : selectedItem.item_id,
                                         item_name : selectedItem.item_name,
                                         company_name : selectedItem.company_name,
                                         items_sold : selectedItem.items_sold,
-                                        unit_price : response.data.price,
+                                        unit_price : new_price,
                                         cost_price: selectedItem.cost_price,
                                         items_sold : items_sold,
-                                        price_rule_id: selectedItem.price_rule_id
+                                        price_rule_id: selectedItem.price_rule_id,
+                                        scan_required: scanRequired,
+                                        scan_price: new_price
 
                                     };
+
 
                                     if(selectedItem.useScanPrice)
                                         itemDetails.unit_price = selectedItem.new_price;
@@ -1105,17 +1123,23 @@
                             return;
                         var that = this;
                         this.itemList.forEach(function(anItem) {
-                            that.GetItemPrice(anItem.item_id)
-                                .then(function (response) {
-                                    anItem.unit_price =response.data.price;
-                                })
-                                .catch(function (error) {
-                                    console.log(error);
-                                });
+                            scanRequired = anItem.scan_required === undefined ? false : true;
+                            if(!scanRequired) {
+                                that.GetItemPrice(anItem.item_id)
+                                    .then(function (response) {
+                                        anItem.unit_price =response.data.price;
+                                    })
+                                    .catch(function (error) {
+                                        console.log(error);
+                                    });
+                            } else {
+                                anItem.unit_price = anItem.scan_price;
+                            }
+
                         });
                     },
                     allDiscountAmountPercentage: function (newVal, oldValue){
-                        if(newVal==oldValue || newVal==0)
+                        if(newVal==oldValue || newVal==0 || newVal > 99 || oldValue >99)
                             return;
                         this.itemList.forEach(function(anItem){
                             anItem.item_discount_percentage = newVal;
@@ -1177,7 +1201,14 @@
                         else
                             this.amountTendered = 0;
                         return due;
+                    },
+                    GetChangeDue()
+                    {
+                        let changedDue = this.GetTotalSale-this.amountTendered;
+                        changedDue = changedDue.toFixed(2);
+                        return changedDue;
                     }
+
                 },
                 created: function(){
                 },

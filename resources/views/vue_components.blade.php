@@ -382,7 +382,7 @@
             },
             setValue()
             {
-                console.log(this.value);
+
                 this.editMode = false;
                 this.$emit('input', this.editedValue)
             },
@@ -435,7 +435,7 @@
     /********************currency symbol******************/
     Vue.component('currency-input', {
         template: `<span>
-                            @{{ localValue>=0 ? currencySymbol : '-' +  currencySymbol }}@{{localValue>=0 ? localValue : (-1) * localValue}}
+                            @{{ localValue>=0 ? currencySymbol : '-' +  currencySymbol }}@{{Math.abs(localValue).toFixed(2)}}
                         </span>`,
         props: ['value','currencySymbol'],
         data: function()
@@ -453,6 +453,7 @@
             {
 
                 this.localValue = Number(this.value).toFixed(2)
+                console.log(this.localValue)
             }
         }
     });

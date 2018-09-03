@@ -100,7 +100,7 @@ class SaleController extends Controller
 
     }
 
-    public function GetSaleReceipt($sale_id)
+    public function GetSaleReceipt($sale_id, Request $request)
     {
 
         $sale = Sale::withTrashed()->where("id", $sale_id)->with('items', 'paymentlogs', 'customer', 'counter')->first();
@@ -109,8 +109,13 @@ class SaleController extends Controller
         /*return response()->json(['sale'=>$sale], 200);*/
         if ($sale == null)
             return redirect()->back()->with(["error" => "Sale id not found!"]);
-        else
-            return view('sales.sale_receipt', ["sale" => $sale, 'counter_list'=>$counterList]);
+        else{
+            if($request->new_version)
+                return view('sales.new_design.sale_receipt', ["sale" => $sale, 'counter_list'=>$counterList]);
+            else
+                return view('sales.sale_receipt', ["sale" => $sale, 'counter_list'=>$counterList]);
+        }
+
 
     }
 
