@@ -382,6 +382,7 @@
             },
             setValue()
             {
+                console.log(this.value);
                 this.editMode = false;
                 this.$emit('input', this.editedValue)
             },

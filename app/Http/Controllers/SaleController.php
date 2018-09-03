@@ -44,7 +44,7 @@ use PhpParser\Node\Scalar\String_;
 class SaleController extends Controller
 {
 
-    public function GetSaleForm()
+    public function GetSaleForm(Request $request)
     {
         $cashRegister = new CashRegister();
         $activeCashRegister = $cashRegister->getCurrentActiveRegister();
@@ -64,8 +64,10 @@ class SaleController extends Controller
                     }
                 }
             }
-
-				return view('sales.new_design.new_sale_vue', ['customerList' => $customerList]);
+                if(isset($request->new_version))
+				    return view('sales.new_design.new_sale_vue', ['customerList' => $customerList]);
+                else
+                    return view('sales.new_sale_vue', ['customerList' => $customerList]);
     //			else
     //				return view('sales.new_sale', ['customerList' => $customerList]);
         }else{

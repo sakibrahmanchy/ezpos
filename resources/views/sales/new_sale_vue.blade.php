@@ -431,22 +431,28 @@
                         if(found)
                             return;
 
-                        var that = this
-
+                        var that = this;
+                        console.log(selectedItem.useScanPrice);
+                        scanRequired = selectedItem.useScanPrice === undefined ? false : true;
                         this.GetItemPrice(selectedItem.item_id)
                             .then(function (response) {
                                 let sale_type =  $("#sale-type").attr("data-selected-type");
                                 let items_sold = ( sale_type == "sale") ? 1 : -1;
+
+                                if(!scanRequired) new_price = response.data.price;
+                                else new_price = selectedItem.new_price;
 
                                 var itemDetails = {
                                     item_id : selectedItem.item_id,
                                     item_name : selectedItem.item_name,
                                     company_name : selectedItem.company_name,
                                     items_sold : selectedItem.items_sold,
-                                    unit_price : response.data.price,
+                                    unit_price : new_price,
                                     cost_price: selectedItem.cost_price,
                                     items_sold : items_sold,
-                                    price_rule_id: selectedItem.price_rule_id
+                                    price_rule_id: selectedItem.price_rule_id,
+                                    scan_required: scanRequired,
+                                    scan_price: new_price
 
                                 };
 
@@ -480,7 +486,7 @@
                         return axios.post("{{route('item_price')}}",
                             {
                                 item_id: itemId,
-                                customer_id: this.customer_id
+                                customer_id: this.customer_id,
                             })
                     },
                     Remove: function(itemId){
@@ -814,13 +820,20 @@
                         return;
                     var that = this;
                     this.itemList.forEach(function(anItem) {
-                        that.GetItemPrice(anItem.item_id)
-                            .then(function (response) {
-                                anItem.unit_price =response.data.price;
-                            })
-                            .catch(function (error) {
-                                console.log(error);
-                            });
+                        console.log(anItem);
+                        scanRequired = anItem.scan_required === undefined ? false : true;
+                        if(!scanRequired) {
+                            that.GetItemPrice(anItem.item_id)
+                                .then(function (response) {
+                                    anItem.unit_price =response.data.price;
+                                })
+                                .catch(function (error) {
+                                    console.log(error);
+                                });
+                        } else {
+                            anItem.unit_price = anItem.scan_price;
+                        }
+
                     });
                 },
                 allDiscountAmountPercentage: function (newVal, oldValue){

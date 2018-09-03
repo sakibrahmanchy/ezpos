@@ -272,23 +272,10 @@
 					<div class="sales-header">
                       <div class="col-md-12" style="padding: 10px; background: rgb(51, 122, 183); color:white; border-top-left-radius: 5px; border-top-right-radius: 5px">
                                {{--<div class="sale-buttons input-group" style = "border-bottom:solid #ddd 1px; padding:10px;max-width: 100%;display: inline-block;">--}}
-                    <div class="pull-right col-md-12">
-                        <button  v-if="activeTab != 1" type="button" class="pull-right btn btn-default"  @click="activeTab=1">Item Grid</button>
-
-                        <button  type="button" class="btn btn-default pull-right"  @click="activeTab=2">Options   <i v-if="activeTab!=2" class="fa fa-chevron-down"></i></button>
-                        <div class="pull-right padding-left-md" style='padding-right: 10px'>
-                            <button  type="button" class="btn btn-warning"  @click="activeTab=2" >Cancel Sale</button>
-                        </div>
-                        <div class="col-md-2 pull-right">
-                            <select class="form-control">
-                                <option value ="0" selected>Select Customer for sale</option>
-                                @foreach($customerList as $aCustomer)
-                                    <option value = "{{$aCustomer->id}}">{{$aCustomer->first_name}} {{$aCustomer->last_name}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div style="clear:both">
+                    <div style="float: right">
+                        <button v-if="activeTab != 1" type="button" class="btn btn-default"  @click="activeTab=1">Item Grid</button>
+                        <button  type="button" class="btn btn-default"  @click="activeTab=2">Options   <i v-if="activeTab!=2" class="fa fa-chevron-down"></i></button>
+                        <button  type="button" class="btn btn-warning"  @click="activeTab=2">Cancel Sale</button>
                     </div>
                  </div>
              <div >
@@ -542,7 +529,7 @@
                                                Tendered: <p style="font-size: 25px"><currency-input currency-symbol="$" :value="amountTendered"></currency-input></p><br><br>
                                         </div>
                                         <div class="col-md-2">
-                                             Change: <p style="font-size: 25px"><currency-input currency-symbol="$" :value="GetChangeDue"></currency-input></p><br><br>
+                                             Change: <p style="font-size: 25px"><currency-input currency-symbol="$" :value="GetDue-amountTendered"></currency-input></p><br><br>
                                         </div>
 
                                         <div class="col-md-10">
@@ -734,30 +721,24 @@
                                 return;
 
                             var that = this
-                            scanRequired = selectedItem.useScanPrice === undefined ? false : true;
+
                             this.GetItemPrice(selectedItem.item_id)
                                 .then(function (response) {
                                     let sale_type =  $("#sale-type").attr("data-selected-type");
                                     console.log(sale_type);
                                     let items_sold = ( sale_type == "sale") ? 1 : -1;
 
-                                    if(!scanRequired) new_price = response.data.price;
-                                    else new_price = selectedItem.new_price;
-
                                     var itemDetails = {
                                         item_id : selectedItem.item_id,
                                         item_name : selectedItem.item_name,
                                         company_name : selectedItem.company_name,
                                         items_sold : selectedItem.items_sold,
-                                        unit_price : new_price,
+                                        unit_price : response.data.price,
                                         cost_price: selectedItem.cost_price,
                                         items_sold : items_sold,
-                                        price_rule_id: selectedItem.price_rule_id,
-                                        scan_required: scanRequired,
-                                        scan_price: new_price
+                                        price_rule_id: selectedItem.price_rule_id
 
                                     };
-
 
                                     if(selectedItem.useScanPrice)
                                         itemDetails.unit_price = selectedItem.new_price;
@@ -1124,19 +1105,13 @@
                             return;
                         var that = this;
                         this.itemList.forEach(function(anItem) {
-                            scanRequired = anItem.scan_required === undefined ? false : true;
-                            if(!scanRequired) {
-                                that.GetItemPrice(anItem.item_id)
-                                    .then(function (response) {
-                                        anItem.unit_price =response.data.price;
-                                    })
-                                    .catch(function (error) {
-                                        console.log(error);
-                                    });
-                            } else {
-                                anItem.unit_price = anItem.scan_price;
-                            }
-
+                            that.GetItemPrice(anItem.item_id)
+                                .then(function (response) {
+                                    anItem.unit_price =response.data.price;
+                                })
+                                .catch(function (error) {
+                                    console.log(error);
+                                });
                         });
                     },
                     allDiscountAmountPercentage: function (newVal, oldValue){
@@ -1202,13 +1177,7 @@
                         else
                             this.amountTendered = 0;
                         return due;
-                    },
-                    GetChangeDue()
-                    {
-                        let changedDue = this.GetTotalSale-this.amountTendered;
-                        return changedDue.toFixed(2);
                     }
-
                 },
                 created: function(){
                 },
