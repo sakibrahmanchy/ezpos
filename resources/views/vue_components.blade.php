@@ -25,6 +25,7 @@
                             <div class="vertical-align">
                                 <i class="fa fa-folder">
                                 </i> @{{ aChild.category_name }}
+
                             </div>
 						</li>
 						<li class="product-icon"   v-for="(aChild, index) in children" v-if="aChild.type=='product' && index>=start_index && index<=end_index" @click="ChooseProduct(aChild)"  v-bind:style="{ backgroundImage: 'url(' + aChild.image + ')' }">
@@ -293,11 +294,11 @@
                 }
             },
             onEnter() {
-				if(this.arrowCounter>=0 && !this.autoSelect)
-					this.setResult(this.results[this.arrowCounter]);
-				else if(this.autoSelect && this.item_names.length>0)
-					this.SearchProduct();
-					
+                if(this.arrowCounter>=0 && !this.autoSelect)
+                    this.setResult(this.results[this.arrowCounter]);
+                else if(this.autoSelect && this.item_names.length>0)
+                    this.SearchProduct();
+
             },
             handleClickOutside(evt) {
                 if (!this.$el.contains(evt.target)) {
@@ -495,28 +496,28 @@
             type:"get",
             dataType: "json",
             success: function(response){
-				$("#choose_counter_modal").modal();
+                $("#choose_counter_modal").modal();
                 $(".choose-counter-home").html("");
                 counters = response.counters;
                 counters.forEach(function(counter){
                     var oneCounterHtml = '<li><a class="set_employee_current_counter_after_login" href="javascript:void(0)" data-counter-id="' + counter.id + '">'+counter.name+'</a></li>';
-					var counterJqueryElement = $(oneCounterHtml);
-					
-					counterJqueryElement.find('.set_employee_current_counter_after_login').click(function(){
-						var counterId = $(this).attr("data-counter-id");
-						var url = '{{ route("counter_set_ajax", ":counter_id") }}';
-						url = url.replace(':counter_id', counterId);
-						
-						$.ajax({
-							url: url,
-							type:"get",
-							dataType: "json",
-							success: function(response){
-								$("#choose_counter_modal").modal('hide');
-								$(".counter-name").html('<b>'+response.name+'</b>');
-							}
-						});	
-					});
+                    var counterJqueryElement = $(oneCounterHtml);
+
+                    counterJqueryElement.find('.set_employee_current_counter_after_login').click(function(){
+                        var counterId = $(this).attr("data-counter-id");
+                        var url = '{{ route("counter_set_ajax", ":counter_id") }}';
+                        url = url.replace(':counter_id', counterId);
+
+                        $.ajax({
+                            url: url,
+                            type:"get",
+                            dataType: "json",
+                            success: function(response){
+                                $("#choose_counter_modal").modal('hide');
+                                $(".counter-name").html('<b>'+response.name+'</b>');
+                            }
+                        });
+                    });
                     $(".choose-counter-home").append(counterJqueryElement);
                 });
             },

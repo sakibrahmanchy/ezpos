@@ -403,7 +403,7 @@
                                                 Tax({{ $tax_rate }}%):   <currency-input currency-symbol="$" :value="GetTax"></currency-input><br><br>
                                               <p style="font-size: 18px;">Total: <currency-input currency-symbol="$" :value="GetTotalSale"></currency-input><br></p>
                                                <p style="font-size: 20px; color:red">Due: <currency-input currency-symbol="$" :value="GetDue"></currency-input></p> </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-3" style="padding-left:0px">
                                             <center @click="activeTab=3" href="javascript:void(0)">
                                                 <button class="btn  btn-dark btn-circle-lg">
                                                 <center class="xxxl-font">$</center></button>
@@ -558,14 +558,7 @@
                                        </div>
 
                                     <div class="col-md-3" style="padding-left: 12%;">
-                                        <center>
-                                            <button class="btn btn-circle blue-theme-circle-button">
-                                            <i class="fa fa-database"></i></button>
-                                            <span style=";">
-                                                <center class="blue-font sm-font">Tip <br> amount</center>
-                                            </span>
-                                        </center>
-                                        <br>
+
                                          <center>
                                             <button class="btn btn-circle blue-theme-circle-button">
                                             <i class="fa fa-database"></i></button>
@@ -573,15 +566,7 @@
                                                 <center class="blue-font sm-font">Open <br> Cash Drawer</center>
                                             </span>
                                         </center>
-                                        <br>
-                                         <center>
-                                            <button class="btn btn-circle blue-theme-circle-button">
-                                            <i class="fa fa-barcode"></i></button>
 
-                                            <span style=";">
-                                                <center class="blue-font sm-font">Enter <br> Barcode</center>
-                                            </span>
-                                        </center>
                                     </div>
                                     <div class="col-md-12">
                                         <div class="col-md-9">
