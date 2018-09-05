@@ -6,8 +6,9 @@ use Illuminate\Http\Request;
 use App\Model\Media;
 use App\Model\Sitting;
 use App\Model\Setting;
+use Illuminate\Support\Facades\DB;
 use Storage;
-use DB;
+
 
 class FloorPlanController extends Controller
 {
@@ -76,6 +77,11 @@ class FloorPlanController extends Controller
                     'sitting_images/'.$sitting->id.'.png',
                     file_get_contents($request->logo[$i])
                 );
+
+               DB::table('customers')->insert([
+                   "first_name" => "Table ".$request->name,
+                   "sitting_id" => $sitting->id
+               ]);
             }
         }
 
@@ -136,6 +142,7 @@ class FloorPlanController extends Controller
                         file_get_contents($request->logo[$i])
                     );
                 }
+
             } else if ($request->id[$i] == "" && $request->name[$i] != "" && $request->logo[$i] != "") {
                 // new
                 $sitting = Sitting::create([
@@ -151,6 +158,11 @@ class FloorPlanController extends Controller
                     'sitting_images/'.$sitting->id.'.png',
                     file_get_contents($request->logo[$i])
                 );
+
+                DB::table('customers')->insert([
+                    "first_name" => "Table ".$request->name[$i],
+                    "sitting_id" => $sitting->id
+                ]);
             } else if ($request->id[$i] != "" && $request->name[$i] == "") {
                 // delete
                 $sitting = Sitting::where('id', $request->id[$i])->first();

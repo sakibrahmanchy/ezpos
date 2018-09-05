@@ -21,26 +21,28 @@
                         <button  v-if="currentParent!==0"  class="btn btn-labeled btn-default" style=" cursor: pointer; margin-bottom: 10px" @click="SetParent(previousParent)">
                             <span class="btn-label"><i class="glyphicon glyphicon-chevron-left"></i></span>Go Back
                         </button> <span  if="currentCategory.id!=0" style="font-size: 20px; margin-left: 10px;" >@{{ currentCategory.category_name }}</span><br>
-						<li  class="folder" v-for="(aChild, index) in children" v-if="aChild.type=='category' && index>=start_index && index<=end_index" @click="SetParent(aChild.id)">
-                            <div class="vertical-align">
-                                <i class="fa fa-folder">
-                                </i> @{{ aChild.category_name }}
+						<div class="itemholder">
+                            <li  class="folder" v-for="(aChild, index) in children" v-if="aChild.type=='category' && index>=start_index && index<=end_index" @click="SetParent(aChild.id)">
+                                <div class="vertical-align">
+                                    <i class="fa fa-folder">
+                                    </i> @{{ aChild.category_name }}
 
-                            </div>
-						</li>
-						<li class="product-icon"   v-for="(aChild, index) in children" v-if="aChild.type=='product' && index>=start_index && index<=end_index" @click="ChooseProduct(aChild)"  v-bind:style="{ backgroundImage: 'url(' + aChild.image + ')' }">
-							<div class="vertical-align">
-							    <div v-if="aChild.item_name.length>22">
-                                    @{{ aChild.item_name.substr(0,22)}}...
                                 </div>
-                                <div v-else>
-                                   @{{ aChild.item_name }}
-                                </div>
+                            </li>
+                            <li class="product-icon"   v-for="(aChild, index) in children" v-if="aChild.type=='product' && index>=start_index && index<=end_index" @click="ChooseProduct(aChild)"  v-bind:style="{ backgroundImage: 'url(' + aChild.image + ')' }">
+                                <div class="vertical-align">
+                                    <div v-if="aChild.item_name.length>22">
+                                        @{{ aChild.item_name.substr(0,22)}}...
+                                    </div>
+                                    <div v-else>
+                                       @{{ aChild.item_name }}
+                                    </div>
 
-								<br />
-								\$@{{ aChild.unit_price }}
-							</div>
-							</li>
+                                    <br />
+                                    \$@{{ aChild.unit_price }}
+                                </div>
+                            </li>
+                        </div>
                      </ul>
 						  <div style="clear: both;"></div>
                                  <ul class="pagination" style="margin-top:0px" v-if="total_page>0" style="margin-left: 40px">

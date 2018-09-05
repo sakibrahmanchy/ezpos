@@ -927,11 +927,14 @@ class SaleController extends Controller
 
         $customerList = Customer::all();
         //dd($sale->items);
-        return view('sales.edit_sale',["sales"=>$sales,"customerList"=>$customerList,"sale_id"=>$sale_id,"payments"=>$sale_payments]);
+        if(isset($request->new_version))
+            return view('sales.new_design.edit_sale',["sales"=>$sales,"customerList"=>$customerList,"sale_id"=>$sale_id,"payments"=>$sale_payments]);
+        else
+            return view('sales.edit_sale',["sales"=>$sales,"customerList"=>$customerList,"sale_id"=>$sale_id,"payments"=>$sale_payments]);
 
     }
 
-    public function EditSaleVueGet($sale_id){
+    public function EditSaleVueGet($sale_id, Request $request){
 
         $sales = DB::table('sales')
             ->join('item_sale','sales.id','=','item_sale.sale_id')
@@ -1033,7 +1036,12 @@ class SaleController extends Controller
 
         $customerList = Customer::all();
         //dd($sale->items);
-        return view('sales.edit_sale_vue',["sales"=>$sales,"customerList"=>$customerList,"sale_id"=>$sale_id,"payments"=>$sale_payments]);
+
+
+        if(isset($request->new_version))
+            return view('sales.new_design.edit_sale_vue',["sales"=>$sales,"customerList"=>$customerList,"sale_id"=>$sale_id,"payments"=>$sale_payments]);
+        else
+            return view('sales.edit_sale',["sales"=>$sales,"customerList"=>$customerList,"sale_id"=>$sale_id,"payments"=>$sale_payments]);
 
     }
 
