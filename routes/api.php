@@ -41,4 +41,8 @@ Route::group(['namespace' => 'Api'], function () {
 
     Route::get('/items/autocomplete', 'ItemController@GetItemsAutocomplete')->middleware('auth:api');
     Route::get('/item/price', 'ItemController@getItemPrice')->middleware('auth:api');
+
+
+    Route::get('customers','CustomerController@getCustomerList')->middleware('auth:api');
+    Route::get('customers/{customer_id}','CustomerController@getCustomer')->middleware('auth:api');
 });

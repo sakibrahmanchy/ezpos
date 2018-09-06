@@ -12,6 +12,7 @@ use App\Model\CashRegister;
 use App\Model\Counter;
 use App\Model\Employee;
 use App\Model\PaymentLog;
+use App\Model\Printer\FooterItem;
 use App\Model\Printer\RegisterDetails;
 use App\Model\Sale;
 use App\Model\User;
@@ -46,7 +47,7 @@ class CashRegisterController extends Controller
         $counter_id = $request->counter_id;
         $opened_by = Auth::user()->id;
         //date_default_timezone_set(date_default_timezone_get());
-        if(CashRegister::isThereAnyOtherRegistersThatAreOpenedByTheUser($opened_by)) {
+        if(!CashRegister::isThereAnyOtherRegistersThatAreOpenedByTheUser($opened_by)) {
 
             if(Counter::where("id",$counter_id)->exists()) {
                 $cashRegisterId = $this->createNewCashRegister($counter_id,$opening_balance, $opened_by);
@@ -72,6 +73,15 @@ class CashRegisterController extends Controller
     {
        $cashRegister = new CashRegister();
        $activeRegister = $cashRegister->getCurrentActiveRegister();
+
+       if(is_null($activeRegister)) {
+           return response()->json([
+               'success'=> true,
+               'message' => "No active cash register for current user",
+               "data" => null
+               ],200);
+       }
+
         return response()->json([
             'success'=>true,
             'message' => "User currently has an active cash register",
@@ -179,14 +189,22 @@ class CashRegisterController extends Controller
                                      "message" => $validation->errors()->first()], 406);
         }
 
+        $counter_id = $request->counter_id;
+        $counter = Counter::where("id",$counter_id)->first();
+        if(is_null($counter))
+            return response()->json(["success"=>false, "message"=>"Counter does not exist"]);
+
         $cashRegister = CashRegister::where("id",$cashRegisterId)->with('OpenedByUser','ClosedByUser','CashRegisterTransactions')->first();
         $transactions = CashRegister::where("id",$cashRegisterId)->with('CashRegisterTransactions')->first()->CashRegisterTransactions;
-//
+
+
         $saleList = PaymentLog::where('payment_logs.cash_register_id', $cashRegisterId)
             ->join('sales','sales.id','=','payment_logs.sale_id')
             ->where("sale_type",SaleTypes::$SALE)
             ->select(DB::raw('payment_logs.payment_type,payment_logs.paid_amount,payment_logs.cash_register_id,
             payment_logs.sale_id,sales.sale_type,payment_logs.sale_status,payment_logs.created_at'))->get();
+
+
 
         $allTransactionArr = CashRegister::generateTransactionData($saleList,$cashRegister,SaleStatus::$SUCCESS);
         $suspendedTransactionsLayAway = CashRegister::generateTransactionData($saleList,$cashRegister,SaleStatus::$LAYAWAY);
@@ -200,7 +218,6 @@ class CashRegisterController extends Controller
             ->where('payment_logs.cash_register_id', $cashRegisterId)
             ->select(DB::raw('sale_id, paid_amount as paid_amount, first_name, last_name, payment_logs.created_at'))
             ->get();
-
 
 
         try {
@@ -406,15 +423,13 @@ class CashRegisterController extends Controller
             $printer->feed();
 
         } Catch (\Exception $e) {
-            dd($e);
-            //dd($e);
             return redirect()->back()->with(["error" => $e->getMessage()]);
         } finally {
             if (isset($printer)) {
                 $printer->cut();
                 $printer->pulse();
                 $printer->close();
-                return redirect()->back();
+                return response()->json(["success" => true, "message"=> "Successfully printed"]);
             }
         }
 
@@ -432,6 +447,12 @@ class CashRegisterController extends Controller
             return response()->json(["success" => false,
                                      "message" => $validation->errors()->first()], 406);
         }
+
+        $counter_id = $request->counter_id;
+        $counter = Counter::where("id",$counter_id)->first();
+        if(is_null($counter))
+            return response()->json(["success"=>false, "message"=>"Counter does not exist"]);
+
 
         $cashRegister = new CashRegister();
         $refunded_sales_amount = $cashRegister->getRefundedSalesAmountInCashRegister($cashRegisterId);
@@ -474,9 +495,9 @@ class CashRegisterController extends Controller
         $totalCharAccountAmount = Sale::_eloquentToArray($totalCharAccountAmount,"total_amount");
         $totalCharAccountAmount = array_sum($totalCharAccountAmount);
 
+
         try {
-            $counter_id = $request->counter_id;
-            $counter = Counter::where("id",$counter_id)->first();
+
 
             if($counter->printer_connection_type && $counter->printer_connection_type==\App\Enumaration\PrinterConnectionType::USB_CONNECTION) {
                 $connector = new WindowsPrintConnector($counter->name);
@@ -555,15 +576,17 @@ class CashRegisterController extends Controller
             $printer->text( new FooterItem('Charge Account Sale:', '$'.number_format( $totalCharAccountAmount, 2) ));
 //            $printer->text( new FooterItem('Charge Account Paid:', '$'.number_format( $totalCharAccountAmount - $totalCharAccountAmountDue, 2) ));
 //            $printer->text( new FooterItem('Charge Account Due:', '$'.number_format( $totalCharAccountAmountDue, 2) ));
-            return redirect()->route('cash_register_log_details',["register_id"=>$cashRegister->id]);
+            return response()->json(["success" => true, "message"=> "Successfully printed"]);
+
 
         } Catch (\Exception $e) {
-            return redirect()->back()->with(["error" => $e->getMessage()]);
+            return response()->json(["error" => $e->getMessage()]);
         } finally {
             if (isset($printer)) {
                 $printer->cut();
                 $printer->pulse();
                 $printer->close();
+                return response()->json(["success" => true, "message"=> "Successfully printed"]);
             }
         }
     }

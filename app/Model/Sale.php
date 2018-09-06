@@ -71,7 +71,6 @@ class Sale extends Model
             $activeRegister = $cashRegister->getCurrentActiveRegister();
         }
 
-
             $sale = $this->insertSaleInfo($saleInfo,$saleStatus, $activeRegister->id);
 
             $sale_id = $sale->id;
