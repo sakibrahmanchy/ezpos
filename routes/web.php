@@ -330,10 +330,6 @@ Route::group(['middleware' => ['admin']], function () {
     Route::get('/sitting/logo/{sitting}', ['as' => 'get_sitting_logo', 'uses' => 'FloorPlanController@getLogo']);
 
 
-
-
-
-
 });
 
 

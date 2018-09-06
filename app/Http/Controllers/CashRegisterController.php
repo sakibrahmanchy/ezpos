@@ -224,43 +224,6 @@ class CashRegisterController extends Controller
                     ->select(DB::raw('sale_id, paid_amount as paid_amount, first_name, last_name, payment_logs.created_at'))
 					->get();
 
-		//dd($salesChargeAccountTransactionList);
-
-//        $totalCharAccountAmount = PaymentLog::join('sales','sales.id','=','payment_logs.sale_id')
-//            ->where('payment_logs.sale_status',\App\Enumaration\SaleStatus::$LAYAWAY )
-//            ->where('sale_type', \App\Enumaration\SaleTypes::$SALE)
-//            ->where('payment_logs.cash_register_id', $cashRegisterId)
-//            ->groupBy('sale_id')
-//            ->select(DB::raw('sale_id, sum(paid_amount) as paid_amount'))->get();
-
-//        if( count($allTransactionArr)>0 )
-//        {
-//            $saleIdArr = [];
-//            foreach($allTransactionArr as $aSale){
-//                $saleIdArr[] = $aSale['sale_id'];
-//            }
-//
-//            $saleDetailsArr = DB::table('sales')->whereIn('id', $saleIdArr)->get();
-//            //foreach( $cashSaleList as &$aCashSale )
-//			foreach($allTransactionArr as &$aSale)
-//            {
-//                //$aCashSale->sale_added_on = ;
-//                $aSale['created_at'] = date('Y-m-d');
-//                $aSale['amount'] = 0;
-//
-//                foreach( $saleDetailsArr as $salesDetails )
-//                {
-//                    if( $aSale['sale_id']==$salesDetails->id )
-//                    {
-//                        $aSale['created_at'] = $salesDetails->created_at;
-//                        $aSale['total_sale'] = floatval($aSale['total_sale']) + floatval($salesDetails->due) ;
-//                        break;
-//                    }
-//                }
-//            }
-//			unset($aCashSale);
-//        }
-
         try {
 
             $counter_id = Cookie::get('counter_id',null);
@@ -498,20 +461,6 @@ class CashRegisterController extends Controller
                 ->sum('paid_amount');
 
 
-//        $totalSuspendedSale =  PaymentLog::join('sales','sales.id','=','payment_logs.sale_id')
-//            ->where('payment_logs.cash_register_id','=',$cashRegisterId)
-//            ->whereIn( 'payment_logs.sale_status', [\App\Enumaration\SaleStatus::$LAYAWAY, SaleStatus::$ESTIMATE] )
-//            ->where('sale_type',SaleTypes::$SALE)
-//            ->whereNull('refund_register_id')
-//            ->groupBy('payment_logs.payment_type')
-//            ->sum('paid_amount');
-
-		/*$totalChargeCustomerSale = DB::table('sales')->where('cash_register_id', $cashRegisterId)
-									->where( 'sale_type', \App\Enumaration\SaleTypes::$SALE )
-									->where( 'sale_status', \App\Enumaration\SaleStatus::$SUCCESS )
-									->sum('total_amount');*/
-
-
 		$totalReturnSale = DB::table('sales')->where('cash_register_id', $cashRegisterId)	
 									->where( 'sale_type', \App\Enumaration\SaleTypes::$RETURN )
 									->where( 'sale_status', \App\Enumaration\SaleStatus::$SUCCESS )
@@ -523,15 +472,6 @@ class CashRegisterController extends Controller
         $paymentAmountSuspendedList = CashRegister::generatePaymentAmount($cashRegisterId,[SaleStatus::$LAYAWAY,SaleStatus::$ESTIMATE]);
         $expectedClosingSales = $cashRegister->opening_balance + $paymentAmountTotalList["cashTotal"] +  ($total_additions - $total_subtractions) +
             $paymentAmountSuspendedList["cashTotal"];
-
-
-
-//		$totalCharAccountAmountDue = DB::table('sales')
-//					->where('due', '>', '0')
-//					->where('sale_status',\App\Enumaration\SaleStatus::$LAYAWAY )
-//					->where('sale_type', \App\Enumaration\SaleTypes::$SALE)
-//					->where('cash_register_id', $cashRegisterId)
-//					->sum('due');
 
 
         $totalCharAccountAmount = PaymentLog::join('sales','sales.id','=','payment_logs.sale_id')

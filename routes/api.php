@@ -20,6 +20,7 @@ Route::middleware(['namespace' => 'Api'])->get('/user', function (Request $reque
 
 
 
+
 Route::group(['namespace' => 'Api'], function () {
     Route::get('/status',function() {
         return response(["success"=>true, "message" => "Api Running"]);
@@ -30,9 +31,13 @@ Route::group(['namespace' => 'Api'], function () {
 
     Route::post('/cash_register/open', 'CashRegisterController@openCashRegister')->middleware('auth:api');
     Route::get('cash_register/active', "CashRegisterController@getActiveCashRegister")->middleware('auth:api');
+    Route::post('cash_register/close', "CashRegisterController@closeActiveRegister")->middleware('auth:api');
+    Route::get('cash_register/log/{cash_register_id}', "CashRegisterController@cashRegisterLogDetails")->middleware('auth:api');
+    Route::get('/cash_register/log/print/summary/{register_id}','CashRegisterController@printRegisterLogSummary')->middleware('auth:api');
+    Route::get('/cash_register/log/print/details/{register_id}','CashRegisterController@printRegisterLogDetails')->middleware('auth:api');
 
     Route::post('/order/process', 'OrderController@processOrder')->middleware('auth:api');
-
+    Route::get('/orders/{id}', 'OrderController@getSaleReceipt')->middleware('auth:api');
 
     Route::get('/items/autocomplete', 'ItemController@GetItemsAutocomplete')->middleware('auth:api');
     Route::get('/item/price', 'ItemController@getItemPrice')->middleware('auth:api');

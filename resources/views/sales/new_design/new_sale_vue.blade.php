@@ -1185,8 +1185,7 @@
                     },
                     GetChangeDue()
                     {
-                        let changedDue = this.GetDue;;
-                        changedDue = changedDue.toFixed(2);
+                        let changedDue = this.GetDue;
                         return changedDue;
                     }
 

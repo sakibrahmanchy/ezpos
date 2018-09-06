@@ -44,13 +44,25 @@ class OrderController extends Controller
         $paymentInfo = $processedOrder->processPaymentInfo();
         $saleInfo = $processedOrder->processSaleInfo();
         $sale = new Sale();
-        $receipt_id  = $sale->InsertSale($saleInfo,$processedItems,$paymentInfo,SaleStatus::$SUCCESS);
-        dd($receipt_id);
-
+        $sale_id  = $sale->InsertSale($saleInfo,$processedItems,$paymentInfo,SaleStatus::$SUCCESS);
+        //dd($receipt_id);
+        return response(["success"=>true, "message"=>"Sale Successfull","data"=>[ "sale_id"=>$sale_id]]);
 //        $saleInfo = $processedOrder->processSaleInfo();
 //
 //        dd($paymentInfo);
 //        dd($customer_id);
+    }
+
+    public function getSaleReceipt($saleId) {
+        $sale = Sale::withTrashed()->where("id", $saleId)->with('items', 'paymentlogs', 'customer', 'counter')->first();
+
+        /*return response()->json(['sale'=>$sale], 200);*/
+        if ($sale == null)
+            return response(["success"=>false, "message"=>"Sale not found"]);
+        else{
+            return response(["success"=>true, "message"=>"Sale found","data"=>$sale]);
+        }
+
     }
 
 

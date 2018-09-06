@@ -2,7 +2,6 @@
 
 
 function UserHasPermission($permission){
-
     $permissions = \Illuminate\Support\Facades\App::make("user_permissions");
 
     if(in_array($permission,$permissions))
