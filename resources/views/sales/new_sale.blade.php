@@ -220,9 +220,9 @@
                         </div>
 
                         <form id = "saleSubmit" method = "post" action = "{{route('new_sale')}}">
-
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
                         </form>
+
                     </div></div>
 
             </div>
@@ -300,7 +300,6 @@
 
         function checkForCustomerPriceLevels() {
             $( ".unit-price" ).each(function( index ) {
-
                 var current_unit_price = Number($( this ).attr("data-unit-price"));
                 var current_id = ($( this ).attr('id') );
                 id = current_id.replace("unit-price-","");

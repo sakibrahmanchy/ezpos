@@ -425,7 +425,6 @@ mark{background:#0000cc;color:white;}
     border-width: 1px;
     border-color: rgb(51, 122, 183);
     border-style: solid;
-    font-size: 13px;
     text-align: center;
     color:black;
     float:left;
@@ -449,13 +448,10 @@ mark{background:#0000cc;color:white;}
     border-width: 1px;
     border-color:rgb(51, 122, 183);
     border-style: solid;
-    display:block;
     padding-left: 5px;
-    font-size: 13px;
     text-align: center;
     color:white;
     float:left;
-    display: table;
 }
 
 .product-icon:hover {
