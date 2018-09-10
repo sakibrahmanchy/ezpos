@@ -30,6 +30,8 @@ class InvoiceController extends Controller
 
         $invoice = Invoice::where("id",$invoice_id)->with('transactions','customer')->first();
 //        return view('customers.emails_invoice_receipt',["invoice" => $invoice, "customer" => $invoice->customer]);
+
+
         if (isset($invoice->customer->id)) {
             $customer = Customer::where('id',$invoice->customer_id)->first();
         }
@@ -37,10 +39,13 @@ class InvoiceController extends Controller
         if (isset($customer->email) && !is_null($customer->email)) {
 
             Mail::send('customers.emails_invoice_receipt', ["invoice" => $invoice, "customer" => $customer], function ($m) use ($invoice, $customer) {
+
+                $company_mail = SettingsSingleton::getByKey('email_address');
                 $m->from('sales@mg.grimspos.com', 'EZPOS');
 
                 $pdf = PDF::loadView('customers.invoice_receipt_pdf', ["invoice" => $invoice, "customer" => $customer]);
-                $m->to($customer->email, $customer->name)->subject('Invoice receipt for due payment');
+                $m->to($customer->email, $customer->name)->subject('Charge account statement');
+                $m->cc($company_mail);
                 $m->attachData($pdf->output(), 'invoice.pdf', ['mime' => 'application/pdf']);
             });
 
@@ -58,7 +63,9 @@ class InvoiceController extends Controller
 
     public function DownloadInvoiceReceipt(Request $request, $invoice_id)
     {
-        $invoice = Invoice::where("id",$invoice_id)->with('transactions','customer')->first();
+        $invoice = Invoice::where("invoices.id",$invoice_id)
+            ->with('Transactions','Customer','PaymentLogs')->first();
+
         $customer = Customer::where('id',$invoice->customer->id)->first();
 
         $pdf = PDF::loadView('customers.invoice_receipt_pdf', ["invoice" => $invoice, "customer" => $customer]);
@@ -85,7 +92,6 @@ class InvoiceController extends Controller
 
         $invoice_id = $request->invoice_id;
         $invoice = Invoice::where('id',$invoice_id)->with('Transactions')->first();
-
         $payment_type = $request->payment_type;
 
         foreach ($invoice->transactions as $aTransaction) {
@@ -95,7 +101,7 @@ class InvoiceController extends Controller
                 $saleDue = $sale->due;
                 $customer_id = $sale->customer_id;
                 $paymentLog = new PaymentLog();
-                $paymentLog->addNewPaymentLog(PaymentTypes::$TypeList[$payment_type],$saleDue,$sale,$customer_id, "Due paid for sale ".$sale->id, $invoice_id);
+                    $paymentLog->addNewPaymentLog(PaymentTypes::$TypeList[$payment_type],$saleDue,$sale,$customer_id, "Due paid for sale ".$sale->id, $invoice_id);
 
                 $customerTransactionInfo = CustomerTransaction::where("id",$aTransaction->id)
                     ->first();
@@ -137,9 +143,12 @@ class InvoiceController extends Controller
     }
 
     public function undoInvoiceClear($invoice_id) {
+
         $invoice = Invoice::where("id",$invoice_id)->with('Transactions')->first();
+
         PaymentLog::where("invoice_id",$invoice_id)->where("invoice_id","<>",0)->delete();
         foreach ($invoice->transactions as $aTransaction) {
+
             $sale_id = $aTransaction->sale_id;
             $previousPayment = PaymentLog::where("sale_id",$sale_id)->sum('paid_amount');
             $sale = Sale::where("id",$sale_id)->first();

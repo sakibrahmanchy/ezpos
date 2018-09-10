@@ -112,7 +112,7 @@
             color: #fff;
         }
 
-    </style>
+    sasas</style>
 
     <script src="{{asset("js/vue/vue.min.js")}}"></script>
     <script src="{{asset("js/axios/axios.min.js")}}"></script>

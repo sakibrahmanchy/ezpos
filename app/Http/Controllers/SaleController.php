@@ -930,7 +930,7 @@ class SaleController extends Controller
         if(isset($request->new_version))
             return view('sales.new_design.edit_sale',["sales"=>$sales,"customerList"=>$customerList,"sale_id"=>$sale_id,"payments"=>$sale_payments]);
         else
-            return view('sales.edit_sale',["sales"=>$sales,"customerList"=>$customerList,"sale_id"=>$sale_id,"payments"=>$sale_payments]);
+            return view('sales.edit_sale_vue',["sales"=>$sales,"customerList"=>$customerList,"sale_id"=>$sale_id,"payments"=>$sale_payments]);
 
     }
 
@@ -1041,7 +1041,7 @@ class SaleController extends Controller
         if(isset($request->new_version))
             return view('sales.new_design.edit_sale_vue',["sales"=>$sales,"customerList"=>$customerList,"sale_id"=>$sale_id,"payments"=>$sale_payments]);
         else
-            return view('sales.edit_sale',["sales"=>$sales,"customerList"=>$customerList,"sale_id"=>$sale_id,"payments"=>$sale_payments]);
+            return view('sales.edit_sale_vue',["sales"=>$sales,"customerList"=>$customerList,"sale_id"=>$sale_id,"payments"=>$sale_payments]);
 
     }
 

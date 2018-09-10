@@ -323,6 +323,15 @@ class CustomerController extends Controller
         $payment_type = $request->payment_type;
         $customer_id = $request->customer_id;
 
+        $totalChargeAmount = 0;
+        $total_amount_of_charge = CustomerTransaction::whereIn('id',$transactionList)->sum(DB::raw('sale_amount - paid_amount'));
+        $invoice = Invoice::create([
+            'customer_id' => $customer_id,
+            'last_date_of_payment' => date('Y-m-d h:i:s'),
+            'total_amount_of_charge' => $total_amount_of_charge
+        ]);
+        $invoice->Transactions()->attach($transactionList);
+
         foreach ($transactionList as $aTransactionId) {
             $aTransaction = CustomerTransaction::where("id",$aTransactionId)->first();
             $sale = Sale::where("id",$aTransaction->sale_id)->first();
@@ -331,10 +340,12 @@ class CustomerController extends Controller
                 $saleDue = $sale->due;
                 $customer_id = $sale->customer_id;
                 $paymentLog = new PaymentLog();
-                $paymentLog->addNewPaymentLog(PaymentTypes::$TypeList[$payment_type],$saleDue,$sale,$customer_id, "Due paid for sale ".$sale->id);
+                $paymentLog->addNewPaymentLog(PaymentTypes::$TypeList[$payment_type],$saleDue,$sale,$customer_id, "Due paid for sale ".$sale->id, $invoice->id);
 
                 $customerTransactionInfo = CustomerTransaction::where("id",$aTransaction->id)
                     ->first();
+
+                $totalChargeAmount += $customerTransactionInfo->total_amount;
 
                 if(!is_null($customerTransactionInfo)) {
                     $customerTransactionInfo->update([
@@ -370,7 +381,10 @@ class CustomerController extends Controller
             }
         }
 
-        return redirect()->back();
+
+
+
+        return redirect()-> route("customer_invoice", ["invoice_id"=>$invoice->id]) ;
 
     }
 
@@ -390,13 +404,14 @@ class CustomerController extends Controller
     }
 
     public function getCustomerDueInvoice($invoice_id) {
-        $invoice = Invoice::where("id",$invoice_id)->with('Transactions','Customer')->first();
-
+        $invoice = Invoice::where("invoices.id",$invoice_id)
+            ->with('Transactions','Customer','PaymentLogs')->first();
+         //dd($invoice);
         return view('customers.invoice_receipt',["invoice"=>$invoice]);
     }
 
     public function getGeneratedInvoices($customer_id) {
-        $invoices = Invoice::where("customer_id",$customer_id)->get();
+        $invoices = Invoice::where("customer_id",$customer_id)->with('Transactions','Customer')->get();
 
         return view("customers.invoices_list",["invoices"=>$invoices]);
     }
@@ -405,7 +420,7 @@ class CustomerController extends Controller
         $invoices = Invoice::join('customer_transaction_invoice','customer_transaction_invoice.invoice_id','=','invoices.id')
                     ->join('customer_transactions','customer_transactions.id','=','customer_transaction_invoice.customer_transaction_id')
                     ->where(DB::raw('(customer_transactions.sale_amount - customer_transactions.paid_amount)'),0)
-                    ->where('customer_transactions.customer_id',$customer_id)->get();
+                    ->where('customer_transactions.customer_id',$customer_id)->groupBy('invoice_id')->get();
 
         return view("customers.invoices_cleared_list",["invoices"=>$invoices]);
     }

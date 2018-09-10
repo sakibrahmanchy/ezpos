@@ -129,6 +129,7 @@ class CashRegisterController extends Controller
         $suspendedSalePaymentInfo = CashRegister::generatePaymentAmount($cashRegister->getCurrentActiveRegister()->id,
             [SaleStatus::$ESTIMATE, SaleStatus::$LAYAWAY]);
 
+
         $cash_sales = $salePaymentInfo["cashTotal"];
 
         $deleted_sales = Sale::getDeletedSales($cashRegister->getCurrentActiveRegister()->id);

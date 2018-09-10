@@ -411,6 +411,7 @@
                    $("#selectedTransactionsSubmitForm").append('<input name = "transaction_list[]" value="'+id+'">')
                 });
 
+                var customer_id = "{{ $customer->id }}";
                 $("#customer_id").val(customer_id);
                 $("#payment_type").val(payment_type);
                // console.log($("#selectedTransactionsSubmitForm"));

@@ -15,4 +15,8 @@ class Invoice extends Model
     public function Customer() {
         return $this->belongsTo('App\Model\Customer','customer_id');
     }
+
+    public function PaymentLogs() {
+        return $this->hasMany('App\Model\PaymentLog');
+    }
 }

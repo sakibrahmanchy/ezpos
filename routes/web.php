@@ -61,7 +61,7 @@ Route::group(['middleware' => ['admin']], function () {
     route::get('/customer/new','CustomerController@GetCustomerForm' )->name('new_customer')->middleware('auth');
     route::post('/customer/new','CustomerController@AddCustomer')->name('new_customer')->middleware('auth');
     route::get('customer/list','CustomerController@GetCustomerList')->name('customer_list')->middleware('auth');
-    Route::get('customer/profile/{customer_id}','CustomerController@getCustomerProfile')->name('customer_profile')->middleware('auth');
+    Route::get('customer/{customer_id}/profile','CustomerController@getCustomerProfile')->name('customer_profile')->middleware('auth');
     Route::get('customer/invoice/{invoice_id}','CustomerController@getCustomerDueInvoice')->name('customer_invoice')->middleware('auth');
     Route::post('customer/due/details/ajax','CustomerController@getCustomerDueDetailsAjax')->name('customer_due_details_ajax')->middleware('auth');
     Route::post('customer/due/selected/total','InvoiceController@getTotalDueForSelectedSales')->name('customer_due_selected_total')->middleware('auth');
@@ -69,8 +69,8 @@ Route::group(['middleware' => ['admin']], function () {
     Route::post('customer/invoice/clear','InvoiceController@clearCustomerInvoice')->name('clear_customer_invoice')->middleware('auth','cash_register');
     Route::get('customer/invoice/clear/undo/{invoice_id}','InvoiceController@undoInvoiceClear')->name('undo_clear_customer_invoice')->middleware('auth','cash_register');
     Route::post('customer/invoice_generate','CustomerController@generateCustomerDueInvoice')->name('customer_invoice_generate')->middleware('auth');
-    Route::get('customer/invoice/list/{customer_id}','CustomerController@getGeneratedInvoices')->name('customer_invoices_list')->middleware('auth');
-    Route::get('customer/invoice/cleared/list/{customer_id}','CustomerController@getClearedInvoices')->name('customer_invoices_cleared_list')->middleware('auth');
+    Route::get('customer/{customer_id}/invoice/list','CustomerController@getGeneratedInvoices')->name('customer_invoices_list')->middleware('auth');
+    Route::get('customer/{customer_id}/invoice/cleared/list','CustomerController@getClearedInvoices')->name('customer_invoices_cleared_list')->middleware('auth');
     Route::get('customer/balance/add','CustomerController@customerAddBalanceGet')->name('customer_balance_add')->middleware('auth');
     Route::post('customer/balance/add','CustomerController@customerAddBalancePost')->name('customer_balance_add')->middleware('auth');
     Route::get('customer/assign/price_level/{customer_id}','CustomerController@customerAssignPriceLevelGet')->name('customer_assign_price_level_get')->middleware('auth');

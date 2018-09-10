@@ -309,7 +309,7 @@
                         <table border="0" width="100%" cellpadding="0" cellspacing="0" align="center">
                             <tr>
                                 <td  style="padding: 30px; font-family: sans-serif; font-size: 16px; line-height: 22px; color: #444444;">
-                                    <h1 style="text-align: center">Invoice Receipt</h1>
+                                    <h1 style="text-align: center">Invoice Statement</h1>
                                     <br><br>
                                 Dear Valued Customer,<br><br>Kindly find attached copy of your charge account statement. Thanks in advance for your prompt remittance. <br><br>Cordially,<br>Accounts Receivables
                                     <br>{{$settings['company_name']}}<br>

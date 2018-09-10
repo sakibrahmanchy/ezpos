@@ -100,7 +100,7 @@
         @if($payment > 0)
             <tr class="success">
                 <td colspan="2" ><strong class="pull-right" style="font-size: 18px;margin-right: 115px">Paid Amount</strong></td>
-                <td><strong  style="font-size: 18px;">${{  number_format($payment, 2) }}</strong></td>
+                <td><strong  style="font-size: 18px;">${{  number_format($payment, 2) }} (Paid by {{array_search($invoice->paymentLogs[0]->payment_type , \App\Enumaration\PaymentTypes::$TypeList) }})</strong></td>
             </tr>
             <tr {{ ($due-$payment>0)  ?     'class="success"' : 'class="warning"'}}>
                 <td colspan="2" ><strong class="pull-right" style="font-size: 18px;margin-right: 115px">Remaining Due</strong></td>
