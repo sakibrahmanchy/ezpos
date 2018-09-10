@@ -30,13 +30,13 @@
                                 </div>
                             </li>
                             <li class="product-icon"   v-for="(aChild, index) in children" v-if="aChild.type=='product' && index>=start_index && index<=end_index" @click="ChooseProduct(aChild)"  v-bind:style="{ backgroundImage: 'url(' + aChild.image + ')' }">
-                                <div class="vertical-align">
-                                    <div v-if="aChild.item_name.length>22">
+                                <div>
+                                    <template v-if="aChild.item_name.length>22">
                                         @{{ aChild.item_name.substr(0,22)}}...
-                                    </div>
-                                    <div v-else>
+                                    </template>
+                                    <template v-else>
                                        @{{ aChild.item_name }}
-                                    </div>
+                                    </template>
 
                                     <br />
                                     \$@{{ aChild.unit_price }}
