@@ -237,6 +237,12 @@ class RouteTokens
         "get_media_image" => "floor_plan_add_update",
         "delete_media_image" => "floor_plan_add_update",
         "get_sitting_logo" => "floor_plan_add_update",
+
+
+        "add_menu_view" => "floor_plan_add_update",
+        "add_menu_post" => "floor_plan_add_update",
+        "all_menu_view" => "floor_plan_add_update",
+        "delete_menu_post" => "floor_plan_add_update",
     );
 
 

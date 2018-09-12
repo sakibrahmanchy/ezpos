@@ -1,6 +1,7 @@
-@extends('layouts.app')
+@extends('layouts.master')
 
-@section('breadcrumbs', Breadcrumbs::render('add_menu_view'))
+@section('pageTitle','Add Menu')
+{{--@section('breadcrumbs', Breadcrumbs::render('add_menu_view'))--}}
 
 @section('additionalCSS')
 <link href="{{ asset('plugin/select2/css/select2.min.css') }}" rel="stylesheet" />
@@ -81,17 +82,17 @@
             				</div>
             			</div>
 
-            			<div class="col-md-2">
-            				<div class="form-group">
-            					<label>Combo</label>
-            					<select class="form-control" id="combo_select">
-            						<option value="">Select Combo</option>
-            						@foreach ($combos as $combo)
-            							<option data-id="{{ $combo->id }}" data-index="{{ $loop->index }}" value="{{ $combo->name }}">{{ $combo->name }}</option>
-            						@endforeach
-            					</select>
-            				</div>
-            			</div>
+            			{{--<div class="col-md-2">--}}
+            				{{--<div class="form-group">--}}
+            					{{--<label>Combo</label>--}}
+            					{{--<select class="form-control" id="combo_select">--}}
+            						{{--<option value="">Select Combo</option>--}}
+            						{{--@foreach ($combos as $combo)--}}
+            							{{--<option data-id="{{ $combo->id }}" data-index="{{ $loop->index }}" value="{{ $combo->name }}">{{ $combo->name }}</option>--}}
+            						{{--@endforeach--}}
+            					{{--</select>--}}
+            				{{--</div>--}}
+            			{{--</div>--}}
             		</div>
 
             		<div class="row">
@@ -429,58 +430,58 @@
 			selected_items.push(product_id);
 		});
 
-		$('#btn_add_combo').click(function(event) {
-			event.preventDefault();
+		{{--$('#btn_add_combo').click(function(event) {--}}
+			{{--event.preventDefault();--}}
 
-			var combo_name = $('#combo_select').val();
-			var combo_id = $('#combo_select').find(':selected').attr('data-id');
-			var combo_index = $('#combo_select').find(':selected').attr('data-index');
-			var combos = "{{ $combos }}";
-			combos = JSON.parse(combos.replace(/&quot;/g,'"'));
+			{{--var combo_name = $('#combo_select').val();--}}
+			{{--var combo_id = $('#combo_select').find(':selected').attr('data-id');--}}
+			{{--var combo_index = $('#combo_select').find(':selected').attr('data-index');--}}
+			{{--var combos = "{{ $combos }}";--}}
+			{{--combos = JSON.parse(combos.replace(/&quot;/g,'"'));--}}
 
-            console.log(combos);
+            {{--console.log(combos);--}}
 
-			if (!combo_name){
-				alert("Select a combo");
-				return;
-			}
+			{{--if (!combo_name){--}}
+				{{--alert("Select a combo");--}}
+				{{--return;--}}
+			{{--}--}}
 
-			if ($('.combo'+combo_id).length != 0){
-				alert("Already added");
-				return;
-			}
+			{{--if ($('.combo'+combo_id).length != 0){--}}
+				{{--alert("Already added");--}}
+				{{--return;--}}
+			{{--}--}}
 
-			var html_combo_category_ui = $('#templete_combo_category_ui').html();
-			var row_combo_category_ui = $(html_combo_category_ui);
-			row_combo_category_ui.addClass('combo'+combo_id);
-			row_combo_category_ui.find('.combo_panel_title').html(combo_name);
-			row_combo_category_ui.find('.input_combo_id').val(combo_id);
-			row_combo_category_ui.find('.panel-heading').attr("id", "heading"+combo_id);
-			row_combo_category_ui.find('.category-title-anchor').attr("href", "#"+combo_id);
-			row_combo_category_ui.find('.category-title-anchor').attr("aria-controls", combo_id);
-			row_combo_category_ui.find('.collapse').attr("id", combo_id);
-			row_combo_category_ui.find('.collapse').attr("aria-labelledby", "heading"+combo_id);
+			{{--var html_combo_category_ui = $('#templete_combo_category_ui').html();--}}
+			{{--var row_combo_category_ui = $(html_combo_category_ui);--}}
+			{{--row_combo_category_ui.addClass('combo'+combo_id);--}}
+			{{--row_combo_category_ui.find('.combo_panel_title').html(combo_name);--}}
+			{{--row_combo_category_ui.find('.input_combo_id').val(combo_id);--}}
+			{{--row_combo_category_ui.find('.panel-heading').attr("id", "heading"+combo_id);--}}
+			{{--row_combo_category_ui.find('.category-title-anchor').attr("href", "#"+combo_id);--}}
+			{{--row_combo_category_ui.find('.category-title-anchor').attr("aria-controls", combo_id);--}}
+			{{--row_combo_category_ui.find('.collapse').attr("id", combo_id);--}}
+			{{--row_combo_category_ui.find('.collapse').attr("aria-labelledby", "heading"+combo_id);--}}
 
-			$.each(combos[combo_index].categories, function( index, value ) {
-				var html_category_li = $('#templete_combo_category_li').html();
-				var row_category_li = $(html_category_li);
-				row_category_li.find('.badge').html(value.pivot.quantity);
-				row_category_li.find('.category_title').html(value.category_name);
+			{{--$.each(combos[combo_index].categories, function( index, value ) {--}}
+				{{--var html_category_li = $('#templete_combo_category_li').html();--}}
+				{{--var row_category_li = $(html_category_li);--}}
+				{{--row_category_li.find('.badge').html(value.pivot.quantity);--}}
+				{{--row_category_li.find('.category_title').html(value.category_name);--}}
 
-				row_combo_category_ui.find('.category-body').append(row_category_li);
-			});
+				{{--row_combo_category_ui.find('.category-body').append(row_category_li);--}}
+			{{--});--}}
 
-			if ($('.combo-panel').length == 0){
-				var html_combo_panel = $('#templete_combo_panel').html();
-				var combo_panel = $(html_combo_panel);
+			{{--if ($('.combo-panel').length == 0){--}}
+				{{--var html_combo_panel = $('#templete_combo_panel').html();--}}
+				{{--var combo_panel = $(html_combo_panel);--}}
 
-				combo_panel.find('.combo-panel-body').html(row_combo_category_ui);
-				$('#menu_items_container').append(combo_panel);
-			} else {
-				$('.combo-panel-body').append(row_combo_category_ui);
-			}
+				{{--combo_panel.find('.combo-panel-body').html(row_combo_category_ui);--}}
+				{{--$('#menu_items_container').append(combo_panel);--}}
+			{{--} else {--}}
+				{{--$('.combo-panel-body').append(row_combo_category_ui);--}}
+			{{--}--}}
 
-		});
+		{{--});--}}
 
 		$(document.body).on('click', '.btn_delete_combo' ,function(event){
 			if ($('.combo-item').length == 1) {

@@ -40,7 +40,7 @@ class CashRegisterController extends Controller
         $validation = Validator::make($request->all(), $rules);
         if ($validation->fails()) {
             return response()->json(["success" => false,
-                                     "message" => $validation->errors()->first()], 406);
+                                     "message" => $validation->errors()->first()], 200);
         }
 
         $opening_balance = $request->opening_balance;
@@ -54,17 +54,18 @@ class CashRegisterController extends Controller
                 return response()->json([
                     'success'=>true,
                     'message' => "Cash Register Opened",
-                    "data" =>['cash_register_id'=>$cashRegisterId]],200);
+                    "data" =>$cashRegisterId
+                ],200);
             }
             else{
                 return response()->json([
                     'success'=>false,
-                    'message' => "Invalid counter id"],422);
+                    'message' => "Invalid counter id"],200);
             }
         }
         return response()->json([
             'success'=>false,
-            'message' => "This user has already opened a cash register which needs to be closed."],403);
+            'message' => "This user has already opened a cash register which needs to be closed."],200);
 
     }
 
@@ -85,7 +86,8 @@ class CashRegisterController extends Controller
         return response()->json([
             'success'=>true,
             'message' => "User currently has an active cash register",
-            "data" =>["cash_register_id" => $activeRegister->id]],200);
+            "data" => $activeRegister->id
+        ],200);
     }
 
     public function createNewCashRegister($counter_id, $opening_balance, $opened_by) {

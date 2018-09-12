@@ -31,6 +31,16 @@ route::get('counter/ajax/set/{counter_id}','CounterController@SetCounterAjax')->
 route::get('counter/set/{counter_id}','CounterController@SetCounter')->name('counter_set')->middleware('auth');
 route::get('sale/refunded/list/{register_id}','SaleController@getDeletedSales')->name('refunded_sale_list')->middleware('auth');
 
+//Menu
+Route::get('/menu/add', ['as' => 'add_menu_view', 'uses' => 'MenuController@showAddMenu', 'middleware' => 'admin']);
+Route::post('/menu/add', ['as' => 'add_menu_post', 'uses' => 'MenuController@postAddMenu', 'middleware' => 'admin']);
+Route::get('/menu/all', ['as' => 'all_menu_view', 'uses' => 'MenuController@showAllMenu', 'middleware' => 'admin']);
+Route::post('/menu/delete', ['as' => 'delete_menu_post', 'uses' => 'MenuController@deleteMenu', 'middleware' => 'admin']);
+Route::get('/menu/edit/{menu}', ['as' => 'edit_menu_view', 'uses' => 'MenuController@showEditMenu', 'middleware' => 'admin']);
+Route::post('/menu/edit/{menu}', ['as' => 'edit_menu_post', 'uses' => 'MenuController@postEditMenu', 'middleware' => 'admin']);
+Route::post('/menu/image/create', ['as' => 'create_menu_image', 'uses' => 'MenuController@createImage', 'middleware' => 'admin']);
+Route::get('/menu/logo/{filename}', ['as' => 'get_menu_logo', 'uses' => 'MenuController@getLogo']);
+
 
 Route::group(['middleware' => ['admin']], function () {
 

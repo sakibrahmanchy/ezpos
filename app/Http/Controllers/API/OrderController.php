@@ -34,7 +34,7 @@ class OrderController extends Controller
         $validation = Validator::make($request->all(), $rules);
         if ($validation->fails()) {
             return response()->json(["success" => false,
-                                     "message" => $validation->errors()->first()], 406);
+                                     "message" => $validation->errors()->first()], 200);
         }
 
 
@@ -44,13 +44,9 @@ class OrderController extends Controller
         $paymentInfo = $processedOrder->processPaymentInfo();
         $saleInfo = $processedOrder->processSaleInfo();
         $sale = new Sale();
-        $sale_id  = $sale->InsertSale($saleInfo,$processedItems,$paymentInfo,SaleStatus::$SUCCESS);
-        //dd($receipt_id);
-        return response(["success"=>true, "message"=>"Sale Successfull","data"=>[ "sale_id"=>$sale_id]]);
-//        $saleInfo = $processedOrder->processSaleInfo();
-//
-//        dd($paymentInfo);
-//        dd($customer_id);
+        $sale_id  = $sale->InsertSale($saleInfo,$processedItems,null,SaleStatus::$LAYAWAY);
+
+        return response(["success"=>true, "message"=>"Sale Successfull","data"=>$sale_id]);
     }
 
     public function getSaleReceipt($saleId) {

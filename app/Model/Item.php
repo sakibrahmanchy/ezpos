@@ -39,6 +39,10 @@ class Item extends Model
         return $this->hasMany('App\Model\InventoryLog');
     }
 
+    public function images() {
+        return $this->belongsToMany('App\Model\File', 'items_images', 'id', 'item_id');
+    }
+
     public function InsertItem($request){
 
         $item = new Item();

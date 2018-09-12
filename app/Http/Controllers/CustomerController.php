@@ -473,7 +473,7 @@ class CustomerController extends Controller
     public function customerAssignPriceLevelPost(Request $request) {
         $customer = Customer::where("id",$request->customer_id)->first();
         $id_list = $request->id_list;
-        foreach ($id_list as $anId){
+        foreach ($id_list as $anId) {
             if(!$customer->items->contains($anId)) {
                 $customer->Items()->attach([$anId => ["price_level_id"=>$request->price_level_id]]);
             }else

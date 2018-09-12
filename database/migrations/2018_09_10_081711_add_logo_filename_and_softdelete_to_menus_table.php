@@ -13,7 +13,10 @@ class AddLogoFilenameAndSoftdeleteToMenusTable extends Migration
      */
     public function up()
     {
-        //
+        Schema::table('menus', function ($table) {
+            $table->string('logo_filename');
+            $table->softDeletes();
+        });
     }
 
     /**
@@ -23,6 +26,9 @@ class AddLogoFilenameAndSoftdeleteToMenusTable extends Migration
      */
     public function down()
     {
-        //
+        Schema::table('menus', function (Blueprint $table) {
+            $table->dropColumn('logo_filename');
+            $table->dropSoftDeletes();
+        });
     }
 }
