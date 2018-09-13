@@ -38,7 +38,6 @@ class OrderController extends Controller
                                      "message" => $validation->errors()->first()], 200);
         }
 
-
         $processedOrder = new ProcessOrder($request);
 
         $processedItems = $processedOrder->processItems();
@@ -46,6 +45,8 @@ class OrderController extends Controller
         $saleInfo = $processedOrder->processSaleInfo();
         $sale = new Sale();
         $sale_id  = $sale->InsertSale($saleInfo,$processedItems,null,SaleStatus::$LAYAWAY);
+
+        DB::connection('mysql_restaurant')->table('orders')->where('id', $request->order_id)->update(['ezpos_sale_id' => $sale_id]);
 
         return response(["success"=>true, "message"=>"Sale Successfull","data"=>$sale_id]);
     }
