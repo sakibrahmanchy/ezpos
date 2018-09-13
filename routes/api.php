@@ -38,6 +38,7 @@ Route::group(['namespace' => 'Api'], function () {
 
     Route::post('/order/process', 'OrderController@processOrder')->middleware('auth:api');
     Route::get('/orders/{id}', 'OrderController@getSaleReceipt')->middleware('auth:api');
+    Route::get('/orders/{id}/receipt', 'OrderController@printOrder')->middleware('auth:api');
 
     Route::get('/items/autocomplete', 'ItemController@GetItemsAutocomplete')->middleware('auth:api');
     Route::get('/item/price', 'ItemController@getItemPrice')->middleware('auth:api');

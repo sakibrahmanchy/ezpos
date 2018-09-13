@@ -6,6 +6,7 @@ use App\Enumaration\PaymentTypes;
 use App\Enumaration\SaleStatus;
 use App\Enumaration\UserTypes;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\SaleController;
 use App\Model\Api\ProcessOrder;
 use App\Model\CashRegister;
 use App\Model\Customer;
@@ -58,6 +59,13 @@ class OrderController extends Controller
         else{
             return response(["success"=>true, "message"=>"Sale found","data"=>$sale]);
         }
+
+    }
+
+    public function printOrder($orderId, Request $request) {
+        $saleController = new SaleController();
+        $saleController->printSaleReciept($orderId,$request);
+        return response(["success"=>true, "message"=>"Successfully printed"]);
 
     }
 
