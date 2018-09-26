@@ -44,7 +44,6 @@ class UserTableSeeder extends Seeder
 
             if(!is_null($newPermissionsToAdd))
                 UserPermission::AddNewPermissions($newPermissionsToAdd,$employee->id);
-
         }
 
     }

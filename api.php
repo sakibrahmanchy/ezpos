@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 |
 */
 
+
 Route::post('authenticate', 'Api\AuthenticateController@authenticate');
 Route::post('authenticate_by_pin', 'Api\AuthenticateController@authenticateByPin');
 

@@ -6,6 +6,8 @@ use App\Model\File;
 use App\Model\Item;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input as Input;
+use Excel;
+
 class FileController extends Controller
 {
     //
@@ -41,11 +43,4 @@ class FileController extends Controller
         if($fileUploadStatus)  return response()->json(['success' => true,'item_id'=>$item_id], 200);
         else  return response()->json(['success' => false], 400);
     }
-
-
-
-
-
-
-
 }

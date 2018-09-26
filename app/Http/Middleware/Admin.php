@@ -42,6 +42,7 @@ class Admin
             App::instance('user_permissions', $permissionList);
             App::instance('user_permission_categories', $permissionCategoryList);
             App::instance('user_counter_list', $permissionCategoryList);
+            ;
 
             $route_name = $request->route()->getName();
             if(!self::routeNeedsPermission($route_name))

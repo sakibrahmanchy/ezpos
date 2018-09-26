@@ -19,6 +19,9 @@ Route::middleware(['namespace' => 'Api'])->get('/user', function (Request $reque
 
 
 
+Route::post('test',function() {
+    echo "Auth success";
+})->middleware('pos-auth');
 
 
 Route::group(['namespace' => 'Api'], function () {
